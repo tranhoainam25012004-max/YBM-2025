@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YBM 2025 - Dashboard</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 { color: var(--primary); margin-bottom: 30px; }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            gap: 15px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, border-color 0.2s;
+            border: 2px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        .card-info h3 { margin: 0; font-size: 1.1rem; }
+        .card-info p { margin: 5px 0 0; font-size: 0.9rem; color: #64748b; }
+        .icon { font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <h1>Danh Sách Bài Tập YBM 2025</h1>
+
+    <div class="container">
+        <a href="TEST2_PART1/TEST2_PART_1.html" class="card">
+            <div class="card-info">
+                <h3>Test 2 - Part 1</h3>
+                <p>Luyện tập nghe hình ảnh</p>
+            </div>
+            <span class="icon">🎧</span>
+        </a>
+
+        <a href="TEST2_PART2/TEST2_PART_2.html" class="card">
+            <div class="card-info">
+                <h3>Test 2 - Part 2</h3>
+                <p>Luyện tập câu hỏi & đáp</p>
+            </div>
+            <span class="icon">💬</span>
+        </a>
+
+        <a href="TEST2_PART7_SINGLE/TEST2_PART_7_SINGLE.html" class="card">
+            <div class="card-info">
+                <h3>Test 2 - Part 7</h3>
+                <p>Đoạn văn đơn (Single Passage)</p>
+            </div>
+            <span class="icon">📖</span>
+        </a>
+    </div>
+
+</body>
+</html>
