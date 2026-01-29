@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TOEIC - Vocabulary Practice</title>
+
+<style>
+:root {
+    --green:#28a745; --red:#dc3545; --yellow:#ffc107; --blue:#007bff;
+    --dark:#343a40; --bg:#f0f2f5;
+}
+body {
+    font-family: system-ui, sans-serif;
+    background: #e9ecef; /* Màu nền xám đậm hơn một chút */
+    margin: 0;
+    padding: 15px;
+    color: var(--dark);
+}
+.main-container{max-width:900px;margin:auto}
+h1{text-align:center;color:#0056b3}
+
+
+.question-header{
+    font-size:1.3em;font-weight:bold;margin-bottom:15px
+}
+.sub-section-title{
+    font-weight:bold;color:#0056b3;
+    border-left:4px solid #0056b3;padding-left:10px;
+    margin:20px 0 15px
+}
+
+
+input[type=text]{
+    width:100%;padding:8px;border:1px solid #ccc;border-radius:5px
+}
+input.correct{border-color:var(--green);background:#d4edda}
+input.incorrect{border-color:var(--red);background:#f8d7da}
+
+.vocab-grid{
+    display:grid;grid-template-columns:1fr;gap:15px
+}
+@media(min-width:768px){
+    .vocab-grid{grid-template-columns:1fr 1fr}
+}
+
+
+.vocab-header{
+    display:flex;justify-content:space-between;
+    border-bottom:1px dashed #eee;margin-bottom:10px
+}
+.vocab-word{font-size:1.2em;font-weight:bold}
+.speaker-icon{
+    cursor:pointer;background:#eef4ff;
+    border-radius:50%;width:30px;height:30px;
+    display:flex;align-items:center;justify-content:center
+}
+.answer-text{display:none;color:var(--green);font-weight:bold;font-size:.9em}
+.vocab-controls{
+    display:flex;justify-content:flex-end;gap:10px;margin-top:10px
+}
+.btn{
+    border:none;border-radius:6px;
+    padding:6px 14px;color:#fff;font-weight:bold;cursor:pointer
+}
+.btn-green{background:var(--green)}
+.btn-red{background:var(--red)}
+.btn-yellow{background:var(--yellow);color:#333}
+
+.vocab-section {
+  margin-top: 12px;
+}
+
+.vocab-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.vocab-word {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.word-text {
+  color: #1aa33a;
+}
+
+.meaning-block {
+  margin-top: 10px;
+}
+
+.meaning-label {
+  color: #1aa33a;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.meaning-input,
+.synonym-input {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.synonym-title {
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.no-syn {
+  font-style: italic;
+  color: #999;
+  margin-left: 6px;
+}
+
+.synonym-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.synonym-text {
+  color: #1aa33a;
+  min-width: 80px;
+}
+
+.speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+.answer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    color: var(--green);
+}
+
+
+.en-col {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--dark);
+    padding-right: 10px;
+    border-right: 1px dashed #eee; /* Đường kẻ mờ phân cách giữa 2 cột */
+}
+
+.vi-col {
+    display: none; /* Ẩn mặc định */
+    font-size: 15px;
+    line-height: 1.6;
+    color: #222323;
+    font-style: italic;
+    background: #edf2fc;
+    padding: 0 10px;
+    border-radius: 8px;
+}
+
+.vi-col.visible {
+    display: block; /* Hiện khi nhấn nút */
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Khung lớn bao quanh từng bài tập */
+.question-block {
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px; /* Bo góc tròn hơn tạo cảm giác mềm mại */
+    /* Đổ bóng sâu hơn để tạo độ nổi khối 3D */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+    margin-bottom: 50px;
+    border-top: 6px solid var(--blue);
+    transition: transform 0.3s ease; /* Hiệu ứng khi di chuột vào */
+}
+
+.question-block:hover {
+    transform: translateY(-2px); /* Nhấc nhẹ box lên khi di chuột */
+}
+
+/* Khung cho từng dòng câu tiếng Anh - Việt */
+.sentence-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    /* Đổ bóng nhẹ cho từng dòng để tách biệt khỏi nền trắng của block lớn */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    align-items: start;
+}
+
+/* Khung cho từng thẻ từ vựng */
+.vocab-card {
+    border: none; /* Bỏ viền cứng nhắc */
+    border-radius: 15px;
+    padding: 20px;
+    background: #ffffff;
+    /* Đổ bóng giúp card từ vựng trông như đang đặt trên mặt bàn */
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.vocab-card:hover {
+    box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+    border-color: var(--blue);
+}
+</style>
+</head>
+
+<body>
+<div class="main-container">
+<h1>Luyện TOEIC – Dịch & Từ vựng</h1>
+<div id="app-content"></div>
+</div>
+
+<script>
+const exercises = [
+    {
+            id: 147-148,
+                    title: "147-148",
+                    sentences: [
+                        { en: "More than a decade of helping start-ups take flight", vi: "Hơn một thập kỷ giúp đỡ những công ty khởi nghiệp phát triển" },
+                        { en: "Convenient outsourcing of human resources tasks", vi: "Sự thuê ngoài thuận tiện cho những nhiệm vụ nhân sự" },
+                        { en: "Project-based consulting on personnel issues", vi: "Tư vấn dựa trên dự án về những vấn đề nhân sự" },
+                        { en: "Full-service HR technology platform for long-term clients", vi: "Nền tảng công nghệ nhân sự đầy đủ dịch vụ cho các khách hàng lâu năm" },
+                        { en: "Areas of expertise include recruiting, training, payroll, and much more. Visit www.deftlee.com to schedule a consultation.", vi: "Những lĩnh vực chuyên môn bao gồm tuyển dụng, đào tạo, trả lương và hơn thế nữa. truy cập trang web để lên lịch một buổi phỏng vấn" },
+                        { en: "I hiahly recommend Deftlee Their HR nlatform alone is worth the prices they charge. Our managers love how it has simplified tasks like tracking time off and performance evaluations. -Ryan Maas, Aurora Logistics", 
+                        vi: "tôi rất đề xuất Deftlee. Chỉ riêng nền tảng nhân sự của họ thì xứng đáng với giá cả mà họ đưa ra. Quản lí của chúng tôi thích cách nó đơn giản hóa nhiệm vụ chẳng hạn như theo dõi thời gian nghỉ phép và đánh giá hiệu xuất." },
+                        { en: "My business has grown from four employees to more than 50, and Deftlee has been there every step of the way. I'm always impressed by their ability to adapt to our changing needs. -Kasumi Tanaka, TBR Solutions", 
+                        vi: "doanh nghiệp của tôi đã phát triển từ bốn nhân viên thành 50 nhân viên, và Deftlee đã ở đó trong mỗi bước đi. Tôi luôn ấn tượng với khả năng của họ để thích ứng với nhu cầu thay đổi của chúng tôi." },
+                        
+                    ],
+                    vocab: [
+                        {
+                            word: "Take flight",pos: " ",meanings: [
+                            { meaning: "cất cánh", synonyms: [] },
+                            { meaning: "phát triển", synonyms: ["develop", "evolve", "grow", "prosper", "thrive"] }]
+                        },
+                        {
+                            word: "Outsourcing",pos: "n",meanings: [
+                            { meaning: "sự thuê ngoài", synonyms: [] }]
+                        },
+                        {
+                            word: "Personnel",pos: "n",meanings: [
+                            { meaning: "nhân sự", synonyms: [] } ]
+                        },
+                        {
+                            word: "Platform",pos: "n",meanings: [
+                            { meaning: "nhà ga", synonyms: [] },
+                            { meaning: "nền tảng", synonyms: [] } ]
+                        },
+                        {
+                            word: "Expertise",pos: "n",meanings: [
+                            { meaning: "chuyên môn", synonyms: [] }]
+                        },
+                        {
+                            word: "Expert",pos: " ",meanings: [
+                            { meaning: "(n) chuyên gia", synonyms: [] },
+                            { meaning: "(adj) chuyên nghiệp", synonyms: [] }]
+                        },
+                        {
+                            word: "Consultation",pos: "n",meanings: [
+                            { meaning: "buổi tư vấn", synonyms: [] }]
+                        },
+                        {
+                            word: "Testimonials",pos: "n",meanings: [
+                            { meaning: "các đánh giá", synonyms: ["reviews"] }]
+                        },
+                        {
+                            word: "Worth",pos: "adj",meanings: [
+                            { meaning: "xứng đáng", synonyms: [] }]
+                        },
+                        {
+                            word: "Simplify",pos: "v",meanings: [
+                            { meaning: "đơn giản hóa", synonyms: [] }]
+                        },
+                        {
+                            word: "Performance", pos: "n",meanings: [
+                            { meaning: "hiệu suất", synonyms: [] },
+                            { meaning: "buổi trình diễn", synonyms: [] }]
+                        },
+                        {
+                            word: "Evaluation",  pos: "n", meanings: [
+                            { meaning: "sự đánh giá", synonyms: [] } ]
+                        },
+                        {
+                            word: "Evaluate",pos: "v", meanings: [
+                            { meaning: "đánh giá", synonyms: ["assess"] }]
+                        },
+                        {
+                            word: "Adapt",pos: "v",meanings: [
+                            { meaning: "thay đổi", synonyms: ["alter", "modify", "revise", "adjust", "change"] },]
+                        },
+                        {
+                            word: "Adapt to st",pos: "v",meanings: [
+                            { meaning: "thhích nghi", synonyms: [] },]
+                        }
+                        ]
+
+        }
+];
+exercises[0].questions = [
+{
+question: {
+    en: "147. What is most likely true about Deftlee?",
+    vi: "Điều gì có khả năng đúng nhất về Deftlee?"
+  },
+  options: [
+    {
+      label: "A",
+      en: "It offers to handle employee compensation for its clients.",
+      vi: "Công ty đề nghị xử lý chế độ đãi ngộ cho nhân viên của khách hàng."
+    },
+    {
+      label: "B",
+      en: "It advises businesses on environmental issues.",
+      vi: "Công ty tư vấn cho doanh nghiệp về các vấn đề môi trường."
+    },
+    {
+      label: "C",
+      en: "It has grown rapidly in a short time.",
+      vi: "Công ty đã phát triển nhanh chóng trong một thời gian ngắn."
+    },
+    {
+      label: "D",
+      en: "It develops project management software.",
+      vi: "Công ty phát triển phần mềm quản lý dự án."
+    }
+  ]},
+  { question: {
+    en: "148. What does Ms. Tanaka appreciate about Deftlee?",
+    vi: "Bà Tanaka đánh giá cao điều gì ở Deftlee?"
+  },
+  options: [
+    { label: "A", en: "Its pricing.", vi: "Giá cả của công ty." },
+    { label: "B", en: "Its flexibility.", vi: "Sự linh hoạt của công ty." },
+    { label: "C", en: "Its technology.", vi: "Công nghệ của công ty." },
+    { label: "D", en: "Its confidentiality.", vi: "Tính bảo mật của công ty." }
+  ],
+  vocab: [
+{
+    word: "Offer",
+    pos: "v",
+    meanings: [
+        { meaning: "đề nghị", synonyms: [] },
+        { meaning: "cung cấp", synonyms: [] }
+    ]
+},
+{
+    word: "Offer",
+    pos: "n",
+    meanings: [
+        { meaning: "lời đề nghị", synonyms: [] },
+        { meaning: "ưu đãi", synonyms: ["deal", "incentive"] }
+    ]
+},
+{
+    word: "Advise",
+    pos: "v",
+    meanings: [
+        { meaning: "khuyên", synonyms: [] },
+        { meaning: "tư vấn", synonyms: [] }
+    ]
+},
+{
+    word: "Rapid",
+    pos: "adj",
+    meanings: [
+        { meaning: "nhanh chóng", synonyms: ["quick"] }
+    ]
+},
+{
+    word: "Handle",
+    pos: "v",
+    meanings: [
+        { meaning: "xử lý", synonyms: ["address", "process", "deal with"] }
+    ]
+},
+{
+    word: "Compensation",
+    pos: "n",
+    meanings: [
+        { meaning: "bù đắp / đền bù", synonyms: [] },
+        { meaning: "thù lao / lương", synonyms: ["pay"] }
+    ]
+},
+{
+    word: "Flexibility",
+    pos: "n",
+    meanings: [
+        { meaning: "tính linh động", synonyms: [] }
+    ]
+},
+{
+    word: "Flexible",
+    pos: "adj",
+    meanings: [
+        { meaning: "linh động", synonyms: [] }
+    ]
+},
+{
+    word: "Confidentiality",
+    pos: "n",
+    meanings: [
+        { meaning: "tính bảo mật", synonyms: [] }
+    ]
+},
+{
+    word: "Confidential",
+    pos: "adj",
+    meanings: [
+        { meaning: "bảo mật", synonyms: [] }
+    ]
+}
+
+  ]}
+
+]
+exercises.push({
+  id: 149-150,
+  title: "149-150",
+
+  /* ===== ĐOẠN VĂN ===== */
+  sentences: [
+    {
+      en: `Since our opening nearly 30 years ago, Conover's 
+      has been proud to equip Mandeville residents for a wide range 
+      of indoor and outdoor sports. `,
+      vi: `Kể từ khi thành lập gần 30 năm trước, 
+      Conover’s đã tự hào trang bị cho cư dân Mandeville đa 
+      dạng đồ thể thao trong nhà và ngoài trời. `
+    },
+    {
+      en: `However, we have recently made the difficult 
+      decision to remove fishing gear, supplies, and equipment 
+      from our inventory due to poor sales. The floor space this 
+      stock used to occupy will instead be used to display additional 
+      workout apparel.`,
+      vi: `Tuy nhiên, gần đây chúng tôi đã ra một quyết định khó khăn để loại 
+      bỏ dụng cụ câu cá, các vật tư và thiết bị câu cá khỏi 
+      hàng hóa bán của chúng tôi do doanh số bán kém.
+      Không gian mặt hàng này đã từng chiếm dữ thay cào đó sẽ được 
+      sử dụng để trưng bày thêm các trang phục thể dục.`
+    },
+    {
+      en: `This step will help Conover's remain profitable so that we can continue supporting Mandeville's athletes for many years to come. Still, we apologize for the inconvenience this will cause for the fishing enthusiasts among our customers. `,
+      vi: `Bước đi này sẽ giúp Conover’s duy trì lợi nhuận đê chúng tôi có thể tiếp tục hỗ trợ những vận động viên của Mandecille trong nhiều năm tới.
+Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra cho những người đam mê câu cá cho những khách hàng của chúng tôi.
+`
+    }
+  ],
+
+  /* ===== TỪ VỰNG ĐOẠN VĂN ===== */
+  vocab: [
+    {
+        word: "A wide range of",
+        pos: "phrase",
+        meanings: [
+            { 
+                meaning: "nhiều", 
+                synonyms: ["a broad range of", "a variety of", "an assortment of", "an array of"] 
+            }
+        ]
+    },
+    {
+        word: "Fishing gear",
+        pos: "n",
+        meanings: [
+            { meaning: "dụng cụ câu cá", synonyms: [] }
+        ]
+    },
+    {
+        word: "Occupy",
+        pos: "v",
+        meanings: [
+            { meaning: "chiếm lĩnh/ sử dụng", synonyms: [] }
+        ]
+    },
+    {
+        word: "Workout",
+        pos: "v,n",
+        meanings: [
+            { meaning: "tập thể dục", synonyms: ["exercise"] }
+        ]
+    },
+    {
+        word: "Apparel",
+        pos: "n",
+        meanings: [
+            { 
+                meaning: "quần áo", 
+                synonyms: ["attire", "garment", "wear", "clothing"] 
+            }
+        ]
+    },
+    {
+        word: "Athlete",
+        pos: "n",
+        meanings: [
+            { meaning: "vận động viên", synonyms: [] }
+        ]
+    },
+    {
+        word: "Athletic",
+        pos: "adj",
+        meanings: [
+            { meaning: "thuộc về thể thao", synonyms: [] }
+        ]
+    },
+    {
+        word: "Enthusiast",
+        pos: "n",
+        meanings: [
+            { meaning: "người đam mê", synonyms: [] }
+        ]
+    },
+    {
+        word: "Enthusiastic",
+        pos: "adj",
+        meanings: [
+            { meaning: "đam mê", synonyms: ["passionate"] }
+        ]
+    }
+],
+
+  /* ===== CÂU HỎI ===== */
+  questions: [
+    {
+      
+        question: {
+            en: "149 What does Conover's sell?",
+            vi: "149 Conover's bán mặt hàng gì?"
+        },
+        options: [
+            { label: "A", en: "Groceries", vi: "Thực phẩm/Tạp hóa" },
+            { label: "B", en: "Electronics", vi: "Đồ điện tử" },
+            { label: "C", en: "Art supplies", vi: "Dụng cụ mỹ thuật" },
+            { label: "D", en: "Sporting goods", vi: "Đồ dùng thể thao" }
+  ]},
+      {
+        question: {
+            en: "150. What is the notice about?",
+            vi: "150. Thông báo này nói về điều gì?"
+        },
+        options: [
+            { label: "A", en: "A change in inventory", vi: "Sự thay đổi về hàng tồn kho" },
+            { label: "B", en: "An anniversary celebration", vi: "Một lễ kỷ niệm" },
+            { label: "C", en: "A temporary store closure", vi: "Việc đóng cửa cửa hàng tạm thời" },
+            { label: "D", en: "A fund-raising event", vi: "Một sự kiện gây quỹ" }
+        ],
+
+      /* ===== TỪ VỰNG CÂU HỎI (150) ===== */
+      vocab: [
+    {
+        word: "Inventory",
+        pos: "n",
+        meanings: [
+            { meaning: "hàng tồn kho/ hàng hóa", synonyms: ["stock"] }
+        ]
+    },
+    {
+        word: "Temporary",
+        pos: "adj",
+        meanings: [
+            { meaning: "tạm thời", synonyms: ["tentative", "interim"] }
+        ]
+    },
+    {
+        word: "permanent",
+        pos: "adj",
+        meanings: [
+            { meaning: "lâu dài", synonyms: [] }
+        ]
+    },
+    {
+        word: "Fun-raising",
+        pos: "n",
+        meanings: [
+            { meaning: "sự gây quỹ", synonyms: [] }
+        ]
+    },
+    {
+        word: "fund-riser",
+        pos: "n",
+        meanings: [
+            { meaning: "buổi gây quỹ", synonyms: [] }
+        ]
+    }
+]}
+  ]
+});
+exercises.push({
+  id: "151-152",
+  title: "151-152",
+
+  /* ===== ĐOẠN VĂN ===== */
+  sentences: [
+    {
+      en: "We received your request to let your sister use your excess frequent-flyer miles. This is only possible after connecting your Emerald Club accounts, which must be done through our Web site. Please follow these steps.",
+      vi: "Chúng tôi đã nhận được yêu cầu của bạn để chị gái của bạn sử dụng số dặm bay thường xuyên còn dư.Điều này chỉ được thực hiện sau khi kết nối tài khoản, mà phải thực hiện thông qua trang web của chúng tôi. Vui lòng thực hiện theo các bước:"
+    },
+    {
+      en: "1. Log in to your Emerald Club member page. Select 'Add a Family Member' from the sidebar.",
+      vi: "1.	Đăng nhập trang thành viên của bạn. Chọn “add a family member” từ thanh bên cạnh"
+    },
+    {
+      en: "2. Enter the requested information about your relative.",
+      vi: "2.	Nhập thông tin yêu cầu về mối quan hệ của bạn."
+    },
+    {
+      en: "3. After reviewing the guidelines on documents that we will accept as proof of your relationship, upload eligible documents.",
+      vi: "3.	Sau khi xem các hướng dẫn trên tài liệu mà chúng tôi sẽ chấp nhận như là bằng chứng mối quan hệ của bạn, tải lên những tài liệu đủ điều kiện."
+    },
+    {
+      en: "4. Click 'Submit' at the bottom of the page. Within five business days, you will receive an e-mail confirming the connection or requesting additional documentation.",
+      vi: "4.	Nhấn vào nút nộp ở cuối trang. Trong vòng  ngày, bạn sẽ nhận được email xác nhận kết nối hoặc yêu cầu thêm tài liệu."
+    },
+    {
+      en: "Please let us know if you encounter difficulties with this process.",
+      vi: "Vui lòng cho tôi biết nếu bạn gặp khó khăn với quy trình này."
+    }
+  ],
+
+  /* ===== TỪ VỰNG ĐOẠN VĂN ===== */
+  vocab: [
+    {
+    "word": "Excess",
+    "pos": "n",
+    "meanings": [
+      { "meaning": "dư", "synonyms": ["surplus"] }
+    ]
+  },
+  {
+    "word": "Follow",
+    "pos": "v",
+    "meanings": [
+      { "meaning": "theo dõi", "synonyms": [] },
+      { "meaning": "tuân thủ", "synonyms": ["abide by", "comply with", "conform to", "adhere to", "observe"] }
+    ]
+  },
+  {
+    "word": "Guideline",
+    "pos": "n",
+    "meanings": [
+      { "meaning": "hướng dẫn", "synonyms": ["instruction", "direction"] }
+    ]
+  },
+  {
+    "word": "Proof",
+    "pos": "n",
+    "meanings": [
+      { "meaning": "bằng chứng", "synonyms": ["evidence"] }
+    ]
+  },
+  {
+    "word": "Prove",
+    "pos": "v",
+    "meanings": [
+      { "meaning": "chứng minh", "synonyms": [] }
+    ]
+  },
+  {
+    "word": "Eligible",
+    "pos": "adj",
+    "meanings": [
+      { "meaning": "đủ điều kiện", "synonyms": ["qualified"] }
+    ]
+  },
+  {
+    "word": "Encounter",
+    "pos": "v",
+    "meanings": [
+      { "meaning": "gặp", "synonyms": ["meet", "face"] }
+    ]
+  },
+  {
+    "word": "Process",
+    "pos": "n",
+    "meanings": [
+      { "meaning": "quy trình", "synonyms": ["procedure"] }
+    ]
+  }
+  ],
+
+  /* ===== CÂU HỎI ===== */
+  questions: [
+  {
+    "question": {
+      "en": "151. What is suggested about Mr. Reilly?",
+      "vi": "151. Cái gì được đề xuất về ông Reilly?"
+    },
+    "options": [
+      { "label": "A", "en": "He reported a security issue with his account.", "vi": "Ông ấy đã báo cáo về một vấn đề bảo mật với tài khoản của ông ấy" },
+      { "label": "B", "en": "He is a travel agent.", "vi": "Ông ấy là nhân viên công ty du lịch" },
+      { "label": "C", "en": "He often flies with Irish Air.", "vi": "Ông ấy thường xuyên bay với hãng hàng không Irish" },
+      { "label": "D", "en": "A member of his family works for Irish Air", "vi": "Một thành viên trong gia đình của ông ấy làm việc cho hãng hàng không Irish" }
+    ]
+  },
+  {
+    "question": {
+      "en": "152. What is Mr. Reilly instructed to do?",
+      "vi": "152. Ông Reilly được hướng dẫn làm gì?"
+    },
+    "options": [
+      { "label": "A", "en": "Change his log-in credentials", "vi": "Thay đổi thông tin đăng nhập" },
+      { "label": "B", "en": "Provide some documents by mail", "vi": "Cung cấp một vài tài liệu qua thư" },
+      { "label": "C", "en": "Check his member page for updates", "vi": "Kiểm tra trang thành viên để đăng nhập" },
+      { "label": "D", "en": "Verify a relationship online", "vi": "Xác minh một mối quan hệ trực tuyến" }
+    ],
+    "vocab": [
+      {
+        "word": "Agent",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "nhân viên", "synonyms": ["employee"] },
+          { "meaning": "đại lý", "synonyms": ["agency"] },
+          { "meaning": "người đại diện", "synonyms": ["representative"] }
+        ]
+      },
+      {
+        "word": "Instruct",
+        "pos": "v",
+        "meanings": [
+          { "meaning": "hướng dẫn", "synonyms": ["guide", "direct"] }
+        ]
+      },
+      {
+        "word": "Log-in credentials",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "thông tin đăng nhập", "synonyms": [] }
+        ]
+      },
+      {
+        "word": "Mail",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "thư", "synonyms": ["letter"] }
+        ]
+      },
+      {
+        "word": "Verify",
+        "pos": "v",
+        "meanings": [
+          { "meaning": "xác thực", "synonyms": [] }
+        ]
+      }
+    ]
+  }
+]
+});
+exercises.push({
+  "id": "153-154",
+  "title": "153-154",
+  "sentences": [
+    {
+      "en": "Hi, Nadia. I just noticed we have a problem with some promotional materials I packed for the trade show.",
+      "vi": "Chào, Nadia. Tôi vừa chú ý chúng ta gặp một vấn đề với một vài tài liệu quảng cáo tôi đã đóng gói cho hội chợ thương mại."
+    },
+    {
+      "en": "They have our Stahl Street address on them.",
+      "vi": "Chúng ta có địa chỉ đường Stahl trên những tài liệu này."
+    },
+    {
+      "en": "Which ones?",
+      "vi": "Những tài liệu nào?"
+    },
+    {
+      "en": "The brochures for our Nimble line of power tools. I guess we never had them reprinted with our new address after the move.",
+      "vi": "Những tờ quảng cáo những công cụ điện Nimble của chúng ta. Tôi đoán chúng ta chưa bao giờ in lại chúng với địa chỉ mới sau khi chúng ta chuyển đi."
+    },
+    {
+      "en": "Well, there are print shops near the convention center, right? You could go to one tonight or early tomorrow morning, and ask them to print correction stickers for you to put on the brochures.",
+      "vi": "Ồ, những tiệm in ở gần trung tâm hội nghị đúng không? Bạn có thể đến đó vào tối nay hoặc sáng sớm mai, và yêu cầu họ in những nhãn dán chỉnh sửa cho bạn để dán vào tờ quảng cáo."
+    },
+    {
+      "en": "That should work! Thanks for your help.",
+      "vi": "Điều này sẽ hiệu quả! Cảm ơn sự giúp đỡ của bạn."
+    }
+  ],
+  "vocab": [
+    {
+      "word": "Pack",
+      "pos": "v",
+      "meanings": [
+        {
+          "meaning": "đóng gói",
+          "synonyms": ["package"]
+        }
+      ]
+    },
+    {
+      "word": "Trade show",
+      "pos": "n",
+      "meanings": [
+        {
+          "meaning": "hội chợ thương mại",
+          "synonyms": ["trade fair"]
+        }
+      ]
+    }
+  ],
+   /* ===== CÂU HỎI ===== */
+  questions: [
+  {
+    "question": {
+      "en": "153. What problem does Mr. Belton have?",
+      "vi": "153. Vấn đề gì xảy ra với ông Belton?"
+    },
+    "options": [
+      { "label": "A", "en": "He misplaced some posters.", "vi": "ông ấy đã làm thất lạc một vài tấm poster" },
+      { "label": "B", "en": "He was mistaken about a venue's address.", "vi": "ông ấy bị sai về một địa chỉ của địa điểm" },
+      { "label": "C", "en": "He is unable to use a power tool.", "vi": "ông ấy không thể sử dụng công cụ điện" },
+      { "label": "D", "en": "He has outdated brochures.", "vi": "ông ấy có những tờ quảng cáo cũ" }
+    ]
+  },
+  {
+    "question": {
+      "en": "154. At 7:18 P.M., what does Mr. Belton mean when he writes, \"That should work\"?",
+      "vi": "154. Vào 7:18 ông Belton nghĩ gì khi ông ấy viết “điều này sẽ hiệu quả”?"
+    },
+    "options": [
+      { "label": "A", "en": "A device seems to have been repaired.", "vi": "một thiết bị dường như đã được sửa chữa" },
+      { "label": "B", "en": "The proposed plan is likely to succeed.", "vi": "kế hoạch được đề xuất có thể thành công" },
+      { "label": "C", "en": "He is surprised that a promotional effort is unpopular.", "vi": "ông ấy ngạc nhiên rằng nỗ lực quảng cáo thì không được ưa chuộng" },
+      { "label": "D", "en": "An announcement could resolve a misunderstanding.", "vi": "một thông báo có thể giải quyết một sự hiểu lầm" }
+    ],
+    "vocab": [
+      {
+        "word": "Misplace",
+        "pos": "v",
+        "meanings": [
+          { "meaning": "làm thất lạc", "synonyms": ["lose"] }
+        ]
+      },
+      {
+        "word": "Mistaken",
+        "pos": "adj",
+        "meanings": [
+          { "meaning": "sai", "synonyms": ["wrong"] }
+        ]
+      },
+      {
+        "word": "Power tool",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "công cụ điện", "synonyms": ["power", "energy", "electricity"] }
+        ]
+      },
+      {
+        "word": "Outdated",
+        "pos": "adj",
+        "meanings": [
+          { "meaning": "cũ / lỗi thời", "synonyms": ["old", "out of date"] }
+        ]
+      },
+      {
+        "word": "Brochure",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "tờ quảng cáo", "synonyms": [] }
+        ]
+      },
+      {
+        "word": "Device",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "thiết bị", "synonyms": [] }
+        ]
+      },
+      {
+        "word": "Propose",
+        "pos": "v",
+        "meanings": [
+          { "meaning": "đề xuất", "synonyms": ["suggest", "recommend"] }
+        ]
+      },
+      {
+        "word": "Likely",
+        "pos": "adj",
+        "meanings": [
+          { "meaning": "có thể", "synonyms": [] }
+        ]
+      },
+      {
+        "word": "Promotion",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "sự xúc tiến", "synonyms": [] },
+          { "meaning": "sự quảng cáo", "synonyms": [] },
+          { "meaning": "sự thăng chức", "synonyms": [] }
+        ]
+      },
+      {
+        "word": "Effort",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "nỗ lực", "synonyms": ["attempt", "endeavor"] }
+        ]
+      },
+      {
+        "word": "Resolve",
+        "pos": "v",
+        "meanings": [
+          { "meaning": "giải quyết", "synonyms": ["solve", "settle"] }
+        ]
+      },
+      {
+        "word": "Misunderstanding",
+        "pos": "n",
+        "meanings": [
+          { "meaning": "sự hiểu lầm", "synonyms": [] }
+        ]
+      }
+    ]
+  }
+]
+});
+
+
+
+const app=document.getElementById("app-content");
+
+
+function renderApp() {
+  app.innerHTML = "";
+
+  exercises.forEach((ex, exIndex) => {
+    /* ===============================
+        PASSAGE BLOCK
+    =============================== */
+    let passageHTML = `
+      <div class="question-block">
+        <div class="question-header">PASSAGE ${ex.title}</div>
+        <div class="sub-section-title">I. Dịch đoạn văn</div>
+    `;
+
+    ex.sentences.forEach((s, i) => {
+      passageHTML += `
+        <div class="sentence-row">
+          <div>
+            ${s.en}
+          </div>
+          <div class="vi-col" id="tr-${exIndex}-${i}">
+            ${s.vi}
+          </div>
+        </div>
+      `;
+    });
+
+    passageHTML += `
+      <button class="btn btn-yellow" onclick="toggleTrans(${exIndex})">
+        Hiện / Ẩn dịch đoạn văn
+      </button>
+
+      <div class="sub-section-title">II. Từ vựng đoạn văn</div>
+      <div class="vocab-grid">
+    `;
+
+    ex.vocab.forEach((v, vIndex) => {
+      let meaningHTML = "";
+      v.meanings.forEach((m, mIndex) => {
+        let synHTML = "";
+        if (m.synonyms && m.synonyms.length) {
+          m.synonyms.forEach((syn, sIdx) => {
+            synHTML += `
+              <div style="margin-left:14px;margin-top:4px">
+                <input type="text" id="s-${exIndex}-${vIndex}-${mIndex}-${sIdx}">
+                <div class="answer-text" id="sa-${exIndex}-${vIndex}-${mIndex}-${sIdx}">
+                  ${syn}
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          synHTML = `<i style="color:#aaa">Không có</i>`;
+        }
+
+        meaningHTML += `
+          <div class="meaning-block">
+            <input type="text" id="m-${exIndex}-${vIndex}-${mIndex}">
+            <div class="answer-text" id="ma-${exIndex}-${vIndex}-${mIndex}">
+              ${m.meaning}
+            </div>
+            <div><b>Đồng nghĩa</b>${synHTML}</div>
+          </div>
+        `;
+      });
+
+      passageHTML += `
+        <div class="vocab-card">
+          <div class="vocab-header">
+            <div class="vocab-word">${v.word} (${v.pos})
+            <span class="speaker-icon" onclick="speak('${v.word}')">🔊</span></div>
+          </div>
+          ${meaningHTML}
+          <div class="vocab-controls">
+            <button class="btn btn-green" onclick="showAns(${exIndex},${vIndex})">Đáp án</button>
+            <button class="btn btn-red" onclick="checkVocab(${exIndex},${vIndex})">Kiểm tra</button>
+          </div>
+        </div>
+      `;
+    });
+
+    passageHTML += `</div></div>`;
+    app.innerHTML += passageHTML;
+
+    /* ===============================
+        QUESTION BLOCK
+    =============================== */
+    if (ex.questions && ex.questions.length) {
+      let questionHTML = `
+        <div class="question-block" style="border-top-color:var(--green)">
+          <div class="question-header">QUESTIONS ${ex.title}</div>
+          <div class="sub-section-title">III. Câu hỏi</div>
+      `;
+
+      ex.questions.forEach((q, qIndex) => {
+    questionHTML += `
+      <div class="sentence-row" style="grid-template-columns:1fr">
+        <b>${q.question.en}</b>
+        ${q.options.map(o => `<div>(${o.label}) ${o.en}</div>`).join("")}
+        
+        <div class="vi-col" id="qv-${exIndex}-${qIndex}">
+          <b>Dịch:</b> ${q.question.vi}
+          <ul>${q.options.map(o => `<li>(${o.label}) ${o.vi}</li>`).join("")}</ul>
+        </div>
+      </div>
+      
+      <button class="btn btn-yellow" style="margin-bottom:20px" onclick="toggleSingleQuestionTrans(${exIndex}, ${qIndex})">
+        Hiện / Ẩn dịch câu hỏi này
+      </button>
+    `;
+
+        if (q.vocab && q.vocab.length) {
+          questionHTML += `
+            <div class="sub-section-title">IV. Từ vựng câu hỏi</div>
+            <div class="vocab-grid">
+          `;
+          q.vocab.forEach((qv, qvIdx) => {
+            let qmHTML = "";
+            qv.meanings.forEach((m, mIdx) => {
+              let qsHTML = "";
+              if (m.synonyms && m.synonyms.length) {
+                m.synonyms.forEach((syn, sIdx) => {
+                  qsHTML += `
+                    <div style="margin-left:14px;margin-top:4px">
+                      <input type="text" id="qs-${exIndex}-${qIndex}-${qvIdx}-${mIdx}-${sIdx}">
+                      <div class="answer-text" id="qsa-${exIndex}-${qIndex}-${qvIdx}-${mIdx}-${sIdx}">
+                        ${syn}
+                      </div>
+                    </div>
+                  `;
+                });
+              } else { qsHTML = `<i>Không có</i>`; }
+
+              qmHTML += `
+                <div class="meaning-block">
+                  <input type="text" id="qm-${exIndex}-${qIndex}-${qvIdx}-${mIdx}">
+                  <div class="answer-text" id="qma-${exIndex}-${qIndex}-${qvIdx}-${mIdx}">${m.meaning}</div>
+                  <div><b>Đồng nghĩa</b>${qsHTML}</div>
+                </div>
+              `;
+            });
+
+              questionHTML += `
+                <div class="vocab-card">
+                  <div class="vocab-word">
+                    ${qv.word} (${qv.pos})
+                    <span class="speaker-icon" onclick="speak('${qv.word}')">🔊</span>
+                  </div>
+                  ${qmHTML}
+                <div class="vocab-controls">
+                  <button class="btn btn-green" onclick="showQAns(${exIndex},${qIndex},${qvIdx})">Đáp án</button>
+                  <button class="btn btn-red" onclick="checkQVocab(${exIndex},${qIndex},${qvIdx})">Kiểm tra</button>
+                </div>
+              </div>
+            `;
+          });
+          questionHTML += `</div>`;
+        }
+      });
+      questionHTML += `</div>`;
+      app.innerHTML += questionHTML;
+    }
+  });
+}
+
+
+// Hàm mới: Chỉ toggle class "visible" cho đúng ID của câu hỏi được chọn
+function toggleSingleQuestionTrans(exIndex, qIndex) {
+    const target = document.getElementById(`qv-${exIndex}-${qIndex}`);
+    if (target) {
+        target.classList.toggle("visible");
+    }
+}
+
+
+function toggleTrans(exIndex){
+    exercises[exIndex].sentences.forEach((_,i)=>{
+        document.getElementById(`tr-${exIndex}-${i}`).classList.toggle("visible");
+    });
+}
+
+function checkVocab(exIndex,vIndex){
+    const v=exercises[exIndex].vocab[vIndex];
+
+    v.meanings.forEach((m,mIndex)=>{
+        const inp=document.getElementById(
+            `m-${exIndex}-${vIndex}-${mIndex}`
+        );
+        const ok=inp.value.trim().toLowerCase()
+            === m.meaning.toLowerCase();
+        inp.className= ok ? "correct":"incorrect";
+
+        m.synonyms.forEach((syn,sIdx)=>{
+            const sinp=document.getElementById(
+                `s-${exIndex}-${vIndex}-${mIndex}-${sIdx}`
+            );
+            const sok=sinp.value.trim().toLowerCase()
+                === syn.toLowerCase();
+            sinp.className= sok ? "correct":"incorrect";
+        });
+    });
+}
+
+function checkQVocab(exIndex, qIndex, vIndex) {
+    const v = exercises[exIndex].questions[qIndex].vocab[vIndex];
+    v.meanings.forEach((m, mIndex) => {
+        // Kiểm tra nghĩa chính
+        const inp = document.getElementById(`qm-${exIndex}-${qIndex}-${vIndex}-${mIndex}`);
+        const ok = inp.value.trim().toLowerCase() === m.meaning.toLowerCase();
+        inp.className = ok ? "correct" : "incorrect";
+
+        // Kiểm tra đồng nghĩa
+        if (m.synonyms && m.synonyms.length) {
+            m.synonyms.forEach((syn, sIdx) => {
+                const sinp = document.getElementById(`qs-${exIndex}-${qIndex}-${vIndex}-${mIndex}-${sIdx}`);
+                const sok = sinp.value.trim().toLowerCase() === syn.toLowerCase();
+                sinp.className = sok ? "correct" : "incorrect";
+            });
+        }
+    });
+}
+
+
+/* Các hàm showAns bổ sung loa nhỏ */
+function showAns(exIndex, vIndex) {
+  const v = exercises[exIndex].vocab[vIndex];
+  v.meanings.forEach((m, mIndex) => {
+    document.getElementById(`ma-${exIndex}-${vIndex}-${mIndex}`).style.display = "block";
+    m.synonyms.forEach((syn, sIdx) => {
+      const el = document.getElementById(`sa-${exIndex}-${vIndex}-${mIndex}-${sIdx}`);
+      el.innerHTML = `${syn} <span class="speaker-icon" style="width:20px;height:20px;font-size:12px;display:inline-flex;margin-left:5px" onclick="speak('${syn}')">🔊</span>`;
+      el.style.display = "block";
+    });
+  });
+}
+
+function showQAns(exIndex, qIndex, vIndex) {
+  const v = exercises[exIndex].questions[qIndex].vocab[vIndex];
+  v.meanings.forEach((m, mIndex) => {
+    const ma = document.getElementById(`qma-${exIndex}-${qIndex}-${vIndex}-${mIndex}`);
+    if(ma) ma.style.display = "block";
+    m.synonyms.forEach((syn, sIdx) => {
+      const el = document.getElementById(`qsa-${exIndex}-${qIndex}-${vIndex}-${mIndex}-${sIdx}`);
+      if(el) {
+        el.innerHTML = `${syn} <span class="speaker-icon" style="width:20px;height:20px;font-size:12px;display:inline-flex;margin-left:5px" onclick="speak('${syn}')">🔊</span>`;
+        el.style.display = "block";
+      }
+    });
+  });
+}
+
+
+function speak(text){
+    if("speechSynthesis" in window){
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang="en-US";
+        speechSynthesis.speak(u);
+    }
+}
+
+
+renderApp();
+</script>
+</body>
+</html>

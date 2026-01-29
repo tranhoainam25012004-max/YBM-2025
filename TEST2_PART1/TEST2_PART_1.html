@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOEIC Part 1 - Thẻ Từ Vựng Riêng Biệt</title>
+    <style>
+        :root {
+            --green: #28a745;
+            --red: #dc3545;
+            --yellow: #ffc107;
+            --blue: #007bff;
+            --dark: #343a40;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 15px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* --- KHỐI CÂU HỎI CHUNG --- */
+        .question-block {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border-top: 5px solid var(--blue);
+        }
+
+        .question-header {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #444;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .audio-wrapper {
+            background: #f1f3f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        audio { width: 100%; outline: none; }
+
+        .sub-section-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #0056b3;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 4px solid #0056b3;
+            padding-left: 10px;
+        }
+
+        /* --- PHẦN 1: CÂU ĐIỀN TỪ (Giữ nguyên) --- */
+        .sentence-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: center;
+            padding: 12px;
+            background: #fdfdfd;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+        }
+
+        .en-col { font-size: 1.05em; word-wrap: break-word; }
+        .vi-col {
+            font-style: italic;
+            color: #666;
+            display: none;
+            border-left: 3px solid #eee;
+            padding-left: 10px;
+        }
+        .vi-col.visible { display: block; }
+
+        input[type="text"] {
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: 0.3s;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        input.correct { border-color: var(--green); background-color: #d4edda; color: var(--green); font-weight: bold; }
+        input.incorrect { border-color: var(--red); background-color: #f8d7da; color: var(--red); }
+
+        .answer-text {
+            display: none;
+            margin-top: 4px;
+            font-size: 0.9em;
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* --- PHẦN 2: TỪ VỰNG (CARD STYLE - MỚI) --- */
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        /* Giao diện 2 cột trên màn hình lớn */
+        @media (min-width: 768px) {
+            .vocab-grid {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+
+        .vocab-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: var(--blue);
+        }
+
+        .vocab-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .vocab-word {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+        
+        .label-small {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .speaker-icon {
+            cursor: pointer;
+            color: var(--blue);
+            font-size: 1.2em;
+            padding: 5px;
+            background: #eef4ff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vocab-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end; /* Đẩy nút về bên phải */
+        }
+
+        /* --- BUTTONS --- */
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn-sm { font-size: 0.85rem; padding: 6px 12px; } /* Nút nhỏ cho card */
+        
+        .btn-green { background-color: var(--green); }
+        .btn-red { background-color: var(--red); }
+        .btn-yellow { background-color: var(--yellow); color: #333; }
+        .btn-outline { background: transparent; border: 1px solid #ccc; color: #555; }
+        .btn-outline:hover { background: #eee; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .sentence-row { grid-template-columns: 1fr; gap: 10px; }
+            .vi-col { border-left: none; border-top: 1px dashed #eee; padding-left: 0; padding-top: 8px; margin-top: 5px; }
+            input[type="text"] { width: 100%; margin-top: 5px; }
+            .controls { flex-direction: column; }
+            .btn { width: 100%; }
+            .vocab-controls .btn { width: auto; flex: 1; } /* Nút trong card vẫn nằm ngang */
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h1>Luyện Tập TOEIC Part 1</h1>
+    <div id="app-content"></div>
+</div>
+
+<script>
+    // --- DỮ LIỆU CÂU HỎI (Bạn sửa dữ liệu ở đây như bình thường) ---
+    // Lưu ý: Đảm bảo tên file audio chính xác và không có dấu cách nếu có thể
+    const exercises = [
+        // CÂU 1
+        {
+            id: "1-2",
+            title: "Câu 1: ",
+            audioSrc: "Test 02_Part 1_01.mp3", // Sửa lại tên file đúng của bạn
+            sentences: [
+                { prefix: "(A) They're ", answer: "wiping off a desk", vi: "Họ đang lau sạch một cái bàn làm việc" },
+                { prefix: "(B) They're ", answer: "examining a camera", vi: "Họ đang kiểm tra cái máy chụp hình" },
+                { prefix: "(C) They're ", answer: "lifting a computer monitor", vi: "Họ đang nhấc một cái màn hình máy tính" },
+                { prefix: "(D) They're ", answer: "holding some files", vi: "Họ đang cầm một vài tập tài liệu" }
+            ],
+            vocab: [
+                { word: "Wipe (off)", answer: ["lau", "lau sạch"], synonyms: [] },
+                { word: "Cloth", answer: ["khăn lau"], synonyms: [] },
+                { word: "Examine", answer: ["kiểm tra"], synonyms: ["inspect", "scrutinize"] },
+                { word: "Lift", answer: ["nhấc", "nâng"], synonyms: [] },
+                { word: "Monitor (n)", answer: ["màn hình"], synonyms: [] },
+                { word: "Monitor (v)", answer: ["giám sát"], synonyms: ["supervise", "oversee"] }
+            ]
+        },
+        
+        // CÂU 2
+        {
+            id: "2-2",
+            title: "Câu 2: ",
+            audioSrc: "Test 02_Part 1_02.mp3", // Sửa lại tên file đúng của bạn
+            sentences: [
+                { prefix: "(A) She's ", answer: "writing notes on a clipboard", vi: "Cô ấy đang ghi chép trên một cái bảng kẹp" },
+                { prefix: "(B) She's ", answer: "sliding open a glass door", vi: "Cô ấy đang trượt mở một cái cửa kiếng" },
+                { prefix: "(C) There are ", answer: "products stacked on shelves", vi: "Có các sản phẩm được xếp chồng lên kệ" },
+                { prefix: "(D) There ", answer: "are binders on a counter", vi: "Có những cái bìa đựng tài liệu trên cái quầy" }
+            ],
+            vocab: [
+                { word: "Clipboard (n)", answer: ["bảng kẹp"], synonyms: [] },
+                { word: "Slide (v)", answer: ["trượt"], synonyms: [] },
+                { word: "Stack (v)", answer: ["chất thành chồng", "xếp chồng"], synonyms: ["pile"] },
+                { word: "Shelves (n)", answer: ["những cái kệ", "kệ"], synonyms: ["shelving units"] },
+                { word: "Counter (n)", answer: ["quầy", "cái quầy"], synonyms: [] }
+            ]
+        },// CÂU 3
+{
+    id: "3-2",
+    title: "Câu 3: ",
+    audioSrc: "Test 02_Part 1_03.mp3",
+    sentences: [
+        {
+            prefix: "(A) The men are ",
+            answer: "on opposite sides of the table",
+            vi: "Những người đàn ông đang ở hai bên đối diện của cái bàn"
+        },
+        {
+            prefix: "(B) One of the men is ",
+            answer: "wrapping a box in plastic",
+            vi: "Một người đàn ông đang gói một cái hộp trong túi nhựa"
+        },
+        {
+            prefix: "(C) The men are ",
+            answer: "moving some shelving",
+            vi: "Những người đàn ông đang di chuyển một vài cái kệ"
+        },
+        {
+            prefix: "(D) One of the men is ",
+            answer: "unpacking some stationery supplies",
+            vi: "Một người đàn ông đang gỡ cái hộp chứa một vài dụng cụ văn phòng"
+        }
+    ],
+    vocab: [
+        {
+            word: "On opposite sides (phrase)",
+            answer: ["đối diện nhau"],
+            synonyms: ["across from one another"]
+        },
+        {
+            word: "Wrap (v)",
+            answer: ["gói"],
+            synonyms: []
+        },
+        {
+            word: "Roll (v)",
+            answer: ["cuộn"],
+            synonyms: ["wind up"]
+        },
+        {
+            word: "Shelving (n)",
+            answer: ["những cái kệ"],
+            synonyms: ["shelving units", "shelves"]
+        },
+        {
+            word: "Unpack (v)",
+            answer: ["gỡ hộp"],
+            synonyms: []
+        },
+        {
+            word: "Pack (v)",
+            answer: ["đóng hộp"],
+            synonyms: []
+        },
+        {
+            word: "Stationery (n)",
+            answer: ["văn phòng phẩm"],
+            synonyms: ["office supplies","office supplies"]
+        }
+    ]
+}
+,
+                        // CÂU 4
+{
+    id: "4-2",
+    title: "Câu 4: ",
+    audioSrc: "Test 02_Part 1_04.mp3",
+    sentences: [
+        {
+            prefix: "(A) Some people are ",
+            answer: "gathered around a display",
+            vi: "Một vài người đang tụ tập xung quanh một cái kệ trưng bày"
+        },
+        {
+            prefix: "(B) Some people are ",
+            answer: "standing behind a vehicle",
+            vi: "Một vài người đang đứng sau một chiếc xe hơi"
+        },
+        {
+            prefix: "(C) One of the people is ",
+            answer: "searching through a suitcase",
+            vi: "Một người đang tìm kiếm trong cái vali"
+        },
+        {
+            prefix: "(D) One of the people is ",
+            answer: "picking up a piece of furniture",
+            vi: "Một người đang lấy một món đồ nội thất"
+        }
+    ],
+    vocab: [
+        {
+            word: "Gather (v)",
+            answer: ["tụ tập"],
+            synonyms: []
+        },
+        {
+            word: "Display (n)",
+            answer: ["kệ trưng bày"],
+            synonyms: []
+        },
+        {
+            word: "Display case (n)",
+            answer: ["tủ kính"],
+            synonyms: []
+        },
+        {
+            word: "Vehicle (n)",
+            answer: ["xe hơi"],
+            synonyms: ["car", "automobile"]
+        },
+        {
+            word: "Suitcase (n)",
+            answer: ["hành lý"],
+            synonyms: ["luggage", "baggage"]
+        },
+        {
+            word: "Pick up (v)",
+            answer: ["lấy vật gì", "đón ai đó"],
+            synonyms: []
+        },
+        {
+            word: "A piece of furniture (n)",
+            answer: ["một món đồ nội thất"],
+            synonyms: []
+        }
+    ]
+}
+,
+                        // CÂU 5
+{
+    id: "5-2",
+    title: "Câu 5: ",
+    audioSrc: "Test 02_Part 1_05.mp3",
+    sentences: [
+        {
+            prefix: "(A) Some windows ",
+            answer: "overlook a busy street",
+            vi: "Một vài cửa sổ nhìn ra con đường đông đúc"
+        },
+        {
+            prefix: "(B) Some cars are ",
+            answer: "stopped at an intersection",
+            vi: "Một vài xe hơi đang dừng lại ở ngã tư"
+        },
+        {
+            prefix: "(C) Some lines are ",
+            answer: "being painted in a parking lot",
+            vi: "Một vài vạch kẻ đang được sơn trong bãi đậu xe"
+        },
+        {
+            prefix: "(D) Some trees are ",
+            answer: "growing by a building",
+            vi: "Một vài cái cây đang mọc kế bên tòa nhà"
+        }
+    ],
+    vocab: [
+        {
+            word: "Overlook (v)",
+            answer: ["nhìn ra"],
+            synonyms: []
+        },
+        {
+            word: "Busy (adj)",
+            answer: ["bận rộn", "đông đúc"],
+            synonyms: ["crowded"]
+        },
+        {
+            word: "Intersection (n)",
+            answer: ["giao lộ", "ngã tư"],
+            synonyms: []
+        },
+        {
+            word: "Roundabout (n)",
+            answer: ["vòng xoay"],
+            synonyms: []
+        },
+        {
+            word: "Line (n)",
+            answer: ["hàng", "dòng", "sản phẩm", "vạch kẻ"],
+            synonyms: []
+        },
+        {
+            word: "By (prep)",
+            answer: ["bên cạnh"],
+            synonyms: ["beside", "next to"]
+        }
+    ]
+}
+,
+     // CÂU 6
+{
+    id: "6-2",
+    title: "Câu 6: ",
+    audioSrc: "Test 02_Part 1_06.mp3",
+    sentences: [
+        {
+            prefix: "(A) A framed picture ",
+            answer: "is mounted on the wall",
+            vi: "Một bức hình đóng khung được đóng lên tường"
+        },
+        {
+            prefix: "(B) Some books are ",
+            answer: "scattered on a rug",
+            vi: "Một vài quyển sách nằm trên tấm thảm"
+        },
+        {
+            prefix: "(C) A bench is ",
+            answer: "being placed on the floor",
+            vi: "Cái băng ghế được đặt trên sàn"
+        },
+        {
+            prefix: "(D) Some light fixtures are ",
+            answer: "being installed",
+            vi: "Một vài thiết bị chiếu sáng đang được lắp đặt"
+        }
+    ],
+    vocab: [
+        {
+            word: "Frame (n)",
+            answer: ["khung"],
+            synonyms: []
+        },
+        {
+            word: "Frame (v)",
+            answer: ["đóng khung"],
+            synonyms: []
+        },
+        {
+            word: "Be mounted (v)",
+            answer: ["được gắn lên"],
+            synonyms: ["be attached to"]
+        },
+        {
+            word: "Scatter (v)",
+            answer: ["rải rác"],
+            synonyms: []
+        },
+        {
+            word: "Rug (n)",
+            answer: ["thảm"],
+            synonyms: ["carpet", "mat"]
+        },
+        {
+            word: "Place (v)",
+            answer: ["đặt", "để"],
+            synonyms: ["put", "position", "station"]
+        },
+        {
+            word: "Light fixture (n)",
+            answer: ["thiết bị chiếu sáng"],
+            synonyms: []
+        }
+    ]
+}
+ ];
+
+    // --- HÀM RENDER ---
+    const appContent = document.getElementById('app-content');
+
+    function renderApp() {
+        appContent.innerHTML = '';
+        
+        exercises.forEach((ex, exIndex) => {
+            const block = document.createElement('div');
+            block.className = 'question-block';
+            
+            // 1. Header & Audio
+            let html = `<div class="question-header">${ex.title}</div>`;
+            if (ex.audioSrc) {
+                html += `
+                    <div class="audio-wrapper">
+                        <span style="display:block; margin-bottom:5px; font-weight:bold; color:#555; font-size:0.9em">🎧 Nghe audio:</span>
+                        <audio controls>
+                            <source src="${ex.audioSrc}" type="audio/mpeg">
+                            Trình duyệt không hỗ trợ.
+                        </audio>
+                    </div>
+                `;
+            } else {
+                html += `<div style="color:red; margin-bottom:10px;">(Chưa có file audio)</div>`;
+            }
+
+            // 2. Phần Điền câu (Giữ nguyên như cũ)
+            html += `<div class="sub-section-title">I. Nghe & Điền từ</div>`;
+            ex.sentences.forEach((sent, sIndex) => {
+                html += `
+                    <div class="sentence-row">
+                        <div class="en-col">
+                            ${sent.prefix} 
+                            <input type="text" style="width:150px; display:inline-block" id="q${exIndex}-s${sIndex}-input" placeholder="..." autocomplete="off">
+                            <div id="q${exIndex}-s${sIndex}-ans" class="answer-text">${sent.answer}</div>
+                        </div>
+                        <div class="vi-col" id="q${exIndex}-s${sIndex}-trans">
+                            <span style="font-weight:bold">Dịch: </span> ${sent.vi}
+                        </div>
+                    </div>
+                `;
+            });
+            // Nút bấm chung cho phần câu
+            html += `
+                <div class="controls">
+                    <button class="btn btn-green" onclick="showSentenceAns(${exIndex})">Đáp Án</button>
+                    <button class="btn btn-red" onclick="checkSentence(${exIndex})">Hoàn Thành</button>
+                    <button class="btn btn-yellow" onclick="toggleTrans(${exIndex})">Dịch</button>
+                </div>
+            `;
+
+            // 3. Phần Từ vựng (THAY ĐỔI LỚN: CHUYỂN SANG DẠNG CARD)
+            html += `<div class="sub-section-title" style="margin-top:30px; border-top:1px dashed #ccc; padding-top:15px">II. Từ vựng & Đồng nghĩa</div>`;
+            html += `<div class="vocab-grid">`;
+
+            ex.vocab.forEach((voc, vIndex) => {
+                // Xử lý Input Đồng nghĩa (nhiều ô)
+                let synInputsHtml = '';
+                if (voc.synonyms.length > 0) {
+                    voc.synonyms.forEach((syn, sIdx) => {
+                        synInputsHtml += `
+                            <div style="margin-top:5px;">
+                                <input type="text" id="q${exIndex}-v${vIndex}-syn-${sIdx}" placeholder="Đồng nghĩa ${sIdx + 1}..." autocomplete="off">
+                                <div id="q${exIndex}-v${vIndex}-syn-ans-${sIdx}" class="answer-text">
+                                    ${syn} <span class="speaker-icon" style="display:inline-flex; width:20px; height:20px; font-size:0.8em" onclick="speak('${syn}')">🔊</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    synInputsHtml = `<div style="font-style:italic; color:#aaa; font-size:0.9em; padding:5px 0;">-- Không có từ đồng nghĩa --</div>`;
+                }
+
+                // Render Card cho từng từ
+                html += `
+                    <div class="vocab-card">
+                        <div>
+                            <div class="vocab-header">
+                                <div class="vocab-word">${voc.word}</div>
+                                <div class="speaker-icon" onclick="speak('${voc.word.replace(/\(.*\)/, '')}')">🔊</div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="label-small">Nghĩa tiếng Việt:</label>
+                                <input type="text" id="q${exIndex}-v${vIndex}-mean" placeholder="Nhập nghĩa..." autocomplete="off">
+                                <div id="q${exIndex}-v${vIndex}-mean-ans" class="answer-text">
+                                    ${voc.answer.join(' / ')}
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label-small">Từ đồng nghĩa (${voc.synonyms.length}):</label>
+                                ${synInputsHtml}
+                            </div>
+                        </div>
+
+                        <div class="vocab-controls">
+                            <button class="btn btn-sm btn-green" onclick="showSingleVocabAns(${exIndex}, ${vIndex})">Đáp án</button>
+                            <button class="btn btn-sm btn-red" onclick="checkSingleVocab(${exIndex}, ${vIndex})">Kiểm tra</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`; // End vocab-grid
+
+            block.innerHTML = html;
+            appContent.appendChild(block);
+        });
+    }
+
+    // --- LOGIC ---
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    }
+
+    // 1. Logic cho Câu (Giữ nguyên - check cả bài)
+    function checkSentence(exIndex) {
+        exercises[exIndex].sentences.forEach((sent, sIndex) => {
+            const input = document.getElementById(`q${exIndex}-s${sIndex}-input`);
+            if (input.value.trim().toLowerCase() === sent.answer.toLowerCase()) {
+                input.className = 'correct';
+            } else {
+                input.className = 'incorrect';
+            }
+        });
+    }
+
+    function showSentenceAns(exIndex) {
+        exercises[exIndex].sentences.forEach((sent, sIndex) => {
+            document.getElementById(`q${exIndex}-s${sIndex}-ans`).style.display = 'block';
+        });
+    }
+
+    function toggleTrans(exIndex) {
+        exercises[exIndex].sentences.forEach((sent, sIndex) => {
+            document.getElementById(`q${exIndex}-s${sIndex}-trans`).classList.toggle('visible');
+        });
+    }
+
+    // 2. Logic cho Từ vựng (MỚI: Check từng từ riêng lẻ)
+    function checkSingleVocab(exIndex, vIndex) {
+        const voc = exercises[exIndex].vocab[vIndex];
+        
+        // Check nghĩa
+        const meanInput = document.getElementById(`q${exIndex}-v${vIndex}-mean`);
+        const meanVal = meanInput.value.trim().toLowerCase();
+        const isMeanCorrect = voc.answer.some(a => meanVal.includes(a.toLowerCase()));
+        
+        // Reset class trước khi check
+        meanInput.className = '';
+        if (meanVal === '') {
+            meanInput.className = ''; // Bỏ qua nếu rỗng
+        } else if (isMeanCorrect) {
+            meanInput.className = 'correct';
+        } else {
+            meanInput.className = 'incorrect';
+        }
+
+        // Check đồng nghĩa (từng ô)
+        if (voc.synonyms.length > 0) {
+            voc.synonyms.forEach((syn, sIdx) => {
+                const input = document.getElementById(`q${exIndex}-v${vIndex}-syn-${sIdx}`);
+                const val = input.value.trim().toLowerCase();
+                
+                input.className = '';
+                if (val === '') {
+                    // ko làm gì
+                } else if (val === syn.toLowerCase()) {
+                    input.className = 'correct';
+                } else {
+                    input.className = 'incorrect';
+                }
+            });
+        }
+    }
+
+    function showSingleVocabAns(exIndex, vIndex) {
+        const voc = exercises[exIndex].vocab[vIndex];
+        
+        // Hiện nghĩa
+        document.getElementById(`q${exIndex}-v${vIndex}-mean-ans`).style.display = 'block';
+        
+        // Hiện đồng nghĩa
+        if (voc.synonyms.length > 0) {
+            voc.synonyms.forEach((syn, sIdx) => {
+                document.getElementById(`q${exIndex}-v${vIndex}-syn-ans-${sIdx}`).style.display = 'block';
+            });
+        }
+    }
+
+    renderApp();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Practice - Individual Vocab Controls</title>
+    <style>
+        :root {
+            --primary: #004085; --success: #28a745; --danger: #dc3545;
+            --warning: #ffc107; --pink-bg: #fce4e4;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5;
+            margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container { width: 100%; max-width: 500px; }
+
+        .section-header {
+            font-size: 1rem; color: var(--primary); font-weight: bold;
+            border-left: 4px solid var(--primary); padding-left: 8px; margin: 15px 0 10px;
+        }
+
+        /* Thẻ Card cho phần nghe */
+        .compact-card {
+            background: white; border-radius: 10px; padding: 12px;
+            margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #eee;
+        }
+
+        .line-content { font-size: 0.95rem; line-height: 1.8; margin-bottom: 4px; }
+        .line-trans { 
+            font-size: 0.85rem; color: #666; font-style: italic; 
+            border-top: 1px dashed #eee; padding-top: 4px; display: none;
+        }
+
+        /* Input co dãn */
+        .input-box { display: inline-flex; flex-direction: column; vertical-align: middle; margin: 0 2px; }
+        .fill-in {
+            border: 1px solid #ccc; border-radius: 5px; padding: 2px 5px;
+            background: var(--pink-bg); font-weight: bold; font-size: 0.95rem;
+            text-align: center; outline: none; min-width: 35px; width: 4ch; transition: all 0.2s;
+        }
+
+        .ans-label { color: var(--success); font-weight: bold; font-size: 0.85rem; display: none; text-align: center; margin-top: 2px; }
+        .show-ans .ans-label { display: block; }
+
+        /* Buttons chung */
+        .btn-group { display: flex; gap: 8px; margin: 10px 0 20px; }
+        .btn { 
+            border: none; border-radius: 6px; padding: 8px; color: white; 
+            font-weight: bold; cursor: pointer; flex: 1; font-size: 0.8rem;
+        }
+        .btn-ans { background: var(--success); }
+        .btn-check { background: var(--danger); }
+        .btn-dich { background: var(--warning); color: #333; }
+
+        /* Nút nhỏ cho từng từ vựng */
+        .small-btn-group { display: flex; gap: 5px; margin-top: 10px; justify-content: flex-end; }
+        .btn-sm { padding: 5px 10px; font-size: 0.75rem; flex: none; width: auto; }
+
+        .correct { border: 2px solid var(--success) !important; background: #e6ffed !important; color: var(--success); }
+        .incorrect { border: 2px solid var(--danger) !important; background: #fff5f5 !important; color: var(--danger); }
+
+        /* Vocab Card */
+        .vocab-item { background: white; border-radius: 10px; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .word-title { font-size: 1.05rem; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .word-type { font-size: 0.85rem; color: #666; font-style: italic; font-weight: normal; }
+        
+        .meaning-row { margin-bottom: 8px; }
+        .synonym-line { margin-top: 5px; padding-left: 15px; font-size: 0.9rem; color: #555; display: flex; align-items: center; flex-wrap: wrap; }
+        .audio-icon { cursor: pointer; font-size: 1.1rem; margin-left: 5px; }
+        .audio-player {
+        background: #eee;
+        padding: 15px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .audio-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .play-btn, .rewind-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .speed-badge {
+        background: white;
+        border: 1px solid #ccc;
+        padding: 2px 8px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    /* Thanh tiến độ */
+    .progress-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .seek-slider {
+        width: 100%;
+        cursor: pointer;
+        height: 5px;
+        border-radius: 5px;
+        accent-color: var(--primary); /* Màu thanh trượt */
+    }
+    .time-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: #666;
+        font-family: monospace;
+    }
+    </style>
+</head>
+<body>
+
+<div id="toeic-app" class="container"></div>
+
+<script>
+    const data = [
+        // Dán đoạn này tiếp nối vào mảng data của bạn
+{
+    id: 7,
+    audioUrl: "Test 02_Part 2_07.mp3",
+    listening: [
+        { q: "7. {Why is} the {doctor running late}?", t: "Tại sao bác sĩ đến trễ?" },
+        { q: "(A) Ok, {but I don’t} feel {sick}.", t: "Ok, nhưng tôi không cảm thấy không khỏe." },
+        { q: "(B) She had {a car trouble}.", t: "Cô ấy đã gặp sự cố về xe." },
+        { q: "(C) No, {that’s not} too {early}.", t: "Không, nó không quá sớm đâu." }
+    ],
+    vocabulary: []
+},
+{
+    id: 8,
+    audioUrl: "Test 02_Part 2_08.mp3",
+    listening: [
+        { q: "8. {Where can I} find {art supplies}?", t: "Tôi có thể tìm thấy dụng cụ vẽ ở đâu?" },
+        { q: "(A) {Three types} of {paint}.", t: "Ba loại sơn." },
+        { q: "(B) {In aisle} seven.", t: "Ở kệ số 7." },
+        { q: "(C) {To pass} the {time}.", t: "Để giết thời gian." }
+    ],
+    vocabulary: [
+        { 
+            w: "Supplies", ty: "n", 
+            meanings: [
+                { m: "những dụng cụ", s: "tools" },
+                { m: "vật tư", s: "materials" }
+            ]
+        },
+        { 
+            w: "Paint", ty: "v", 
+            meanings: [
+                { m: "vẽ", s: "draw" }
+            ]
+        },
+        { 
+            w: "Paint", ty: "n", 
+            meanings: [
+                { m: "sơn", s: "dye" }
+            ]
+        },
+        { 
+            w: "Aisle", ty: "n", 
+            meanings: [
+                { m: "dãy kệ", s: "" },
+                { m: "lối đi giữa hai hàng ghế", s: "pathway" }
+            ]
+        }
+    ]
+},
+        {
+            id: 9,
+            audioUrl: "Test 02_Part 2_09.mp3",
+            listening: [
+                { q: "9. {Who waters} the {plants} in {the lobby}?", t: "Ai tưới cây trong sảnh?" },
+                { q: "(A) {We can} take {the elevator}.", t: "Chúng ta có thể đi thang máy." },
+                { q: "(B) {Gerald} does.", t: "Gerald làm." },
+                { q: "(C) {I'm not thirsty} right now.", t: "Bây giờ tôi không khát nước." }
+            ],
+            vocabulary: [
+                { w: "Elevator", ty: "n", meanings: [{ m: "thang máy", s: "lift" }] },
+                { w: "Escalator", ty: "n", meanings: [{ m: "thang cuốn"}] },
+                { w: "Stairs", ty: "n", meanings: [{ m: "thang bộ", s: "steps" }] }
+            ]
+        },
+  {
+    "id": 10,
+    "audioUrl": "Test 02_Part 2_10.mp3",
+    "listening": [
+      { "q": "10. {Do you have} a {phone} I could {use}?", "t": "Bạn có điện thoại mà tôi có thể dùng được không?" },
+      { "q": "(A) {Who} was it?", "t": "Ai vậy?" },
+      { "q": "(B) Try this {coupon}.", "t": "Thử dùng phiếu giảm giá này." },
+      { "q": "(C) I'm {expecting a call}.", "t": "Tôi đang chờ một cuộc gọi." }
+    ],
+    "vocabulary": [
+      { "w": "Coupon", "ty": "n", "meanings": [{ "m": "phiếu giảm giá" }] }
+    ]
+  },
+  {
+    "id": 11,
+    "audioUrl": "Test 02_Part 2_11.mp3",
+    "listening": [
+      { "q": "11. {How} can we {welcome} our {summer interns}?", "t": "Chúng ta có thể chào đón những học sinh mùa hè như thế nào?" },
+      { "q": "(A) We have {air conditioning}.", "t": "Chúng ta có máy lạnh." },
+      { "q": "(B) {She's graduating} in spring.", "t": "Cô ấy sẽ tốt nghiệp vào mùa xuân." },
+      { "q": "(C) The {team} could {go out to lunch} together.", "t": "Cả nhóm có thể ra ngoài ăn trưa cùng nhau." }
+    ],
+    "vocabulary": [
+      { "w": "Intern", "ty": "n", "meanings": [{ "m": "thực tập sinh", "s": "trainee" }] },
+      { "w": "Graduate", "ty": "v", "meanings": [{ "m": "tốt nghiệp" }] }
+    ]
+  },
+  {
+    "id": 12,
+    "audioUrl": "Test 02_Part 2_12.mp3",
+    "listening": [
+      { "q": "12. {When} will the {product testing} start?", "t": "Khi nào buổi thử nghiệm sản phẩm bắt đầu?" },
+      { "q": "(A) My {coworker} Flora {would know}.", "t": "Đồng nghiệp của tôi Flora sẽ biết." },
+      { "q": "(B) The {third page} of our {report}.", "t": "Trang ba của bản báo cáo." },
+      { "q": "(C) From a {special laboratory}.", "t": "Từ một phòng thí nghiệm đặc biệt." }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 13,
+    "audioUrl": "Test 02_Part 2_13.mp3",
+    "listening": [
+      { "q": "13. Do you know {the deadline} for {that project}?", "t": "Bạn có biết hạn chót cho dự án đó là khi nào không?" },
+      { "q": "(A) I {met} him {at a workshop}.", "t": "Tôi đã gặp anh ấy tại một buổi hội thảo." },
+      { "q": "(B) A new {projector}.", "t": "Một cái máy chiếu mới." },
+      { "q": "(C) It's {not urgent}.", "t": "Nó không gấp." }
+    ],
+    "vocabulary": [
+      { "w": "Workshop", "ty": "n", "meanings": [{ "m": "hội thảo", "s": "seminar" }] },
+      { "w": "Projector", "ty": "n", "meanings": [{ "m": "máy chiếu" }] },
+      { "w": "Urgent", "ty": "adj", "meanings": [{ "m": "gấp/ khẩn cấp" }] }
+    ]
+  },
+  {
+    "id": 14,
+    "audioUrl": "Test 02_Part 2_14.mp3",
+    "listening": [
+      { "q": "14. {What did you think} of the {job candidate}?", "t": "Bạn nghĩ gì về ứng cử viên?" },
+      { "q": "(A) At a {recent job fair}.", "t": "Tại một hội chợ nghề nghiệp gần đây." },
+      { "q": "(B) It {tastes delicious}.", "t": "Nó có vị ngon." },
+      { "q": "(C) I thought {he was impressive}.", "t": "Tôi nghĩ anh ấy thật là ấn tượng." }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 15,
+    "audioUrl": "Test 02_Part 2_15.mp3",
+    "listening": [
+      { "q": "15. {Did you find a buyer} for the {Maple Street house}?", "t": "Bạn đã tìm ra người mua cho căn nhà trên phố Maple chưa?" },
+      { "q": "(A) No, it's {still on the market}.", "t": "Không, nó vẫn đang được rao bán." },
+      { "q": "(B) Yes, {a sign} in the {front yard}.", "t": "Đúng, một cái biển báo ở sân trước." },
+      { "q": "(C) {Twelve hundred square} feet.", "t": "1200 feet vuông." }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 16,
+    "audioUrl": "Test 02_Part 2_16.mp3",
+    "listening": [
+      { "q": "16. {What} do {we have to wear} for the {company photo shoot}?", "t": "Chúng ta phải mặc gì cho buổi chụp hình công ty?" },
+      { "q": "(A) I'm {aware of them}.", "t": "Tôi biết chúng." },
+      { "q": "(B) Didn't you {read the memo}?", "t": "Bạn không đọc thông báo hở?" },
+      { "q": "(C) Yes, he's {popular on social media}.", "t": "Đúng rồi, anh ấy nổi tiếng trên mạng xã hội." }
+    ],
+    "vocabulary": [
+      { "w": "Aware", "ty": "adj", "meanings": [{ "m": "biết/ quan tâm" }] },
+      { "w": "Memo", "ty": "n", "meanings": [{ "m": "thông báo", "s": "notice" }] }
+    ]
+  },
+  {
+    "id": 17,
+    "audioUrl": "Test 02_Part 2_17.mp3",
+    "listening": [
+      { "q": "17. {That gallery's} been {closed for months}.", "t": "Phòng trưng bày đó đã được đóng cửa vài tháng rồi." },
+      { "q": "(A) I hope the {renovations end soon}.", "t": "Tôi hy vọng việc tu sửa này sẽ kết thúc sớm." },
+      { "q": "(B) Yes, the {drawer is open}.", "t": "Đúng rồi, cái ngăn kéo đang mở." },
+      { "q": "(C) We'll {probably visit one}.", "t": "Chúng ta có thể đến thăm một phòng tranh." }
+    ],
+    "vocabulary": [
+      { "w": "Renovation", "ty": "n", "meanings": [{ "m": "sự tu sửa/ nâng cấp" }] },
+      { "w": "Renovate", "ty": "v", "meanings": [{ "m": "tu sửa/ nâng cấp", "s": "upgrade/ improve/ remodel" }] },
+      { "w": "Drawer", "ty": "n", "meanings": [{ "m": "ngăn kéo" }] }
+    ]
+  },{
+    "id": 18,
+    "audioUrl": "Test 02_Part 2_18.mp3",
+    "listening": [
+      { "q": "18. {Could you design} the {event invitations}?", "t": "Bạn có thể thiết kế thiệp mời cho bữa tiệc không?" },
+      { "q": "(A) A {soft color scheme}.", "t": "Một bảng màu nhẹ nhàng." },
+      { "q": "(B) They're {excited to attend}.", "t": "Họ hào hứng tham gia." },
+      { "q": "(C) My vacation {starts tomorrow}.", "t": "Kỳ nghỉ của tôi bắt đầu vào ngày mai." }
+    ],
+    "vocabulary": [
+      { "w": "Color scheme", "ty": "n", "meanings": [{ "m": "bảng màu" }] },
+      { "w": "Soft", "ty": "adj", "meanings": [{ "m": "nhẹ nhàng" }] }
+    ]
+  },
+  {
+    "id": 19,
+    "audioUrl": "Test 02_Part 2_19.mp3",
+    "listening": [
+      { "q": "19. {This author's} last {book was nominated} for a {Voss Award, right}?", "t": "Quyển sách mới nhất của tác giả này đã được đề cử cho giải thưởng Voss đúng không?" },
+      { "q": "(A) No, for {some other award}.", "t": "Không, dành cho một giải thưởng khác." },
+      { "q": "(B) The {top shelf}.", "t": "Trên nóc kệ." },
+      { "q": "(C) A few {films}.", "t": "Một vài bộ phim mới." }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 20,
+    "audioUrl": "Test 02_Part 2_20.mp3",
+    "listening": [
+      { "q": "20. {When} will {the roadwork end}?", "t": "Khi nào công trình làm đường chấm dứt?" },
+      { "q": "(A) Oh, did he?", "t": "Ô, anh ấy à?" },
+      { "q": "(B) More than {60 workers}.", "t": "Hơn 60 công nhân." },
+      { "q": "(C) They're {making good progress}.", "t": "Họ đang tiến triển rất tốt." }
+    ],
+    "vocabulary": [
+      { "w": "Progress", "ty": "v", "meanings": [{ "m": "tiến triển" }] },
+      { "w": "Progress", "ty": "n", "meanings": [{ "m": "tiến độ/ sự tiến bộ" }] }
+    ]
+  },
+  {
+    "id": 21,
+    "audioUrl": "Test 02_Part 2_21.mp3",
+    "listening": [
+      { "q": "21. {Would you like} that {shirt} in a {larger size}?", "t": "Bạn muốn cái áo sơ mi đó ở cỡ lớn hơn không?" },
+      { "q": "(A) Thanks, it is a {bit tight}.", "t": "Cảm ơn, nó thì chật một chút." },
+      { "q": "(B) That's {good to know}.", "t": "Thật tốt để biết điều đó." },
+      { "q": "(C) I'll {print out the sales data}.", "t": "Tôi sẽ in ra dữ liệu bán hàng." }
+    ],
+    "vocabulary": [
+      { "w": "Tight", "ty": "adj", "meanings": [{ "m": "chật" }] },
+      { "w": "Loose", "ty": "adj", "meanings": [{ "m": "lỏng lẻo" }] }
+    ]
+  },
+  {
+    "id": 22,
+    "audioUrl": "Test 02_Part 2_22.mp3",
+    "listening": [
+      { "q": "22. There are a lot of {empty seats} in the {theater today, aren't there}?", "t": "Có nhiều ghế trống trong rạp này hôm nay phải không?" },
+      { "q": "(A) Just some {soft drinks}.", "t": "Một ít nước giải khát." },
+      { "q": "(B) {Weekdays} are {always quiet}.", "t": "Những ngày trong tuần luôn luôn ít khách." },
+      { "q": "(C) Here's my ticket.", "t": "Đây là vé của tôi." }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 23,
+    "audioUrl": "Test 02_Part 2_23.mp3",
+    "listening": [
+      { "q": "23. {When} can I {visit the factory} to {see the production samples}?", "t": "Tôi có thể đến nhà máy khi nào để xem những mẫu sản xuất vậy?" },
+      { "q": "(A) {Make sure} you {purchase apples at the store}.", "t": "Đảm bảo là bạn mua táo tại cửa hàng." },
+      { "q": "(B) {Come by} anytime {next week}.", "t": "Đến bất kỳ lúc nào vào tuần sau." },
+      { "q": "(C) No, that's not the {only factor}.", "t": "Không đó không phải là yếu tố duy nhất." }
+    ],
+    "vocabulary": [
+      { "w": "Come by", "ty": "v", "meanings": [{ "m": "ghé qua/ đến", "s": "stop by" }] },
+      { "w": "Factor", "ty": "n", "meanings": [{ "m": "yếu tố/ nhân tố", "s": "element" }] }
+    ]
+  },
+  {
+    "id": 24,
+    "audioUrl": "Test 02_Part 2_24.mp3",
+    "listening": [
+      { "q": "24. {Didn't} Ms. Oba {tell us to call her when} the {printer was repaired}?", "t": "Cô Oba không phải nói với chúng ta gọi cô ấy khi máy in đã được sửa sao?" },
+      { "q": "(A) Yes-we'd {better call her now}.", "t": "Đúng rồi chúng ta nên gọi cô ấy ngay bây giờ." },
+      { "q": "(B) We {sell office equipment}.", "t": "Chúng tôi bán thiết bị văn phòng." },
+      { "q": "(C) No, that {belongs to the technician}.", "t": "Không nó thuộc về kỹ thuật viên." }
+    ],
+    "vocabulary": [
+      { "w": "Belong to", "ty": "-", "meanings": [{ "m": "thuộc về" }] },
+      { "w": "Technician", "ty": "n", "meanings": [{ "m": "kỹ thuật viên" }] },
+      { "w": "Technique", "ty": "n", "meanings": [{ "m": "kỹ thuật" }] },
+      { "w": "Technical", "ty": "adj", "meanings": [{ "m": "kỹ thuật" }] }
+    ]
+  },{
+    "id": 25,
+    "audioUrl": "Test 02_Part 2_25.mp3",
+    "listening": [
+      { "q": "25. Will the {keynote speaker arrive today}, or is she {flying in tomorrow}?", "t": "Diễn giả chính đến ngày hôm nay hay cô ấy sẽ bay đến vào ngày mai?" },
+      { "q": "(A) They're {first-time attendees}.", "t": "Họ là những người tham dự lần đầu." },
+      { "q": "(B) Possible {speech topics}.", "t": "Những chủ đề có thể diễn thuyết." },
+      { "q": "(C) She'll get here {this evening}.", "t": "Cô ấy sẽ đến đây vào tối nay." }
+    ],
+    "vocabulary": [
+      { "w": "Keynote speaker", "ty": "n", "meanings": [{ "m": "diễn giả chính" }] },
+      { "w": "Attendee", "ty": "n", "meanings": [{ "m": "người tham gia", "s": "participant" }] },
+      { "w": "Attendant", "ty": "n", "meanings": [{ "m": "người phục vụ" }] },
+      { "w": "Server", "ty": "n", "meanings": [{ "m": "phục vụ bàn", "s": "waiter/ waitress" }] }
+    ]
+  },
+  {
+    "id": 26,
+    "audioUrl": "Test 02_Part 2_26.mp3",
+    "listening": [
+      { "q": "26. {What kinds of articles} do you {write for the magazine}?", "t": "Bạn viết loại bài báo nào cho tạp chí vậy?" },
+      { "q": "(A) {Through} a {news magazine}.", "t": "Qua một tạp chí về tin tức." },
+      { "q": "(B) I {mostly do editing}.", "t": "Tôi chỉ biên tập." },
+      { "q": "(C) Thanks, we're {proud of it}.", "t": "Cảm ơn, chúng tôi tự hào về nó." }
+    ],
+    "vocabulary": [
+      { "w": "Article", "ty": "n", "meanings": [{ "m": "bài báo/ món đồ" }] }
+    ]
+  },
+  {
+    "id": 27,
+    "audioUrl": "Test 02_Part 2_27.mp3",
+    "listening": [
+      { "q": "27. {How} did you like {Monday's class}?", "t": "Bạn thích lớp học thứ hai ra sao?" },
+      { "q": "(A) I was {traveling for work}.", "t": "Tôi đi công tác rồi." },
+      { "q": "(B) Yes, definitely.", "t": "Đúng, chắc chắn rồi." },
+      { "q": "(C) A different {instructor}.", "t": "Một người hướng dẫn khác." }
+    ],
+    "vocabulary": [
+      { "w": "Definitely", "ty": "adv", "meanings": [{ "m": "chắc chắn", "s": "absolutely/ certainly" }] }
+    ]
+  },
+  {
+    "id": 28,
+    "audioUrl": "Test 02_Part 2_28.mp3",
+    "listening": [
+      { "q": "28. Do you want to have dinner at the restaurant {in our hotel}?", "t": "Bạn có muốn ăn tối tại nhà hàng trong khách sạn của chúng tôi không?" },
+      { "q": "(A) No, eight P.M. at the latest.", "t": "Không, trễ nhất là 8 giờ tối." },
+      { "q": "(B) Some {members of the tour group}.", "t": "Một vài thành viên của đoàn tham quan." },
+      { "q": "(C) {Does} it have {vegetarian options}?", "t": "Nó có lựa chọn ăn chay không?" }
+    ],
+    "vocabulary": []
+  },
+  {
+    "id": 29,
+    "audioUrl": "Test 02_Part 2_29.mp3",
+    "listening": [
+      { "q": "29. If the conference room's taken, {where} can {we hold a meeting}?", "t": "Nếu như phòng họp này được đặt rồi thì chúng ta tổ chức cuộc họp ở đâu?" },
+      { "q": "(A) Half an hour ago.", "t": "Nửa tiếng trước." },
+      { "q": "(B) {My new office} is {pretty big}.", "t": "Văn phòng mới của tôi thì khá to." },
+      { "q": "(C) The {rescheduled directors' meeting}.", "t": "Một cuộc họp của giám đốc đã được lên lịch lại." }
+    ],
+    "vocabulary": [
+      { "w": "Taken", "ty": "-", "meanings": [{ "m": "đã đặt", "s": "is booked" }] },
+      { "w": "Pretty", "ty": "adv", "meanings": [{ "m": "khá/ tương đối", "s": "fairly/ quite/ rather/ relatively/ comparatively" }] }
+    ]
+  },
+  {
+    "id": 30,
+    "audioUrl": "Test 02_Part 2_30.mp3",
+    "listening": [
+      { "q": "30. {I'm not sure we're ready} to {play this song at the concert}.", "t": "Tôi không chắc chúng ta sẵn sàng chơi bài hát này tại nhạc hội?" },
+      { "q": "(A) Let's {rehearse it some more}.", "t": "Hãy diễn tập nó thêm một chút nữa." },
+      { "q": "(B) No, the {venue's on the right}.", "t": "Không, địa điểm nằm bên tay phải." },
+      { "q": "(C) The lead guitarist.", "t": "Người chơi ghi-ta chính." }
+    ],
+    "vocabulary": [
+      { "w": "Rehearse", "ty": "v", "meanings": [{ "m": "diễn tập" }] },
+      { "w": "Venue", "ty": "n", "meanings": [{ "m": "địa điểm", "s": "location/ site/ spot" }] }
+    ]
+  },
+  {
+    "id": 31,
+    "audioUrl": "Test 02_Part 2_31.mp3",
+    "listening": [
+      { "q": "31. {Why don't you load up the packages} so we can {deliver them}?", "t": "Tại sao bạn không chất những gói hàng lên xe để chúng tôi vận chuyển nó?" },
+      { "q": "(A) There was {plenty of space before}.", "t": "Trước đây có nhiều không gian." },
+      { "q": "(B) Most of us enjoyed it.", "t": "Hầu hết chúng tôi đều thích nó." },
+      { "q": "(C) They're already {in the truck}.", "t": "Chúng thì đã ở trong xe tải." }
+    ],
+    "vocabulary": [
+      { "w": "Load", "ty": "-", "meanings": [{ "m": "chất lên/ tải lên" }] }
+    ]
+  }
+
+    ];
+
+    function speak(txt) {
+        const u = new SpeechSynthesisUtterance(txt); u.lang = 'en-US'; window.speechSynthesis.speak(u);
+    }
+
+    function adjustWidth(el) {
+        const length = el.value.length > 0 ? el.value.length : 4;
+        el.style.width = (length + 1) + "ch";
+    }
+
+    function render() {
+    const app = document.getElementById('toeic-app');
+    app.innerHTML = ''; 
+
+    data.forEach(item => {
+        let h = `<div class="section-header">I. NGHE & ĐIỀN TỪ</div><div id="l-${item.id}">`;
+
+        // Trình phát nhạc có thanh tiến độ
+        h += `
+            <div class="audio-player">
+                <div class="audio-controls">
+                    <button class="ctrl-btn" id="play-btn-${item.id}" onclick="togglePlay(${item.id})">▶</button>
+                    <button class="ctrl-btn" style="background:#6c757d; font-size: 1rem;" 
+                        onclick="const a=document.getElementById('audio-${item.id}'); a.currentTime=0; a.play(); document.getElementById('play-btn-${item.id}').innerHTML='Ⅱ';">↺</button>
+                </div>
+                
+                <audio id="audio-${item.id}" src="${item.audioUrl}" ontimeupdate="updateTime(${item.id})"></audio>
+                
+                <div class="progress-container">
+                    <input type="range" id="seek-${item.id}" class="seek-slider" value="0" min="0" step="1" 
+                        onchange="seekAudio(${item.id}, this.value)">
+                    <div class="time-row">
+                        <span id="time-${item.id}">0:00 / 0:00</span>
+                    </div>
+                </div>
+                
+                <button class="speed-btn" onclick="changeSpeed(${item.id}, this)">1x</button>
+            </div>
+        `;
+
+        // Render Phần Nghe
+        item.listening.forEach(line => {
+            const qHtml = line.q.replace(/\{(.*?)\}/g, (m, p) => `
+                <div class="input-box">
+                    <input type="text" class="fill-in" data-ans="${p}" oninput="adjustWidth(this)">
+                    <div class="ans-label">${p}</div>
+                </div>`);
+            
+            h += `<div class="compact-card">
+                    <div class="line-content">${qHtml}</div>
+                    <div class="line-trans">Dịch: ${line.t}</div>
+                  </div>`;
+        });
+
+        h += `<div class="btn-group">
+                <button class="btn btn-ans" onclick="act('l-${item.id}', 'ans', this)">Đáp Án</button>
+                <button class="btn btn-check" onclick="act('l-${item.id}', 'check')">Hoàn Thành</button>
+                <button class="btn btn-dich" onclick="act('l-${item.id}', 'dich')">Dịch</button>
+            </div></div>`;
+
+        // Render Phần Từ Vựng (Giữ nguyên cấu trúc nút riêng từng thẻ)
+        h += `<div class="section-header">II. TỪ VỰNG</div>`;
+        item.vocabulary.forEach((v, vIndex) => {
+    const vocabId = `v-${item.id}-${vIndex}`;
+    h += `<div class="vocab-item" id="${vocabId}">
+            <div class="word-title">
+                <span><strong>${v.w}</strong> <span class="word-type">(${v.ty})</span></span>
+                <span class="audio-icon" onclick="speak('${v.w}')">🔊</span>
+            </div>`;
+    
+    v.meanings.forEach((entry, mIndex) => {
+        h += `<div class="meaning-row">
+                <span>Nghĩa ${v.meanings.length > 1 ? mIndex + 1 : ''}:</span>
+                <div class="input-box">
+                    <input type="text" class="fill-in" data-ans="${entry.m}" oninput="adjustWidth(this)">
+                    <div class="ans-label">${entry.m}</div>
+                </div>`;
+
+        if(entry.s && entry.s.trim() !== "") {
+            // Tách từ đồng nghĩa bằng dấu phẩy HOẶC dấu gạch chéo
+            const syns = entry.s.split(/[/,]+/).map(s => s.trim()).filter(s => s !== "");
+            
+            h += `<div class="synonym-line">└─ Đồng nghĩa: `;
+            
+            syns.forEach(syn => {
+                h += `
+                    <div class="input-box" style="margin-right: 15px; margin-bottom: 5px;">
+                        <input type="text" class="fill-in" data-ans="${syn}" oninput="adjustWidth(this)">
+                        <div class="ans-label">
+                            ${syn} <span class="audio-icon" style="font-size: 0.9rem;" onclick="speak('${syn}')">🔊</span>
+                        </div>
+                    </div>`;
+            });
+            h += `</div>`;
+        }
+        h += `</div>`;
+    });
+    h += `<div class="small-btn-group">
+            <button class="btn btn-ans btn-sm" onclick="act('${vocabId}', 'ans', this)">Đáp Án</button>
+            <button class="btn btn-check btn-sm" onclick="act('${vocabId}', 'check')">Hoàn Thành</button>
+        </div></div>`;
+});
+        app.innerHTML += h;
+    });
+}
+
+    function act(id, type, btn) {
+        const el = document.getElementById(id);
+        if(type === 'ans') {
+            const is = el.classList.toggle('show-ans');
+            if(btn) btn.innerText = is ? "Ẩn" : "Đáp Án";
+        } else if(type === 'dich') {
+            el.querySelectorAll('.line-trans').forEach(t => t.style.display = t.style.display === 'block' ? 'none' : 'block');
+        } else {
+            el.querySelectorAll('.fill-in').forEach(i => {
+                const u = i.value.trim().toLowerCase(), c = i.getAttribute('data-ans').toLowerCase();
+                i.classList.toggle('correct', u === c && u !== "");
+                i.classList.toggle('incorrect', u !== c || u === "");
+            });
+        }
+    }
+    // Hàm xử lý Phát/Dừng
+    function togglePlay(id) {
+        const audio = document.getElementById(`audio-${id}`);
+        const btn = document.getElementById(`play-btn-${id}`);
+        
+        if (audio.paused) {
+            audio.play();
+            btn.innerHTML = "Ⅱ"; // Chuyển sang biểu tượng tạm dừng
+        } else {
+            audio.pause();
+            btn.innerHTML = "▶"; // Chuyển sang biểu tượng phát
+        }
+    }
+
+    // Hàm thay đổi tốc độ
+    function changeSpeed(id, btn) {
+        const audio = document.getElementById(`audio-${id}`);
+        const speeds = [1, 1.25, 1.5, 0.75];
+        let currentSpeed = audio.playbackRate;
+        let nextIndex = (speeds.indexOf(currentSpeed) + 1) % speeds.length;
+        let newSpeed = speeds[nextIndex];
+        
+        audio.playbackRate = newSpeed;
+        btn.innerText = newSpeed + "x";
+    }
+
+    // Cập nhật thời gian hiển thị
+  // Hàm cập nhật thời gian và thanh trượt
+    function updateTime(id) {
+        const audio = document.getElementById(`audio-${id}`);
+        const seekSlider = document.getElementById(`seek-${id}`);
+        const display = document.getElementById(`time-${id}`);
+        
+        if (!isNaN(audio.duration)) {
+            // Cập nhật giá trị thanh trượt
+            seekSlider.max = Math.floor(audio.duration);
+            seekSlider.value = Math.floor(audio.currentTime);
+            
+            // Cập nhật hiển thị thời gian
+            display.innerText = `${formatTime(Math.floor(audio.currentTime))} / ${formatTime(Math.floor(audio.duration))}`;
+        }
+        
+        if (audio.ended) {
+            document.getElementById(`play-btn-${id}`).innerHTML = "▶";
+        }
+    }
+
+    // Hàm tua nhạc khi người dùng kéo thanh trượt
+    function seekAudio(id, value) {
+        const audio = document.getElementById(`audio-${id}`);
+        audio.currentTime = value;
+    }
+
+    function formatTime(sec) {
+        let m = Math.floor(sec / 60);
+        let s = sec % 60;
+        return `${m}:${s < 10 ? '0' + s : s}`;
+    }
+
+    window.onload = render;
+</script>
+</body>
+</html>
