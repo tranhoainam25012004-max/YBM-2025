@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học TOEIC - Tách dòng từ vựng</title>
+    <style>
+        :root { --brand-blue: #007bff; --bg-light-blue: #f8fbff; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
+        .container { max-width: 1000px; margin: auto; }
+        
+        .lesson-group { 
+            border: 2px dashed var(--brand-blue); 
+            padding: 20px; 
+            margin-bottom: 40px; 
+            border-radius: 20px;
+            background: #ffffff;
+        }
+        
+        .group-header { text-align: center; margin-bottom: 20px; }
+        .group-title { 
+            display: inline-block; color: white; background: var(--brand-blue); 
+            padding: 8px 25px; border-radius: 20px; font-size: 1.2rem; margin-bottom: 15px;
+        }
+
+        .audio-player { width: 100%; max-width: 400px; height: 40px; }
+
+        .section { background: #f8fbff; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        h2 { color: var(--brand-blue); font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px solid #d1e3ff; padding-bottom: 5px; }
+        
+        .btn-group { margin-bottom: 15px; display: flex; gap: 8px; overflow-x: auto; }
+        button { white-space: nowrap; background: white; color: var(--brand-blue); border: 2px solid var(--brand-blue); padding: 6px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
+        button.active-btn { background: var(--brand-blue); color: white; }
+
+        /* Quan trọng: Mặc định ẩn các lớp này */
+        .en-text, .ipa-text, .vi-text, .guide-text { display: none; margin-bottom: 5px; line-height: 1.6; }
+        .show { display: block !important; }
+
+        .content-line { background: #fff; border-left: 5px solid var(--brand-blue); padding: 10px; border-radius: 8px; margin-bottom: 8px; }
+
+        /* Định dạng Ngữ điệu & Âm chặn */
+        .intonation { color: #ff5722; font-weight: bold; font-size: 1.2rem; margin: 0 2px; }
+        
+        .guide-text { color: #2c3e50; font-family: 'Segoe UI', sans-serif; background: #fff0f6; padding: 5px 10px; border-radius: 5px; border: 1px dashed #d63384; }
+        
+        /* Style cho Âm chặn (Stop Sound) */
+        .stop { color: #e74c3c; font-weight: bold; border-bottom: 2px solid #e74c3c; }
+        .stop::after { content: "|"; margin-left: 1px; }
+
+        /* Flashcard Styles */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .card { perspective: 1000px; min-height: 180px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 2px solid var(--brand-blue); background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
+        .card-back { background-color: var(--brand-blue); color: white; transform: rotateY(180deg); justify-content: flex-start; align-items: stretch; overflow-y: auto; }
+        .vocab-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .vocab-info { display: flex; flex-direction: column; }
+        .speak-btn { font-size: 1.3rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+const allLessons = [
+    {
+        title: "Questions 32 - 34",
+        audioUrl: "Test 02_Part 3_32-34.mp3",
+        
+  passage: [
+  {
+    "en": "Hi, Nancy. I just saw you through the window, so I thought I'd stop in.",
+    "ipa": "/haɪ, ˈnænsi. aɪ dʒʌst sɔː juː θruː ðə ˈwɪndoʊ, soʊ aɪ θɔːt aɪd stɑːp ɪn./",
+    "guide": "haɪ, ˈnænsi <span class='intonation'>⤵</span>. aɪ <b>dʒʌs‿sɔː</b> juː θruː ðə ˈwɪndoʊ <span class='intonation'>⤴</span>, soʊ aɪ <b>θɔː‿daɪd</b> <b>stɑːp‿ɪn</b> <span class='intonation'>⤵</span>",
+    "vi": "Chào Nancy. Tôi vừa thấy bạn qua cửa sổ, nên tôi nghĩ mình sẽ ghé vào."
+  },
+  {
+    "en": "As a fellow Main Street business owner, I'm glad to see you're getting the bookstore ready for reopening.",
+    "ipa": "/æz ə ˈfɛloʊ meɪn striːt ˈbɪznəs ˈoʊnər, aɪm ɡlæd tuː siː jʊər ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi fɔːr riːˈoʊpnɪŋ./",
+    "guide": "<b>æz‿ə</b> ˈfɛloʊ ˈmeɪn <span class='stop'>striːt</span> ˈbɪznə<b>s‿oʊnər</b> <span class='intonation'>⤴</span>, aɪm <b>ɡlæd‿tə</b> siː <b>jər</b> ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi <b>fər</b> riːˈoʊpnɪŋ <span class='intonation'>⤵</span>",
+    "vi": "Là một chủ doanh nghiệp trên phố Main, tôi rất vui khi thấy bạn đang chuẩn bị cho hiệu sách sẵn sàng mở cửa trở lại."
+  },
+  {
+    "en": "Yes, we'll finally reopen this weekend. What do you think of the changes to the layout?",
+    "ipa": "/jɛs, wiːl ˈfaɪnəli riːˈoʊpən ðɪs ˈwiːkˌɛnd. wʌt duː juː θɪŋk ʌv ðə ˈtʃeɪndʒəz tuː ðə ˈleɪˌaʊt?/",
+    "guide": "jɛs <span class='intonation'>⤵</span>, wiːl ˈfaɪnəli riːˈoʊpən ðɪs <b>ˈwiːk‿ɛn</b> <span class='intonation'>⤵</span>. <b>wʌt‿də‿ju</b> θɪŋ<b>k‿əv</b> ðə ˈtʃeɪndʒɪz tə ðə <b>ˈleɪˌaʊ<span class='stop'>t</span></b> <span class='intonation'>⤵</span>",
+    "vi": "Vâng, cuối cùng chúng tôi cũng sẽ mở cửa lại vào cuối tuần này. Bạn nghĩ gì về những thay đổi trong cách bố trí?"
+  },
+  {
+    "en": "We'll have staff selling coffee and tea from that counter, and customers will be able to relax at the tables with their drinks and books.",
+    "ipa": "/wiːl hæv stæf ˈsɛlɪŋ ˈkɔːfi ænd tiː frʌm ðæt ˈkaʊntər, ænd ˈkʌstəmərz wɪl biː ˈeɪbl tuː rɪˈlæks æt ðə ˈteɪbəlz wɪθ ðɛr drɪŋks ænd bʊks./",
+    "guide": "wiːl <b>hæv‿stæf</b> ˈsɛlɪŋ ˈkɔːfi <b>ən</b> tiː frəm <b>ðæt‿ˈkaʊntər</b> <span class='intonation'>⤴</span>, <b>ən</b> ˈkʌstəmərz wɪl bi <b>ˈeɪbl‿tə</b> rɪˈlæks <b>æt‿ðə</b> ˈteɪbəlz wɪθ ðər <b>drɪŋks‿ən</b> bʊks <span class='intonation'>⤵</span>",
+    "vi": "Chúng tôi sẽ có nhân viên bán cà phê và trà từ quầy đó, và khách hàng có thể thư giãn tại bàn với đồ uống và sách của họ."
+  },
+  {
+    "en": "Sounds nice. Will you serve snacks too, or just drinks?",
+    "ipa": "/saʊndz naɪs. wɪl juː sɜːrv snæks tuː, ɔːr dʒʌst drɪŋks?/",
+    "guide": "<b>saʊn</b>dz naɪs <span class='intonation'>⤵</span>. wɪl <b>jə</b> sɜːrv snæks tuː <span class='intonation'>⤴</span>, ɔːr <b>dʒʌs‿drɪŋks</b> <span class='intonation'>⤵</span>",
+    "vi": "Nghe hay đấy. Bạn sẽ phục vụ cả đồ ăn nhẹ nữa hay chỉ đồ uống?"
+  },
+  {
+    "en": "We'll sell a few baked goods. Oh, that reminds me I need to head out now to buy the plates and silverware we'll need.",
+    "ipa": "/wiːl sɛl ə fjuː beɪkt ɡʊdz. oʊ, ðæt rɪˈmaɪndz miː aɪ niːd tuː hɛd aʊt naʊ tuː baɪ ðə pleɪts ænd ˈsɪlvərˌwɛr wiːl niːd./",
+    "guide": "wiːl sɛl ə fjuː <b>beɪk‿ɡʊdz</b> <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, ðæt <b>rɪˈmaɪn</b>z‿mi aɪ <b>niːd‿tə</b> <b>hɛd‿aʊt</b> naʊ <span class='intonation'>⤴</span> tə baɪ ðə <b>pleɪts‿ən</b> ˈsɪlvərˌwɛr wiːl niːd <span class='intonation'>⤵</span>",
+    "vi": "Chúng tôi sẽ bán một vài loại bánh nướng. Ồ, điều đó nhắc tôi nhớ rằng tôi cần phải đi ngay bây giờ để mua đĩa và dụng cụ ăn uống bạc mà chúng tôi sẽ cần."
+  }
+],
+    questions: [
+        {
+            q: "32 What is the woman getting ready for?",
+            ipa: "/wʌt ɪz ðə ˈwʊmən ˈɡɛtɪŋ ˈrɛdi fɔːr?/",
+            vi: "32. Người phụ nữ chuẩn bị cho cái gì?",
+            options: [
+                { en: "A seasonal sale", ipa: "/ə ˈsiːzənl seɪl/", vi: "Một buổi ưu đãi theo mùa" },
+                { en: "A business's reopening", ipa: "/ə ˈbɪznəsɪz riːˈoʊpnɪŋ/", vi: "Một sự khai trương lại của doanh nghiệp" },
+                { en: "A book's publication", ipa: "/ə bʊks ˌpʌblɪˈkeɪʃn/", vi: "Một sự xuất bản sách" },
+                { en: "A local festival", ipa: "/ə ˈloʊkl ˈfɛstɪvl/", vi: "Một lễ hội địa phương" }
+            ]
+        },
+        {
+            q: "33 What new feature of the bookstore does the woman point out?",
+            ipa: "/wʌt nuː ˈfiːtʃər ʌv ðə ˈbʊkstɔːr dʌz ðə ˈwʊmən pɔɪnt aʊt?/",
+            vi: "33. Tính năng mới gì của hiệu sách mà người phụ nữ chỉ ra?",
+            options: [
+                { en: "Its search kiosks", ipa: "/ɪts sɜːrtʃ ˈkiːɑːsks/", vi: "Những kios tìm kiếm của nó" },
+                { en: "Its gift certificates", ipa: "/ɪts ɡɪft sərˈtɪfɪkəts/", vi: "Những phiếu quà tặng của nó" },
+                { en: "Its author readings", ipa: "/ɪts ˈɔːθər ˈriːdɪŋz/", vi: "Những buổi đọc sách của tác giả" },
+                { en: "Its in-store café", ipa: "/ɪts ɪn-stɔːr kæˈfeɪ/", vi: "Quán cà phê trong cửa hàng" }
+            ]
+        },
+        {
+            q: "34 What will the woman most likely do next?",
+            ipa: "/wʌt wɪl ðə ˈwʊmən moʊst ˈlaɪkli duː nɛkst?/",
+            vi: "34. Người phụ nữ có thể làm gì tiếp theo nhất?",
+            options: [
+                { en: "Purchase some supplies", ipa: "/ˈpɜːrtʃəs sʌm səˈplaɪz/", vi: "Mua một vài món vật dụng" },
+                { en: "Start a cleaning process", ipa: "/stɑːrt ə ˈkliːnɪŋ ˈprɑːsɛs/", vi: "Bắt đầu một quá trình vệ sinh" },
+                { en: "Hang up some signs", ipa: "/hæŋ ʌp sʌm saɪnz/", vi: "Treo một vài biển báo" },
+                { en: "Write a job posting", ipa: "/raɪt ə dʒɑːb ˈpoʊstɪŋ/", vi: "Viết một bài đăng tuyển dụng" }
+            ]
+        }
+    ],
+   vocabulary: [
+        { vi: "Bạn đồng chí (n)", words: [{ en: "Fellow", ipa: "/ˈfɛloʊ/" }] },
+        { vi: "Sự mở cửa lại (n)", words: [{ en: "Reopening", ipa: "/riːˈoʊpnɪŋ/" }] },
+        { vi: "Bố cục (n)", words: [{ en: "Layout", ipa: "/ˈleɪˌaʊt/" }] },
+        { vi: "Bánh nướng (n)", words: [{ en: "Baked goods", ipa: "/beɪkt ɡʊdz/" }] },
+        { vi: "Dụng cụ ăn uống bằng bạc (n)", words: [{ en: "Silverware", ipa: "/ˈsɪlvərˌwɛr/" }] },
+        { vi: "Sự xuất bản (n)", words: [{ en: "Publication", ipa: "/ˌpʌblɪˈkeɪʃn/" }] },
+        { 
+            vi: "Ấn phẩm (n)", 
+            words: [
+                { en: "Publication", ipa: "/ˌpʌblɪˈkeɪʃn/" },
+                { en: "Issue", ipa: "/ˈɪʃuː/" }
+            ] 
+        },
+        { vi: "Xuất bản (v)", words: [{ en: "Publish", ipa: "/ˈpʌblɪʃ/" }] },
+        { vi: "Phiếu quà tặng (n)", words: [{ en: "Gift certificate", ipa: "/ɡɪft sərˈtɪfɪkət/" }] },
+        { vi: "Buổi đọc sách của tác giả (n)", words: [{ en: "Author reading", ipa: "/ˈɔːθər ˈriːdɪŋ/" }] },
+        { 
+            vi: "Tác giả (n)", 
+            words: [
+                { en: "Author", ipa: "/ˈɔːθər/" },
+                { en: "Novelist", ipa: "/ˈnɑːvəlɪst/" },
+                { en: "Writer", ipa: "/ˈraɪtər/" }
+            ] 
+        },
+        { 
+            vi: "Mua (v)", 
+            words: [
+                { en: "Purchase", ipa: "/ˈpɜːrtʃəs/" },
+                { en: "Buy", ipa: "/baɪ/" }
+            ] 
+        },
+        { 
+            vi: "Vật tư/ vật dụng (n)", 
+            words: [
+                { en: "Supplies", ipa: "/səˈplaɪz/" }
+            ] 
+        },
+        { vi: "Bài đăng tuyển dụng (n)", words: [{ en: "Job posting", ipa: "/dʒɑːb ˈpoʊstɪŋ/" }] }
+    ]
+    },
+    {
+  "title": "Questions 35 - 37",
+  "audioUrl": "Test 02_Part 3_35-37.mp3",
+  "passage": [
+    {
+      "en": "Hi, this is Marco Amato. I'm a new member at the gym.",
+      "ipa": "/haɪ, ðɪs ɪz ˈmɑːrkoʊ əˈmɑːtoʊ. aɪm ə nuː ˈmɛmbər æt ðə dʒɪm./",
+      "guide": "haɪ <span class='intonation'>⤴</span>, <b>ðɪs‿ɪz</b> ˈmɑːrkoʊ əˈmɑːtoʊ <span class='intonation'>⤵</span>. aɪm ə nuː ˈmɛmbər <b>æt‿ðə</b> dʒɪm <span class='intonation'>⤵</span>",
+      "vi": "Xin chào, tôi là Macro Amato. Tôi là thành viên mới tại trung tâm thể dục."
+    },
+    {
+      "en": "Uh, I was supposed to have a personal training session with Tim yesterday at seven, but I missed it because of rush-hour traffic.",
+      "ipa": "/ʌ, aɪ wʌz səˈpoʊzd tuː hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ æt ˈsɛvn, bʌt aɪ mɪst ɪt bɪˈkɔːz ʌv ˈrʌʃˌaʊər ˈtræfɪk./",
+      "guide": "ʌ <span class='intonation'>⤴</span>, aɪ wəz <b>səˈpoʊz‿tə</b> hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ <b>æt‿ˈsɛvn</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>mɪst‿ɪt</b> bɪˈkəz‿əv ˈrʌʃˌaʊər ˈtræfɪk <span class='intonation'>⤵</span>",
+      "vi": "Tôi đáng lẽ phải có một buổi tập luyện cá nhân với Tim hôm qua vào lúc 7 giờ, nhưng tôi đã bỏ lỡ nó bởi vì kẹt xe giờ cao điểm."
+    },
+    {
+      "en": "I see. Well, I'm sorry, but our gym doesn't issue refunds for missed sessions.",
+      "ipa": "/aɪ siː. wɛl, aɪm ˈsɔːri, bʌt ˈaʊər dʒɪm ˈdʌznt ˈɪʃuː ˈriːfʌndz fɔːr mɪst ˈsɛʃnz./",
+      "guide": "aɪ siː <span class='intonation'>⤵</span>. wɛl <span class='intonation'>⤴</span>, aɪm ˈsɔːri <span class='intonation'>⤵</span>, bʌt ˈaʊər dʒɪm ˈdʌznt <b>ˈɪʃuː‿ˈriːfʌndz</b> fər <b>mɪst‿ˈsɛʃnz</b> <span class='intonation'>⤵</span>",
+      "vi": "Tôi hiểu rồi. Tôi xin lỗi nhưng phòng tập của chúng tôi không có hoàn tiền cho những buổi tập bị bỏ lỡ."
+    },
+    {
+      "en": "Oh, I know. I was wondering if I could move my future sessions later so that this doesn't happen again.",
+      "ipa": "/oʊ, aɪ noʊ. aɪ wʌz ˈwʌndərɪŋ ɪf aɪ kʊd muːv maɪ ˈfjuːtʃər ˈsɛʃnz ˈleɪtər soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn./",
+      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ noʊ <span class='intonation'>⤵</span>. aɪ wəz ˈwʌndərɪŋ <b>ɪf‿aɪ</b> kʊd <b>muːv‿maɪ</b> ˈfjuːtʃər ˈsɛʃnz ˈleɪtər <span class='intonation'>⤴</span> soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn <span class='intonation'>⤵</span>",
+      "vi": "Tôi biết. Tôi tự hỏi liệu rằng tôi có thể chuyển những buổi tập trong tương lai muộn hơn để việc này không xảy ra lần nữa."
+    },
+    {
+      "en": "Tim isn't available later. I could schedule you with Derek, though. He has openings at eight.",
+      "ipa": "/tɪm ˈɪznt əˈveɪləbl ˈleɪtər. aɪ kʊd ˈskɛdʒuːl juː wɪθ ˈdɛrɪk, ðoʊ. hiː hæz ˈoʊpnɪŋz æt eɪt./",
+      "guide": "tɪm ˈɪzn<b>t‿əˈveɪləbl</b> ˈleɪtər <span class='intonation'>⤵</span>. aɪ kʊd ˈskɛdʒuːl ju wɪθ ˈdɛrɪk <span class='intonation'>⤴</span>, ðoʊ. <b>hiː‿hæz</b> ˈoʊpnɪŋ<b>z‿æt</b> eɪt <span class='intonation'>⤵</span>",
+      "vi": "Tim không rảnh vào sau đó. Mặc dù vậy tôi có thể xếp lịch cho bạn cùng Derek. Anh ấy có lịch trống vào 8 giờ."
+    },
+    {
+      "en": "Perfect—that will give me enough time to get there after finishing work.",
+      "ipa": "/ˈpɜːrfɪkt—ðæt wɪl ɡɪv miː ɪˈnʌf taɪm tuː ɡɛt ðɛr ˈæftər ˈfɪnɪʃɪŋ wɜːrk./",
+      "guide": "ˈpɜːrfɪkt <span class='intonation'>⤵</span>—ðæt wɪl <b>ɡɪv‿mi</b> ɪˈnʌf taɪm tə <b>ɡɛt‿ðɛr</b> ˈæftər ˈfɪnɪʃɪŋ wɜːrk <span class='intonation'>⤵</span>",
+      "vi": "Hoàn hảo-việc này sẽ cho tôi có đủ thời gian đi đến phòng tập sau khi tan làm."
+    }
+  ],
+  "questions": [
+    {
+      "q": "35 Where most likely does the woman work?",
+      "ipa": "/wɛr moʊst ˈlaɪkli dʌz ðə ˈwʊmən wɜːrk?/",
+      "vi": "35 Người phụ nữ làm việc ở đâu?",
+      "options": [
+        { "en": "At a bank", "ipa": "/æt ə bæŋk/", "vi": "Tại một ngân hàng" },
+        { "en": "At a medical clinic", "ipa": "/æt ə ˈmɛdɪkl ˈklɪnɪk/", "vi": "Tại một phòng khám y tế" },
+        { "en": "At a real estate agency", "ipa": "/æt ə ˈriːəl ɪˈsteɪt ˈeɪdʒənsi/", "vi": "Tại một công ty bất động sản" },
+        { "en": "At a fitness center", "ipa": "/æt ə ˈfɪtnəs ˈsɛntər/", "vi": "Tại một trung tâm thể dục" }
+      ]
+    },
+    {
+      "q": "36 What was the man unable to do yesterday?",
+      "ipa": "/wʌt wʌz ðə mæn ʌnˈeɪbl tuː duː ˈjɛstərdeɪ?/",
+      "vi": "36 Người đàn ông không thể làm cái gì vào ngày hôm qua?",
+      "options": [
+        { "en": "Locate a building", "ipa": "/loʊˈkeɪt ə ˈbɪldɪŋ/", "vi": "Tìm kiếm một tòa nhà" },
+        { "en": "Keep an appointment", "ipa": "/kiːp ən əˈpɔɪntmənt/", "vi": "Giữ một cuộc hẹn" },
+        { "en": "Transfer a payment", "ipa": "/trænsˈfɜːr ə ˈpeɪmənt/", "vi": "Chuyển khoản thanh toán" },
+        { "en": "Arrange transportation", "ipa": "/əˈreɪndʒ ˌtrænspɔːrˈteɪʃn/", "vi": "Sắp xếp phương tiện vận chuyển" }
+      ]
+    },
+    {
+      "q": "37 What does the man like about the woman's suggestion?",
+      "ipa": "/wʌt dʌz ðə mæn laɪk əˈbaʊt ðə ˈwʊmənz səɡˈdʒɛstʃən?/",
+      "vi": "37 Người đàn ông thích cái gì về đề xuất của người phụ nữ?",
+      "options": [
+        { "en": "It suits his schedule", "ipa": "/ɪt suːts hɪz ˈskɛdʒuːl/", "vi": "Nó phù hợp với lịch trình của anh ấy" },
+        { "en": "It is good for his health", "ipa": "/ɪt ɪz ɡʊd fɔːr hɪz hɛlθ/", "vi": "Nó tốt cho sức khỏe của anh ấy" },
+        { "en": "It will be more enjoyable", "ipa": "/ɪt wɪl biː mɔːr ɪnˈdʒɔɪəbl/", "vi": "Nó sẽ thú vị hơn" },
+        { "en": "It will reduce a fee", "ipa": "/ɪt wɪl rɪˈduːs ə fiː/", "vi": "Nó sẽ giảm phí" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Đáng lẽ phải/ cần phải", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
+    { "vi": "Sẽ", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
+    { "vi": "Buổi tập luyện cá nhân", "words": [{ "en": "Personal training session", "ipa": "/ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn/" }] },
+    { "vi": "Giờ cao điểm", "words": [{ "en": "Rush-hour", "ipa": "/ˈrʌʃˌaʊər/" }] },
+    { "vi": "Hoàn tiền", "words": [{ "en": "Refunds", "ipa": "/ˈriːfʌndz/" }] },
+    { "vi": "Tự hỏi", "words": [{ "en": "Wonder", "ipa": "/ˈwʌndər/" }] },
+    { "vi": "Liệu rằng (từ nối)", "words": [{ "en": "If", "ipa": "/ɪf/" }, { "en": "Whether", "ipa": "/ˈwɛðər/" }] },
+    { "vi": "Có sẵn", "words": [{ "en": "Available", "ipa": "/əˈveɪləbl/" }] },
+    { "vi": "Rảnh-người", "words": [{ "en": "Available", "ipa": "/əˈveɪləbl/" }] },
+    { "vi": "Những buổi tập", "words": [{ "en": "Sessions", "ipa": "/ˈsɛʃnz/" }] },
+    { 
+      "vi": "Những phần", 
+      "words": [
+        { "en": "Sections", "ipa": "/ˈsɛkʃnz/" }, 
+        { "en": "Parts", "ipa": "/pɑːrts/" }, 
+        { "en": "Portions", "ipa": "/ˈpɔːrʃnz/" }, 
+        { "en": "Segments", "ipa": "/ˈsɛɡmənts/" }
+      ] 
+    },
+    { "vi": "Bất động sản", "words": [{ "en": "Real estate", "ipa": "/ˈriːəl ɪˈsteɪt/" }, { "en": "Property", "ipa": "/ˈprɑːpərti/" }] },
+    { 
+      "vi": "Công ty", 
+      "words": [
+        { "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, 
+        { "en": "Company", "ipa": "/ˈkʌmpəni/" }, 
+        { "en": "Firm", "ipa": "/fɜːrm/" },
+        { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }
+      ] 
+    },
+    { "vi": "Trung tâm thể dục", "words": [{ "en": "Fitness center", "ipa": "/ˈfɪtnəs ˈsɛntər/" }, { "en": "Gym", "ipa": "/dʒɪm/" }] },
+    { 
+      "vi": "Tìm kiếm", 
+      "words": [
+        { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, 
+        { "en": "Find", "ipa": "/faɪnd/" }, 
+        { "en": "Seek", "ipa": "/siːk/" },
+        { "en": "Look for", "ipa": "/lʊk fɔːr/" },
+        { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }
+      ] 
+    },
+    { "vi": "Được tọa lạc", "words": [{ "en": "Located", "ipa": "/ˈloʊkeɪtɪd/" }, { "en": "Situated", "ipa": "/ˈsɪtʃueɪtɪd/" }] },
+    { "vi": "Phí", "words": [{ "en": "Fee", "ipa": "/fiː/" }, { "en": "Charge", "ipa": "/tʃɑːrdʒ/" }] },
+    { "vi": "Giá vé", "words": [{ "en": "Fare", "ipa": "/fɛr/" }] }
+  ]
+},
+{
+  "title": "Questions 38 - 40",
+  "audioUrl": "Test 02_Part 3_38-40.mp3",
+ "passage": [
+    {
+      "en": "Jutaro, this invoice from Turnbull Appliances just arrived in the mail.",
+      "ipa": "/dʒuːˈtɑːroʊ, ðɪs ˈɪnvɔɪs frʌm ˈtɜːrnbʊl əˈplaɪənsɪz dʒʌst əˈraɪvd ɪn ðə meɪl./",
+      "guide": "dʒuːˈtɑːroʊ <span class='intonation'>⤴</span>, ðɪs ˈɪnvɔɪs frəm ˈtɜːrnbʊl əˈplaɪənsɪz <b>dʒʌs<span class='stop'>t</span>‿əˈraɪv</b><b>d‿ɪn</b> ðə meɪl <span class='intonation'>⤵</span>",
+      "vi": "Jutaro, hóa đơn từ Turnbull Appliances vừa được gửi đến qua đường bưu điện."
+    },
+    {
+      "en": "It's for the installation of our new office fridge last month.",
+      "ipa": "/ɪts fɔːr ðɪ ˌɪnstəˈleɪʃn ʌv ˈaʊər nuː ˈɑːfɪs frɪdʒ læst mʌnθ./",
+      "guide": "<b>ɪts‿fər</b> ðɪ ˌɪnstəˈleɪʃn əv ˈaʊər nuː <b>ˈɑːfɪs‿frɪdʒ</b> <b>læs<span class='stop'>t</span>‿mʌnθ</b> <span class='intonation'>⤵</span>",
+      "vi": "Hóa đơn này cho sự lắp đặt tủ lạnh mới cho văn phòng của chúng ta tháng trước."
+    },
+    {
+      "en": "That wasn't free?",
+      "ipa": "/ðæt ˈwʌznt friː?/",
+      "guide": "ðæt <b>ˈwʌzn<span class='stop'>t</span></b> friː <span class='intonation'>⤴</span>?",
+      "vi": "Nó không miễn phí hả?"
+    },
+    {
+      "en": "The technicians had to do some extra work to set up the wiring.",
+      "ipa": "/ðə tɛkˈnɪʃnz hæd tuː duː sʌm ˈɛkstrə wɜːrk tuː sɛt ʌp ðə ˈwaɪərɪŋ./",
+      "guide": "ðə tɛkˈnɪʃnz <b>hæd‿tə</b> du sʌm ˈɛkstrə wɜːrk tə <b>sɛt‿ʌp</b> ðə ˈwaɪərɪŋ <span class='intonation'>⤵</span>",
+      "vi": "Những kỹ thuật viên phải làm thêm một vài công việc để lắp đặt hệ thống dây điện."
+    },
+    {
+      "en": "That isn't part of the standard installation, so it costs extra.",
+      "ipa": "/ðæt ˈɪznt pɑːrt ʌv ðə ˈstændərd ˌɪnstəˈleɪʃn, soʊ ɪt kɔːsts ˈɛkstrə./",
+      "guide": "ðæt ˈɪzn<span class='stop'>t</span> <b>pɑːr<span class='stop'>t</span>‿əv</b> ðə ˈstændərd ˌɪnstəˈleɪʃn <span class='intonation'>⤴</span>, soʊ <b>ɪ<span class='stop'>t</span>‿kɔːsts</b> ˈɛkstrə <span class='intonation'>⤵</span>",
+      "vi": "Việc đó không phải là một phần của gói lắp đặt tiêu chuẩn, vì vậy nó tốn thêm tiền."
+    },
+    {
+      "en": "Oh, that's not good. The price of the fridge was close to the limit Ms. Brent approved for the replacement.",
+      "ipa": "/oʊ, ðæts nɑːt ɡʊd. ðə praɪs ʌv ðə frɪdʒ wʌz kloʊs tuː ðə ˈlɪmɪt ˌmɪz brɛnt əˈpruːvd fɔːr ðə rɪˈpleɪsmənt./",
+      "guide": "oʊ <span class='intonation'>⤴</span>, <b>ðæts‿nɑːt</b> ɡʊd <span class='intonation'>⤵</span>. ðə praɪs əv ðə frɪdʒ wəz <b>kloʊs‿tə</b> ðə ˈlɪmɪt ˌmɪz brɛnt <b>əˈpruːv-d</b> fər ðə rɪˈpleɪsmənt <span class='intonation'>⤵</span>",
+      "vi": "Ổ, không tốt rồi. Giá của cái tủ lạnh đã gần tới giới hạn cô Brent duyệt cho thay thế tủ lạnh."
+    },
+    {
+      "en": "With this charge, we've exceeded the budget.",
+      "ipa": "/wɪð ðɪs tʃɑːrdʒ, wiːv ɪkˈsiːdɪd ðə ˈbʌdʒɪt./",
+      "guide": "wɪð ðɪs tʃɑːrdʒ <span class='intonation'>⤴</span>, wiːv ɪkˈsiːdɪd ðə <b>ˈbʌdʒɪ<span class='stop'>t</span></b> <span class='intonation'>⤵</span>",
+      "vi": "Với khoản phí này, chúng ta đã vượt mức ngân sách rồi."
+    },
+    {
+      "en": "I see. I'll let Ms. Brent know about the situation.",
+      "ipa": "/aɪ siː. aɪl lɛt ˌmɪz brɛnt noʊ əˈbaʊt ðə ˌsɪtʃuˈeɪʃn./",
+      "guide": "aɪ siː <span class='intonation'>⤵</span>. aɪl <b>lɛ<span class='stop'>t</span>‿ˌmɪz</b> brɛnt <b>noʊ‿əˈbaʊt</b> ðə ˌsɪtʃuˈeɪʃn <span class='intonation'>⤵</span>",
+      "vi": "Tôi hiểu rồi. Tôi sẽ cho cô Brent biết về tình huống này."
+    }
+  ],
+  "questions": [
+    {
+      "q": "38 Why does the man say “that wasn't free”?",
+      "ipa": "/waɪ dʌz ðə mæn seɪ ðæt ˈwʌznt friː?/",
+      "vi": "38 Tại sao người đàn ông nói “cái đó không miễn phí hả?”",
+      "options": [
+        { "en": "To show surprise", "ipa": "/tuː ʃoʊ sərˈpraɪz/", "vi": "Để thể hiện sự bất ngờ" },
+        { "en": "To explain a refusal", "ipa": "/tuː ɪkˈspleɪn ə rɪˈfjuːzl/", "vi": "Để giải thích một sự từ chối" },
+        { "en": "To request reimbursement", "ipa": "/tuː rɪˈkwɛst ˌriːɪmˈbɜːrsmənt/", "vi": "Để yêu cầu hoàn tiền" },
+        { "en": "To emphasize an item’s value", "ipa": "/tuː ˈɛmfəsaɪz ən ˈaɪtəmz ˈvæljuː/", "vi": "Để nhấn mạnh giá trị của một món đồ" }
+      ]
+    },
+    {
+      "q": "39 What problem does the man report?",
+      "ipa": "/wʌt ˈprɑːbləm dʌz ðə mæn rɪˈpɔːrt?/",
+      "vi": "39 Người đàn ông báo cáo vấn đề gì?",
+      "options": [
+        { "en": "An appliance has broken down", "ipa": "/ən əˈplaɪəns hæz ˈbroʊkən daʊn/", "vi": "Một thiết bị điện đã bị hỏng" },
+        { "en": "Some paperwork is missing", "ipa": "/sʌm ˈpeɪpərwɜːrk ɪz ˈmɪsɪŋ/", "vi": "Một vài giấy tờ bị thiếu" },
+        { "en": "Some technicians are unavailable", "ipa": "/sʌm tɛkˈnɪʃnz ɑːr ˌʌnəˈveɪləbl/", "vi": "Một vài kỹ thuật viên không rảnh" },
+        { "en": "A budget has been exceeded", "ipa": "/ə ˈbʌdʒɪt hæz biːn ɪkˈsiːdɪd/", "vi": "Một vài ngân sách đã bị vượt quá" }
+      ]
+    },
+    {
+      "q": "40 What does the woman say she will do?",
+      "ipa": "/wʌt dʌz ðə ˈwʊmən seɪ ʃiː wɪl duː?/",
+      "vi": "40 Người phụ nữ nói cô ấy sẽ làm gì?",
+      "options": [
+        { "en": "Look for a manual", "ipa": "/lʊk fɔːr ə ˈmænjuəl/", "vi": "Tìm kiếm một sách hướng dẫn" },
+        { "en": "Cancel an order", "ipa": "/ˈkæns l ən ˈɔːrdər/", "vi": "Thoát đặt hàng" },
+        { "en": "Make some copies", "ipa": "/meɪk sʌm ˈkɑːpiz/", "vi": "Thực hiện một vài bản sao" },
+        { "en": "Speak with a manager", "ipa": "/spiːk wɪð ə ˈmænɪdʒər/", "vi": "Nói chuyện với quản lý" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Hóa đơn", "words": [{ "en": "Invoice", "ipa": "/ˈɪnvɔɪs/" }, { "en": "Bill", "ipa": "/bɪl/" }, { "en": "Receipt", "ipa": "/rɪˈsiːt/" }] },
+    { "vi": "Phí", "words": [{ "en": "Charge", "ipa": "/tʃɑːrdʒ/" }, { "en": "Fee", "ipa": "/fiː/" }] },
+    { "vi": "Giá vé", "words": [{ "en": "Fare", "ipa": "/fɛr/" }] },
+    { "vi": "Hệ thống dây điện", "words": [{ "en": "Wiring", "ipa": "/ˈwaɪərɪŋ/" }] },
+    { "vi": "Dây điện", "words": [{ "en": "Wire", "ipa": "/ˈwaɪər/" }] },
+    { "vi": "Gói lắp đặt tiêu chuẩn", "words": [{ "en": "Standard installation", "ipa": "/ˈstændərd ˌɪnstəˈleɪʃn/" }] },
+    { "vi": "Duyệt", "words": [{ "en": "Approve", "ipa": "/əˈpruːv/" }, { "en": "Grant", "ipa": "/ɡrænt/" }] },
+    { "vi": "Sự từ chối", "words": [{ "en": "Refusal", "ipa": "/rɪˈfjuːzl/" }] },
+    { "vi": "Từ chối", "words": [{ "en": "Refuse", "ipa": "/rɪˈfjuːz/" }, { "en": "Reject", "ipa": "/rɪˈdʒɛkt/" }, { "en": "Decline", "ipa": "/dɪˈklaɪn/" }, { "en": "Turn down", "ipa": "/tɜːrn daʊn/" }] },
+    { "vi": "Hoàn lại chi phí", "words": [{ "en": "Reimbursement", "ipa": "/ˌriːɪmˈbɜːrsmənt/" }] },
+    { "vi": "Nhấn mạnh", "words": [{ "en": "Emphasize", "ipa": "/ˈɛmfəsaɪz/" }, { "en": "Stress", "ipa": "/strɛs/" }] },
+    { "vi": "Thiết bị điện", "words": [{ "en": "Appliance", "ipa": "/əˈplaɪəns/" }] },
+    { "vi": "Hư/hỏng", "words": [{ "en": "Break down", "ipa": "/breɪk daʊn/" }, { "en": "Damage", "ipa": "/ˈdæmɪdʒ/" }, { "en": "Malfunction", "ipa": "/ˌmælˈfʌŋkʃn/" }] },
+    { "vi": "Kỹ thuật viên", "words": [{ "en": "Technician", "ipa": "/tɛkˈnɪʃn/" }] },
+    { "vi": "Kỹ thuật", "words": [{ "en": "Technique", "ipa": "/tɛkˈniːk/" }] },
+    { "vi": "Thuộc về kỹ thuật", "words": [{ "en": "Technical", "ipa": "/ˈtɛknɪkl/" }] },
+    { "vi": "Không có sẵn/Không rảnh", "words": [{ "en": "Unavailable", "ipa": "/ˌʌnəˈveɪləbl/" }] },
+    { "vi": "Vượt quá", "words": [{ "en": "Exceed", "ipa": "/ɪkˈsiːd/" }, { "en": "Surpass", "ipa": "/sərˈpæs/" }] },
+    { "vi": "Tìm kiếm", "words": [{ "en": "Look for", "ipa": "/lʊk fɔːr/" }, { "en": "Find", "ipa": "/faɪnd/" }, { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, { "en": "Seek", "ipa": "/siːk/" }, { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }] },
+    { "vi": "Sách hướng dẫn", "words": [{ "en": "Manual", "ipa": "/ˈmænjuəl/" }] }
+  ]
+},
+{
+  "title": "Questions 41 - 43",
+  "audioUrl": "Test 02_Part 3_41-43.mp3",
+  "passage": [
+    {
+      "en": "Hi, I'm hoping to find out how much it would cost to rent one of your buses for an event next month.",
+      "ipa": "/haɪ, aɪm ˈhoʊpɪŋ tuː faɪnd aʊt haʊ mʌtʃ ɪt wʊd kɔːst tuː rɛnt wʌn ʌv jʊər ˈbʌsɪz fɔːr ən ɪˈvɛnt nɛkst mʌnθ./",
+      "guide": "haɪ <span class='intonation'>⤴</span>, aɪm ˈhoʊpɪŋ tə <b>faɪn-daʊt</b> haʊ mʌtʃ ɪ<span class='stop'>t</span> wəd kɔːst tə rɛnt <b>wʌn-nəv</b> jər ˈbʌsɪz fər ən ɪˈvɛn<span class='stop'>t</span> nɛks<span class='stop'>t</span> mʌnθ <span class='intonation'>⤵</span>",
+      "vi": "Xin chào, tôi hi vọng tìm hiểu được nó sẽ tốn bao nhiêu tiền để thuê một trong những chiếc xe bus của các bạn cho một sự kiện vào tháng tới."
+    },
+    {
+      "en": "It's a two-day company retreat for the pharmacy I own. We'll need transportation to and from a resort on Garris Mountain.",
+      "ipa": "/ɪts ə tuː-deɪ ˈkʌmpəni rɪˈtriːt fɔːr ðə ˈfɑːrməsi aɪ oʊn. wiːl niːd ˌtrænspɔːrˈteɪʃn tuː ænd frʌm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən./",
+      "guide": "<b>ɪts-sə</b> tuː-deɪ ˈkʌmpəni rɪˈtriːt fər ðə ˈfɑːrməsi aɪ oʊn <span class='intonation'>⤵</span>. wiːl niːd ˌtrænspɔːrˈteɪʃn <b>tuː-wən</b> frəm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən <span class='intonation'>⤵</span>",
+      "vi": "Đó là một chuyến nghỉ dưỡng của công ty kéo dài hai ngày dành cho tiệm thuốc tây tôi sở hữu. Chúng tôi cần phương tiện chuyên chở đến và từ khu nghỉ dưỡng trên núi Garris."
+    },
+    {
+      "en": "Sure. I'll just need a few more details. But first—did you know you can request a quote through our Web site? Many customers prefer to do that.",
+      "ipa": "/ʃʊər. aɪl dʒʌst niːd ə fjuː mɔːr ˈdiːteɪlz. bʌt fɜːrst—dɪd juː noʊ juː kæn rɪˈkwɛst ə kwoʊt θruː ˈaʊər wɛb saɪt? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tuː duː ðæt./",
+      "guide": "ʃʊər <span class='intonation'>⤵</span>. aɪl <b>dʒʌs-niːd</b> ə fjuː mɔːr ˈdiːteɪlz <span class='intonation'>⤵</span>. bʌt fɜːrs<span class='stop'>t</span>—dɪd ju noʊ ju kən rɪˈkwɛs-tə kwoʊt θruː ˈaʊər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tə du ðæt <span class='intonation'>⤵</span>",
+      "vi": "Chắc chắn rồi tôi chỉ cần biết thêm một vài chi tiết nữa. Nhưng đầu tiên- bạn có biết rằng bạn có thể yêu cầu bảng báo giá thông qua trang web của chúng tôi không? Nhiều khách hàng của chúng tôi thích làm điều đó hơn."
+    },
+    {
+      "en": "Oh, I tried to use the service on your Web site, but I couldn't. I couldn't understand how to fill out the request form.",
+      "ipa": "/oʊ, aɪ traɪd tuː juːz ðə ˈsɜːrvɪs ɑːn jʊər wɛb saɪt, bʌt aɪ ˈkʊdnt. aɪ ˈkʊdnt ˌʌndərˈstænd haʊ tuː fɪl aʊt ðə rɪˈkwɛst fɔːrm./",
+      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ traɪd tə juːz ðə ˈsɜːrvɪs ɑːn jər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>ˈkʊdn<span class='stop'>t</span></b> <span class='intonation'>⤵</span>. aɪ ˈkʊdn<span class='stop'>t</span> ˌʌndərˈstænd haʊ tə <b>fɪ-laʊt</b> ðə rɪˈkwɛst fɔːrm <span class='intonation'>⤵</span>",
+      "vi": "Ồ, tôi đã cố gắng sử dụng dịch vụ trên trang web của bạn nhưng tôi không thể. Tôi không thể hiểu cách điền vào biểu mẫu yêu cầu."
+    }
+  ],
+  "questions": [
+    {
+      "q": "41 Why is the woman calling?",
+      "ipa": "/waɪ ɪz ðə ˈwʊmən ˈkɔːlɪŋ?/",
+      "vi": "41 Tại sao người phụ nữ gọi điện thoại?",
+      "options": [
+        { "en": "To check on an order", "ipa": "/tuː tʃɛk ɑːn ən ˈɔːrdər/", "vi": "Để kiểm tra một đơn hàng" },
+        { "en": "To receive a cost estimate", "ipa": "/tuː rɪˈsiːv ə kɔːst ˈɛstɪmeɪt/", "vi": "Để nhận bảng báo giá" },
+        { "en": "To reserve an event venue", "ipa": "/tuː rɪˈzɜːrv ən ɪˈvɛnt ˈvɛnjuː/", "vi": "Để đặt một địa điểm sự kiện" },
+        { "en": "To ask for a change to a route", "ipa": "/tuː æsk fɔːr ə tʃeɪndʒ tuː ə ruːt/", "vi": "Để yêu cầu thay đổi cho một tuyến đường" }
+      ]
+    },
+    {
+      "q": "42 What kind of business does the woman own?",
+      "ipa": "/wʌt kaɪnd ʌv ˈbɪznəs dʌz ðə ˈwʊmən oʊn?/",
+      "vi": "42 Người phụ nữ sở hữu loại hình doanh nghiệp nào?",
+      "options": [
+        { "en": "A tour company", "ipa": "/ə tʊər ˈkʌmpəni/", "vi": "Một công ty tham quan" },
+        { "en": "A ski resort", "ipa": "/ə skiː rɪˈzɔːrt/", "vi": "Một khu nghỉ dưỡng trượt tuyết" },
+        { "en": "An insurance agency", "ipa": "/ən ɪnˈʃʊərəns ˈeɪdʒənsi/", "vi": "Một công ty bảo hiểm" },
+        { "en": "A pharmacy", "ipa": "/ə ˈfɑːrməsi/", "vi": "Một tiệm thuốc tây" }
+      ]
+    },
+    {
+      "q": "43 Why was the woman unable to use the online service?",
+      "ipa": "/waɪ wʌz ðə ˈwʊmən ˌʌnəˈveɪləbl tuː juːz ðɪ ˈɑːnˌlaɪn ˈsɜːrvɪs?/",
+      "vi": "43 Tại sao người phụ nữ không thể sử dụng dịch vụ trực tuyến?",
+      "options": [
+        { "en": "A form is confusing", "ipa": "/ə fɔːrm ɪz kənˈfjuːzɪŋ/", "vi": "Một biểu mẫu thì khó hiểu" },
+        { "en": "She was not aware of it", "ipa": "/ʃiː wʌz nɑːt əˈwɛr ʌv ɪt/", "vi": "Cô ấy không biết nó" },
+        { "en": "A Web site was down", "ipa": "/ə wɛb saɪt wʌz daʊn/", "vi": "Một trang web ngừng hoạt động" },
+        { "en": "Her computer is outdated", "ipa": "/hɜːr kəmˈpjuːtər ɪz ˌaʊtˈdeɪtɪd/", "vi": "Máy tính cô ấy cũ rồi" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Sở hữu (v)", "words": [{ "en": "Own", "ipa": "/oʊn/" }, { "en": "Possess", "ipa": "/pəˈzɛs/" }] },
+    { "vi": "Chuyến nghỉ dưỡng (n)", "words": [{ "en": "Retreat", "ipa": "/rɪˈtriːt/" }] },
+    { "vi": "Phương tiện chuyên chở (n)", "words": [{ "en": "Transportation", "ipa": "/ˌtrænspɔːrˈteɪʃn/" }] },
+    { "vi": "Sự ước tính (n)", "words": [{ "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/" }] },
+    { "vi": "Bảng báo giá (n)", "words": [{ "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/" }, { "en": "Quote", "ipa": "/kwoʊt/" }] },
+    { "vi": "Đặt trước (v)", "words": [{ "en": "Reserve", "ipa": "/rɪˈzɜːrv/" }, { "en": "Book", "ipa": "/bʊk/" }] },
+    { "vi": "Địa điểm (n)", "words": [{ "en": "Venue", "ipa": "/ˈvɛnjuː/" }, { "en": "Site", "ipa": "/saɪt/" }, { "en": "Location", "ipa": "/loʊˈkeɪʃn/" }, { "en": "Spot", "ipa": "/spɑːt/" }] },
+    { "vi": "Tuyến đường / Lộ trình (n)", "words": [{ "en": "Route", "ipa": "/ruːt/" }] },
+    { "vi": "Công ty / Đại lý (n)", "words": [{ "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, { "en": "Company", "ipa": "/ˈkʌmpəni/" }, { "en": "Firm", "ipa": "/fɜːrm/" }, { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }] },
+    { "vi": "Gây bối rối / Khó hiểu (adj)", "words": [{ "en": "Confusing", "ipa": "/kənˈfjuːzɪŋ/" }] },
+    { "vi": "Biết / Quan tâm về cái gì (adj)", "words": [{ "en": "Aware of something", "ipa": "/əˈwɛr ʌv ˈsʌmθɪŋ/" }] },
+    { "vi": "Bị hư / Trục trặc (phrase)", "words": [{ "en": "Is down", "ipa": "/ɪz daʊn/" }] },
+    { "vi": "Ngừng hẳn / Đã hỏng (phrase)", "words": [{ "en": "Was down", "ipa": "/wʌz daʊn/" }] },
+    { "vi": "Cũ / Lỗi thời (adj)", "words": [{ "en": "Outdated", "ipa": "/ˌaʊtˈdeɪtɪd/" }, { "en": "Out-of-date", "ipa": "/ˌaʊt əv ˈdeɪt/" }, { "en": "Old", "ipa": "/oʊld/" }] }
+  ]
+},
+{
+  "title": "Questions 44 - 46",
+  "audioUrl": "Test 02_Part 3_44-46.mp3",
+ "passage": [
+    {
+      "en": "Hi, Tamara. Oh, I see you're reading the new issue of the company newsletter. What's it about?",
+      "ipa": "/haɪ, təˈmærə. oʊ, aɪ siː jʊər ˈriːdɪŋ ðə nuː ˈɪʃuː ʌv ðə ˈkʌmpəni ˈnuːzlɛtər. wʌts ɪt əˈbaʊt?/",
+      "guide": "haɪ, təˈmærə <span class='intonation'>⤴</span>. oʊ <span class='intonation'>⤵</span>, aɪ siː jər ˈriːdɪŋ ðə nuː <b>ˈɪʃuː-wəv</b> ðə ˈkʌmpəni ˈnuːzlɛtər <span class='intonation'>⤵</span>. <b>wʌt-sɪ-təˈbaʊt</b> <span class='intonation'>⤴</span>?",
+      "vi": "Xin chào Tamara. Ồ, tôi thấy bạn đang đọc số mới của bản tin công ty. Nội dung là gì vậy?"
+    },
+    {
+      "en": "The main feature is an announcement about a contest to design a new company logo.",
+      "ipa": "/ðə meɪn ˈfiːtʃər ɪz ən əˈnaʊnsmənt əˈbaʊt ə ˈkɑːntɛst tuː dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ./",
+      "guide": "ðə meɪn ˈfiːtʃər <b>ɪ-zən</b> əˈnaʊnsmən-təˈbaʊt ə ˈkɑːntɛst tə dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ <span class='intonation'>⤵</span>",
+      "vi": "Bài báo chính là thông báo về cuộc thi thiết kế logo công ty mới."
+    },
+    {
+      "en": "Any employee can submit a design, and the CEO's going to pick the winning logo next month.",
+      "ipa": "/ˈɛni ɛmˈplɔɪiː kæn səbˈmɪt ə dɪˈzaɪn, ænd ðə siː-iː-oʊz ˈɡoʊɪŋ tuː pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ nɛkst mʌnθ./",
+      "guide": "ˈɛni ɛmˈplɔɪiː kən <b>səbˈmɪ-tə</b> dɪˈzaɪn <span class='intonation'>⤴</span>, ən ðə siː-iː-oʊz ˈɡoʊɪŋ tə pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ <b>nɛks<span class='stop'>t</span></b> mʌnθ <span class='intonation'>⤵</span>",
+      "vi": "Bất kỳ nhân viên nào cũng có thể nộp một thiết kế, và giám đốc điều hành sẽ chọn ra logo chiến thắng vào tháng tới."
+    },
+    {
+      "en": "How interesting! I'd like to enter.",
+      "ipa": "/haʊ ˈɪntrəstɪŋ! aɪd laɪk tuː ˈɛntər./",
+      "guide": "haʊ <b>ˈɪn-rəs-tɪŋ</b> <span class='intonation'>⤴</span>! aɪd <b>laɪk-tə</b> ˈɛntər <span class='intonation'>⤵</span>",
+      "vi": "Thú vị làm sao! Tôi muốn tham gia."
+    },
+    {
+      "en": "Well, the announcement includes instructions for participants. You should take a look at them.",
+      "ipa": "/wɛl, ðɪ əˈnaʊnsmənt ɪnˈkluːdz ɪnˈstrʌkʃnz fɔːr pɑːrˈtɪsɪpənts. juː ʃʊd teɪk ə lʊk æt ðɛm./",
+      "guide": "wɛl <span class='intonation'>⤴</span>, ðɪ əˈnaʊnsmən-tɪnˈkluːdz ɪnˈstrʌkʃnz fər pɑːrˈtɪsɪpənts <span class='intonation'>⤵</span>. jə ʃəd <b>teɪ-kə</b> lʊ-kæt ðəm <span class='intonation'>⤵</span>",
+      "vi": "Tốt, thông báo đã bao gồm những hướng dẫn cho những người tham gia. Bạn nên xem qua chúng."
+    }
+  ],
+  "questions": [
+    {
+      "q": "44 What does the man ask the woman about?",
+      "vi": "44 Người đàn ông hỏi người phụ nữ cái gì?",
+      "options": [
+        { "en": "Who will lead a meeting", "vi": "Ai sẽ dẫn dắt một cuộc họp" },
+        { "en": "Why a report is not finished", "vi": "Tại sao một bản báo cáo chưa xong" },
+        { "en": "What topics a newsletter covers", "vi": "Bản tin bao gồm những chủ đề gì" },
+        { "en": "When an executive will visit", "vi": "Khi nào một giám đốc điều hành sẽ đến" }
+      ]
+    },
+    {
+      "q": "45 What will happen next month?",
+      "vi": "45 Cái gì sẽ xảy ra vào tháng sau?",
+      "options": [
+        { "en": "A new logo will be chosen", "vi": "Một logo mới sẽ được chọn" },
+        { "en": "A parking area will be expanded", "vi": "Một bãi đậu xe sẽ được mở rộng" },
+        { "en": "A department will be restructured", "vi": "Một bộ phận sẽ được tái cơ cấu" },
+        { "en": "A review will be published", "vi": "Một bài đánh giá sẽ được phát hành" }
+      ]
+    },
+    {
+      "q": "46 What does the woman say the man should look at?",
+      "vi": "46 Người phụ nữ nói người đàn ông nên xem qua cái gì?",
+      "options": [
+        { "en": "A revised list of names", "vi": "Một danh sách tên đã được thay đổi chỉnh sửa" },
+        { "en": "Guidelines for a competition", "vi": "Những hướng dẫn cho một cuộc thi" },
+        { "en": "Blueprints for a building", "vi": "Bản thiết kế một tòa nhà" },
+        { "en": "A budget proposal", "vi": "Một đề xuất ngân sách" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Phát hành / Vấn đề", "words": [{ "en": "Issue", "ipa": "/ˈɪʃuː/" }] },
+    { "vi": "Ấn phẩm", "words": [{ "en": "Issue", "ipa": "/ˈɪʃuː/" }, { "en": "Publication", "ipa": "/ˌpʌblɪˈkeɪʃn/" }] },
+    { "vi": "Tính năng / Bài báo chính", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Function", "ipa": "/ˈfʌŋkʃn/" }] },
+    { "vi": "Bài báo", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Article", "ipa": "/ˈɑːrtɪkl/" }] },
+    { "vi": "Kiểm tra / Cuộc thi", "words": [{ "en": "Contest", "ipa": "/ˈkɑːntɛst/" }, { "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }] },
+    { "vi": "Nộp", "words": [{ "en": "Submit", "ipa": "/səbˈmɪt/" }, { "en": "Turn in", "ipa": "/tɜːrn ɪn/" }, { "en": "File", "ipa": "/faɪl/" }] },
+    { "vi": "Chọn", "words": [{ "en": "Pick", "ipa": "/pɪk/" }, { "en": "Choose", "ipa": "/tʃuːz/" }] },
+    { "vi": "Hướng dẫn", "words": [{ "en": "Instruction", "ipa": "/ɪnˈstrʌkʃn/" }, { "en": "Guideline", "ipa": "/ˈɡaɪdlaɪn/" }, { "en": "Direction", "ipa": "/dəˈrɛkʃn/" }] },
+    { "vi": "Người tham gia", "words": [{ "en": "Participant", "ipa": "/pɑːrˈtɪsɪpənt/" }, { "en": "Attendee", "ipa": "/əˌtɛnˈdiː/" }] },
+    { "vi": "Lãnh đạo / Dẫn dắt", "words": [{ "en": "Lead", "ipa": "/liːd/" }] },
+    { "vi": "Bao phủ / Bao gồm / Chi trả / Đưa tin", "words": [{ "en": "Cover", "ipa": "/ˈkʌvər/" }] },
+    { "vi": "Giám đốc điều hành", "words": [{ "en": "Executive", "ipa": "/ɪɡˈzɛkjətɪv/" }] },
+    { "vi": "Bài đánh giá / Sự xem xét", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }] },
+    { "vi": "Đánh giá / Xem xét", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }] },
+    { "vi": "Tái cơ cấu", "words": [{ "en": "Restructure", "ipa": "/ˌriːˈstrʌktʃər/" }, { "en": "Reorganize", "ipa": "/riːˈɔːrɡənaɪz/" }] },
+    { "vi": "Xuất bản", "words": [{ "en": "Publish", "ipa": "/ˈpʌblɪʃ/" }, { "en": "Issue", "ipa": "/ˈɪʃuː/" }] },
+    { 
+      "vi": "Thay đổi / Chỉnh sửa", 
+      "words": [
+        { "en": "Revise", "ipa": "/rɪˈvaɪz/" }, 
+        { "en": "Alter", "ipa": "/ˈɔːltər/" }, 
+        { "en": "Adapt", "ipa": "/əˈdæpt/" }, 
+        { "en": "Adjust", "ipa": "/əˈdʒʌst/" }, 
+        { "en": "Modify", "ipa": "/ˈmɑːdɪfaɪ/" }, 
+        { "en": "Change", "ipa": "/tʃeɪndʒ/" }
+      ] 
+    },
+    { "vi": "Cuộc thi", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }, { "en": "Contest", "ipa": "/ˈkɑːntɛst/" }] },
+    { "vi": "Sự cạnh tranh", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }] },
+    { "vi": "Đối thủ cạnh tranh", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }, { "en": "Competitors", "ipa": "/kəmˈpɛtɪtərz/" }] },
+    { "vi": "Bản thiết kế", "words": [{ "en": "Blueprint", "ipa": "/ˈbluːprɪnt/" }] },
+    { 
+      "vi": "Đề xuất", 
+      "words": [
+        { "en": "Proposal", "ipa": "/prəˈpoʊzl/" }, 
+        { "en": "Suggestion", "ipa": "/səˈdʒɛstʃən/" }, 
+        { "en": "Recommendation", "ipa": "/ˌrɛkəmɛnˈdeɪʃn/" }, 
+        { "en": "Idea", "ipa": "/aɪˈdiə/" }
+      ] 
+    }
+  ]
+},{
+  "title": "Questions 47 - 49",
+  "audioUrl": "Test 02_Part 3_47-49.mp3",
+ "passage": [
+    {
+      "en": "Excuse me. I'm not sure which product to buy. My bathroom drain is clogged, and I need something that can clear it. What do you recommend?",
+      "ipa": "/ɪkˈskjuːs miː. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌkt tuː baɪ. maɪ ˈbæθruːm dreɪn ɪz klɑːɡd, ænd aɪ niːd ˈsʌmθɪŋ ðæt kæn klɪər ɪt. wʌt duː juː ˌrɛkəˈmɛnd?/",
+      "guide": "ɪkˈskjuːs miː <span class='intonation'>⤴</span>. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌk<b><span class='stop'>t</span>‿tə</b> baɪ <span class='intonation'>⤵</span>. maɪ ˈbæθruːm <b>dreɪ-nɪz</b> klɑːɡd <span class='intonation'>⤴</span>, <b>ən-naɪ</b> niːd ˈsʌmθɪŋ ðæt kən <b>klɪə-rɪt</b> <span class='intonation'>⤵</span>. <b>wʌt-də-ju</b> ˌrɛkəˈmɛnd <span class='intonation'>⤵</span>?",
+      "vi": "Xin lỗi, tôi không chắc nên mua sản phẩm nào. Cống thoát nước phòng tắm của tôi bị tắc, và tôi cần một vài thứ có thể làm sạch nó. Bạn có đề xuất gì không?"
+    },
+    {
+      "en": "Almost any of these products would probably work, but if you want to make sure the job gets done, I'd recommend Purifine. Purifine's the strongest drain cleaner on the market.",
+      "ipa": "/ˈɔːlmoʊst ˈɛni ʌv ðɪːz ˈprɑːdʌkts wʊd ˈprɑːbəbli wɜːrk, bʌt ɪf juː wɑːnt tuː meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn, aɪd ˌrɛkəˈmɛnd ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst dreɪn ˈkliːnər ɑːn ðə ˈmɑːrkɪt./",
+      "guide": "ˈɔːlmoʊst <b>ˈɛ-ni-jəv</b> ðɪːz ˈprɑːdʌkts wəd ˈprɑːbəbli wɜːrk <span class='intonation'>⤴</span>, bʌt ɪf ju wɑːnt tə meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn <span class='intonation'>⤵</span>, <b>aɪd-ˌrɛkəˈmɛnd</b> ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst <b>dreɪn-ˈkliːnər</b> ɑːn ðə ˈmɑːrkɪt <span class='intonation'>⤵</span>",
+      "vi": "Hầu hết các sản phẩm này có thể hiệu quả, nhưng nếu bạn muốn đảm bảo công việc được hoàn tất, tôi đề xuất Purifine. Purifine là chất thông cống mạnh nhất trên thị trường."
+    },
+    {
+      "en": "Got it. Thank you! Is there anything I should know before using it on my drain?",
+      "ipa": "/ɡɑːt ɪt. θæŋk juː! ɪz ðɛr ˈɛniθɪŋ aɪ ʃʊd noʊ bɪˈfɔːr ˈjuːzɪŋ ɪt ɑːn maɪ dreɪn?/",
+      "guide": "<b>ɡɑː-tɪt</b> <span class='intonation'>⤵</span>. θæŋk juː <span class='intonation'>⤵</span>! ɪz ðər <b>ˈɛ-ni-θɪŋ-aɪ</b> ʃəd noʊ bɪˈfɔːr <b>ˈjuːzɪ-ŋɪt</b> ɑːn maɪ dreɪn <span class='intonation'>⤴</span>?",
+      "vi": "Hiểu rồi. Cảm ơn nhé! Còn bất cứ cái gì tôi nên biết trước khi sử dụng nó trên cống thoát nước không?"
+    },
+    {
+      "en": "Yes—these kinds of chemicals can be dangerous. Make sure to look over the safety information printed on the back of the bottle before you open it up.",
+      "ipa": "/jɛs—ðɪːz kaɪndz ʌv ˈkɛmɪklz kæn biː ˈdeɪndʒərəs. meɪk ʃʊər tuː lʊk ˈoʊvər ðə ˈseɪfti ˌɪnfərˈmeɪʃn ˈprɪntɪd ɑːn ðə bæk ʌv ðə ˈbɑːtl bɪˈfɔːr juː ˈoʊpən ɪt ʌp./",
+      "guide": "jɛs <span class='intonation'>⤴</span>—ðɪːz <b>kaɪnd-zəv</b> ˈkɛmɪklz kən bi ˈdeɪndʒərəs <span class='intonation'>⤵</span>. meɪk ʃʊər tə <b>lʊ-ˈkoʊvər</b> ðə ˈseɪfti ˌɪnfərˈmeɪʃn <b>ˈprɪntɪ-dɑːn</b> ðə <b>bæ-kəv</b> ðə ˈbɑːtl bɪˈfɔːr ju <b>ˈoʊ-pə-nɪ-tʌp</b> <span class='intonation'>⤵</span>",
+      "vi": "Có—những loại hóa chất này có thể nguy hiểm. Đảm bảo xem kỹ thông tin an toàn được in ở mặt sau của chai trước khi mở nó."
+    }
+  ],
+  "questions": [
+    {
+      "q": "47 What does the man want to do?",
+      "ipa": "/wʌt dʌz ðə mæn wɑːnt tuː duː?/",
+      "vi": "47 Người đàn ông muốn làm gì?",
+      "options": [
+        { "en": "Clear a drain", "ipa": "/klɪər ə dreɪn/", "vi": "Làm sạch cống thoát nước" },
+        { "en": "Remove a stain", "ipa": "/rɪˈmuːv ə steɪn/", "vi": "Loại bỏ vết bẩn" },
+        { "en": "Protect some flooring", "ipa": "/prəˈtɛkt sʌm ˈflɔːrɪŋ/", "vi": "Bảo vệ một vài sàn nhà" },
+        { "en": "Improve a room's odor", "ipa": "/ɪmˈpruːv ə ruːmz ˈoʊdər/", "vi": "Cải thiện mùi trong phòng" }
+      ]
+    },
+    {
+      "q": "48 Why does the woman recommend a product?",
+      "ipa": "/waɪ dʌz ðə ˈwʊmən ˌrɛkəˈmɛnd ə ˈprɑːdʌkt?/",
+      "vi": "48 Tại sao người phụ nữ đề xuất sản phẩm?",
+      "options": [
+        { "en": "It is environmentally friendly", "ipa": "/ɪt ɪz ɪnˌvaɪrənˈmɛntəli ˈfrɛndli/", "vi": "Nó thân thiện với môi trường" },
+        { "en": "It has a variety of uses", "ipa": "/ɪt hæz ə vəˈraɪəti ʌv ˈjuːsɪz/", "vi": "Nó có nhiều công dụng" },
+        { "en": "It is powerful", "ipa": "/ɪt ɪz ˈpaʊərfl/", "vi": "Nó thì mạnh" },
+        { "en": "It is inexpensive", "ipa": "/ɪt ɪz ˌɪnɪkˈspɛnsɪv/", "vi": "Nó thì rẻ" }
+      ]
+    },
+    {
+      "q": "49 What does the woman tell the man to do?",
+      "ipa": "/wʌt dʌz ðə ˈwʊmən tɛl ðə mæn tuː duː?/",
+      "vi": "49 Người phụ nữ nói người đàn ông làm gì?",
+      "options": [
+        { "en": "Leave some windows open", "ipa": "/liːv sʌm ˈwɪndoʊz ˈoʊpən/", "vi": "Để cửa sổ mở" },
+        { "en": "Watch some videos", "ipa": "/wɑːtʃ sʌm ˈvɪdioʊz/", "vi": "Xem một vài video" },
+        { "en": "Wear a pair of gloves", "ipa": "/wɛr ə pɛr ʌv ɡlʌvz/", "vi": "Đeo một đôi găng tay" },
+        { "en": "Read a product label", "ipa": "/riːd ə ˈprɑːdʌkt ˈleɪbl/", "vi": "Đọc nhãn sản phẩm" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Cống thoát nước (n)", "words": [{ "en": "Drain", "ipa": "/dreɪn/" }] },
+    { "vi": "Tắc / Nghẹt (adj)", "words": [{ "en": "Clogged", "ipa": "/klɑːɡd/" }] },
+    { "vi": "Chất thông cống (n)", "words": [{ "en": "Drain cleaner", "ipa": "/dreɪn ˈkliːnər/" }] },
+    { "vi": "Hóa chất (n)", "words": [{ "en": "Chemical", "ipa": "/ˈkɛmɪkl/" }] },
+    { "vi": "Xem kỹ (v)", "words": [{ "en": "Look over", "ipa": "/lʊk ˈoʊvər/" }] },
+    { "vi": "Rõ ràng (adj) ", "words": [{ "en": "Clear", "ipa": "/klɪər/" }] },
+    { "vi": "Vệ sinh (v)/Làm sạch (v)", "words": [{ "en": "Clear", "ipa": "/klɪər/" }] },
+    { "vi": "Vết bẩn (n)", "words": [{ "en": "Stain", "ipa": "/steɪn/" }] },
+    { "vi": "Vấy bẩn (v)", "words": [{ "en": "Stain", "ipa": "/steɪn/" }] },
+    { "vi": "Mùi (n)", "words": [{ "en": "Odor", "ipa": "/ˈoʊdər/" }, { "en": "Smell", "ipa": "/smɛl/" }] },
+    { 
+        "vi": "Nhiều (phrase)", 
+        "words": [
+            { "en": "A variety of", "ipa": "/ə vəˈraɪəti ʌv/" }, 
+            { "en": "An array of", "ipa": "/ən əˈreɪ ʌv/" },
+            { "en": "An assortment of", "ipa": "/ən əˈsɔːrtmənt ʌv/" },
+            { "en": "A wide range of", "ipa": "/ə waɪd reɪndʒ ʌv/" },
+            { "en": "A broad range of", "ipa": "/ə brɔːd reɪndʒ ʌv/" }
+        ] 
+    },
+    { "vi": "Mạnh (adj)", "words": [{ "en": "Powerful", "ipa": "/ˈpaʊərfl/" }, { "en": "Strong", "ipa": "/strɔːŋ/" }] },
+    { "vi": "Rẻ (adj)", "words": [{ "en": "Inexpensive", "ipa": "/ˌɪnɪkˈspɛnsɪv/" }, { "en": "Cheap", "ipa": "/tʃiːp/" }] },
+    { "vi": "Đắt (adj)", "words": [{ "en": "Expensive", "ipa": "/ɪkˈspɛnsɪv/" }, { "en": "Costly", "ipa": "/ˈkɔːstli/" }] },
+    { "vi": "Găng tay (n)", "words": [{ "en": "Gloves", "ipa": "/ɡlʌvz/" }] }
+  ]
+},{
+  "title": "Questions 50 - 52",
+  "audioUrl": "Test 02_Part 3_50-52.mp3",
+  "passage": [
+    {
+      "en": "Hi, Tanya and George. Welcome to the team here at Pritchard Airport.",
+      "ipa": "/haɪ, ˈtænjə ænd dʒɔːrdʒ. ˈwɛlkəm tuː ðə tiːm hɪər æt ˈprɪtʃərd ˈɛrpɔːrt./",
+      "guide": "haɪ <span class='intonation'>⤴</span>, ˈtænjə <b>ən-dʒɔːrdʒ</b> <span class='intonation'>⤵</span>. ˈwɛlkəm tə ðə tiːm hɪər <b>æt-ˈprɪtʃərd</b> ˈɛrpɔːrt <span class='intonation'>⤵</span>",
+      "vi": "Xin chào Tanya và George. Chào mừng đến với nhóm ở tại sân bay Pritchard."
+    },
+    {
+      "en": "We're so glad to have two more baggage handlers with our busy season coming soon.",
+      "ipa": "/wɪər soʊ ɡlæd tuː hæv tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ ˈaʊər ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn./",
+      "guide": "wɪər soʊ ɡlæd <b>tə-hæv</b> tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ <b>ˈaʊ-ər</b> ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn <span class='intonation'>⤵</span>",
+      "vi": "Chúng tôi rất vui có thêm hai nhân viên xử lý hành lý khi mùa cao điểm của chúng tôi đến gần."
+    },
+    {
+      "en": "OK, do you have any questions before I begin your orientation?",
+      "ipa": "/ˌoʊˈkeɪ, duː juː hæv ˈɛni ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jʊər ˌɔːriɛnˈteɪʃn?/",
+      "guide": "ˌoʊˈkeɪ <span class='intonation'>⤴</span>, də ju <b>hæ-və-ni</b> ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jər ˌɔːriɛnˈteɪʃn <span class='intonation'>⤵</span>?",
+      "vi": "Ok, hai bạn có bất kỳ câu hỏi gì trước khi tôi bắt đầu buổi hướng dẫn không?"
+    },
+    {
+      "en": "Yes, I do. Are there lockers where we can leave our belongings during our shifts?",
+      "ipa": "/jɛs, aɪ duː. ɑːr ðɛr ˈlɑːkərz wɛr wiː kæn liːv ˈaʊər bɪˈlɔːŋɪŋz ˈdjʊərɪŋ ˈaʊər ʃɪfts?/",
+      "guide": "jɛs, aɪ duː <span class='intonation'>⤵</span>. <b>ɑːr-ðər</b> ˈlɑːkərz wɛr wi kən <b>liː-və-waʊər</b> bɪˈlɔːŋɪŋz ˈdjʊərɪŋ <b>ˈaʊ-ər</b> ʃɪfts <span class='intonation'>⤴</span>?",
+      "vi": "Tôi có. Có tủ đựng đồ nơi mà chúng tôi có thể để đồ tư trang trong ca làm việc không?"
+    },
+    {
+      "en": "There are. You'll see them when we visit the staff breakroom later this morning.",
+      "ipa": "/ðɛr ɑːr. juːl siː ðɛm wɛn wiː ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər ðɪs ˈmɔːrnɪŋ./",
+      "guide": "<b>ðɛr-ɑːr</b> <span class='intonation'>⤵</span>. juːl siː ðəm wɛn wi ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
+      "vi": "Có. Bạn sẽ thấy chúng khi chúng ta đến phòng nghỉ của nhân viên vào cuối giờ sáng."
+    },
+    {
+      "en": "And we're supposed to wear a reflective vest and black pants, right? Where do we get those from?",
+      "ipa": "/ænd wɪər səˈpoʊzd tuː wɛr ə rɪˈflɛktɪv vɛst ænd blæk pænts, raɪt? wɛr duː wiː ɡɛt ðoʊz frʌm?/",
+      "guide": "ən wɪər <b>səˈpoʊz-tə-wɛr</b> ə rɪˈflɛktɪv vɛst ən blæk pænts <span class='intonation'>⤴</span>, raɪt? wɛr də wi <b>ɡɛ<span class='stop'>t</span>-ðoʊz</b> frəm <span class='intonation'>⤵</span>?",
+      "vi": "Chúng tôi cần phải mặc áo phản quang với quần tây đen phải không? Chúng tôi lấy nó ở đâu?"
+    },
+    {
+      "en": "We supply the vest, but you'll need to wear your own pants.",
+      "ipa": "/wiː səˈplaɪ ðə vɛst, bʌt juːl niːd tuː wɛr jʊər oʊn pænts./",
+      "guide": "wi səˈplaɪ ðə vɛst <span class='intonation'>⤴</span>, bʌt juːl <b>niːd-tə-wɛr</b> jər oʊn pænts <span class='intonation'>⤵</span>",
+      "vi": "Chúng tôi cung cấp áo phản quang nhưng bạn phải tự trang bị quần tây của riêng mình."
+    }
+  ],
+  "questions": [
+    {
+      "q": "50 Where is the conversation taking place?",
+      "ipa": "/wɛr ɪz ðə ˌkɑːnvərˈseɪʃn ˈteɪkɪŋ pleɪs?/",
+      "vi": "50 Đoạn hội thoại này diễn ra ở đâu?",
+      "options": [
+        { "en": "At an appliance store", "ipa": "/æt ən əˈplaɪəns stɔːr/", "vi": "Tại một cửa hàng thiết bị điện" },
+        { "en": "At a movie theater", "ipa": "/æt ə ˈmuːvi ˈθiːətər/", "vi": "Tại một rạp chiếu phim" },
+        { "en": "At an airport", "ipa": "/æt ən ˈɛrpɔːrt/", "vi": "Tại một sân bay" },
+        { "en": "At a school", "ipa": "/æt ə skuːl/", "vi": "Tại một trường học" }
+      ]
+    },
+    {
+      "q": "51 Where will the speakers go later in the morning?",
+      "ipa": "/wɛr wɪl ðə ˈspiːkərz ɡoʊ ˈleɪtər ɪn ðə ˈmɔːrnɪŋ?/",
+      "vi": "51 Những người nói này sẽ đi đâu vào buổi sáng?",
+      "options": [
+        { "en": "To a staff break area", "ipa": "/tuː ə stæf breɪk ˈɛriə/", "vi": "Tới một khu vực giải lao của nhân viên" },
+        { "en": "To a cafeteria", "ipa": "/tuː ə ˌkæfəˈtɪriə/", "vi": "Tới căn tin" },
+        { "en": "To a loading zone", "ipa": "/tuː ə ˈloʊdɪŋ zoʊn/", "vi": "Tới một khu vực khách hàng" },
+        { "en": "To a conference room", "ipa": "/tuː ə ˈkɑːnfərəns ruːm/", "vi": "Tới một phòng họp" }
+      ]
+    },
+    {
+      "q": "52 What does the man ask about?",
+      "ipa": "/wʌt dʌz ðə mæn æsk əˈbaʊt?/",
+      "vi": "52 Người đàn ông hỏi về cái gì?",
+      "options": [
+        { "en": "Who is part of a team", "ipa": "/huː ɪz pɑːrt ʌv ə tiːm/", "vi": "Ai là một phần của nhóm" },
+        { "en": "How long a certain shift is", "ipa": "/haʊ lɔːŋ ə ˈsɜːrtn ʃɪft ɪz/", "vi": "Một ca làm việc nhất định kéo dài bao lâu" },
+        { "en": "Where to submit a document", "ipa": "/wɛr tuː səbˈmɪt ə ˈdɑːkjumənt/", "vi": "Nộp tài liệu ở đâu" },
+        { "en": "How to obtain a uniform", "ipa": "/haʊ tuː əbˈteɪn ə ˈjuːnɪfɔːrm/", "vi": "Cách nào để lấy một cái đồng phục" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Đáng lẽ phải / Cần phải", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
+    { "vi": "Sẽ", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
+    { "vi": "Mùa cao điểm", "words": [{ "en": "Busy season", "ipa": "/ˈbɪzi ˈsiːzn/" }, { "en": "Peak season", "ipa": "/piːk ˈsiːzn/" }] },
+    { "vi": "Buổi định hướng nhân viên mới", "words": [{ "en": "Orientation", "ipa": "/ˌɔːriɛnˈteɪʃn/" }] },
+    { "vi": "Phòng nghỉ nhân viên", "words": [{ "en": "Staff breakroom", "ipa": "/stæf ˈbreɪkruːm/" }] },
+    { "vi": "Áo phản quang", "words": [{ "en": "Reflective vest", "ipa": "/rɪˈflɛktɪv vɛst/" }] },
+    { "vi": "Phản ánh / Phản chiếu", "words": [{ "en": "Reflect", "ipa": "/rɪˈflɛkt/" }] },
+    { "vi": "Tư trang", "words": [{ "en": "Belonging", "ipa": "/bɪˈlɔːŋɪŋ/" }] },
+    { "vi": "Căng tin", "words": [{ "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/" }] },
+    { "vi": "Khu vực bốc hàng", "words": [{ "en": "Loading zone", "ipa": "/ˈloʊdɪŋ zoʊn/" }] },
+    { "vi": "Phòng họp", "words": [{ "en": "Conference room", "ipa": "/ˈkɑːnfərəns ruːm/" }, { "en": "Meeting room", "ipa": "/ˈmiːtɪŋ ruːm/" }] },
+    { "vi": "Chắc chắn", "words": [{ "en": "Certain", "ipa": "/ˈsɜːrtn/" }, { "en": "Definite", "ipa": "/ˈdɛfɪnət/" }, { "en": "Absolute", "ipa": "/ˈæbsəluːt/" }] },
+    { "vi": "Nhất định", "words": [{ "en": "Certain", "ipa": "/ˈsɜːrtn/" }] },
+    { "vi": "Nộp", "words": [{ "en": "Submit", "ipa": "/səbˈmɪt/" }, { "en": "Turn in", "ipa": "/tɜːrn ɪn/" }, { "en": "File", "ipa": "/faɪl/" }] },
+    { "vi": "Đạt được / Lấy được", "words": [
+      { "en": "Obtain", "ipa": "/əbˈtɛɪn/" }, 
+      { "en": "Gain", "ipa": "/ɡeɪn/" }, 
+      { "en": "Acquire", "ipa": "/əˈkwaɪər/" }, 
+      { "en": "Achieve", "ipa": "/əˈtʃiːv/" }, 
+      { "en": "Attain", "ipa": "/əˈteɪn/" }, 
+      { "en": "Secure", "ipa": "/sɪˈkjʊər/" }, 
+      { "en": "Reach", "ipa": "/riːtʃ/" }, 
+      { "en": "Get", "ipa": "/ɡɛt/" }, 
+      { "en": "Accomplish", "ipa": "/əˈkɑːmplɪʃ/" }
+    ]}
+  ]
+},{
+  "title": "Questions 53 - 55",
+  "audioUrl": "Test 02_Part 3_53-55.mp3",
+ "passage": [
+    {
+      "en": "Hi, Lori. Did Dean let you know that I'll be giving the interview that Tech News Weekly asked for?",
+      "ipa": "/haɪ, ˈlɔːri. dɪd diːn lɛt juː noʊ ðæt aɪl biː ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli æskt fɔːr?/",
+      "guide": "haɪ, ˈlɔːri <span class='intonation'>⤴</span>. dɪd diːn <b>lɛ-tʃu-noʊ</b> ðæt aɪl bi ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli <b>æs-kt-fɔːr</b> <span class='intonation'>⤵</span>",
+      "vi": "Xin chào Lori. Dean có cho bạn biết là tôi sẽ trả lời phỏng vấn mà Tech News Weekly yêu cầu không?"
+    },
+    {
+      "en": "He's quite busy this week, and I also know a lot about the products the interviewer wants to discuss.",
+      "ipa": "/hiːz kwaɪt ˈbɪzi ðɪs wiːk, ænd aɪ ˈɔːlsoʊ noʊ ə lɑːt əˈbaʊt ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər wɑːnts tuː dɪˈskʌs./",
+      "guide": "hiːz kwaɪt ˈbɪzi ðɪs wiːk <span class='intonation'>⤴</span>, <b>ən-naɪ</b> ˈɔːlsoʊ <b>noʊ-ə-lɑː-təˈbaʊt</b> ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər <b>wɑːn-tsə</b> dɪˈskʌs <span class='intonation'>⤵</span>",
+      "vi": "Anh ấy khá bận vào tuần này, và tôi cũng biết nhiều về những sản phẩm người phỏng vấn muốn thảo luận."
+    },
+    {
+      "en": "Really? Last time we spoke, he said that he would come here to the public relations department so we could prepare him for it. That was this morning.",
+      "ipa": "/ˈrɪəli? læst taɪm wiː spoʊk, hiː sɛd ðæt hiː wʊd kʌm hɪər tuː ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wiː kʊd prɪˈpɛr hɪm fɔːr ɪt. ðæt wʌz ðɪs ˈmɔːrnɪŋ./",
+      "guide": "ˈrɪəli <span class='intonation'>⤴</span>? <b>læs-taɪm</b> wi spoʊk <span class='intonation'>⤴</span>, hi sɛd ðæt hi wəd kʌm hɪər tə ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wi kəd <b>prɪˈpɛr-ɪm</b> fər ɪt <span class='intonation'>⤵</span>. ðæt wəz <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
+      "vi": "Thật sao? Lần cuối chúng tôi nói chuyện, anh ấy đã nói rằng anh ấy sẽ đến bộ phận quan hệ công chúng để chúng ta có thể chuẩn bị cho anh ấy cho buổi phỏng vấn này. Đó là vào sáng nay."
+    },
+    {
+      "en": "Well, I spoke with him after lunch. You can call him to confirm if you'd like.",
+      "ipa": "/wɛl, aɪ spoʊk wɪθ hɪm ˈæftər lʌntʃ. juː kæn kɔːl hɪm tuː kənˈfɜːrm ɪf juːd laɪk./",
+      "guide": "wɛl <span class='intonation'>⤴</span>, aɪ <b>spoʊ-kwɪ-ðɪm</b> ˈæftər lʌntʃ <span class='intonation'>⤵</span>. ju kən <b>kɔː-lɪm</b> tə kənˈfɜːrm <b>ɪ-fjud-laɪk</b> <span class='intonation'>⤵</span>",
+      "vi": "Tốt, tôi đã nói chuyện với anh ấy sau bữa ăn trưa. Bạn có thể gọi anh ấy để xác nhận nếu bạn muốn."
+    }
+  ],
+  "questions": [
+    {
+      "q": "53 What is the conversation about?",
+      "ipa": "/wʌt ɪz ðə ˌkɑːnvərˈseɪʃn əˈbaʊt?/",
+      "vi": "53 Đoạn hội thoại về cái gì?",
+      "options": [
+        { "en": "A company policy", "ipa": "/ə ˈkʌmpəni ˈpɑːləsi/", "vi": "Chính sách công ty" },
+        { "en": "A production delay", "ipa": "/ə prəˈdʌkʃn dɪˈleɪ/", "vi": "Sự trì hoãn sản xuất" },
+        { "en": "A damaged machine", "ipa": "/ə ˈdæmɪdʒd məˈʃiːn/", "vi": "Một cái máy bị phá hủy" },
+        { "en": "An upcoming interview", "ipa": "/ən ˈʌpˌkʌmɪŋ ˈɪntərvjuː/", "vi": "Một cuộc phỏng vấn sắp tới" }
+      ]
+    },
+    {
+      "q": "54 What department does the woman most likely work for?",
+      "ipa": "/wʌt dɪˈpɑːrtmənt dʌz ðə ˈwʊmən moʊst ˈlaɪkli wɜːrk fɔːr?/",
+      "vi": "54 Người phụ nữ làm cho bộ phận gì?",
+      "options": [
+        { "en": "Security", "ipa": "/sɪˈkjʊərəti/", "vi": "Phòng an ninh" },
+        { "en": "Accounting", "ipa": "/əˈkaʊntɪŋ/", "vi": "Phòng kế toán" },
+        { "en": "Public Relations", "ipa": "/ˈpʌblɪk rɪˈleɪʃnz/", "vi": "Phòng quan hệ công chúng" },
+        { "en": "Human Resources", "ipa": "/ˈhjuːmən rɪˈsɔːrsɪz/", "vi": "Phòng nhân sự" }
+      ]
+    },
+    {
+      "q": "55 What does the man imply when he says, 'I spoke with him after lunch'?",
+      "ipa": "/wʌt dʌz ðə mæn ɪmˈplaɪ wɛn hiː sɛz, aɪ spoʊk wɪθ hɪm ˈæftər lʌntʃ?/",
+      "vi": "55 Người đàn ông ngụ ý gì khi anh ấy nói “tôi đã nói chuyện với anh ấy sau giờ ăn trưa”?",
+      "options": [
+        { "en": "He missed a group outing", "ipa": "/hiː mɪst ə ɡruːp ˈaʊtɪŋ/", "vi": "Anh ấy đã bỏ lỡ chuyến đi chơi của cả nhóm" },
+        { "en": "He already received some instructions", "ipa": "/hiː ɔːlˈrɛdi rɪˈsiːvd sʌm ɪnˈstrʌkʃnz/", "vi": "Anh ấy đã nhận được một vài hướng dẫn" },
+        { "en": "A plan changed a short time ago", "ipa": "/ə plæn tʃeɪndʒd ə ʃɔːrt taɪm əˈɡoʊ/", "vi": "Một kế hoạch đã thay đổi một thời gian ngắn trước đây" },
+        { "en": "A task has been completed", "ipa": "/ə tæsk hæz biːn kəmˈpliːtɪd/", "vi": "Một nhiệm vụ đã được hoàn thành" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Trả lời phỏng vấn (v)", "words": [{ "en": "Give the interview", "ipa": "/ɡɪv ðɪ ˈɪntərvjuː/" }] },
+    { 
+      "vi": "Khá / Tương đối (adv)", 
+      "words": [
+        { "en": "Quite", "ipa": "/kwaɪt/" }, 
+        { "en": "Fairly", "ipa": "/ˈfɛrli/" }, 
+        { "en": "Pretty", "ipa": "/ˈprɪti/" },
+        { "en": "Rather", "ipa": "/ˈræðər/" },
+        { "en": "Relatively", "ipa": "/ˈrɛlətɪvli/" },
+        { "en": "Comparatively", "ipa": "/kəmˈpærətɪvli/" }
+      ] 
+    },
+    { "vi": "Quan hệ công chúng (n)", "words": [{ "en": "Public Relation", "ipa": "/ˈpʌblɪk rɪˈleɪʃn/" }] },
+    { "vi": "Một chuyến đi chơi (n)", "words": [{ "en": "A group outing", "ipa": "/ə ɡruːp ˈaʊtɪŋ/" }] },
+    { 
+      "vi": "Hướng dẫn (n)", 
+      "words": [
+        { "en": "Instruction", "ipa": "/ɪnˈstrʌkʃn/" }, 
+        { "en": "Guideline", "ipa": "/ˈɡaɪdlaɪn/" }, 
+        { "en": "Direction", "ipa": "/dəˈrɛkʃn/" }
+      ] 
+    }
+  ]
+},
+{
+  "title": "Questions 56 - 58",
+  "audioUrl": "Test 02_Part 3_56-58.mp3",
+  "passage": [
+    {
+      "en": "Scott, what do you think of the company's new internal Web site? To me, it seems to have a lot of helpful features.",
+      "ipa": "/skɑːt, wʌt duː juː θɪŋk ʌv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt? tuː miː, ɪt siːmz tuː hæv ə lɑːt ʌv ˈhɛlpfl ˈfiːtʃərz./",
+      "guide": "skɑːt <span class='intonation'>⤴</span>, <b>wʌt-də-ju</b> θɪŋ-kəv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt <span class='intonation'>⤵</span>? tuː miː <span class='intonation'>⤴</span>, ɪt siːmz tə <b>hæ-və-lɑː-təv</b> ˈhɛlpfl ˈfiːtʃərz <span class='intonation'>⤵</span>",
+      "vi": "Scott, bạn nghĩ gì về trang web nội bộ mới của công ty? Với tôi, dường như nó có nhiều tính năng hữu ích."
+    },
+    {
+      "en": "Yes, I like it. I was especially happy to see that we can share documents through it.",
+      "ipa": "/jɛs, aɪ laɪk ɪt. aɪ wʌz ɪˈspɛʃəli ˈhæpi tuː siː ðæt wiː kæn ʃɛr ˈdɑːkjumənts θruː ɪt./",
+      "guide": "jɛs <span class='intonation'>⤵</span>, aɪ <b>laɪ-kɪt</b>. aɪ wəz ɪˈspɛʃəli ˈhæpi tə siː ðæt wi kən ʃɛr ˈdɑːkjumənts <b>θruː-wɪt</b> <span class='intonation'>⤵</span>",
+      "vi": "Vâng, tôi thích nó. Tôi đặc biệt vui mừng khi thấy rằng chúng ta có thể chia sẻ tài liệu thông qua nó."
+    },
+    {
+      "en": "That should make it easier for teams to collaborate.",
+      "ipa": "/ðæt ʃʊd meɪk ɪt ˈiːziər fɔːr tiːmz tuː kəˈlæbəreɪt./",
+      "guide": "ðæt ʃəd <b>meɪ-kɪt</b> ˈiːziər fər tiːmz tə kəˈlæbəreɪt <span class='intonation'>⤵</span>",
+      "vi": "Điều đó giúp cho các nhóm cộng tác dễ dàng hơn."
+    },
+    {
+      "en": "I agree. And the companywide forum page is going to improve collaboration, too. I wonder how they thought of including that in the Web site.",
+      "ipa": "/aɪ əˈɡriː. ænd ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tuː ɪmˈpruːv kəˌlæbəˈreɪʃn, tuː. aɪ ˈwʌndər haʊ ðeɪ θɔːt ʌv ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt./",
+      "guide": "aɪ əˈɡriː <span class='intonation'>⤵</span>. ən ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tə ɪmˈpruːv kəˌlæbəˈreɪʃn <span class='intonation'>⤵</span>, tuː. aɪ ˈwʌndər haʊ ðeɪ <b>θɔː-təv</b> ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt <span class='intonation'>⤵</span>",
+      "vi": "Tôi đồng ý. Và trang diễn đàn toàn công ty sẽ cải thiện khả năng hợp tác nữa. Tôi tự hỏi cách họ nghĩ ra việc đưa điều đó vào trang Web công ty."
+    },
+    {
+      "en": "Well, Alexis might know, since she works for the IT department.",
+      "ipa": "/wɛl, əˈlɛksɪs maɪt noʊ, sɪns ʃiː wɜːrks fɔːr ðɪ aɪ-tiː dɪˈpɑːrtmənt./",
+      "guide": "wɛl <span class='intonation'>⤴</span>, əˈlɛksɪs maɪt noʊ <span class='intonation'>⤵</span>, sɪns ʃi <b>wɜːrk-sfər</b> ðɪ aɪ-tiː dɪˈpɑːrtmənt <span class='intonation'>⤵</span>",
+      "vi": "Ờ, Alexis có thể biết, bởi vì cô ấy làm việc cho phòng IT."
+    },
+    {
+      "en": "Hey, Alexis? Scott and I are curious—where did the inspiration for the new Web site's forum page come from?",
+      "ipa": "/heɪ, əˈlɛksɪs? skɑːt ænd aɪ ɑːr ˈkjʊriəs—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fɔːr ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ kʌm frʌm?/",
+      "guide": "heɪ, əˈlɛksɪs <span class='intonation'>⤴</span>? skɑːt <b>ən-naɪ</b> ɑːr ˈkjʊriəs <span class='intonation'>⤵</span>—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fər ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ <b>kʌm-frʌm</b> <span class='intonation'>⤵</span>?",
+      "vi": "Hey, Alexis? Scott và tôi thật tò mò nguồn cảm hứng cho trang diễn đàn của trang Web mới đến từ đâu vậy?"
+    },
+    {
+      "en": "I think it was proposed by Courtney Gray in Human Resources. She had a lot of good suggestions, actually.",
+      "ipa": "/aɪ θɪŋk ɪt wʌz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz. ʃiː hæd ə lɑːt ʌv ɡʊd səˈdʒɛstʃənz, ˈæktʃuəli./",
+      "guide": "aɪ <b>θɪŋ-kɪt</b> wəz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz <span class='intonation'>⤵</span>. ʃi <b>hæ-də-lɑː-təv</b> ɡʊd səˈdʒɛstʃənz <span class='intonation'>⤴</span>, ˈæktʃuəli <span class='intonation'>⤵</span>",
+      "vi": "Tôi nghĩ nó đã được đề xuất bởi Courtney Gray ở bộ phận nhân sự. Cô ấy đã có nhiều đề xuất tốt thật vậy."
+    }
+  ],
+  "questions": [
+    {
+      "q": "56 What did the speakers' company recently do?",
+      "ipa": "/wʌt dɪd ðə ˈspiːkərz ˈkʌmpəni ˈriːsəntli duː?/",
+      "vi": "56 Công ty của những người nói gần đây làm gì?",
+      "options": [
+        { "en": "It launched a Web site", "ipa": "/ɪt lɔːntʃt ə wɛb saɪt/", "vi": "Nó đã ra mắt một trang Web" },
+        { "en": "It renovated its office", "ipa": "/ɪt ˈrɛnəveɪtɪd ɪts ˈɑːfɪs/", "vi": "Nó đã nâng cấp văn phòng" },
+        { "en": "It hired a spokesperson", "ipa": "/ɪt ˈhaɪərd ə ˈspoʊkspɜːrsn/", "vi": "Nó đã thuê một người phát ngôn" },
+        { "en": "It introduced a new policy", "ipa": "/ɪt ˌɪntrəˈduːst ə nuː ˈpɑːləsi/", "vi": "Nó đã giới thiệu một chính sách mới" }
+      ]
+    },
+    {
+      "q": "57 What do the men say is a benefit of the change?",
+      "ipa": "/wʌt duː ðə mɛn seɪ ɪz ə ˈbɛnɪfɪt ʌv ðə tʃeɪndʒ?/",
+      "vi": "57 Những người đàn ông nói gì về lợi ích của sự thay đổi?",
+      "options": [
+        { "en": "It will attract new customers", "ipa": "/ɪt wɪl əˈtrækt nuː ˈkʌstəmərz/", "vi": "Nó sẽ thu hút những khách hàng mới" },
+        { "en": "It will lower maintenance costs", "ipa": "/ɪt wɪl ˈloʊər ˈmeɪntənəns kɔːsts/", "vi": "Nó sẽ giảm chi phí bảo trì" },
+        { "en": "It will improve staff collaboration", "ipa": "/ɪt wɪl ɪmˈpruːv stæf kəˌlæbəˈreɪʃn/", "vi": "Nó sẽ cải thiện khả năng cộng tác của nhân viên" },
+        { "en": "It will make some travel unnecessary", "ipa": "/ɪt wɪl meɪk sʌm ˈtrævl ʌnˈnɛsəsəri/", "vi": "Nó sẽ làm cho một vài việc di chuyển trở nên không cần thiết" }
+      ]
+    },
+    {
+      "q": "58 What do the men ask the woman about?",
+      "ipa": "/wʌt duː ðə mɛn æsk ðə ˈwʊmən əˈbaʊt?/",
+      "vi": "58 Những người đàn ông hỏi người phụ nữ về cái gì?",
+      "options": [
+        { "en": "The reaction to an announcement", "ipa": "/ðə riˈækʃn tuː ən əˈnaʊnsmənt/", "vi": "Phản ứng đối với một thông báo" },
+        { "en": "The quality of a service", "ipa": "/ðə ˈkwɑːləti ʌv ə ˈsɜːrvɪs/", "vi": "Chất lượng của một dịch vụ" },
+        { "en": "The origin of an idea", "ipa": "/ðɪ ˈɔːrɪdʒɪn ʌv ən aɪˈdiə/", "vi": "Nguồn gốc của một ý tưởng" },
+        { "en": "The status of a project", "ipa": "/ðə ˈsteɪtəs ʌv ə ˈprɑːdʒɛkt/", "vi": "Tình trạng của một dự án" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Toàn công ty", "words": [{ "en": "Companywide", "ipa": "/ˈkʌmpəniˌwaɪd/" }] },
+    { "vi": "Tính năng", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Function", "ipa": "/ˈfʌŋkʃn/" }] },
+    { "vi": "Trang diễn đàn", "words": [{ "en": "Forum page", "ipa": "/ˈfɔːrəm peɪdʒ/" }] },
+    { "vi": "Tò mò", "words": [{ "en": "Curious", "ipa": "/ˈkjʊriəs/" }] },
+    { "vi": "Cảm hứng", "words": [{ "en": "Inspiration", "ipa": "/ˌɪnspəˈreɪʃn/" }] },
+    { "vi": "Phát hành / Ra mắt", "words": [
+      { "en": "Launch", "ipa": "/lɔːntʃ/" }, 
+      { "en": "Release", "ipa": "/rɪˈliːs/" }, 
+      { "en": "Roll out", "ipa": "/roʊl aʊt/" },
+      { "en": "Introduce", "ipa": "/ˌɪntəˈduːs/" }
+    ]},
+    { "vi": "Nâng cấp / Tu sửa", "words": [
+      { "en": "Renovate", "ipa": "/ˈrɛnəveɪt/" }, 
+      { "en": "Improve", "ipa": "/ɪmˈpruːv/" }, 
+      { "en": "Upgrade", "ipa": "/ˈʌpɡreɪd/" },
+      { "en": "Remodel", "ipa": "/ˌriːˈmɑːdl/" }
+    ]},
+    { "vi": "Thuê / Tuyển", "words": [{ "en": "Hire", "ipa": "/ˈhaɪər/" }] },
+    { "vi": "Người phát ngôn", "words": [{ "en": "Spokesperson", "ipa": "/ˈspoʊkspɜːrsn/" }] },
+    { "vi": "Giảm", "words": [{ "en": "Lower", "ipa": "/ˈloʊər/" }, { "en": "Reduce", "ipa": "/rɪˈduːs/" }, { "en": "Decrease", "ipa": "/dɪˈkriːs/" }] },
+    { "vi": "Bảo trì", "words": [{ "en": "Maintenance", "ipa": "/ˈmeɪntənəns/" }, { "en": "Service", "ipa": "/ˈsɜːrvɪs/" }] },
+    { "vi": "Sự hợp tác", "words": [{ "en": "Collaboration", "ipa": "/kəˌlæbəˈreɪʃn/" }] },
+    { "vi": "Hợp tác", "words": [{ "en": "Collaborate", "ipa": "/kəˈlæbəreɪt/" }, { "en": "Cooperate", "ipa": "/koʊˈɑːpəreɪt/" }, { "en": "Partner", "ipa": "/ˈpɑːrtnər/" }] },
+    { "vi": "Nguồn gốc", "words": [{ "en": "Origin", "ipa": "/ˈɔːrɪdʒɪn/" }] }
+  ]
+},{
+  "title": "Questions 59 - 61",
+  "audioUrl": "Test 02_Part 3_59-61.mp3",
+  "passage": [
+    {
+      "en": "Louis, I heard that you're going to be posting about our work on social media.",
+      "ipa": "/ˈluːɪs, aɪ hɜːrd ðæt jʊər ˈɡoʊɪŋ tuː biː ˈpoʊstɪŋ əˈbaʊt ˈaʊər wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə./",
+      "guide": "ˈluːɪs <span class='intonation'>⤴</span>, aɪ hɜːrd ðæt jər ˈɡoʊ-ɪn-tə bi ˈpoʊstɪŋ <b>əˈbaʊ-ˈtaʊ-ər</b> wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
+      "vi": "Louis, tôi nghe nói rằng bạn sẽ đăng về công việc của chúng ta trên mạng xã hội."
+    },
+    {
+      "en": "I think that's smart. A lot of people don't know about the services that a tailor shop like this provides.",
+      "ipa": "/aɪ θɪŋk ðæts smɑːrt. ə lɑːt ʌv ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz./",
+      "guide": "aɪ θɪŋk <b>ðæts-smɑːrt</b> <span class='intonation'>⤵</span>. ə <b>lɑː-təv</b> ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz <span class='intonation'>⤵</span>",
+      "vi": "Tôi nghĩ điều này thông minh. Nhiều người không biết về những dịch vụ mà một tiệm may giống vậy cung cấp."
+    },
+    {
+      "en": "Right! Ms. Lam made the decision when she found out that I'm active on social media.",
+      "ipa": "/raɪt! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃiː faʊnd aʊt ðæt aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə./",
+      "guide": "raɪ<b><span class='stop'>t</span></b> <span class='intonation'>⤵</span>! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃi <b>faʊn-daʊ-ðæt</b> aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
+      "vi": "Đúng vậy! Cô Lam đã ra quyết định khi cô ấy phát hiện ra rằng tôi hoạt động tích cực trên mạng xã hội."
+    },
+    {
+      "en": "She'd been wanting to increase the shop's Internet presence. So now one of my duties will be managing our accounts on social media sites.",
+      "ipa": "/ʃiːd biːn ˈwɑːntɪŋ tuː ɪnˈkriːs ðə ʃɑːps ˈɪntərnɛt ˈprɛzns. soʊ naʊ wʌn ʌv maɪ ˈduːtiz wɪl biː ˈmænɪdʒɪŋ ˈaʊər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts./",
+      "guide": "ʃiːd biːn ˈwɑːntɪŋ tə ɪnˈkriːs ðə ʃɑːp<b>s‿ˈɪn-tər-nɛ<span class='stop'>t</span></b> ˈprɛzns <span class='intonation'>⤵</span>. soʊ naʊ <b>wʌ-nəv-maɪ</b> ˈduːtiz wɪl bi ˈmænɪdʒɪŋ ˈaʊ-ər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts <span class='intonation'>⤵</span>",
+      "vi": "Cô ấy đã muốn gia tăng sự hiện diện trên mạng của cửa hàng. Vì vậy bây giờ một trong những nhiệm vụ của tôi là quản lý tài khoản trên mạng xã hội."
+    },
+    {
+      "en": "That's great. What kinds of content are you going to post?",
+      "ipa": "/ðæts ɡreɪt. wʌt kaɪndz ʌv ˈkɑːntɛnt ɑːr juː ˈɡoʊɪŋ tuː poʊst?/",
+      "guide": "ðæts ɡreɪt <span class='intonation'>⤵</span>. wʌt <b>kaɪnd-zəv</b> ˈkɑːntɛnt <b>ɑːr-ju</b> ˈɡoʊ-ɪn-tə poʊst <span class='intonation'>⤴</span>?",
+      "vi": "Tuyệt vời. Bạn sẽ đăng loại nội dung nào?"
+    },
+    {
+      "en": "Well, I definitely want to show pictures of clothes before and after tailoring. But I'm not sure what else yet. If you have any ideas, please let me know!",
+      "ipa": "/wɛl, aɪ ˈdɛfɪnətli wɑːnt tuː ʃoʊ ˈpɪktʃərz ʌv kloʊðz bɪˈfɔːr ænd ˈæftər ˈteɪlərɪŋ. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt. ɪf juː hæv ˈɛni aɪˈdiəz, pliːz lɛt miː noʊ!/",
+      "guide": "wɛl <span class='intonation'>⤴</span>, aɪ ˈdɛfɪnətli <b>wɑːn-tə</b> ʃoʊ ˈpɪktʃər-<b>zəv-kloʊðz</b> bɪˈfɔː-rən ˈæftər ˈteɪlərɪŋ <span class='intonation'>⤵</span>. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt <span class='intonation'>⤵</span>. ɪf ju <b>hæ-və-ni</b> aɪˈdiəz <span class='intonation'>⤴</span>, pliːz <b>lɛt-mi-noʊ</b> <span class='intonation'>⤵</span>!",
+      "vi": "Ờ, tôi chắc chắn muốn đăng hình của quần áo trước và sau khi may. Nhưng tôi không chắc còn gì nữa không. Nếu có bất kỳ đề xuất gì, vui lòng cho tôi biết!"
+    }
+  ],
+  "questions": [
+    {
+      "q": "59 Where do the speakers work?",
+      "ipa": "/wɛr duː ðə ˈspiːkərz wɜːrk?/",
+      "vi": "59 Những người nói làm việc ở đâu?",
+      "options": [
+        { "en": "At a fashion magazine", "ipa": "/æt ə ˈfæʃn ˈmæɡəziːn/", "vi": "Ở tạp chí thời trang" },
+        { "en": "At a restaurant", "ipa": "/æt ə ˈrɛstrɑːnt/", "vi": "Ở một nhà hàng" },
+        { "en": "At a Web development firm", "ipa": "/æt ə wɛb dɪˈvɛləpmənt fɜːrm/", "vi": "Ở một công ty phát triển Web" },
+        { "en": "At a tailor shop", "ipa": "/æt ə ˈteɪlər ʃɑːp/", "vi": "Ở một tiệm may" }
+      ]
+    },
+    {
+      "q": "60 What has the man been assigned to do?",
+      "ipa": "/wʌt hæz ðə mæn biːn əˈsaɪnd tuː duː?/",
+      "vi": "60 Người đàn ông được phân công làm gì?",
+      "options": [
+        { "en": "Mentor some colleagues", "ipa": "/ˈmɛntɔːr sʌm ˈkɑːliːɡz/", "vi": "Cố vấn một vài đồng nghiệp" },
+        { "en": "Oversee social media accounts", "ipa": "/ˌoʊvərˈsiː ˈsoʊʃl ˈmiːdiə əˈkaʊnts/", "vi": "Giám sát các tài khoản mạng xã hội" },
+        { "en": "Organize a storage space", "ipa": "/ˈɔːrɡənaɪz ə ˈstɔːrɪdʒ speɪs/", "vi": "Sắp xếp một không gian lưu trữ" },
+        { "en": "Research a competitor", "ipa": "/rɪˈsɜːrtʃ ə kəmˈpɛtɪtər/", "vi": "Nghiên cứu một đối thủ cạnh tranh" }
+      ]
+    },
+    {
+      "q": "61 What does the man ask the woman to do?",
+      "ipa": "/wʌt dʌz ðə mæn æsk ðə ˈwʊmən tuː duː?/",
+      "vi": "61 Người đàn ông yêu cầu người phụ nữ làm gì?",
+      "options": [
+        { "en": "Review a presentation", "ipa": "/rɪˈvjuː ə ˌprɛznˈteɪʃn/", "vi": "Đánh giá một bài thuyết trình" },
+        { "en": "Make some suggestions", "ipa": "/meɪk sʌm səˈdʒɛstʃənz/", "vi": "Thực hiện một vài đề xuất" },
+        { "en": "Take some pictures", "ipa": "/teɪ sʌm ˈpɪktʃərz/", "vi": "Chụp một vài bức hình" },
+        { "en": "Pick up some food", "ipa": "/pɪk ʌp sʌm fuːd/", "vi": "Lấy một vài thức ăn" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Chắc chắn (adv)", "words": [{ "en": "Definitely", "ipa": "/ˈdɛfɪnətli/" }, { "en": "Absolutely", "ipa": "/ˈæbsəluːtli/" }, { "en": "Certainly", "ipa": "/ˈsɜːrtənli/" }] },
+    { "vi": "Tiệm may (n)", "words": [{ "en": "Tailor shop", "ipa": "/ˈteɪlər ʃɑːp/" }] },
+    { "vi": "Tư vấn / Cố vấn (v)", "words": [{ "en": "Mentor", "ipa": "/ˈmɛntɔːr/" }, { "en": "Advise", "ipa": "/ədˈvaɪz/" }] },
+    { "vi": "Người tư vấn (n)", "words": [{ "en": "Mentor", "ipa": "/ˈmɛntɔːr/" }, { "en": "Advisor", "ipa": "/ədˈvaɪzər/" }, { "en": "Counselor", "ipa": "/ˈkaʊnsələr/" }, { "en": "Consultant", "ipa": "/kənˈsʌltənt/" }] },
+    { "vi": "Giám sát (v)", "words": [{ "en": "Oversee", "ipa": "/ˌoʊvərˈsiː/" }, { "en": "Supervise", "ipa": "/ˈsuːpərvaɪz/" }, { "en": "Monitor", "ipa": "/ˈmɑːnɪtər/" }] },
+    { "vi": "Bài đánh giá (n)", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }, { "en": "Testimonial", "ipa": "/ˌtɛstɪˈmoʊniəl/" }, { "en": "Evaluation", "ipa": "/ɪˌvæljuˈeɪʃn/" }] },
+    { "vi": "Đánh giá (v)", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }, { "en": "Assess", "ipa": "/əˈsɛs/" }, { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/" }] },
+    { "vi": "Không gian lưu trữ (n)", "words": [{ "en": "Storage space", "ipa": "/ˈstɔːrɪdʒ speɪs/" }] },
+    { "vi": "Phân công (v)", "words": [{ "en": "Assign", "ipa": "/əˈsaɪn/" }, { "en": "Delegate", "ipa": "/ˈdɛlɪɡeɪt/" }] },
+    { "vi": "Chỉ định (v)", "words": [{ "en": "Assign", "ipa": "/əˈsaɪn/" }, { "en": "Designate", "ipa": "/ˈdɛzɪɡneɪt/" }] }
+  ]
+},{
+  "title": "Questions 62 - 64",
+  "audioUrl": "Test 02_Part 3_62-64.mp3",
+  "passage": [
+    {
+      "en": "Welcome to the Beldwin Ferry East Terminal. Would you like to purchase a ticket?",
+      "ipa": "/ˈwɛlkəm tuː ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl. wʊd juː laɪk tuː ˈpɜːrtʃəs ə ˈtɪkɪt?/",
+      "guide": "ˈwɛlkəm tə ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl <span class='intonation'>⤵</span>. wəd ju <b>laɪ-k-tə</b> ˈpɜːrtʃə-sə ˈtɪkɪt <span class='intonation'>⤴</span>?",
+      "vi": "Chào mừng đến với Beldwin Ferry East Terminal. Bạn có muốn mua một vé không?"
+    },
+    {
+      "en": "Yes, for the next ferry. I'm a photographer, and I'm planning to spend the day taking pictures of the plant life on Beldwin Island. I've heard it's beautiful.",
+      "ipa": "/jɛs, fɔːr ðə nɛkst ˈfɛri. aɪm ə fəˈtɑːɡrəfər, ænd aɪm ˈplænɪŋ tuː spɛnd ðə deɪ ˈteɪkɪŋ ˈpɪktʃərz ʌv ðə plænt laɪf ɑːn ˈbɛldwɪn ˈaɪlənd. aɪv hɜːrd ɪts ˈbjuːtɪfl./",
+      "guide": "jɛs <span class='intonation'>⤵</span>, fər ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri. aɪ-mə fəˈtɑːɡrəfər <span class='intonation'>⤴</span>, <b>ən-naɪm</b> ˈplænɪŋ tə spɛnd ðə deɪ ˈteɪkɪŋ <b>ˈpɪktʃər-zəv</b> ðə <b>plæn-tlaɪf</b> ɑːn ˈbɛldwɪn ˈaɪlənd <span class='intonation'>⤵</span>. aɪv hɜːr-<b>dɪts</b> ˈbjuːtɪfl <span class='intonation'>⤵</span>",
+      "vi": "Có, cho chuyến phà tiếp theo. Tôi là một nhiếp ảnh gia, và tôi dự định dành một ngày chụp hình cho hệ thực vật ở đảo Beldwin. Tôi đã nghe nói về vẻ đẹp của nó."
+    },
+    {
+      "en": "Yes, very! Four dollars, please.",
+      "ipa": "/jɛs, ˈvɛri! fɔːr ˈdɑːlərz, pliːz./",
+      "guide": "jɛs, ˈvɛri <span class='intonation'>⤴</span>! fɔːr ˈdɑːlərz, pliːz <span class='intonation'>⤵</span>",
+      "vi": "Vâng, rất đẹp! Làm ơn 4 đô."
+    },
+    {
+      "en": "Oh, I thought the fare was higher than that... Ah, I see.",
+      "ipa": "/oʊ, aɪ θɔːt ðə fɛr wʌz ˈhaɪər ðæn ðæt... ɑː, aɪ siː./",
+      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ θɔːt ðə <b>fɛr-wəz</b> ˈhaɪər ðən ðæt... ɑː <span class='intonation'>⤴</span>, aɪ siː <span class='intonation'>⤵</span>",
+      "vi": "Ổ, tôi đã nghĩ giá vé đã cao hơn như vậy... À tôi hiểu rồi."
+    },
+    {
+      "en": "Yes. Here's your ticket. As you can see, the next ferry departs in about half an hour.",
+      "ipa": "/jɛs. hɪərz jʊər ˈtɪkɪt. æz juː kæn siː, ðə nɛkst ˈfɛri dɪˈpɑːrts ɪn əˈbaʊt hæf ən ˈaʊər./",
+      "guide": "jɛs <span class='intonation'>⤵</span>. hɪərz jər ˈtɪkɪt. <b>æ-zju-kən-siː</b> <span class='intonation'>⤴</span>, ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri dɪˈpɑːrts ɪ-nəˈbaʊt <b>hæ-fə-ˈnaʊ-ər</b> <span class='intonation'>⤵</span>",
+      "vi": "Vâng. Đây là vé của bạn. Như bạn có thể thấy, chuyến phà tiếp theo khởi hành trong nửa giờ."
+    },
+    {
+      "en": "Hmm... In that case, is there a restaurant or cafeteria around here? I'd like to grab a bite to eat before getting on the ferry.",
+      "ipa": "/hm̩... ɪn ðæt keɪs, ɪz ðɛr ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪriə əˈraʊnd hɪər? aɪd laɪk tuː ɡræb ə baɪt tuː iːt bɪˈfɔːr ˈɡɛtɪŋ ɑːn ðə ˈfɛri./",
+      "guide": "hm̩... ɪn ðæt keɪs <span class='intonation'>⤴</span>, ɪ-zðər ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪri-jə əˈraʊnd hɪər <span class='intonation'>⤴</span>? aɪd <b>laɪ-k-tə</b> ɡræ-bə-baɪ<b><span class='stop'>t</span></b>-tə-iː<b><span class='stop'>t</span></b> bɪˈfɔːr ˈɡɛtɪŋ <b>ɑːn-ðə-ˈfɛri</b> <span class='intonation'>⤵</span>",
+      "vi": "Hmm... trong trường hợp đó, có nhà hàng hay căn tin nào xung quanh đây không? Tôi muốn ăn một chút trước khi lên phà."
+    },
+    {
+      "en": "Yes, there's a place around that corner.",
+      "ipa": "/jɛs, ðɛrz ə pleɪs əˈraʊnd ðæt ˈkɔːrnər./",
+      "guide": "jɛs <span class='intonation'>⤵</span>, <b>ðɛr-zə-pleɪs</b> əˈraʊnd ðæt ˈkɔːrnər <span class='intonation'>⤵</span>",
+      "vi": "Vâng, có một nơi ở quanh góc đó."
+    }
+  ],
+  "questions": [
+    {
+      "q": "62 What is the purpose of the man's trip?",
+      "ipa": "/wʌt ɪz ðə ˈpɜːrpəs ʌv ðə mænz trɪp?/",
+      "vi": "62 Mục đích chuyến đi của người đàn ông là gì?",
+      "options": [
+        { "en": "To get exercise outdoors", "ipa": "/tuː ɡɛt ˈɛksərsaɪz ˌaʊtˈdɔːrz/", "vi": "Để tập thể dục ngoài trời" },
+        { "en": "To create artworks", "ipa": "/tuː kriˈeɪt ˈɑːrtwɜːrks/", "vi": "Để tạo một tác phẩm nghệ thuật" },
+        { "en": "To collect samples of plants", "ipa": "/tuː kəˈlɛkt ˈsæmplz ʌv plænts/", "vi": "Để thu thập những mẫu thực vật" },
+        { "en": "To repair electronics", "ipa": "/tuː rɪˈpɛr ɪˌlɛkˈtrɑːnɪks/", "vi": "Để sửa những thiết bị điện tử" }
+      ]
+    },
+    {
+      "q": "63 Look at the graphic. Why does the man receive a discount?",
+      "ipa": "/lʊk æt ðə ˈɡræfɪk. waɪ dʌz ðə mæn rɪˈsiːv ə ˈdɪskaʊnt?/",
+      "vi": "63 Nhìn vào ảnh. Tại sao người đàn ông lại được giảm giá?",
+      "options": [
+        { "en": "It is after 6 P.M.", "ipa": "/ɪt ɪz ˈæftər sɪks piː.ɛm./", "vi": "Nó thì sau 6h tối" },
+        { "en": "It is a weekend day", "ipa": "/ɪt ɪz ə ˈwiːkɛnd deɪ/", "vi": "Nó là một ngày cuối tuần" },
+        { "en": "He is a senior", "ipa": "/hiː ɪz ə ˈsiːnjər/", "vi": "Anh ấy là người cao tuổi" },
+        { "en": "He has a pass", "ipa": "/hiː hæz ə pæs/", "vi": "Anh ấy có thẻ đi lại" }
+      ]
+    },
+    {
+      "q": "64 What will the man most likely do next?",
+      "ipa": "/wʌt wɪl ðə mæn moʊst ˈlaɪkli duː nɛkst?/",
+      "vi": "64 Người đàn ông sẽ có thể làm gì nhất tiếp theo?",
+      "options": [
+        { "en": "Have a small meal", "ipa": "/hæv ə smɔːl miːl/", "vi": "Có một bữa ăn nhẹ" },
+        { "en": "Board a passenger ferry", "ipa": "/bɔːrd ə ˈpæsəndʒər ˈfɛri/", "vi": "Lên phà chở khách" },
+        { "en": "Shop for souvenirs", "ipa": "/ʃɑːp fɔːr ˌsuːvəˈnɪərz/", "vi": "Mua sắm quà lưu niệm" },
+        { "en": "Retrieve his bicycle", "ipa": "/rɪˈtriːv hɪz ˈbaɪsɪkl/", "vi": "Lấy lại xe đạp của mình" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Mua (v)", "words": [{ "en": "Purchase", "ipa": "/ˈpɜːrtʃəs/" }, { "en": "Buy", "ipa": "/baɪ/" }] },
+    { "vi": "Khởi hành (v)", "words": [{ "en": "Depart", "ipa": "/dɪˈpɑːrt/" }, { "en": "Leave", "ipa": "/liːv/" }] },
+    { "vi": "Căng tin (n)", "words": [{ "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/" }, { "en": "Café", "ipa": "/kæˈfeɪ/" }] },
+    { "vi": "Tập thể dục (n/v)", "words": [{ "en": "Exercise", "ipa": "/ˈɛksərsaɪz/" }, { "en": "Workout", "ipa": "/ˈwɜːrkaʊt/" }] },
+    { "vi": "Cây cối / Thực vật (n)", "words": [{ "en": "Plants", "ipa": "/plænts/" }, { "en": "Flora", "ipa": "/ˈflɔːrə/" }] },
+    { "vi": "Người cao tuổi (n)", "words": [{ "en": "Senior", "ipa": "/ˈsiːnjər/" }] },
+    { "vi": "Vé đi lại / Thẻ (n)", "words": [{ "en": "Pass", "ipa": "/pæs/" }, { "en": "Ticket", "ipa": "/ˈtɪkɪt/" }] },
+    { "vi": "Bước lên / Lên phà (v)", "words": [{ "en": "Board", "ipa": "/bɔːrd/" }, { "en": "Get on", "ipa": "/ɡɛt ɑːn/" }] },
+    { "vi": "Phà chở khách (n)", "words": [{ "en": "Passenger ferry", "ipa": "/ˈpæsəndʒər ˈfɛri/" }] },
+    { "vi": "Lấy lại / Thu hồi (v)", "words": [{ "en": "Retrieve", "ipa": "/rɪˈtriːv/" }] },
+    { "vi": "Ăn nhẹ (phrase)", "words": [{ "en": "Grab a bite to eat", "ipa": "/ɡræb ə baɪt tuː iːt/" }] },
+    { "vi": "Nhiếp ảnh gia (n)", "words": [{ "en": "Photographer", "ipa": "/fəˈtɑːɡrəfər/" }] }
+  ]
+},{
+  "title": "Questions 65 - 67",
+  "audioUrl": "Test 02_Part 3_65-67.mp3",
+  "passage": [
+    {
+      "en": "Thanks for helping me with the charity drive to collect gently used items. Our patients have donated a lot, right?",
+      "ipa": "/θæŋks fɔːr ˈhɛlpɪŋ miː wɪθ ðə ˈtʃærəti draɪv tuː kəˈlɛkt ˈdʒɛntli juːzd ˈaɪtəmz. ˈaʊər ˈpeɪʃnts hæv ˈdoʊneɪtɪd ə lɑːt, raɪt?/",
+      "guide": "θæŋks fər <b>ˈhɛlpɪŋ-mi</b> wɪθ ðə ˈtʃærəti draɪv tə kəˈlɛkt ˈdʒɛntli <b>juːz-daɪtəmz</b> <span class='intonation'>⤵</span>. ˈaʊər ˈpeɪʃnts həv <b>ˈdoʊneɪtɪ-də-lɑːt</b> <span class='intonation'>⤴</span>, raɪt <span class='intonation'>⤵</span>?",
+      "vi": "Cảm ơn giúp đỡ tôi với chiến dịch từ thiện để thu gom những món đồ đã qua sử dụng nhẹ. Những bệnh nhân của chúng ta đã quyên góp nhiều phải không?"
+    },
+    {
+      "en": "Yes. Someone's just dropped off all of these board games, dolls, and blocks. They're in great condition.",
+      "ipa": "/jɛs. ˈsʌmwʌnz dʒʌst drɑːpt ɔːf ɔːl ʌv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ænd blɑːks. ðɛr ɪn ɡreɪt kənˈdɪʃn./",
+      "guide": "jɛs <span class='intonation'>⤵</span>. ˈsʌmwʌnz <b>dʒʌs<span class='stop'>t</span>-drɑːp-tɔːf</b> ɔːl-ləv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ən blɑːks <span class='intonation'>⤵</span>. <b>ðɛr-ɪn</b> ɡreɪt kənˈdɪʃn <span class='intonation'>⤵</span>",
+      "vi": "Đúng. Một ai đó đã đưa tất cả những trò chơi bàn cờ, búp bê và khối xếp hình này; chúng đều còn rất mới."
+    },
+    {
+      "en": "And the medical staff and visitors have also been bringing things in.",
+      "ipa": "/ænd ðə ˈmɛdɪkl stæf ænd ˈvɪzɪtərz hæv ˈɔːlsoʊ biːn ˈbrɪŋɪŋ θɪŋz ɪn./",
+      "guide": "<b>ən-ðə</b> ˈmɛdɪkl stæf ən ˈvɪzɪtərz həv ˈɔːlsoʊ biːn <b>ˈbrɪŋɪŋ-θɪŋ-zɪn</b> <span class='intonation'>⤵</span>",
+      "vi": "Và những nhân viên y tế cũng như những vị khách cũng đem đồ đến nữa."
+    },
+    {
+      "en": "Wonderful! The collection boxes are in the hall by the administration office. But don't put them in all together, as the pieces may get mixed up.",
+      "ipa": "/ˈwʌndərfl! ðə kəˈlɛkʃn ˈbɑːksɪz ɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs. bʌt doʊnt pʊt ðɛm ɪn ɔːl təˈɡɛðər, æz ðə ˈpiːsɪz meɪ ɡɛt mɪkst ʌp./",
+      "guide": "ˈwʌndərfl <span class='intonation'>⤴</span>! ðə kəˈlɛkʃn ˈbɑːksɪ-zɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs <span class='intonation'>⤵</span>. bʌt <b>doʊn<span class='stop'>t</span>-pʊ-ðəm-ɪn</b> ɔːl təˈɡɛðər <span class='intonation'>⤴</span>, æz ðə <b>ˈpiːsɪz-meɪ</b> ɡɛt <b>mɪks-tʌp</b> <span class='intonation'>⤵</span>",
+      "vi": "Tuyệt vời! Những hộp đựng đồ đang nằm trong hành lang kế bên phòng hành chính. Nhưng đừng đặt những cái hộp này cùng với nhau bởi vì những mảnh ghép có thể bị lẫn lộn."
+    },
+    {
+      "en": "I brought some plastic bags to separate each item.",
+      "ipa": "/aɪ brɔːt sʌm ˈplæstɪk bæɡz tuː ˈsɛpəreɪt iːtʃ ˈaɪtəm./",
+      "guide": "aɪ <b>brɔː-sʌm</b> ˈplæstɪk bæɡz tə ˈsɛpəreɪ-tiːtʃ <b>ˈaɪtəm</b> <span class='intonation'>⤵</span>",
+      "vi": "Tôi đã mang một vài túi nhựa để tách biệt một vài món đồ."
+    }
+  ],
+  "questions": [
+    {
+      "q": "65 Where most likely are the speakers?",
+      "ipa": "/wɛr moʊst ˈlaɪkli ɑːr ðə ˈspiːkərz?/",
+      "vi": "65 Những người nói ở đâu?",
+      "options": [
+        { "en": "At a travel agency", "ipa": "/æt ə ˈtrævl ˈeɪdʒənsi/", "vi": "Tại một công ty du lịch" },
+        { "en": "At a school", "ipa": "/æt ə skuːl/", "vi": "Tại trường học" },
+        { "en": "At a hospital", "ipa": "/æt ə ˈhɑːspɪtl/", "vi": "Tại một bệnh viện" },
+        { "en": "At a bank", "ipa": "/æt ə bæŋk/", "vi": "Tại một ngân hàng" }
+      ]
+    },
+    {
+      "q": "66 Look at the graphic. Which box will the man use?",
+      "ipa": "/lʊk æt ðə ˈɡræfɪk. wɪtʃ bɑːks wɪl ðə mæn juːz?/",
+      "vi": "66 Nhìn vào hình. Cái hộp nào sẽ được người đàn ông dùng?",
+      "options": [
+        { "en": "Box 1", "ipa": "/bɑːks wʌn/", "vi": "Hộp 1" },
+        { "en": "Box 2", "ipa": "/bɑːks tuː/", "vi": "Hộp 2" },
+        { "en": "Box 3", "ipa": "/bɑːks θriː/", "vi": "Hộp 3" },
+        { "en": "Box 4", "ipa": "/bɑːks fɔːr/", "vi": "Hộp 4" }
+      ]
+    },
+    {
+      "q": "67 What does the woman suggest doing?",
+      "ipa": "/wʌt dʌz ðə ˈwʊmən səɡˈdʒɛst ˈduːɪŋ?/",
+      "vi": "67 Người phụ nữ đề xuất làm gì?",
+      "options": [
+        { "en": "Assessing the value of the contents", "ipa": "/əˈsɛsɪŋ ðə ˈvæljuː ʌv ðə ˈkɑːntɛnts/", "vi": "Đánh giá giá trị của những món đồ" },
+        { "en": "Printing some new labels for the boxes", "ipa": "/ˈprɪntɪŋ sʌm nuː ˈleɪblz fɔːr ðə ˈbɑːksɪz/", "vi": "In một vài nhãn mới cho các hộp" },
+        { "en": "Placing some items in individual bags", "ipa": "/ˈpleɪsɪŋ sʌm ˈaɪtəmz ɪn ˌɪndɪˈvɪdʒuəl bæɡz/", "vi": "Đặt một vài món đồ trong cái túi riêng lẻ" },
+        { "en": "Checking to see if there are missing pieces", "ipa": "/ˈtʃɛkɪŋ tuː siː ɪf ðɛr ɑːr ˈmɪsɪŋ ˈpiːsɪz/", "vi": "Kiểm tra xem liệu rằng có mảnh ghép nào thiếu" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Trả lại / Đưa cho ai đó (v)", "words": [{ "en": "Drop off", "ipa": "/drɑːp ɔːf/" }] },
+    { "vi": "Còn rất mới (adj phr)", "words": [{ "en": "In great condition", "ipa": "/ɪn ɡreɪt kənˈdɪʃn/" }] },
+    { "vi": "Chiến dịch (n)", "words": [{ "en": "Drive", "ipa": "/draɪv/" }, { "en": "Campaign", "ipa": "/kæmˈpeɪn/" }] },
+    { "vi": "Đồ đã qua sử dụng nhẹ (n phr)", "words": [{ "en": "Gently used items", "ipa": "/ˈdʒɛntli juːzd ˈaɪtəmz/" }] },
+    { "vi": "Nhẹ nhàng (adj)", "words": [{ "en": "Gentle", "ipa": "/ˈdʒɛntl/" }, { "en": "Light", "ipa": "/laɪt/" }, { "en": "Soft", "ipa": "/sɔːft/" }] },
+    { "vi": "Khối / Dãy nhà (n)", "words": [{ "en": "Block", "ipa": "/blɑːk/" }] },
+    { "vi": "Hộp đựng đồ (n)", "words": [{ "en": "Collection box", "ipa": "/kəˈlɛkʃn bɑːks/" }] },
+    { "vi": "Phòng hành chính (n)", "words": [{ "en": "Administration office", "ipa": "/ædˌmɪnɪˈstreɪʃn ˈɑːfɪs/" }] },
+    { "vi": "Lẫn lộn (v phr)", "words": [{ "en": "Mix up", "ipa": "/mɪks ʌp/" }] },
+    { "vi": "Công ty / Đại lý (n)", "words": [{ "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, { "en": "Firm", "ipa": "/fɜːrm/" }, { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }, { "en": "Company", "ipa": "/ˈkʌmpəni/" }] },
+    { "vi": "Đánh giá (v)", "words": [{ "en": "Assess", "ipa": "/əˈsɛs/" }, { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/" }] },
+    { "vi": "Nội dung (n)", "words": [{ "en": "Content", "ipa": "/ˈkɑːntɛnt/" }] },
+    { "vi": "Cá nhân / Riêng lẻ (adj)", "words": [{ "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/" }, { "en": "Separate", "ipa": "/ˈsɛpərət/" }] },
+    { "vi": "Miếng / Mảnh / Tác phẩm (n)", "words": [{ "en": "Piece", "ipa": "/piːs/" }] },
+    { "vi": "Riêng biệt (adj)", "words": [{ "en": "Separate", "ipa": "/ˈsɛpərət/" }, { "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/" }] },
+    { "vi": "Tách biệt (v)", "words": [{ "en": "Separate", "ipa": "/ˈsɛpəreɪt/" }] },
+    { "vi": "Găng tay (n)", "words": [{ "en": "Gloves", "ipa": "/ɡlʌvz/" }] }
+  ]
+},{
+  "title": "Questions 68 - 70",
+  "audioUrl": "Test 02_Part 3_68-70.mp3",
+  "passage": [
+    {
+      "en": "Hi, could you help me?",
+      "ipa": "/haɪ, kʊd juː hɛlp miː?/",
+      "guide": "haɪ <span class='intonation'>⤴</span>, <b>kʊ-dʒu</b> hɛlp mi <span class='intonation'>⤴</span>?",
+      "vi": "Chào, bạn có thể giúp tôi được không?"
+    },
+    {
+      "en": "Absolutely. What brings you to the Randholm Building today?",
+      "ipa": "/ˌæbsəˈluːtli. wʌt brɪŋz juː tuː ðə ˈrændhoʊm ˈbɪldɪŋ tuˈdeɪ?/",
+      "guide": "ˌæbsəˈluːtli <span class='intonation'>⤵</span>. <b>wʌt-brɪŋ-zju</b> tə ðə ˈrændhoʊm ˈbɪldɪŋ təˈdeɪ <span class='intonation'>⤵</span>?",
+      "vi": "Chắc chắn rồi. Điều gì đem bạn tới tòa nhà Randholm hôm nay?"
+    },
+    {
+      "en": "I'm looking for the convenience store. I have a job interview there in a few minutes.",
+      "ipa": "/aɪm ˈlʊkɪŋ fɔːr ðə kənˈviːniəns stɔːr. aɪ hæv ə dʒɑːb ˈɪntərvjuː ðɛr ɪn ə fjuː ˈmɪnɪts./",
+      "guide": "aɪm <b>ˈlʊkɪŋ-fər</b> ðə kənˈviːniəns stɔːr <span class='intonation'>⤵</span>. aɪ <b>hæ-və-dʒɑː-bɪn-tərvjuː</b> ðɛr ɪ-nə fjuː ˈmɪnɪts <span class='intonation'>⤵</span>",
+      "vi": "Tôi đang tìm kiếm cửa hàng tiện lợi. Tôi có một buổi phỏng vấn công việc ở đó ít phút nữa."
+    },
+    {
+      "en": "OK. Here's the floor plan for the ground floor. You're here, at the information desk.",
+      "ipa": "/ˌoʊˈkeɪ. hɪərz ðə flɔːr plæn fɔːr ðə ɡraʊnd flɔːr. jʊər hɪər, æt ðɪ ˌɪnfərˈmeɪʃn dɛsk./",
+      "guide": "ˌoʊˈkeɪ <span class='intonation'>⤵</span>. hɪərz ðə <b>flɔːr-plæn</b> fər ðə ɡraʊnd flɔːr <span class='intonation'>⤵</span>. jər hɪər <span class='intonation'>⤴</span>, <b>æt-ðɪ</b> ˌɪnfərˈmeɪʃn dɛsk <span class='intonation'>⤵</span>",
+      "vi": "Ok. Đây là sơ đồ của tầng trệt. Bạn đang ở đây, tại bàn thông tin."
+    },
+    {
+      "en": "Just walk around the potted trees there. The convenience store is across from Uncle Freddie's.",
+      "ipa": "/dʒʌst wɔːk əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr. ðə kənˈviːniəns stɔːr ɪz əˈkrɔːs frʌm ˈʌŋkl ˈfrɛdiz./",
+      "guide": "<b>dʒʌs<span class='stop'>t</span>-wɔːk</b> əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr <span class='intonation'>⤵</span>. ðə kənˈviːniəns stɔːr <b>ɪ-zəˈkrɔːs</b> frəm ˈʌŋkl ˈfrɛdiz <span class='intonation'>⤵</span>",
+      "vi": "Chỉ cần đi bộ vòng qua những chậu cây đó. Cửa hàng tiện lợi đối diện Uncle Freddie's."
+    },
+    {
+      "en": "I see. Thank you.",
+      "ipa": "/aɪ siː. θæŋk juː./",
+      "guide": "aɪ siː <span class='intonation'>⤵</span>. <b>θæŋ-kju</b> <span class='intonation'>⤵</span>",
+      "vi": "Tôi hiểu rồi. Cảm ơn bạn."
+    },
+    {
+      "en": "Sure. Oh, and afterwards, come back out this way. The other entrance is closed today.",
+      "ipa": "/ʃʊər. oʊ, ænd ˈæftərwərdz, kʌm bæk aʊt ðɪs weɪ. ðɪ ˈʌðər ˈɛntrəns ɪz kloʊzd tuˈdeɪ./",
+      "guide": "ʃʊər <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, <b>ən-ˈæftərwərdz</b> <span class='intonation'>⤴</span>, kʌm <b> bæ-kaʊ-ðɪs</b> weɪ <span class='intonation'>⤵</span>. ðɪ ˈʌðər <b>ˈɛn-trən-sɪz</b> kloʊzd təˈdeɪ <span class='intonation'>⤵</span>",
+      "vi": "Được. Ồ và sau đó hãy quay trở lại lối này. Lối vào còn lại bị đóng cửa hôm nay."
+    },
+    {
+      "en": "That's good to know.",
+      "ipa": "/ðæts ɡʊd tuː noʊ./",
+      "guide": "ðæts <b>ɡʊ-tə-noʊ</b> <span class='intonation'>⤵</span>",
+      "vi": "Thật tốt để biết chuyện này."
+    }
+  ],
+  "questions": [
+    {
+      "q": "68 What does the man plan to do?",
+      "ipa": "/wʌt dʌz ðə mæn plæn tuː duː?/",
+      "vi": "68 Người đàn ông dự định làm gì?",
+      "options": [
+        { "en": "Make a purchase", "ipa": "/meɪk ə ˈpɜːrtʃəs/", "vi": "Mua hàng" },
+        { "en": "Meet a friend", "ipa": "/miːt ə frɛnd/", "vi": "Gặp bạn" },
+        { "en": "Deliver a package", "ipa": "/dɪˈlɪvər ə ˈpækɪdʒ/", "vi": "Giao một kiện hàng" },
+        { "en": "Attend a job interview", "ipa": "/əˈtɛnd ə dʒɑːb ˈɪntərvjuː/", "vi": "Tham dự một buổi phỏng vấn tuyển dụng" }
+      ]
+    },
+    {
+      "q": "69 Look at the graphic. Where will the man most likely go?",
+      "ipa": "/lʊk æt ðə ˈɡræfɪk. wɛr wɪl ðə mæn moʊst ˈlaɪkli ɡoʊ?/",
+      "vi": "69 Nhìn vào hình. Người đàn ông sẽ đi đâu?",
+      "options": [
+        { "en": "To the Information Desk", "ipa": "/tuː ðɪ ˌɪnfərˈmeɪʃn dɛsk/", "vi": "Tới bàn thông tin" },
+        { "en": "To The Full Basket", "ipa": "/tuː ðə fʊl ˈbæskɪt/", "vi": "Tới The Full Basket" },
+        { "en": "To Quality Spot", "ipa": "/tuː ˈkwɑːləti spɑːt/", "vi": "Tới Quality Spot" },
+        { "en": "To Uncle Freddie's", "ipa": "/tuː ˈʌŋkl ˈfrɛdiz/", "vi": "Tới Uncle Freddie's" }
+      ]
+    },
+    {
+      "q": "70 What does the woman inform the man about?",
+      "ipa": "/wʌt dʌz ðə ˈwʊmən ɪnˈfɔːrm ðə mæn əˈbaʊt?/",
+      "vi": "70 Người phụ nữ thông báo cho người đàn ông về cái gì?",
+      "options": [
+        { "en": "An elevator skips some floors", "ipa": "/ən ˈɛləveɪtər skɪps sʌm flɔːrz/", "vi": "Một thang máy bỏ qua một số tầng" },
+        { "en": "A parking space has a time limit", "ipa": "/ə ˈpɑːrkɪŋ speɪs hæz ə taɪm ˈlɪmɪt/", "vi": "Một bãi đậu xe giới hạn thời gian" },
+        { "en": "A sales event is happening", "ipa": "/ə seɪlz ɪˈvɛnt ɪz ˈhæpənɪŋ/", "vi": "Một sự kiện bán hàng đang diễn ra" },
+        { "en": "An entrance is closed", "ipa": "/ən ˈɛntrəns ɪz kloʊzd/", "vi": "Một lối vào bị đóng rồi" }
+      ]
+    }
+  ],
+  "vocabulary": [
+    { "vi": "Chắc chắn (adv)", "words": [{ "en": "Absolutely", "ipa": "/ˌæbsəˈluːtli/" }, { "en": "Definitely", "ipa": "/ˈdɛfɪnətli/" }, { "en": "Certainly", "ipa": "/ˈsɜːrtənli/" }] },
+    { "vi": "Tìm kiếm (v)", "words": [{ "en": "Look for", "ipa": "/lʊk fɔːr/" }, { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, { "en": "Find", "ipa": "/faɪnd/" }, { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }, { "en": "Seek", "ipa": "/siːk/" }] },
+    { "vi": "Bố cục / Cách bố trí (n)", "words": [{ "en": "Floor plan", "ipa": "/flɔːr plæn/" }, { "en": "Floor map", "ipa": "/flɔːr mæp/" }, { "en": "Layout", "ipa": "/ˈleɪaʊt/" }] },
+    { "vi": "Đối diện (prep)", "words": [{ "en": "Across from", "ipa": "/əˈkrɔːs frʌm/" }, { "en": "Opposite", "ipa": "/ˈɑːpəzɪt/" }] },
+    { "vi": "Chậu cây (n)", "words": [{ "en": "Potted tree", "ipa": "/ˈpɑːtɪd triː/" }] },
+    { "vi": "Thang máy (n)", "words": [{ "en": "Elevator", "ipa": "/ˈɛləveɪtər/" }, { "en": "Lift", "ipa": "/lɪft/" }] },
+    { "vi": "Bỏ qua (v)", "words": [{ "en": "Skip", "ipa": "/skɪp/" }] },
+    { "vi": "Sự kiện bán hàng (n)", "words": [{ "en": "Sales event", "ipa": "/seɪlz ɪˈvɛnt/" }] },
+    { "vi": "Lối vào (n)", "words": [{ "en": "Entrance", "ipa": "/ˈɛntrəns/" }] },
+    { "vi": "Thông báo (v)", "words": [{ "en": "Inform", "ipa": "/ɪnˈfɔːrm/" }, { "en": "Notice", "ipa": "/ˈnoʊtɪs/" }] }
+  ]
+}
+];
+
+function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    window.speechSynthesis.speak(msg);
+}
+
+function toggleSingleContent(btn, className) {
+    const parent = btn.closest('.content-line'); 
+    const elements = parent.querySelectorAll('.' + className);
+    elements.forEach(el => el.classList.toggle('show'));
+    btn.classList.toggle('active-btn');
+}
+
+function toggleGroupContent(btn, className) {
+    const parent = btn.closest('.lesson-group'); 
+    const elements = parent.querySelectorAll('.' + className);
+    elements.forEach(el => el.classList.toggle('show'));
+    btn.classList.toggle('active-btn');
+}
+
+function render() {
+    const app = document.getElementById('app');
+    
+    app.innerHTML = allLessons.map((lesson) => `
+        <div class="lesson-group">
+            <div class="group-header">
+                <div class="group-title">${lesson.title}</div><br>
+                <audio class="audio-player" controls><source src="${lesson.audioUrl}" type="audio/mpeg"></audio>
+            </div>
+            
+            <div class="section">
+                <h2>Đoạn Hội Thoại</h2>
+                <div class="btn-group">
+                    <button onclick="toggleGroupContent(this, 'p-en')">Anh</button>
+                    <button onclick="toggleGroupContent(this, 'p-ipa')">IPA</button>
+                    <button onclick="toggleGroupContent(this, 'p-guide')">Cách phát âm</button>
+                    <button onclick="toggleGroupContent(this, 'p-vi')">Việt</button>
+                </div>
+                ${lesson.passage.map(item => `
+                    <div class="content-line">
+                        <div class="en-text p-en"><strong>${item.en}</strong></div>
+                        <div class="ipa-text p-ipa">${item.ipa}</div>
+                        <div class="guide-text p-guide">🗣️ ${item.guide || 'Đang cập nhật...'}</div>
+                        <div class="vi-text p-vi">${item.vi}</div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="section">
+                <h2>Câu Hỏi</h2>
+                ${lesson.questions.map(item => `
+                    <div class="content-line">
+                        <div class="btn-group" style="margin-bottom: 10px;">
+                            <button onclick="toggleSingleContent(this, 'q-en')">Anh</button>
+                            <button onclick="toggleSingleContent(this, 'q-ipa')">IPA</button>
+                            <button onclick="toggleSingleContent(this, 'q-vi')">Việt</button>
+                        </div>
+                        <div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                            <div class="en-text q-en"><strong>${item.q}</strong></div>
+                            <div class="ipa-text q-ipa"><em>${item.ipa}</em></div>
+                            <div class="vi-text q-vi"><strong>${item.vi}</strong></div>
+                        </div>
+                        <div class="options-group" style="padding-left: 15px;">
+                            ${item.options ? item.options.map((opt, index) => `
+                                <div style="margin-bottom: 8px;">
+                                    <span class="en-text q-en">${String.fromCharCode(65 + index)}. ${opt.en}</span>
+                                    <span class="ipa-text q-ipa">(${opt.ipa})</span>
+                                    <span class="vi-text q-vi">: ${opt.vi}</span>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="section">
+                <h2>Từ Vựng (Flashcards)</h2>
+                <div class="flashcard-grid">
+                    ${lesson.vocabulary.map(v => `
+                        <div class="card" onclick="this.classList.toggle('flipped')">
+                            <div class="card-inner">
+                                <div class="card-front">
+                                    <strong style="font-size: 1.1rem; text-align: center;">${v.vi}</strong>
+                                </div>
+                                <div class="card-back">
+                                    ${v.words.map(w => `
+                                        <div class="vocab-item-row">
+                                            <div class="vocab-info">
+                                                <span class="vocab-en">${w.en}</span>
+                                                <span class="vocab-ipa">${w.ipa}</span>
+                                            </div>
+                                            <span class="speak-btn" onclick="event.stopPropagation(); speak('${w.en}')">🔊</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+render();
+</script>
+</body>
+</html>

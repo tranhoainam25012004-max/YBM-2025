@@ -147,23 +147,39 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
 }
 
 
+/* Khung cho từng dòng câu tiếng Anh - Việt */
+.sentence-row {
+    display: block; /* Chuyển từ grid sang block để các phần tử xếp chồng lên nhau */
+    margin-bottom: 15px;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    border: 2px solid var(--blue); 
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1); 
+    transition: all 0.2s ease;
+}
+
 .en-col {
     font-size: 16px;
     line-height: 1.6;
     color: var(--dark);
-    padding-right: 10px;
-    border-right: 1px dashed #eee; /* Đường kẻ mờ phân cách giữa 2 cột */
+    padding-right: 0; /* Bỏ padding cũ */
+    border-right: none; /* Xóa đường kẻ dọc */
+    margin-bottom: 8px; /* Tạo khoảng cách với phần dịch khi hiện lên */
+    font-weight: 500;
 }
 
 .vi-col {
-    display: none; /* Ẩn mặc định */
+    display: none; 
     font-size: 15px;
     line-height: 1.6;
-    color: #222323;
+    color: #444;
     font-style: italic;
-    background: #edf2fc;
-    padding: 0 10px;
-    border-radius: 8px;
+    background: #f0f7ff; /* Màu nền nhẹ cho phần dịch */
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--blue); /* Thêm điểm nhấn bên trái cho phần dịch */
+    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ra mượt mà */
 }
 
 .vi-col.visible {
@@ -189,21 +205,6 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
     transform: translateY(-2px); /* Nhấc nhẹ box lên khi di chuột */
 }
 
-/* Khung cho từng dòng câu tiếng Anh - Việt */
-.sentence-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 15px;
-    background: #ffffff;
-    padding: 18px;
-    border-radius: 12px;
-    /* Đổ bóng nhẹ cho từng dòng để tách biệt khỏi nền trắng của block lớn */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid #f0f0f0;
-    align-items: start;
-}
-
 /* Khung cho từng thẻ từ vựng */
 .vocab-card {
     border: none; /* Bỏ viền cứng nhắc */
@@ -219,12 +220,120 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
     box-shadow: 0 8px 22px rgba(0,0,0,0.12);
     border-color: var(--blue);
 }
+/* Layout cho lưới Flashcard */
+.flash-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 15px; 
+    margin-top: 15px;
+}
+
+/* Cấu trúc thẻ lật */
+.card {
+    height: 150px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    transition: transform 0.6s; 
+    transform-style: preserve-3d; 
+}
+
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+.front, .back { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    backface-visibility: hidden; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    border: 2px solid var(--blue); 
+    padding: 10px; 
+    box-sizing: border-box; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.front { background: #fff; }
+.back { 
+    background: #f0f7ff; 
+    transform: rotateY(180deg); 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    /* Căn các khối nội dung về bên trái */
+    align-items: flex-start; 
+    /* Căn văn bản về bên trái */
+    text-align: left;
+    padding: 15px; 
+}
+
+.card-word { font-size: 1.2em; font-weight: bold; color: var(--blue); }
+.card-pos { font-style: italic; color: #666; font-size: 0.9em; }
+.card-meaning { 
+    color: var(--green); 
+    font-weight: bold; 
+    margin-bottom: 5px;
+    /* Đảm bảo chữ luôn bám lề trái */
+    width: 100%; 
+}
+.card-syn { font-size: 0.85em; color: #555; }
+.syn-item {
+    display: flex;
+    align-items: center;
+    /* Căn icon loa và chữ về bên trái */
+    justify-content: flex-start; 
+    gap: 5px;
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 2px;
+    width: 100%;
+}
+.small-speaker {
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--blue);
+}
+.meaning-count {
+    font-size: 0.75em;
+    color: var(--blue);
+    background: #eef4ff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+
+/* Hiệu ứng khi di chuột vào từng khung câu */
+.sentence-row:hover {
+    background: #f8fbff;
+    transform: scale(1.01);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+}
+.back { 
+    background: #f0f7ff; 
+    transform: rotateY(180deg); 
+    overflow-y: auto; /* Cho phép cuộn nếu quá nhiều từ */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; /* Căn từ trên xuống thay vì ở giữa */
+    padding: 15px 10px;
+    text-align: center;
+}
 </style>
 </head>
 
 <body>
 <div class="main-container">
-<h1>Luyện TOEIC – Dịch & Từ vựng</h1>
+<h1>Luyện TOEIC Part 7– Đoạn đơn</h1>
 <div id="app-content"></div>
 </div>
 
@@ -232,85 +341,227 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
 const exercises = [
     {
             id: 147-148,
-                    title: "147-148",
+                    title: "147-148: refer to the following brochure.",
                     sentences: [
                         { en: "More than a decade of helping start-ups take flight", vi: "Hơn một thập kỷ giúp đỡ những công ty khởi nghiệp phát triển" },
                         { en: "Convenient outsourcing of human resources tasks", vi: "Sự thuê ngoài thuận tiện cho những nhiệm vụ nhân sự" },
                         { en: "Project-based consulting on personnel issues", vi: "Tư vấn dựa trên dự án về những vấn đề nhân sự" },
                         { en: "Full-service HR technology platform for long-term clients", vi: "Nền tảng công nghệ nhân sự đầy đủ dịch vụ cho các khách hàng lâu năm" },
                         { en: "Areas of expertise include recruiting, training, payroll, and much more. Visit www.deftlee.com to schedule a consultation.", vi: "Những lĩnh vực chuyên môn bao gồm tuyển dụng, đào tạo, trả lương và hơn thế nữa. truy cập trang web để lên lịch một buổi phỏng vấn" },
-                        { en: "I hiahly recommend Deftlee Their HR nlatform alone is worth the prices they charge. Our managers love how it has simplified tasks like tracking time off and performance evaluations. -Ryan Maas, Aurora Logistics", 
+                        { en: "I highly recommend Deftlee Their HR platform alone is worth the prices they charge. Our managers love how it has simplified tasks like tracking time off and performance evaluations. -Ryan Maas, Aurora Logistics", 
                         vi: "tôi rất đề xuất Deftlee. Chỉ riêng nền tảng nhân sự của họ thì xứng đáng với giá cả mà họ đưa ra. Quản lí của chúng tôi thích cách nó đơn giản hóa nhiệm vụ chẳng hạn như theo dõi thời gian nghỉ phép và đánh giá hiệu xuất." },
                         { en: "My business has grown from four employees to more than 50, and Deftlee has been there every step of the way. I'm always impressed by their ability to adapt to our changing needs. -Kasumi Tanaka, TBR Solutions", 
                         vi: "doanh nghiệp của tôi đã phát triển từ bốn nhân viên thành 50 nhân viên, và Deftlee đã ở đó trong mỗi bước đi. Tôi luôn ấn tượng với khả năng của họ để thích ứng với nhu cầu thay đổi của chúng tôi." },
                         
                     ],
                     vocab: [
-                        {
-                            word: "Take flight",pos: " ",meanings: [
-                            { meaning: "cất cánh", synonyms: [] },
-                            { meaning: "phát triển", synonyms: ["develop", "evolve", "grow", "prosper", "thrive"] }]
-                        },
-                        {
-                            word: "Outsourcing",pos: "n",meanings: [
-                            { meaning: "sự thuê ngoài", synonyms: [] }]
-                        },
-                        {
-                            word: "Personnel",pos: "n",meanings: [
-                            { meaning: "nhân sự", synonyms: [] } ]
-                        },
-                        {
-                            word: "Platform",pos: "n",meanings: [
-                            { meaning: "nhà ga", synonyms: [] },
-                            { meaning: "nền tảng", synonyms: [] } ]
-                        },
-                        {
-                            word: "Expertise",pos: "n",meanings: [
-                            { meaning: "chuyên môn", synonyms: [] }]
-                        },
-                        {
-                            word: "Expert",pos: " ",meanings: [
-                            { meaning: "(n) chuyên gia", synonyms: [] },
-                            { meaning: "(adj) chuyên nghiệp", synonyms: [] }]
-                        },
-                        {
-                            word: "Consultation",pos: "n",meanings: [
-                            { meaning: "buổi tư vấn", synonyms: [] }]
-                        },
-                        {
-                            word: "Testimonials",pos: "n",meanings: [
-                            { meaning: "các đánh giá", synonyms: ["reviews"] }]
-                        },
-                        {
-                            word: "Worth",pos: "adj",meanings: [
-                            { meaning: "xứng đáng", synonyms: [] }]
-                        },
-                        {
-                            word: "Simplify",pos: "v",meanings: [
-                            { meaning: "đơn giản hóa", synonyms: [] }]
-                        },
-                        {
-                            word: "Performance", pos: "n",meanings: [
-                            { meaning: "hiệu suất", synonyms: [] },
-                            { meaning: "buổi trình diễn", synonyms: [] }]
-                        },
-                        {
-                            word: "Evaluation",  pos: "n", meanings: [
-                            { meaning: "sự đánh giá", synonyms: [] } ]
-                        },
-                        {
-                            word: "Evaluate",pos: "v", meanings: [
-                            { meaning: "đánh giá", synonyms: ["assess"] }]
-                        },
-                        {
-                            word: "Adapt",pos: "v",meanings: [
-                            { meaning: "thay đổi", synonyms: ["alter", "modify", "revise", "adjust", "change"] },]
-                        },
-                        {
-                            word: "Adapt to st",pos: "v",meanings: [
-                            { meaning: "thhích nghi", synonyms: [] },]
-                        }
-                        ]
+    {
+        word: "Take flight",
+        pos: "phrase",
+        ipa: "/teɪk flaɪt/",
+        meanings: [
+            { meaning: "cất cánh", synonyms: [] },
+            { 
+                meaning: "phát triển", 
+                synonyms: [
+                    { word: "develop", ipa: "/dɪˈveləp/" },
+                    { word: "evolve", ipa: "/ɪˈvɑːlv/" },
+                    { word: "grow", ipa: "/ɡroʊ/" },
+                    { word: "prosper", ipa: "/ˈprɑːspər/" },
+                    { word: "thrive", ipa: "/θraɪv/" }
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Outsourcing",
+        pos: "n",
+        ipa: "/ˈaʊtsɔːrsɪŋ/",
+        meanings: [
+            { 
+                meaning: "sự thuê ngoài", 
+                synonyms: [
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Personnel",
+        pos: "n",
+        ipa: "/ˌpɜːrsəˈnel/",
+        meanings: [
+            { 
+                meaning: "nhân sự", 
+                synonyms: [
+                    ] 
+            }
+        ]
+    },
+    {
+        word: "Platform",
+        pos: "n",
+        ipa: "/ˈplætfɔːrm/",
+        meanings: [
+            { meaning: "nhà ga", synonyms: [] },
+            { 
+                meaning: "nền tảng", 
+                synonyms: [
+                   ] 
+            }
+        ]
+    },
+    {
+        word: "Expertise",
+        pos: "n",
+        ipa: "/ˌekspɜːrˈtiːz/",
+        meanings: [
+            { 
+                meaning: "chuyên môn", 
+                synonyms: [
+                    ] 
+            }
+        ]
+    },
+    {
+        word: "Expert",
+        pos: "n, adj",
+        ipa: "/ˈekspɜːrt/",
+        meanings: [
+            { 
+                meaning: "chuyên gia", 
+                synonyms: [
+                    { word: "specialist", ipa: "/ˈspeʃəlɪst/" }
+                ] 
+            },
+            { 
+                meaning: "chuyên nghiệp", 
+                synonyms: [
+                    { word: "professional", ipa: "/prəˈfeʃənl/" }
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Consultation",
+        pos: "n",
+        ipa: "/ˌkɑːnslˈteɪʃn/",
+        meanings: [
+            { 
+                meaning: "buổi tư vấn", 
+                synonyms: [
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Testimonials",
+        pos: "n",
+        ipa: "/ˌtestɪˈmoʊniəlz/",
+        meanings: [
+            { 
+                meaning: "các đánh giá", 
+                synonyms: [
+                    { word: "reviews", ipa: "/rɪˈvjuːz/" },
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Worth",
+        pos: "adj",
+        ipa: "/wɜːrθ/",
+        meanings: [
+            { 
+                meaning: "xứng đáng", 
+                synonyms: [
+                    { word: "valuable", ipa: "/ˈvæljuəbl/" }
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Simplify",
+        pos: "v",
+        ipa: "/ˈsɪmplɪfaɪ/",
+        meanings: [
+            { 
+                meaning: "đơn giản hóa", 
+                synonyms: [
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Performance",
+        pos: "n",
+        ipa: "/pərˈfɔːrməns/",
+        meanings: [
+            { 
+                meaning: "hiệu suất", 
+                synonyms: [
+                    { word: "productivity", ipa: "/ˌproʊdʌkˈtɪvəti/" }
+                ] 
+            },
+            { 
+                meaning: "buổi trình diễn", 
+                synonyms: [
+                    { word: "show", ipa: "/ʃoʊ/" }
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Evaluation",
+        pos: "n",
+        ipa: "/ɪˌvæljuˈeɪʃn/",
+        meanings: [
+            { 
+                meaning: "sự đánh giá", 
+                synonyms: [
+                 ] 
+            }
+        ]
+    },
+    {
+        word: "Evaluate",
+        pos: "v",
+        ipa: "/ɪˈvæljueɪt/",
+        meanings: [
+            { 
+                meaning: "đánh giá", 
+                synonyms: [
+                    { word: "assess", ipa: "/əˈses/" },
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Adapt",
+        pos: "v",
+        ipa: "/əˈdæpt/",
+        meanings: [
+            { 
+                meaning: "thay đổi", 
+                synonyms: [
+                    { word: "modify", ipa: "/ˈmɑːdɪfaɪ/" },
+                    { word: "adjust", ipa: "/əˈdʒʌst/" }
+                ] 
+            }
+        ]
+    },
+    {
+        word: "Adapt to st",
+        pos: "v",
+        ipa: "/əˈdæpt tuː/",
+        meanings: [
+            { 
+                meaning: "thích nghi", 
+                synonyms: [
+                ] 
+            }
+        ]
+    }
+]
 
         }
 ];
@@ -356,6 +607,7 @@ question: {
 {
     word: "Offer",
     pos: "v",
+    ipa: "/ˈɔːfər/",
     meanings: [
         { meaning: "đề nghị", synonyms: [] },
         { meaning: "cung cấp", synonyms: [] }
@@ -364,44 +616,66 @@ question: {
 {
     word: "Offer",
     pos: "n",
+    ipa: "/ˈɔːfər/",
     meanings: [
         { meaning: "lời đề nghị", synonyms: [] },
-        { meaning: "ưu đãi", synonyms: ["deal", "incentive"] }
+        { 
+            meaning: "ưu đãi", 
+            synonyms: [
+                { word: "deal", ipa: "/diːl/" }, 
+                { word: "incentive", ipa: "/ɪnˈsentɪv/" }
+            ] 
+        }
     ]
 },
 {
     word: "Advise",
     pos: "v",
+    ipa: "/ədˈvaɪz/",
     meanings: [
         { meaning: "khuyên", synonyms: [] },
-        { meaning: "tư vấn", synonyms: [] }
+        { meaning: "tư vấn", synonyms: [{ word: "consult", ipa: "/kənˈsʌlt/" }] }
     ]
 },
 {
     word: "Rapid",
     pos: "adj",
+    ipa: "/ˈræpɪd/",
     meanings: [
-        { meaning: "nhanh chóng", synonyms: ["quick"] }
+        { 
+            meaning: "nhanh chóng", 
+            synonyms: [{ word: "quick", ipa: "/kwɪk/" }, { word: "fast", ipa: "/fæst/" }] 
+        }
     ]
 },
 {
     word: "Handle",
     pos: "v",
+    ipa: "/ˈhændl/",
     meanings: [
-        { meaning: "xử lý", synonyms: ["address", "process", "deal with"] }
+        { 
+            meaning: "xử lý", 
+            synonyms: [
+                { word: "address", ipa: "/əˈdres/" }, 
+                { word: "process", ipa: "/ˈprɑːses/" }, 
+                { word: "deal with", ipa: "/diːl wɪð/" }
+            ] 
+        }
     ]
 },
 {
     word: "Compensation",
     pos: "n",
+    ipa: "/ˌkɑːmpenˈseɪʃn/",
     meanings: [
         { meaning: "bù đắp / đền bù", synonyms: [] },
-        { meaning: "thù lao / lương", synonyms: ["pay"] }
+        { meaning: "thù lao / lương", synonyms: [{ word: "pay", ipa: "/peɪ/" }, { word: "remuneration", ipa: "/rɪˌmjuːnəˈreɪʃn/" }] }
     ]
 },
 {
     word: "Flexibility",
     pos: "n",
+    ipa: "/ˌfleksəˈbɪləti/",
     meanings: [
         { meaning: "tính linh động", synonyms: [] }
     ]
@@ -409,6 +683,7 @@ question: {
 {
     word: "Flexible",
     pos: "adj",
+    ipa: "/ˈfleksəbl/",
     meanings: [
         { meaning: "linh động", synonyms: [] }
     ]
@@ -416,6 +691,7 @@ question: {
 {
     word: "Confidentiality",
     pos: "n",
+    ipa: "/ˌkɑːnfɪˌdenʃiˈæləti/",
     meanings: [
         { meaning: "tính bảo mật", synonyms: [] }
     ]
@@ -423,6 +699,7 @@ question: {
 {
     word: "Confidential",
     pos: "adj",
+    ipa: "/ˌkɑːnfɪˈdenʃl/",
     meanings: [
         { meaning: "bảo mật", synonyms: [] }
     ]
@@ -433,34 +710,26 @@ question: {
 ]
 exercises.push({
   id: 149-150,
-  title: "149-150",
+  title: "149-150: refer to the following notice.",
 
   /* ===== ĐOẠN VĂN ===== */
   sentences: [
     {
-      en: `Since our opening nearly 30 years ago, Conover's 
-      has been proud to equip Mandeville residents for a wide range 
-      of indoor and outdoor sports. `,
-      vi: `Kể từ khi thành lập gần 30 năm trước, 
-      Conover’s đã tự hào trang bị cho cư dân Mandeville đa 
-      dạng đồ thể thao trong nhà và ngoài trời. `
+      en: `Conover's `,
+      vi: `Conover's `
     },
     {
-      en: `However, we have recently made the difficult 
-      decision to remove fishing gear, supplies, and equipment 
-      from our inventory due to poor sales. The floor space this 
-      stock used to occupy will instead be used to display additional 
-      workout apparel.`,
-      vi: `Tuy nhiên, gần đây chúng tôi đã ra một quyết định khó khăn để loại 
-      bỏ dụng cụ câu cá, các vật tư và thiết bị câu cá khỏi 
-      hàng hóa bán của chúng tôi do doanh số bán kém.
-      Không gian mặt hàng này đã từng chiếm dữ thay cào đó sẽ được 
-      sử dụng để trưng bày thêm các trang phục thể dục.`
-    },
-    {
-      en: `This step will help Conover's remain profitable so that we can continue supporting Mandeville's athletes for many years to come. Still, we apologize for the inconvenience this will cause for the fishing enthusiasts among our customers. `,
-      vi: `Bước đi này sẽ giúp Conover’s duy trì lợi nhuận đê chúng tôi có thể tiếp tục hỗ trợ những vận động viên của Mandecille trong nhiều năm tới.
+      en: `Since our opening nearly 30 years ago, Conover's has been proud to equip Mandeville residents for a wide range of indoor and outdoor sports. However, we have recently made the difficult decision to remove fishing gear, supplies, and equipment from our inventory due to poor sales. The floor space this stock used to occupy will instead be used to display additional workout apparel. This step will help Conover's remain profitable so that we can continue supporting Mandeville's athletes for many years to come. Still, we apologize for the inconvenience this will cause for the fishing enthusiasts among our customers. `,
+      vi: `Kể từ khi thành lập gần 30 năm trước, Conover’s đã tự hào trang bị cho cư dân Mandeville đa dạng đồ thể thao trong nhà và ngoài trời. 
+Tuy nhiên, gần đây chúng tôi đã ra một quyết định khó khăn để loại bỏ dụng cụ câu cá, các vật tư và thiết bị câu cá khỏi hàng hóa bán của chúng tôi do doanh số bán kém.
+Không gian mặt hàng này đã từng chiếm dữ thay cào đó sẽ được sử dụng để trưng bày thêm các trang phục thể dục.
+Bước đi này sẽ giúp Conover’s duy trì lợi nhuận đê chúng tôi có thể tiếp tục hỗ trợ những vận động viên của Mandecille trong nhiều năm tới.
 Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra cho những người đam mê câu cá cho những khách hàng của chúng tôi.
+`
+    },
+    {
+      en: `-Conover's Management`,
+      vi: `-Quản lý của Conover'
 `
     }
   ],
@@ -470,16 +739,23 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
     {
         word: "A wide range of",
         pos: "phrase",
+        ipa: "/ə waɪd reɪndʒ əv/",
         meanings: [
             { 
-                meaning: "nhiều", 
-                synonyms: ["a broad range of", "a variety of", "an assortment of", "an array of"] 
+                meaning: "nhiều / đa dạng", 
+                synonyms: [
+                    { word: "a broad range of", ipa: "/ə brɔːd reɪndʒ əv/" },
+                    { word: "a variety of", ipa: "/ə vəˈraɪəti əv/" },
+                    { word: "an assortment of", ipa: "/ən əˈsɔːrtmənt əv/" },
+                    { word: "an array of", ipa: "/ən əˈreɪ əv/" }
+                ] 
             }
         ]
     },
     {
         word: "Fishing gear",
         pos: "n",
+        ipa: "/ˈfɪʃɪŋ ɡɪr/",
         meanings: [
             { meaning: "dụng cụ câu cá", synonyms: [] }
         ]
@@ -487,30 +763,42 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
     {
         word: "Occupy",
         pos: "v",
+        ipa: "/ˈɑːkjupaɪ/",
         meanings: [
-            { meaning: "chiếm lĩnh/ sử dụng", synonyms: [] }
+            { 
+                meaning: "chiếm lĩnh / sử dụng", 
+                synonyms: [
+                    ] 
+            }
         ]
     },
     {
         word: "Workout",
-        pos: "v,n",
+        pos: "n",
+        ipa: "/ˈwɜːrkaʊt/",
         meanings: [
-            { meaning: "tập thể dục", synonyms: ["exercise"] }
+            { meaning: "tập thể dục / buổi tập", synonyms: [{ word: "exercise", ipa: "/ˈeksərsaɪz/" }] }
         ]
     },
     {
         word: "Apparel",
         pos: "n",
+        ipa: "/əˈpærəl/",
         meanings: [
             { 
-                meaning: "quần áo", 
-                synonyms: ["attire", "garment", "wear", "clothing"] 
+                meaning: "quần áo / trang phục", 
+                synonyms: [
+                    { word: "attire", ipa: "/əˈtaɪər/" },
+                    { word: "garment", ipa: "/ˈɡɑːrmənt/" },
+                    { word: "clothing", ipa: "/ˈkloʊðɪŋ/" }
+                ] 
             }
         ]
     },
     {
         word: "Athlete",
         pos: "n",
+        ipa: "/ˈæθliːt/",
         meanings: [
             { meaning: "vận động viên", synonyms: [] }
         ]
@@ -518,13 +806,15 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
     {
         word: "Athletic",
         pos: "adj",
+        ipa: "/æθˈletɪk/",
         meanings: [
-            { meaning: "thuộc về thể thao", synonyms: [] }
+            { meaning: "thuộc về thể thao / khỏe khoắn", synonyms: [] }
         ]
     },
     {
         word: "Enthusiast",
         pos: "n",
+        ipa: "/ɪnˈθuːziæst/",
         meanings: [
             { meaning: "người đam mê", synonyms: [] }
         ]
@@ -532,8 +822,14 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
     {
         word: "Enthusiastic",
         pos: "adj",
+        ipa: "/ɪnˌθuːziˈæstɪk/",
         meanings: [
-            { meaning: "đam mê", synonyms: ["passionate"] }
+            { 
+                meaning: "đam mê / nhiệt huyết", 
+                synonyms: [
+                    { word: "passionate", ipa: "/ˈpæʃənət/" },
+                    ] 
+            }
         ]
     }
 ],
@@ -569,36 +865,59 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
     {
         word: "Inventory",
         pos: "n",
+        ipa: "/ˈɪnvəntɔːri/",
         meanings: [
-            { meaning: "hàng tồn kho/ hàng hóa", synonyms: ["stock"] }
+            { 
+                meaning: "hàng tồn kho / hàng hóa", 
+                synonyms: [{ word: "stock", ipa: "/stɑːk/" }] 
+            }
         ]
     },
     {
         word: "Temporary",
         pos: "adj",
+        ipa: "/ˈtempəreri/",
         meanings: [
-            { meaning: "tạm thời", synonyms: ["tentative", "interim"] }
+            { 
+                meaning: "tạm thời", 
+                synonyms: [
+                    { word: "tentative", ipa: "/ˈtentətɪv/" },
+                    { word: "interim", ipa: "/ˈɪntərɪm/" }
+                ] 
+            }
         ]
     },
     {
-        word: "permanent",
+        word: "Permanent",
         pos: "adj",
+        ipa: "/ˈpɜːrmənənt/",
         meanings: [
-            { meaning: "lâu dài", synonyms: [] }
+            { 
+                meaning: "lâu dài / vĩnh cửu", 
+                synonyms: [{ word: "lasting", ipa: "/ˈlæstɪŋ/" }] 
+            }
         ]
     },
     {
-        word: "Fun-raising",
+        word: "Fundraising",
         pos: "n",
+        ipa: "/ˈfʌndreɪzɪŋ/",
         meanings: [
-            { meaning: "sự gây quỹ", synonyms: [] }
+            { 
+                meaning: "sự gây quỹ", 
+                synonyms: [] 
+            }
         ]
     },
     {
-        word: "fund-riser",
+        word: "Fundraiser",
         pos: "n",
+        ipa: "/ˈfʌndreɪzər/",
         meanings: [
-            { meaning: "buổi gây quỹ", synonyms: [] }
+            { 
+                meaning: "buổi gây quỹ / người gây quỹ", 
+                synonyms: [] 
+            }
         ]
     }
 ]}
@@ -606,7 +925,7 @@ Tuy nhiên chúng tôi xin lỗi cho những bất tiện việc này gây ra ch
 });
 exercises.push({
   id: "151-152",
-  title: "151-152",
+  title: "151-152: refer to the following e-mai",
 
   /* ===== ĐOẠN VĂN ===== */
   sentences: [
@@ -638,61 +957,102 @@ exercises.push({
 
   /* ===== TỪ VỰNG ĐOẠN VĂN ===== */
   vocab: [
-    {
-    "word": "Excess",
-    "pos": "n",
-    "meanings": [
-      { "meaning": "dư", "synonyms": ["surplus"] }
+   {
+    word: "Excess",
+    pos: "n",
+    ipa: "/ɪkˈses/",
+    meanings: [
+      { 
+        meaning: "số lượng dư thừa", 
+        synonyms: [{ word: "surplus", ipa: "/ˈsɜːrpləs/" }] 
+      }
     ]
   },
   {
-    "word": "Follow",
-    "pos": "v",
-    "meanings": [
-      { "meaning": "theo dõi", "synonyms": [] },
-      { "meaning": "tuân thủ", "synonyms": ["abide by", "comply with", "conform to", "adhere to", "observe"] }
+    word: "Follow",
+    pos: "v",
+    ipa: "/ˈfɑːloʊ/",
+    meanings: [
+      { meaning: "theo dõi / đi theo", synonyms: [] },
+      { 
+        meaning: "tuân thủ", 
+        synonyms: [
+          { word: "abide by", ipa: "/əˈbaɪd baɪ/" },
+          { word: "comply with", ipa: "/kəmˈplaɪ wɪð/" },
+          { word: "conform to", ipa: "/kənˈfɔːrm tuː/" },
+          { word: "adhere to", ipa: "/ədˈhɪr tuː/" },
+          { word: "observe", ipa: "/əbˈzɜːrv/" }
+        ] 
+      }
     ]
   },
   {
-    "word": "Guideline",
-    "pos": "n",
-    "meanings": [
-      { "meaning": "hướng dẫn", "synonyms": ["instruction", "direction"] }
+    word: "Guideline",
+    pos: "n",
+    ipa: "/ˈɡaɪdlaɪn/",
+    meanings: [
+      { 
+        meaning: "hướng dẫn / nguyên tắc", 
+        synonyms: [
+          { word: "instruction", ipa: "/ɪnˈstrʌkʃn/" },
+          { word: "direction", ipa: "/dəˈrekʃn/" }
+        ] 
+      }
     ]
   },
   {
-    "word": "Proof",
-    "pos": "n",
-    "meanings": [
-      { "meaning": "bằng chứng", "synonyms": ["evidence"] }
+    word: "Proof",
+    pos: "n",
+    ipa: "/pruːf/",
+    meanings: [
+      { 
+        meaning: "bằng chứng", 
+        synonyms: [{ word: "evidence", ipa: "/ˈevɪdəns/" }] 
+      }
     ]
   },
   {
-    "word": "Prove",
-    "pos": "v",
-    "meanings": [
-      { "meaning": "chứng minh", "synonyms": [] }
+    word: "Prove",
+    pos: "v",
+    ipa: "/pruːv/",
+    meanings: [
+      { meaning: "chứng minh", synonyms: [{ word: "demonstrate", ipa: "/ˈdemənstreɪt/" }] }
     ]
   },
   {
-    "word": "Eligible",
-    "pos": "adj",
-    "meanings": [
-      { "meaning": "đủ điều kiện", "synonyms": ["qualified"] }
+    word: "Eligible",
+    pos: "adj",
+    ipa: "/ˈelɪdʒəbl/",
+    meanings: [
+      { 
+        meaning: "đủ điều kiện / xứng đáng", 
+        synonyms: [{ word: "qualified", ipa: "/ˈkwɑːlɪfaɪd/" }] 
+      }
     ]
   },
   {
-    "word": "Encounter",
-    "pos": "v",
-    "meanings": [
-      { "meaning": "gặp", "synonyms": ["meet", "face"] }
+    word: "Encounter",
+    pos: "v",
+    ipa: "/ɪnˈkaʊntər/",
+    meanings: [
+      { 
+        meaning: "gặp phải / đối mặt", 
+        synonyms: [
+          { word: "meet", ipa: "/miːt/" },
+          { word: "face", ipa: "/feɪs/" },
+          ] 
+      }
     ]
   },
   {
-    "word": "Process",
-    "pos": "n",
-    "meanings": [
-      { "meaning": "quy trình", "synonyms": ["procedure"] }
+    word: "Process",
+    pos: "n",
+    ipa: "/ˈprɑːses/",
+    meanings: [
+      { 
+        meaning: "quy trình", 
+        synonyms: [{ word: "procedure", ipa: "/prəˈsiːdʒər/" }] 
+      }
     ]
   }
   ],
@@ -724,40 +1084,72 @@ exercises.push({
     ],
     "vocab": [
       {
-        "word": "Agent",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "nhân viên", "synonyms": ["employee"] },
-          { "meaning": "đại lý", "synonyms": ["agency"] },
-          { "meaning": "người đại diện", "synonyms": ["representative"] }
+        word: "Agent",
+        pos: "n",
+        ipa: "/ˈeɪdʒənt/",
+        meanings: [
+          { 
+            meaning: "nhân viên / tác nhân", 
+            synonyms: [{ word: "employee", ipa: "/ɪmˈplɔɪiː/" }] 
+          },
+          { 
+            meaning: "đại lý", 
+            synonyms: [{ word: "agency", ipa: "/ˈeɪdʒənsi/" }] 
+          },
+          { 
+            meaning: "người đại diện", 
+            synonyms: [{ word: "representative", ipa: "/ˌreprɪˈzentətɪv/" }] 
+          }
         ]
       },
       {
-        "word": "Instruct",
-        "pos": "v",
-        "meanings": [
-          { "meaning": "hướng dẫn", "synonyms": ["guide", "direct"] }
+        word: "Instruct",
+        pos: "v",
+        ipa: "/ɪnˈstrʌkt/",
+        meanings: [
+          { 
+            meaning: "hướng dẫn / chỉ thị", 
+            synonyms: [
+              { word: "guide", ipa: "/ɡaɪd/" }, 
+              { word: "direct", ipa: "/dəˈrekt/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Log-in credentials",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "thông tin đăng nhập", "synonyms": [] }
+        word: "Log-in credentials",
+        pos: "n",
+        ipa: "/ˈlɔːɡ ɪn krəˈdenʃlz/",
+        meanings: [
+          { 
+            meaning: "thông tin đăng nhập", 
+            synonyms: [] 
+          }
         ]
       },
       {
-        "word": "Mail",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "thư", "synonyms": ["letter"] }
+        word: "Mail",
+        pos: "n",
+        ipa: "/meɪl/",
+        meanings: [
+          { 
+            meaning: "thư từ / bưu phẩm", 
+            synonyms: [{ word: "letter", ipa: "/ˈletər/" }, { word: "post", ipa: "/poʊst/" }] 
+          }
         ]
       },
       {
-        "word": "Verify",
-        "pos": "v",
-        "meanings": [
-          { "meaning": "xác thực", "synonyms": [] }
+        word: "Verify",
+        pos: "v",
+        ipa: "/ˈverɪfaɪ/",
+        meanings: [
+          { 
+            meaning: "xác thực / kiểm chứng", 
+            synonyms: [
+              { word: "confirm", ipa: "/kənˈfɜːrm/" },
+              { word: "validate", ipa: "/ˈvælɪdeɪt/" }
+            ] 
+          }
         ]
       }
     ]
@@ -766,7 +1158,7 @@ exercises.push({
 });
 exercises.push({
   "id": "153-154",
-  "title": "153-154",
+  "title": "153-154: refer to the following text-message chain.",
   "sentences": [
     {
       "en": "Hi, Nadia. I just noticed we have a problem with some promotional materials I packed for the trade show.",
@@ -794,23 +1186,25 @@ exercises.push({
     }
   ],
   "vocab": [
-    {
-      "word": "Pack",
-      "pos": "v",
-      "meanings": [
+   {
+      word: "Pack",
+      pos: "v",
+      ipa: "/pæk/",
+      meanings: [
         {
-          "meaning": "đóng gói",
-          "synonyms": ["package"]
+          meaning: "đóng gói / thu xếp đồ đạc",
+          synonyms: [{ word: "package", ipa: "/ˈpækɪdʒ/" }]
         }
       ]
     },
     {
-      "word": "Trade show",
-      "pos": "n",
-      "meanings": [
+      word: "Trade show",
+      pos: "n",
+      ipa: "/treɪd ʃoʊ/",
+      meanings: [
         {
-          "meaning": "hội chợ thương mại",
-          "synonyms": ["trade fair"]
+          meaning: "hội chợ thương mại",
+          synonyms: [{ word: "trade fair", ipa: "/treɪd fer/" }]
         }
       ]
     }
@@ -842,98 +1236,800 @@ exercises.push({
     ],
     "vocab": [
       {
-        "word": "Misplace",
-        "pos": "v",
-        "meanings": [
-          { "meaning": "làm thất lạc", "synonyms": ["lose"] }
+        word: "Misplace",
+        pos: "v",
+        ipa: "/ˌmɪsˈpleɪs/",
+        meanings: [
+          { 
+            meaning: "làm thất lạc / để nhầm chỗ", 
+            synonyms: [{ word: "lose", ipa: "/luːz/" }] 
+          }
         ]
       },
       {
-        "word": "Mistaken",
-        "pos": "adj",
-        "meanings": [
-          { "meaning": "sai", "synonyms": ["wrong"] }
+        word: "Mistaken",
+        pos: "adj",
+        ipa: "/mɪˈsteɪkən/",
+        meanings: [
+          { 
+            meaning: "sai lầm / nhầm lẫn", 
+            synonyms: [{ word: "wrong", ipa: "/rɔːŋ/" }] 
+          }
         ]
       },
       {
-        "word": "Power tool",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "công cụ điện", "synonyms": ["power", "energy", "electricity"] }
+        word: "Power tool",
+        pos: "n",
+        ipa: "/ˈpaʊər tuːl/",
+        meanings: [
+          { 
+            meaning: "công cụ điện", 
+            synonyms: [
+              { word: "equipment", ipa: "/ɪˈkwɪpmənt/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Outdated",
-        "pos": "adj",
-        "meanings": [
-          { "meaning": "cũ / lỗi thời", "synonyms": ["old", "out of date"] }
+        word: "Outdated",
+        pos: "adj",
+        ipa: "/ˌaʊtˈdeɪtɪd/",
+        meanings: [
+          { 
+            meaning: "cũ / lỗi thời", 
+            synonyms: [
+              { word: "old", ipa: "/oʊld/" }, 
+              { word: "obsolete", ipa: "/ˌɑːbsəˈliːt/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Brochure",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "tờ quảng cáo", "synonyms": [] }
+        word: "Brochure",
+        pos: "n",
+        ipa: "/broʊˈʃʊr/",
+        meanings: [
+          { 
+            meaning: "tờ quảng cáo", 
+            synonyms: [
+              { word: "pamphlet", ipa: "/ˈpæmflət/" },
+              { word: "booklet", ipa: "/ˈbʊklət/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Device",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "thiết bị", "synonyms": [] }
+        word: "Device",
+        pos: "n",
+        ipa: "/dɪˈvaɪs/",
+        meanings: [
+          { 
+            meaning: "thiết bị / dụng cụ", 
+            synonyms: [{ word: "gadget", ipa: "/ˈɡædʒɪt/" }, { word: "appliance", ipa: "/əˈplaɪəns/" }] 
+          }
         ]
       },
       {
-        "word": "Propose",
-        "pos": "v",
-        "meanings": [
-          { "meaning": "đề xuất", "synonyms": ["suggest", "recommend"] }
+        word: "Propose",
+        pos: "v",
+        ipa: "/prəˈpoʊz/",
+        meanings: [
+          { 
+            meaning: "đề xuất", 
+            synonyms: [
+              { word: "suggest", ipa: "/səˈdʒest/" }, 
+              { word: "recommend", ipa: "/ˌrekəˈmend/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Likely",
-        "pos": "adj",
-        "meanings": [
-          { "meaning": "có thể", "synonyms": [] }
+        word: "Likely",
+        pos: "adj",
+        ipa: "/ˈlaɪkli/",
+        meanings: [
+          { 
+            meaning: "có khả năng xảy ra", 
+            synonyms: [{ word: "probable", ipa: "/ˈprɑːbəbl/" }] 
+          }
         ]
       },
       {
-        "word": "Promotion",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "sự xúc tiến", "synonyms": [] },
-          { "meaning": "sự quảng cáo", "synonyms": [] },
-          { "meaning": "sự thăng chức", "synonyms": [] }
+        word: "Promotion",
+        pos: "n",
+        ipa: "/prəˈmoʊʃn/",
+        meanings: [
+          { meaning: "sự quảng cáo / xúc tiến", synonyms: [{ word: "advertising", ipa: "/ˈædvərtaɪzɪŋ/" }] },
+          { meaning: "sự thăng chức", synonyms: [{ word: "advancement", ipa: "/ədˈvænsmənt/" }] }
         ]
       },
       {
-        "word": "Effort",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "nỗ lực", "synonyms": ["attempt", "endeavor"] }
+        word: "Effort",
+        pos: "n",
+        ipa: "/ˈefərt/",
+        meanings: [
+          { 
+            meaning: "nỗ lực / sự cố gắng", 
+            synonyms: [
+              { word: "attempt", ipa: "/əˈtempt/" }, 
+              { word: "endeavor", ipa: "/ɪnˈdevər/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Resolve",
-        "pos": "v",
-        "meanings": [
-          { "meaning": "giải quyết", "synonyms": ["solve", "settle"] }
+        word: "Resolve",
+        pos: "v",
+        ipa: "/rɪˈzɑːlv/",
+        meanings: [
+          { 
+            meaning: "giải quyết", 
+            synonyms: [
+              { word: "solve", ipa: "/sɑːlv/" }, 
+              { word: "settle", ipa: "/ˈsetl/" }
+            ] 
+          }
         ]
       },
       {
-        "word": "Misunderstanding",
-        "pos": "n",
-        "meanings": [
-          { "meaning": "sự hiểu lầm", "synonyms": [] }
+        word: "Misunderstanding",
+        pos: "n",
+        ipa: "/ˌmɪsʌndərˈstændɪŋ/",
+        meanings: [
+          { 
+            meaning: "sự hiểu lầm", 
+            synonyms: [{ word: "misconception", ipa: "/ˌmɪskənˈsepʃn/" }] 
+          }
         ]
       }
     ]
   }
 ]
 });
+exercises.push({
+    "id": "155-157",
+    "title": "155-157: rofor to the following job advertisement",
+    "sentences": [
+      { "en": "Carder Bay Automotive Seeks Electric Auto Mechanic", "vi": "Carder Bay Automotive tìm kiếm thợ sửa xe điện" },
+      { "en": "To keep up with changes in consumer preferences, Carder Bay Automotive will begin providing maintenance and repair services for electric automobiles.", "vi": "Để bắt kịp với những thay đổi trong những sở thích của khách hàng, Carder Bay Automotive sẽ bắt đầu cung cấp những dịch vụ bảo trì và sửa chữa cho xe điện." },
+      { "en": "Therefore, we are seeking an auto mechanic with knowledge of this area.", "vi": "Vì vậy, chúng tôi đang tìm kiếm một thợ sửa xe với kiến thức về lĩnh vực này." },
+      { "en": "Candidates must possess at least two years of work experience in maintaining, diagnosing problems with, and repairing electric vehicles.", "vi": "Những ứng viên phải sở hữu ít nhất hai năm kinh nghiệm làm việc trong việc bảo trì, chẩn đoán vấn đề, sửa chữa xe hơi điện." },
+      { "en": "Carder Bay Automotive requires all employees to be punctual, well-organized, and able to work well as part of a team.", "vi": "Carder Bay Automotive yêu cầu tất cả nhân viên đúng giờ, tổ chức tốt, và có thể làm việc như một phần của đội." },
+      { "en": "Mechanics must also be licensed to operate commercial vehicles.", "vi": "Những thợ sửa xe cũng phải được cấp phép để vận hành những chiếc xe thương mại." },
+      { "en": "Candidates invited to interview for this position should expect to be asked a variety of questions intended to assess their technical skills.", "vi": "Những ứng viên tham gia buổi phỏng vấn cho vị trí này nên dự kiến được hỏi nhiều câu hỏi nhằm đánh giá khả năng chuyên môn của họ." },
+      { "en": "Those interested should visit www.carderbayauto.com/jobs/326 to fill out an electronic application.", "vi": "Những ai hứng thú nên truy cập trang web để điền vào một đơn điện tử." }
+    ],
+    "vocab": [
+      {
+        "word": "Keep up with",
+        "pos": "v",
+        "ipa": "/kiːp ʌp wɪð/",
+        "meanings": [{ "meaning": "theo kịp", "synonyms": [] }]
+      },
+      {
+        "word": "Preferences",
+        "pos": "n",
+        "ipa": "/ˈprefrənsɪz/",
+        "meanings": [{ "meaning": "sở thích", "synonyms": [{ "word": "tastes", "ipa": "/teɪsts/" }] }]
+      },
+      {
+        "word": "Seek",
+        "pos": "v",
+        "ipa": "/siːk/",
+        "meanings": [
+          { 
+            "meaning": "tìm kiếm", 
+            "synonyms": [
+              { "word": "find", "ipa": "/faɪnd/" },
+              { "word": "locate", "ipa": "/ˈloʊkeɪt/" },
+              { "word": "look for", "ipa": "/lʊk fɔːr/" },
+              { "word": "search(for)", "ipa": "/sɜːrtʃ/" }
+            ] 
+          }
+        ]
+      },
+      {
+        "word": "Possess",
+        "pos": "v",
+        "ipa": "/pəˈzes/",
+        "meanings": [{ "meaning": "sở hữu", "synonyms": [{ "word": "own", "ipa": "/oʊn/" }] }]
+      },
+      {
+        "word": "Diagnose",
+        "pos": "v",
+        "ipa": "/ˌdaɪəɡˈnoʊs/",
+        "meanings": [{ "meaning": "chuẩn đoán", "synonyms": [] }]
+      },
+      {
+        "word": "Punctual",
+        "pos": "adj",
+        "ipa": "/ˈpʌŋktʃuəl/",
+        "meanings": [{ "meaning": "đúng giờ", "synonyms": [] }]
+      },
+      {
+        "word": "Well-organized",
+        "pos": "adj",
+        "ipa": "/ˌwel ˈɔːrɡənaɪzd/",
+        "meanings": [{ "meaning": "tổ chức tốt", "synonyms": [] }]
+      },
+      {
+        "word": "License",
+        "pos": "n",
+        "ipa": "/ˈlaɪsns/",
+        "meanings": [{ "meaning": "giấy phép", "synonyms": [] }]
+      },
+      {
+        "word": "License",
+        "pos": "v",
+        "ipa": "/ˈlaɪsns/",
+        "meanings": [{ "meaning": "cấp phép", "synonyms": [] }]
+      },
+      {
+        "word": "Operate",
+        "pos": "v",
+        "ipa": "/ˈɑːpəreɪt/",
+        "meanings": [{ "meaning": "vận hành", "synonyms": [{ "word": "function", "ipa": "/ˈfʌŋkʃn/" }, { "word": "run", "ipa": "/rʌn/" }] }]
+      },
+      {
+        "word": "A variety of",
+        "pos": "phrase",
+        "ipa": "/ə vəˈraɪəti əv/",
+        "meanings": [
+          { 
+            "meaning": "nhiều", 
+            "synonyms": [
+              { "word": "a wide range of", "ipa": "" },
+              { "word": "a broad range of", "ipa": "" },
+              { "word": "an assortment of", "ipa": "" },
+              { "word": "an array of", "ipa": "" }
+            ] 
+          }
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "question": { "en": "155. Why is the mechanic position being offered?", "vi": "Tại sao vị trí thợ sửa xe đang được tuyển?" },
+        "options": [
+          { "label": "A", "en": "Business hours have been extended.", "vi": "Thời gian làm việc đã được kéo dài ra" },
+          { "label": "B", "en": "A new type of vehicle will be serviced.", "vi": "Một loại xe mới sẽ được bảo trì" },
+          { "label": "C", "en": "An additional location is opening.", "vi": "Thêm một địa điểm sẽ khai trương" },
+          { "label": "D", "en": "New regulations will go into effect.", "vi": "Những quy định mới sẽ có hiệu lực" }
+        ],
+        "vocab": [
+          { "word": "Extend", "pos": "v", "ipa": "/ɪkˈstend/", "meanings": [{ "meaning": "kéo dài", "synonyms": [{ "word": "prolong", "ipa": "/prəˈlɔːŋ/" }] }] },
+          { "word": "Service", "pos": "v", "ipa": "/ˈsɜːrvɪs/", "meanings": [{ "meaning": "bảo trì", "synonyms": [{ "word": "maintain", "ipa": "/meɪnˈteɪn/" }] }] },
+          { "word": "Regulation", "pos": "n", "ipa": "/ˌreɡjuˈleɪʃn/", "meanings": [{ "meaning": "quy định", "synonyms": [] }] },
+          { "word": "Go into effect", "pos": "v", "ipa": "/ɡoʊ ˈɪntuː ɪˈfekt/", "meanings": [{ "meaning": "có hiệu lực", "synonyms": [] }] }
+        ]
+      },
+      {
+        "question": { "en": "156. What is NOT a stated requirement of the position?", "vi": "Cái gì không được nêu ra của vị trí?" },
+        "options": [
+          { "label": "A", "en": "Teamwork skills", "vi": "kĩ năng làm việc nhóm" },
+          { "label": "B", "en": "Repair experience", "vi": "kinh nghiệm sửa chữa" },
+          { "label": "C", "en": "A maintenance certification", "vi": "một chứng chỉ bảo trì" },
+          { "label": "D", "en": "A driver’s license", "vi": "bằng lái xe" }
+        ],
+        "vocab": [
+          { "word": "Certification", "pos": "n", "ipa": "/ˌsɜːrtɪfɪˈkeɪʃn/", "meanings": [{ "meaning": "chứng chỉ", "synonyms": [{ "word": "certificate", "ipa": "/sərˈtɪfɪkət/" }] }] },
+          { "word": "Certificates", "pos": "n", "ipa": "/sərˈtɪfɪkəts/", "meanings": [{ "meaning": "những chứng chỉ", "synonyms": [] }] },
+          { "word": "License", "pos": "n", "ipa": "/ˈlaɪsns/", "meanings": [{ "meaning": "giấy phép", "synonyms": [] }] }
+        ]
+      },
+      {
+        "question": { "en": "157. According to the job advertisement, what will candidates be asked to do during interviews?", "vi": "Theo quảng cáo việc làm, những ứng viên phải làm gì trong các buổi phỏng vấn?" },
+        "options": [
+          { "label": "A", "en": "Discuss automotive technology", "vi": "thảo luận công nghệ ô tô" },
+          { "label": "B", "en": "Take an online proficiency test", "vi": "thực hiện bài kiểm tra năng lực trực tuyến" },
+          { "label": "C", "en": "Assess the condition of an automobile", "vi": "đánh giá tình trạng của một ô tô" },
+          { "label": "D", "en": "Provide documents proving their qualifications", "vi": "cung cấp tài liệu chứng minh trình độ chuyên môn của họ" }
+        ]
+      }
+    ]
+  
+});
 
 
 
+exercises.push({
+    "id": "158-160",
+    "title": "158-160: refer to the following article",
+    "sentences": [
+      { "en": "Housing Prices on the Rise", "vi": "Giá nhà đang tăng" },
+      { "en": "By Yong-Joon Wang", "vi": "Bởi Yong-Joon Wang" },
+      { "en": "DROSSER (May 6)—Housing prices in Drosser continue to increase, according to data from Turfle.com, the online real estate marketplace.", "vi": "DROSSER (Ngày 6 tháng 5)—giá nhà ở Drosser đang tăng, theo như dữ liệu từ Turfle.com, sàn giao dịch bất động sản online." },
+      { "en": "The average home price for the area jumped 5.2% from last year to $392,500.", "vi": "Giá nhà trung bình cho khu vực này đã tăng 5.2% từ năm ngoái lên thành 392,500 đô." },
+      { "en": "\"Higher home values mean more revenue from property taxes,\" commented Ada Ferrell, chair of the Drosser Housing Authority Board.", "vi": "“giá trị nhà cao hơn có nghĩa là nhiều hơn doanh thu từ thuế bất động sản” Ada Ferrell đã bình luận, chủ tịch của hội đồng chính quyền nhà ở Drosser." },
+      { "en": "\"The city will be able to generate extra funding for its social services.\"", "vi": "“thành phố sẽ có thể tạo ra thêm kinh phí cho các dịch vụ xã hội”" },
+      { "en": "However, Ms. Ferrell pointed out that the trend also poses problems for individual households.", "vi": "Tuy nhiên, cô Ferrell đã chỉ ra rằng xu hướng cũng gây ra vấn đề cho những hộ gia đình cá nhân." },
+      { "en": "\"Some homeowners will struggle to pay their higher property tax bill,\" she said.", "vi": "“một vài chủ nhà sẽ gặp khó khăn để thanh toán hóa đơn thuế bất động sản cao hơn” cô ấy nói." },
+      { "en": "\"Moreover, we know that rent prices have risen correspondingly in the past year, increasing the burden on rental tenants.\"", "vi": "“Ngoài ra chúng tôi biết rằng giá thuê đã tăng tương ứng trong năm vừa qua, tăng áp lực lên những người thuê nhà.\"" },
+      { "en": "\"Rent is becoming an increasingly large share of their living costs.\"", "vi": "“Tiền thuê đang trở thành một phần ngày càng lớn trong chi phí sinh hoạt của họ.”" },
+      { "en": "Residents experiencing financial difficulties due to housing can find a variety of resources on the Drosser Housing Authority Board's Web site, www.drossercity.org/dhab.", "vi": "Những cư dân trải qua các khó khăn về tài chính do nhà ở có thể tìm nhiều nguồn lực trên trang web của hội đồng chính quyền nhà ở." }
+    ],
+    "vocab": [
+      { "word": "Average", "pos": "adj/n", "ipa": "/ˈævərɪdʒ/", "meanings": [{ "meaning": "trung bình", "synonyms": [] }] },
+      { "word": "Revenue", "pos": "n", "ipa": "/ˈrevənuː/", "meanings": [{ "meaning": "doanh thu", "synonyms": [{ "word": "earning", "ipa": "/ˈɜːrnɪŋ/" }] }] },
+      { "word": "Comment", "pos": "v", "ipa": "/ˈkɑːment/", "meanings": [{ "meaning": "bình luận", "synonyms": [{ "word": "remark", "ipa": "/rɪˈmɑːrk/" }] }] },
+      { "word": "Chair", "pos": "n", "ipa": "/tʃer/", "meanings": [{ "meaning": "ghế", "synonyms": [] }, { "meaning": "chủ tịch", "synonyms": [{ "word": "chairman", "ipa": "/ˈtʃermən/" }] }] },
+      { "word": "Board", "pos": "n", "ipa": "/bɔːrd/", "meanings": [{ "meaning": "bảng", "synonyms": [] }, { "meaning": "hội đồng", "synonyms": [{ "word": "panel", "ipa": "/ˈpænl/" }] }] },
+      { "word": "Generate", "pos": "v", "ipa": "/ˈdʒenəreɪt/", "meanings": [{ "meaning": "tạo ra", "synonyms": [{ "word": "create", "ipa": "/kriˈeɪt/" }] }] },
+      { "word": "Funding", "pos": "n", "ipa": "/ˈfʌndɪŋ/", "meanings": [{ "meaning": "kinh phí", "synonyms": [] }] },
+      { "word": "Fund", "pos": "n", "ipa": "/fʌnd/", "meanings": [{ "meaning": "ngân sách/quỹ", "synonyms": [{ "word": "budget", "ipa": "/ˈbʌdʒɪt/" }] }] },
+      { "word": "Struggle", "pos": "v", "ipa": "/ˈstrʌɡl/", "meanings": [{ "meaning": "gặp khó khăn", "synonyms": [] }] },
+      { "word": "Correspondingly", "pos": "adv", "ipa": "/ˌkɔːrəˈspɑːndɪŋli/", "meanings": [{ "meaning": "tương ứng", "synonyms": [] }] },
+      { "word": "Burden", "pos": "n", "ipa": "/ˈbɜːrdn/", "meanings": [{ "meaning": "gánh nặng", "synonyms": [] }] },
+      { "word": "Tenant", "pos": "n", "ipa": "/ˈtenənt/", "meanings": [{ "meaning": "người thuê", "synonyms": [] }] },
+      { "word": "Landlord", "pos": "n", "ipa": "/ˈlændlɔːrd/", "meanings": [{ "meaning": "chủ nhà", "synonyms": [] }] },
+      { "word": "Large share", "pos": "n", "ipa": "", "meanings": [{ "meaning": "phần lớn", "synonyms": [{ "word": "large part", "ipa": "" }] }] },
+      { "word": "Experience", "pos": "v", "ipa": "/ɪkˈspɪriəns/", "meanings": [{ "meaning": "trải nghiệm", "synonyms": [] }] },
+      { "word": "Experience", "pos": "n", "ipa": "/ɪkˈspɪriəns/", "meanings": [{ "meaning": "kinh nghiệm/trải nghiệm", "synonyms": [] }] }
+    ],
+    "questions": [
+      {
+        "question": { "en": "158. Who most likely is Ms. Ferrell?", "vi": "Cô Ferrell là ai?" },
+        "options": [
+          { "label": "A", "en": "A tax accountant", "vi": "kế toán thuế" },
+          { "label": "B", "en": "The manager of a rental property", "vi": "quản lý của một bất động sản cho thuê" },
+          { "label": "C", "en": "A real estate agent", "vi": "người đại diện bất động sản" },
+          { "label": "D", "en": "A housing official", "vi": "một viên chức về nhà ở" }
+        ],
+        "vocab": [
+          { "word": "Real estate", "pos": "n", "ipa": "/ˈriːəl ɪsteɪt/", "meanings": [{ "meaning": "bất động sản", "synonyms": [{ "word": "property", "ipa": "/ˈprɑːpərti/" }] }] },
+          { "word": "Agent", "pos": "n", "ipa": "/ˈeɪdʒənt/", "meanings": [
+            { "meaning": "nhân viên", "synonyms": [{ "word": "employee", "ipa": "" }] },
+            { "meaning": "đại lý", "synonyms": [{ "word": "agency", "ipa": "" }] },
+            { "meaning": "người đại diện", "synonyms": [{ "word": "representative", "ipa": "" }] }
+          ] },
+          { "word": "Official", "pos": "adj", "ipa": "/əˈfɪʃl/", "meanings": [{ "meaning": "chính thức", "synonyms": [] }] },
+          { "word": "Official", "pos": "n", "ipa": "/əˈfɪʃl/", "meanings": [{ "meaning": "viên chức", "synonyms": [] }] }
+        ]
+      },
+      {
+        "question": { "en": "159. The word \"poses\" in paragraph 3, line 2, is closest in meaning to", "vi": "từ “poses” nghĩa là gì?" },
+        "options": [
+          { "label": "A", "en": "pretends", "vi": "giả vờ" },
+          { "label": "B", "en": "models", "vi": "làm mẫu" },
+          { "label": "C", "en": "presents", "vi": "trình bày" },
+          { "label": "D", "en": "states", "vi": "tuyên bố" }
+        ],
+        "vocab": [
+  { "word": "Model", "pos": "v", "ipa": "/ˈmɑːdl/", "meanings": [{ "meaning": "làm mẫu", "synonyms": [] }] },
+  { "word": "Model", "pos": "n", "ipa": "/ˈmɑːdl/", "meanings": [{ "meaning": "mô phỏng", "synonyms": [] }] },
+  { 
+    "word": "Present", "pos": "v", "ipa": "/prɪˈzent/", 
+    "meanings": [
+      { "meaning": "trình bày", "synonyms": [] },
+      { "meaning": "xuất hiện", "synonyms": [] },
+      { 
+        "meaning": "gây ra/dẫn đến", 
+        "synonyms": [
+          { "word": "lead to", "ipa": "/liːd tuː/" }, 
+          { "word": "result in", "ipa": "/rɪˈzʌlt ɪn/" }, 
+          { "word": "cause", "ipa": "/kɔːz/" }
+        ] 
+      }
+    ] 
+  },
+  { 
+    "word": "State", "pos": "v", "ipa": "/steɪt/", 
+    "meanings": [
+      { 
+        "meaning": "khẳng định/tuyên bố", 
+        "synonyms": [
+          { "word": "assert", "ipa": "/əˈsɜːrt/" }, 
+          { "word": "claim", "ipa": "/kleɪm/" }, 
+          { "word": "declare", "ipa": "/dɪˈkler/" }
+        ] 
+      }
+    ] 
+  }
+]
+      },
+      {
+        "question": { "en": "160. What does Ms. Ferrell mention about the rise in housing prices?", "vi": "cô Ferrell đề cập đến cái gì về việc tăng giá nhà?" },
+        "options": [
+          { "label": "A", "en": "It has a downside for some homeowners.", "vi": "nó có một bất lợi cho một vài chủ nhà." },
+          { "label": "B", "en": "A city organization is seeking ways to reverse it.", "vi": "một tổ chức thành phố đang tìm kiếm cách để thu hồi nó" },
+          { "label": "C", "en": "It has caused more people to choose to rent housing.", "vi": "nó đã khiến cho nhiều người chọn thuê nhà" },
+          { "label": "D", "en": "It is the result of the city's popular tax policies.", "vi": "nó là kết quả của chính sách thuế được ưa chuộng" }
+        ],
+        "vocab": [
+          { "word": "Downside", "pos": "n", "ipa": "/ˈdaʊnsaɪd/", "meanings": [{ "meaning": "bất lợi", "synonyms": [{ "word": "disadvantage", "ipa": "/ˌdɪsədˈvæntɪdʒ/" }] }] },
+          { "word": "Reverse", "pos": "v", "ipa": "/rɪˈvɜːrs/", "meanings": [{ "meaning": "đảo ngược/thu hồi", "synonyms": [{ "word": "revoke", "ipa": "/rɪˈvoʊk/" }] }] },
+          { "word": "Reserve", "pos": "v", "ipa": "/rɪˈzɜːrv/", "meanings": [{ "meaning": "đặt chỗ", "synonyms": [{ "word": "book", "ipa": "/bʊk/" }] }] }
+        ]
+      }
+    ]
+  });
+exercises.push({
+    "id": "161-163",
+    "title": "161-163: refer to the following e-mail.",
+    "sentences": [
+      { "en": "Dear Bridget.", "vi": "Bridget thân mến." },
+      { "en": "As you requested, this is your reminder that I'm starting my two-week medical leave on Monday -[1]- Attached you'll find the list of marketing campaigns that I'm currently working on, with details about the status of each.", "vi": "Như bạn đã yêu cầu, đây là lời nhắc cho bạn rằng tôi sắp bắt đầu kỳ nghỉ phép y tế hai tuần vào ngày thứ hai. -[1]- Bạn sẽ tìm thấy danh sách những chiến dịch tiếp thị được đính kèm mà tôi đang làm gần đây, cùng với chi tiết về trạng thái của mỗi cái." },
+      { "en": "I've also notified the other employees involved in each campaign about my absence. - [2] -. In most cases, it will not be difficult for one of them to take over my duties for those two weeks.", "vi": "Tôi cũng thông báo cho những nhân viên khác có dính líu trong mỗi chiến dịch về sự vắng mặt của tôi. - [2] -. Trong hầu hết các trường hợp, nó sẽ không khó cho bất kỳ ai trong số họ tiếp quản nhiệm vụ của tôi trong hai tuần này." },
+      { "en": "The only task left is to meet with Jonathan to hand over the digital promotion plans for the launch of Yancey Cosmetic's new nail polish line.", "vi": "Nhiệm vụ duy nhất còn lại là gặp Jonathan để bàn giao dự án quảng cáo số cho sự ra mắt của dòng sơn móng tay mới của Yancey Cosmetic." },
+      { "en": "I haven't been able to do that yet because I needed to make some last-minute changes that the client requested. - [3]- I'll make sure Jonathan is ready to update Yancey's social media accounts at the appropriate times with the posts I've created.", "vi": "Tôi chưa thể làm điều đó vì tôi cần làm một vài thay đổi phút chót mà khách hàng đã yêu cầu. - [3]- Tôi sẽ đảm bảo Jonathan sẵn sàng cập nhật những tài khoản mạng xã hội của Yancey tại những thời điểm phù hợp với những bài đăng tôi đã tạo." },
+      { "en": "Finally while I'll be unavailable during the first week of my leave, please feel free to contact me if necessary during the second. - [4] -.", "vi": "Cuối cùng, mặc dù tôi sẽ bận trong tuần đầu tiên của kỳ nghỉ, đừng ngần ngại liên lạc với tôi khi cần trong tuần thứ hai. - [4] -." },
+      { "en": "Sincerely, Candice Holt", "vi": "Trân trọng, Candice Holt" }
+    ],
+    "vocab": [
+    { "word": "Attach", "pos": "v", "ipa": "/əˈtætʃ/", "meanings": [{ "meaning": "đính kèm", "synonyms": [{ "word": "enclose", "ipa": "/ɪnˈkloʊz/" }] }] },
+    { "word": "Notify", "pos": "v", "ipa": "/ˈnoʊtɪfaɪ/", "meanings": [{ "meaning": "thông báo", "synonyms": [{ "word": "inform", "ipa": "/ɪnˈfɔːrm/" }] }] },
+    { "word": "Be involved in", "pos": "v", "ipa": "/biː ɪnˈvɑːlvd ɪn/", "meanings": [{ "meaning": "tham gia / liên quan", "synonyms": [] }] },
+    { "word": "Case", "pos": "n", "ipa": "/keɪs/", "meanings": [{ "meaning": "trường hợp", "synonyms": [] }, { "meaning": "vụ án / vụ kiện", "synonyms": [] }] },
+    { "word": "Take over", "pos": "v", "ipa": "/ˈteɪk oʊvər/", "meanings": [{ "meaning": "tiếp quản", "synonyms": [] }] },
+    { "word": "Hand over", "pos": "v", "ipa": "/hænd ˈoʊvər/", "meanings": [{ "meaning": "bàn giao", "synonyms": [] }] },
+    { "word": "Launch", "pos": "n/v", "ipa": "/lɔːntʃ/", "meanings": [{ "meaning": "sự ra mắt / bắt đầu", "synonyms": [{ "word": "release", "ipa": "/rɪˈliːs/" }, { "word": "rollout", "ipa": "/ˈroʊlaʊt/" }, { "word": "introduction", "ipa": "/ˌɪntrəˈdʌkʃn/" }] }] },
+    { "word": "Appropriate", "pos": "adj", "ipa": "/əˈproʊpriət/", "meanings": [{ "meaning": "phù hợp", "synonyms": [{ "word": "suitable", "ipa": "/ˈsuːtəbl/" }, { "word": "proper", "ipa": "/ˈprɑːpər/" }, { "word": "right", "ipa": "/raɪt/" }] }] }
+],
+    "questions": [
+    {
+      "question": { "en": "161. For what type of business does Ms. Holt most likely work?", "vi": "Cô Holt làm việc cho loại hình doanh nghiệp nào?" },
+      "options": [
+        { "label": "A", "en": "An online news platform", "vi": "Một nền tảng tin tức trực tuyến" },
+        { "label": "B", "en": "An advertising agency", "vi": "Một công ty quảng cáo" },
+        { "label": "C", "en": "A cosmetics company", "vi": "Một công ty mỹ phẩm" },
+        { "label": "D", "en": "A medical clinic", "vi": "Một phòng khám" }
+      ],"vocab": [
+  { 
+    "word": "Platform", 
+    "pos": "n", 
+    "ipa": "/ˈplætfɔːrm/", 
+    "meanings": [
+        { "meaning": "nhà ga", "synonyms": [] }, 
+        { "meaning": "nền tảng", "synonyms": [] }
+    ] 
+  },
+  { 
+    "word": "Agency", 
+    "pos": "n", 
+    "ipa": "/ˈeɪdʒənsi/", 
+    "meanings": [
+        { 
+            "meaning": "công ty", 
+            "synonyms": [
+                { "word": "company", "ipa": "/ˈkʌmpəni/" }, 
+                { "word": "firm", "ipa": "/fɜːrm/" },
+                { "word": "agent", "ipa": "/ˈeɪdʒənt/" }
+            ] 
+        }
+    ] 
+  },
+  { 
+    "word": "Clinic", 
+    "pos": "n", 
+    "ipa": "/ˈklɪnɪk/", 
+    "meanings": [
+        { 
+            "meaning": "phòng khám", 
+            "synonyms": [
+                { "word": "practice", "ipa": "/ˈpræktɪs/" }
+            ] 
+        }
+    ] 
+  }
+]
+    },
+    {
+      "question": { "en": "162. What will Ms. Holt prepare Jonathan to do?", "vi": "Cô Holt sẽ chuẩn bị cho Jonathan làm gì?" },
+      "options": [
+        { "label": "A", "en": "Post on social media", "vi": "Đăng trên mạng xã hội" },
+        { "label": "B", "en": "Attend a launch event", "vi": "Tham gia một sự kiện ra mắt" },
+        { "label": "C", "en": "Maintain a database", "vi": "Duy trì cơ sở dữ liệu" },
+        { "label": "D", "en": "Meet with a client", "vi": "Gặp mặt khách hàng" }
+      ]
+    },
+    {
+      "question": { "en": "163. In which of the positions marked [1], [2], [3], and [4] does the following sentence best belong? \"Now that they're finished, we've scheduled a meeting for this afternoon.\"", "vi": "Vị trí nào [1], [2], [3], [4] phù hợp với câu: \"Bởi vì chúng đã được hoàn tất, chúng ta đã lên lịch cuộc họp cho buổi chiều nay.\"" },
+      "options": [
+        { "label": "A", "en": "[1]", "vi": "Vị trí [1]" },
+        { "label": "B", "en": "[2]", "vi": "Vị trí [2]" },
+        { "label": "C", "en": "[3]", "vi": "Vị trí [3]" },
+        { "label": "D", "en": "[4]", "vi": "Vị trí [4]" }
+      ]
+    }
+  ]
+});
+exercises.push({
+    "id": "164-167",
+    "title": "164-167: refer to the following notice.",
+
+    /* ===== ĐOẠN VĂN (Từ ảnh 1 & 3) ===== */
+    "sentences": [
+        { "en": "\"The Sounds of Brilliance\"", "vi": "\"Âm thanh của sự rực rỡ\"" },
+        { "en": "Wednesday, May 28, 4:30 P.M.-9:00 P.M.", "vi": "Thứ Tư, ngày 28 tháng 5, 4:30 chiều - 9:00 tối" },
+        { "en": "The Rendon University Department of Music invites all members of the campus and local community to attend its yearly recital celebrating excellence among our students. Join us in Steen Music Center's Cho Recital Hall for an afternoon and evening of superb vocal, piano, cello, saxophone, and violin music.", "vi": "Khoa âm nhạc của trường đại học Rendon mời tất cả thành viên của khuôn viên trường và cộng đồng địa phương tham gia buổi độc tấu âm nhạc hàng năm để tôn vinh sự xuất sắc của những sinh viên của chúng tôi. Tham gia với chúng tôi ở trong sảnh độc tấu Cho của Steen Music Center vào buổi chiều và tối để nghe hát, pi-a-nô, xê-nô, sắc-xô-phôn và vi-ô-lông xuất sắc." },
+        { "en": "All performers on the program are winners of the department's performance awards. Among the honorees this year is Felicia Logan, who recently reached the semifinal round of the popular singing competition TV show Top Vocalist. The full recital program, with details about the performers and pieces available at www.rendon.edu/music/soe.", "vi": "Tất cả những nhạc sĩ trong chương trình là những người chiến thắng giải thưởng trình diễn của khoa. Trong số những người được tôn vinh năm nay là Felicia Logan, người mà gần đây đã tới vòng bán kết của chương trình truyền hình cuộc thi ca hát nổi tiếng Top Vocalist. Toàn bộ chương trình độc tấu, cùng với chi tiết về những người trình diễn và các tác phẩm thì có sẵn trên trang web." },
+        { "en": "The program will run from 4:30 P.M. to 6:00 P.M. and 7:30 P.M. to 9:00 P.M. There is no fee for admission, and seating is first-come, first-served. Please note that seats cannot be saved during the intermission.", "vi": "Chương trình sẽ kéo dài từ 4h30 tới 6h và 7h30 tới 9h. Sẽ không có phí vào cổng và chỗ ngồi là tới trước phục vụ trước. Vui lòng chú ý rằng những chỗ ngồi không thể được giữ trong giờ giải lao." },
+        { "en": "Steen Music Center is located at 640 Millard Avenue. Street parking on campus is free after 4:00 P.M., and paid parking is available in the Camacho Lot directly west of the music center.", "vi": "Steen Music Center được tọa lạc ở 640 đại lộ Millard. Đỗ xe ở khuôn viên trường miễn phí sau 4h30, và đậu xe có phí thì có sẵn ở Camacho Lot phía tây của trung tâm âm nhạc." }
+    ],
+
+    /* ===== TỪ VỰNG ĐOẠN VĂN (Từ ảnh 1 & 3) ===== */
+    "vocab": [
+        { "word": "Recital", "pos": "n", "ipa": "/rɪˈsaɪtl/", "meanings": [{ "meaning": "buổi độc tấu", "synonyms": [] }] },
+        { 
+            "word": "Superb", "pos": "adj", "ipa": "/suːˈpɜːrb/", 
+            "meanings": [{ 
+                "meaning": "xuất sắc", 
+                "synonyms": [
+                    { "word": "excellent", "ipa": "/ˈeksələnt/" },
+                    { "word": "outstanding", "ipa": "/aʊtˈstændɪŋ/" },
+                    { "word": "exceptional", "ipa": "/ɪkˈsepʃənl/" },
+                    { "word": "extraordinary", "ipa": "/ɪkˈstrɔːrdneri/" },
+                    { "word": "unbeatable", "ipa": "/ʌnˈbiːtəbl/" },
+                    { "word": "superior", "ipa": "/suːˈpɪriər/" }
+                ] 
+            }] 
+        },
+        { "word": "Honor", "pos": "v", "ipa": "/ˈɑːnər/", "meanings": [{ "meaning": "tôn vinh", "synonyms": [] }] },
+        { "word": "Honoree", "pos": "n", "ipa": "/ˌɑːnəˈriː/", "meanings": [{ "meaning": "người được tôn vinh", "synonyms": [] }] },
+        { "word": "Honor", "pos": "n", "ipa": "/ˈɑːnər/", "meanings": [{ "meaning": "vinh dự", "synonyms": [] }] },
+        { "word": "Semifinal round", "pos": "n", "ipa": "/ˌsemifaynl ˈraʊnd/", "meanings": [{ "meaning": "vòng bán kết", "synonyms": [] }] },
+        { "word": "Picies", "pos": "n", "ipa": "/ˈpiːsɪz/", "meanings": [{ "meaning": "tác phẩm", "synonyms": [{ "word": "work", "ipa": "/wɜːrk/" }] }] },
+        { "word": "First-come, first-served", "pos": "phrase", "ipa": "/ˌfɜːrst ˈkʌm ˌfɜːrst ˈsɜːrvd/", "meanings": [{ "meaning": "đến trước, phục vụ trước", "synonyms": [] }] },
+        { "word": "Admission", "pos": "n", "ipa": "/ədˈmɪʃn/", "meanings": [{ "meaning": "phí vào cổng", "synonyms": [] }] },
+        { "word": "Intermission", "pos": "n", "ipa": "/ˌɪntərˈmɪʃn/", "meanings": [{ "meaning": "giải lao", "synonyms": [] }] },
+        { "word": "Located", "pos": "adj", "ipa": "/ˈloʊkeɪtɪd/", "meanings": [{ "meaning": "được tọa lạc", "synonyms": [{ "word": "situated", "ipa": "/ˈsɪtʃueɪtɪd/" }] }] }
+    ],
+
+    /* ===== CÂU HỎI (Từ ảnh 2 & 4) ===== */
+    "questions": [
+        {
+            "question": { "en": "164. Why was the notice written?", "vi": "Tại sao thông báo được viết?" },
+            "options": [
+                { "label": "A", "en": "To advertise an annual concert", "vi": "để quảng cáo một buổi trình diễn hàng năm" },
+                { "label": "B", "en": "To attract students for a music class", "vi": "để thu hút sinh viên cho một lớp âm nhạc" },
+                { "label": "C", "en": "To announce an upcoming competition", "vi": "để thông báo về một cuộc thi sắp tới" },
+                { "label": "D", "en": "To celebrate the release of an album", "vi": "để kỉ niệm sự ra phát hành của một album" }
+            ],
+            "vocab": [
+                { "word": "Annual", "pos": "adj", "ipa": "/ˈænjuəl/", "meanings": [{ "meaning": "hàng năm", "synonyms": [] }] },
+                { "word": "Upcoming", "pos": "adj", "ipa": "/ˈʌpkʌmɪŋ/", "meanings": [{ "meaning": "sắp tới", "synonyms": [{ "word": "next", "ipa": "/nekst/" }] }] },
+                { "word": "Competition", "pos": "n", "ipa": "/ˌkɑːmpəˈtɪʃn/", "meanings": [{ "meaning": "cuộc thi", "synonyms": [{ "word": "contest", "ipa": "/ˈkɑːntest/" }] }] }
+            ]
+        },
+        {
+            "question": { "en": "165. What is indicated about the musicians?", "vi": "Cái gì được chỉ ra về những nhạc sĩ?" },
+            "options": [
+                { "label": "A", "en": "They all play the same instrument.", "vi": "tất cả họ đều chơi cùng loại nhạc cụ" },
+                { "label": "B", "en": "They are visiting from abroad.", "vi": "họ đến từ nước ngoài" },
+                { "label": "C", "en": "They are the recipients of awards.", "vi": "họ là những người nhận giải thưởng" },
+                { "label": "D", "en": "They will graduate from university this year.", "vi": "họ sẽ tốt nghiệp trường đại học vào năm nay" }
+            ],
+            "vocab": [
+                { "word": "Recipient", "pos": "n", "ipa": "/rɪˈsɪpiənt/", "meanings": [{ "meaning": "người nhận", "synonyms": [] }] },
+                { "word": "Receive", "pos": "v", "ipa": "/rɪˈsiːv/", "meanings": [{ "meaning": "nhận", "synonyms": [] }] },
+                { "word": "Receipt", "pos": "n", "ipa": "/rɪˈsiːt/", "meanings": [{ "meaning": "biên nhận / sự nhận", "synonyms": [] }] }
+            ]
+        },
+        {
+            "question": { "en": "166. Why most likely does the notice mention a television program?", "vi": "Tại sao thông báo đề cập đến chương trình truyền hình?" },
+            "options": [
+                { "label": "A", "en": "To explain the inspiration for an activity", "vi": "để giải thích về cảm hứng cho một hoạt động" },
+                { "label": "B", "en": "To specify that an event will be filmed", "vi": "để chỉ rõ sự kiện này sẽ được ghi hình" },
+                { "label": "C", "en": "To highlight the ability of a performer", "vi": "để làm nổi bật khả năng của người trình diễn" },
+                { "label": "D", "en": "To indicate that a song is well-known", "vi": "để chỉ ra rằng bài hát nổi tiếng" }
+            ],
+            "vocab": [
+                { "word": "Inspiration", "pos": "n", "ipa": "/ˌɪnspəˈreɪʃn/", "meanings": [{ "meaning": "nguồn cảm hứng", "synonyms": [] }] },
+                { "word": "Inspire", "pos": "v", "ipa": "/ɪnˈspaɪər/", "meanings": [{ "meaning": "truyền cảm hứng", "synonyms": [] }] },
+                { "word": "Specify", "pos": "v", "ipa": "/ˈspesɪfaɪ/", "meanings": [{ "meaning": "ghi rõ", "synonyms": [] }] },
+                { 
+                    "word": "Well-known", "pos": "adj", "ipa": "/ˌwel ˈnoʊn/", 
+                    "meanings": [{ 
+                        "meaning": "nổi tiếng", 
+                        "synonyms": [
+                            { "word": "known", "ipa": "/noʊn/" },
+                            { "word": "renowned", "ipa": "/rɪˈnaʊnd/" },
+                            { "word": "illustrious", "ipa": "/ɪˈlʌstriəs/" },
+                            { "word": "reputable", "ipa": "/ˈrepjətəbl/" },
+                            { "word": "high-profile", "ipa": "/ˌhaɪ ˈproʊfaɪl/" }
+                        ] 
+                    }] 
+                }
+            ]
+        },
+        {
+            "question": { "en": "167. What is NOT suggested about the event?", "vi": "Cái gì không được đề cập về sự kiện này?" },
+            "options": [
+                { "label": "A", "en": "It will be split into two parts.", "vi": "nó sẽ được chia làm hai phần" },
+                { "label": "B", "en": "It will be broadcast over the Internet.", "vi": "nó sẽ được phát sóng trên internet" },
+                { "label": "C", "en": "It will take place on campus.", "vi": "nó sẽ được diễn ra ở khuôn viên trường" },
+                { "label": "D", "en": "It will be free to attend.", "vi": "nó sẽ được miễn phí tham gia" }
+            ],
+            "vocab": [
+                { "word": "Split", "pos": "v", "ipa": "/splɪt/", "meanings": [{ "meaning": "chia", "synonyms": [{ "word": "divide", "ipa": "/dɪˈvaɪd/" }] }] },
+                { "word": "Broadcast", "pos": "v", "ipa": "/ˈbrɔːdkæst/", "meanings": [{ "meaning": "phát sóng", "synonyms": [] }] }
+            ]
+        }
+    ]
+});
+exercises.push({
+    "id": "168-171",
+    "title": "168-171: refer to the following online chat discussion.",
+    "sentences": [
+        { "en": "Ellen Chambers [2:17 P.M.]: The president wants to meet on Wednesday to talk about how we can get higher-quality job candidates for openings in our labs. Do you two have any ideas?", "vi": "Ellen Chambers [2:17 P.M.]: Chủ tịch muốn gặp mặt vào thứ Tư để nói về cách chúng ta có thể tuyển những ứng cử viên chất lượng cao hơn cho các vị trí trống trong phòng thí nghiệm. Hai bạn có bất kỳ ý tưởng nào không?" },
+        { "en": "Arjun Malhotra [2:19 P.M.]: The company could offer a referral bonus to employees. Some other biotechnology firms do that.", "vi": "Arjun Malhotra [2:19 P.M.]: Công ty có thể cung cấp tiền thưởng giới thiệu cho những nhân viên. Một vài công ty công nghệ sinh học cũng làm vậy." },
+        { "en": "Juana Amado [2:20 P.M.]: I like that idea. We can take advantage of employees' networks.", "vi": "Juana Amado [2:20 P.M.]: Tôi thích ý tưởng đó. Chúng ta có thể tận dụng mối quan hệ của nhân viên." },
+        { "en": "Ellen Chambers [2:21 P.M.]: Won't that require a lot of effort from the employees? And how would we ensure that they don't refer poor candidates just to get the bonus?", "vi": "Ellen Chambers [2:21 P.M.]: Điều đó không yêu cầu nhiều nỗ lực từ những nhân viên hả? Và làm cách nào để biết rằng họ không giới thiệu những ứng viên tệ chỉ để lấy tiền thưởng?" },
+        { "en": "Arjun Malhotra [2:22 P.M.]: All the employee would have to do is provide our department with the person's contact information.", "vi": "Arjun Malhotra [2:22 P.M.]: Tất cả những gì nhân viên phải làm là cung cấp cho phòng chúng ta thông tin liên lạc của người đó." },
+        { "en": "Juana Amado [2:23 P.M.]: Yes, we would handle the rest, as usual. And maybe the company would only pay the full bonus if the referred person ends up both being hired and staying for a while.", "vi": "Juana Amado [2:23 P.M.]: Đúng rồi, chúng ta sẽ xử lý phần còn lại như thường lệ. Và có thể công ty sẽ chỉ thanh toán toàn bộ tiền thưởng nếu người được giới thiệu cuối cùng vừa được tuyển vừa làm việc trong một thời gian." },
+        { "en": "Arjun Malhotra [2:24 P.M.]: Precisely. We could pay half upon hiring and the other half after six months of work.", "vi": "Arjun Malhotra [2:24 P.M.]: Chính xác. Chúng ta có thể trả một nửa khi thuê và nửa còn lại sau sáu tháng làm việc." },
+        { "en": "Ellen Chambers [2:25 P.M.]: OK. Let's put this plan forward at the meeting.", "vi": "Ellen Chambers [2:25 P.M.]: Được rồi. Hãy đưa kế hoạch này ra tại cuộc họp." }
+    ],
+    "vocab": [
+        { "word": "Openings", "pos": "n", "ipa": "/ˈoʊpnɪŋz/", "meanings": [{ "meaning": "vị trí trống", "synonyms": [] }] },
+        { "word": "Biotechnology", "pos": "n", "ipa": "/ˌbaɪoʊtekˈnɑːlədʒi/", "meanings": [{ "meaning": "công nghệ sinh học", "synonyms": [] }] },
+        { "word": "Take advantage of", "pos": "v", "ipa": "/teɪk ədˈvæntɪdʒ əv/", "meanings": [{ "meaning": "tận dụng", "synonyms": [] }] },
+        { "word": "Require", "pos": "v", "ipa": "/rɪˈkwaɪər/", "meanings": [{ "meaning": "yêu cầu", "synonyms": [] }] },
+        { "word": "Effort", "pos": "n", "ipa": "/ˈefərt/", "meanings": [{ "meaning": "nỗ lực", "synonyms": [
+            { "word": "attempt", "ipa": "/əˈtempt/" }, { "word": "endeavor", "ipa": "/ɪnˈdevər/" }
+        ] }] },
+        { "word": "Handle", "pos": "v", "ipa": "/ˈhændl/", "meanings": [{ "meaning": "xử lý", "synonyms": [
+            { "word": "process", "ipa": "/ˈprɑːses/" }, { "word": "address", "ipa": "/əˈdres/" }, { "word": "deal with", "ipa": "/diːl wɪð/" }
+        ] }] },
+        { "word": "End up", "pos": "v", "ipa": "/end ʌp/", "meanings": [{ "meaning": "cuối cùng", "synonyms": [] }] },
+        { "word": "Upon", "pos": "prep", "ipa": "/əˈpɑːn/", "meanings": [{ "meaning": "trên/ ngay sau khi", "synonyms": [] }] }
+    ],
+    "questions": [
+        {
+            "question": { "en": "168. What is mainly being discussed?", "vi": "Nội dung chính của đoạn hội thoại là gì?" },
+            "options": [
+                { "label": "A", "en": "Expanding into a new industry", "vi": "mở rộng vào một ngành mới" },
+                { "label": "B", "en": "Finding skilled workers", "vi": "tìm kiếm những nhân viên có tay nghề" },
+                { "label": "C", "en": "Soliciting client referrals", "vi": "yêu cầu giới thiệu khách hàng" },
+                { "label": "D", "en": "Increasing employee satisfaction", "vi": "tăng sự hài lòng của nhân viên" }
+            ],
+            "vocab": [
+                { "word": "Skilled", "pos": "adj", "ipa": "/skɪld/", "meanings": [{ "meaning": "lành nghề", "synonyms": [] }] },
+                { "word": "Solicit", "pos": "v", "ipa": "/əˈlɪsɪt/", "meanings": [{ "meaning": "yêu cầu / kêu gọi", "synonyms": [] }] },
+                { "word": "Referral", "pos": "n", "ipa": "/rɪˈfɜːrəl/", "meanings": [{ "meaning": "sự giới thiệu", "synonyms": [{ "word": "recommendation", "ipa": "/ˌrekəmenˈdeɪʃn/" }] }] },
+                { "word": "Refer to", "pos": "v", "ipa": "/rɪˈfɜːr tuː/", "meanings": [
+                    { "meaning": "tham khảo", "synonyms": [{ "word": "consult", "ipa": "/kənˈsʌlt/" }] },
+                    { "meaning": "đề cập", "synonyms": [{ "word": "mention", "ipa": "/ˈmenʃn/" }] },
+                    { "meaning": "giới thiệu", "synonyms": [{ "word": "recommend", "ipa": "/ˌrekəˈmend/" }] }
+                ] }
+            ]
+        },
+        {
+            "question": { "en": "169. What is most likely true about the writers?", "vi": "Điều gì đúng về những người viết?" },
+            "options": [
+                { "label": "A", "en": "They recently went to a networking event together.", "vi": "họ vừa đi đến một sự kiện kết nối cùng nhau" },
+                { "label": "B", "en": "They work in different departments.", "vi": "họ làm việc ở những bộ phận khác nhau" },
+                { "label": "C", "en": "They have been given a limited budget.", "vi": "họ đã được đưa cho ngân sách giới hạn" },
+                { "label": "D", "en": "They oversee a hiring process.", "vi": "họ giám sát một quy trình tuyển dụng" }
+            ],
+            "vocab": [
+                { "word": "Networking event", "pos": "n", "ipa": "/ˈnetwɜːrkɪŋ ɪˈvent/", "meanings": [{ "meaning": "sự kiện giao lưu", "synonyms": [] }] },
+                { "word": "Oversee", "pos": "v", "ipa": "/ˌoʊvərˈsiː/", "meanings": [{ "meaning": "giám sát", "synonyms": [
+                    { "word": "supervise", "ipa": "/ˈsuːpərvaɪz/" }, { "word": "monitor", "ipa": "/ˈmɑːnɪtər/" }
+                ] }] }
+            ]
+        },
+        {
+            "question": { "en": "170. At 2:24 P.M., what does Mr. Malhotra most likely mean when he writes, \"Precisely\"?", "vi": "Ông Malhotra có ý gì khi viết \"Precisely\"?" },
+            "options": [
+                { "label": "A", "en": "Ms. Amado has made a helpful suggestion.", "vi": "cô Amado đã đưa ra một đề xuất có ích" },
+                { "label": "B", "en": "They must follow a company policy carefully.", "vi": "họ phải tuân theo chính sách công ty một cách cẩn thận" },
+                { "label": "C", "en": "Some measurements must be accurate.", "vi": "một vài số đo phải chính xác" },
+                { "label": "D", "en": "A project is proceeding on schedule.", "vi": "một dự án đang diễn ra đúng tiến độ" }
+            ],
+            "vocab": [
+                { "word": "Follow", "pos": "v", "ipa": "/ˈfɑːloʊ/", "meanings": [{ "meaning": "tuân theo", "synonyms": [
+                    { "word": "abide by", "ipa": "/əˈbaɪd baɪ/" }, { "word": "comply with", "ipa": "/kəmˈplaɪ wɪð/" },
+                    { "word": "conform to", "ipa": "/kənˈfɔːrm tuː/" }, { "word": "adhere to", "ipa": "/ədˈhɪr tuː/" },
+                    { "word": "observe", "ipa": "/əbˈzɜːrv/" }
+                ] }] },
+                { "word": "Accurate", "pos": "adj", "ipa": "/ˈækjərət/", "meanings": [{ "meaning": "chính xác", "synonyms": [
+                    { "word": "exact", "ipa": "/ɪɡˈzækt/" }, { "word": "correct", "ipa": "/kəˈrekt/" }, { "word": "precise", "ipa": "/prɪˈsaɪs/" }
+                ] }] },
+                { "word": "Proceed", "pos": "v", "ipa": "/proʊˈsiːd/", "meanings": [{ "meaning": "tiến hành / tiếp tục", "synonyms": [] }] },
+                { "word": "On schedule", "pos": "phrase", "ipa": "/ɑːn ˈskedʒuːl/", "meanings": [{ "meaning": "đúng tiến độ", "synonyms": [] }] }
+            ]
+        },
+        {
+            "question": { "en": "171. What will the writers most likely do on Wednesday?", "vi": "Người viết có khả năng sẽ làm gì vào thứ Tư?" },
+            "options": [
+                { "label": "A", "en": "Determine the recipient of a bonus", "vi": "xác định người nhận tiền thưởng" },
+                { "label": "B", "en": "Describe an idea to an executive", "vi": "mô tả ý tưởng cho một giám đốc điều hành" },
+                { "label": "C", "en": "Participate in some job interviews", "vi": "tham gia một vài buổi phỏng vấn" },
+                { "label": "D", "en": "Show some equipment to laboratory staff", "vi": "đưa một vài dụng cụ cho nhân viên" }
+            ],
+            "vocab": [
+                { "word": "Determine", "pos": "v", "ipa": "/dɪˈtɜːrmɪn/", "meanings": [{ "meaning": "xác định", "synonyms": [{ "word": "identify", "ipa": "/aɪˈdentɪfaɪ/" }] }] },
+                { "word": "Recipient", "pos": "n", "ipa": "/rɪˈsɪpiənt/", "meanings": [{ "meaning": "người nhận", "synonyms": [{ "word": "receiver", "ipa": "/rɪˈsiːvər/" }] }] },
+                { "word": "Receipt", "pos": "n", "ipa": "/rɪˈsiːt/", "meanings": [{ "meaning": "biên nhận", "synonyms": [] }] }
+            ]
+        }
+    ]
+});
+exercises.push({
+    id: "172-175",
+    title: "172-175: refer to the following e-mail.",
+    sentences: [
+        { en: "Dear Ms. Muyiwa,", vi: "Thưa bà Muyiwa," },
+        { en: "Thank you for writing to express your interest in the RRVK care system.", vi: "Cảm ơn bạn đã gửi email để bày tỏ hứng thú của bạn trong hệ thống chăm sóc RRVK." },
+        { en: "As you requested, I have attached our brochure detailing the product's features, specifications, and pricing. — [1] —.", vi: "Như bạn đã yêu cầu, tôi đã đính kèm tờ quảng cáo của chúng tôi nêu chi tiết những tính năng, thông số kỹ thuật và giá cả của sản phẩm. — [1] —." },
+        { en: "You mention that your hospital's management wants you to streamline the facility's operations. — [2] —.", vi: "Bạn đề cập rằng ban quản lý của bệnh viện muốn bạn hợp lý hóa hoạt động của cơ sở. — [2] —." },
+        { en: "The RRVK care system consists of kiosks loaded with specialized software designed to do just that.", vi: "Hệ thống chăm sóc RRVK bao gồm những kios có chứa phần mềm chuyên dụng để làm việc đó." },
+        { en: "Your patients can use the system to check themselves in for appointments instead of waiting in line at the hospital's front desk.", vi: "Khách hàng có thể sử dụng hệ thống để tự đặt lịch hẹn thay vì xếp hàng đợi ở trước quầy lễ tân bệnh viện." },
+        { en: "This allows your staff to focus on more complex tasks. — [3] —.", vi: "Điều này cho phép nhân viên của bạn tập trung hơn vào những nhiệm vụ phức tạp. — [3] —." },
+        { en: "If you are interested, I would be happy to give a demonstration of the system at our office. — [4] —. Simply let me know when you are available.", vi: "Nếu bạn hứng thú, tôi sẽ rất vui hướng dẫn về hệ thống ở văn phòng của bạn. — [4] —. Chỉ cần cho tôi biết khi nào bạn rảnh." },
+        { en: "Sincerely, Rosemary Wolfe", vi: "Trân trọng, Rosemary Wolfe" }
+    ],
+    vocab: [
+        { word: "Attach", pos: "v", ipa: "/əˈtætʃ/", meanings: [{ meaning: "đính kèm", synonyms: [{ word: "enclose", ipa: "/ɪnˈkloʊz/" }] }] },
+        { word: "Feature", pos: "n", ipa: "/ˈfiːtʃər/", meanings: [{ meaning: "tính năng", synonyms: [{ word: "function", ipa: "/ˈfʌŋkʃn/" }] }, { meaning: "bài báo", synonyms: [{ word: "article", ipa: "/ˈɑːrtɪkl/" }] }] },
+        { word: "Specification", pos: "n", ipa: "/ˌspesɪfɪˈkeɪʃn/", meanings: [{ meaning: "thông số kỹ thuật", synonyms: [] }] },
+        { word: "Streamline", pos: "v", ipa: "/ˈstriːmlaɪn/", meanings: [{ meaning: "hợp lý hóa", synonyms: [] }] },
+        { word: "Operation", pos: "n", ipa: "/ˌɑːpəˈreɪʃn/", meanings: [{ meaning: "hoạt động", synonyms: [] }] },
+        { word: "Operate", pos: "v", ipa: "/ˈɑːpəreɪt/", meanings: [{ meaning: "vận hành", synonyms: [{ word: "run", ipa: "/rʌn/" }, { word: "function", ipa: "/ˈfʌŋkʃn/" }] }] },
+        { word: "Consist of", pos: "v", ipa: "/kənˈsɪst əv/", meanings: [{ meaning: "bao gồm", synonyms: [{ word: "include", ipa: "/ɪnˈkluːd/" }, { word: "cover", ipa: "/ˈkʌvər/" }, { word: "comprise", ipa: "/kəmˈpraɪz/" }, { word: "contain", ipa: "/kənˈteɪn/" }, { word: "involve", ipa: "/ɪnˈvɑːlv/" }] }] },
+        { word: "Specialized", pos: "adj", ipa: "/ˈspeʃəlaɪzd/", meanings: [{ meaning: "chuyên dụng", synonyms: [] }] },
+        { word: "Focus on", pos: "v", ipa: "/ˈfoʊkəs ɑːn/", meanings: [{ meaning: "tập trung", synonyms: [{ word: "concentrate on", ipa: "/ˈkɑːnsntreɪt ɑːn/" }] }] },
+        { word: "Complex", pos: "adj", ipa: "/kəmˈpleks/", meanings: [{ meaning: "phức tạp", synonyms: [{ word: "complicated", ipa: "/ˈkɑːmplɪkeɪtɪd/" }, { word: "elaborate", ipa: "/ɪˈlæbərət/" }, { word: "intricate", ipa: "/ˈɪntrɪkət/" }] }] },
+        { word: "Simply", pos: "adv", ipa: "/ˈsɪmpli/", meanings: [{ meaning: "đơn giản / chỉ cần", synonyms: [] }] }
+    ],
+    questions: [
+        {
+            question: { en: "172. What is one purpose of the e-mail?", vi: "Mục đích của email là gì?" },
+            options: [
+                { label: "A", en: "To report on an off-site demonstration", vi: "để báo cáo về một buổi hướng dẫn ngoài công ty" },
+                { label: "B", en: "To correct some out-of-date information", vi: "để sửa lại một vài thông tin cũ" },
+                { label: "C", en: "To share some customer testimonials", vi: "để chia sẻ một vài đánh giá của khách hàng" },
+                { label: "D", en: "To respond to a product inquiry", vi: "để phản hồi lại một câu hỏi về sản phẩm" }
+            ],
+            vocab: [
+                { word: "Off-site", pos: "adj", ipa: "/ˌɔːf ˈsaɪt/", meanings: [{ meaning: "ngoài công ty", synonyms: [] }] },
+                { word: "On-site", pos: "adj", ipa: "/ˌɑːn ˈsaɪt/", meanings: [{ meaning: "tại chỗ / công ty", synonyms: [] }] },
+                { word: "Correct", pos: "v", ipa: "/kəˈrekt/", meanings: [{ meaning: "sửa lỗi", synonyms: [] }] },
+                { word: "Out-of-date", pos: "adj", ipa: "/ˌaʊt əv ˈdeɪt/", meanings: [{ meaning: "cũ", synonyms: [{ word: "outdated", ipa: "/ˌaʊtˈdeɪtɪd/" }, { word: "old", ipa: "/oʊld/" }] }] },
+                { word: "Testimonial", pos: "n", ipa: "/ˌtestɪˈmoʊniəl/", meanings: [{ meaning: "đánh giá", synonyms: [{ word: "review", ipa: "/rɪˈvjuː/" }] }] },
+                { word: "Respond to", pos: "v", ipa: "/rɪˈspɑːnd tuː/", meanings: [{ meaning: "phản hồi", synonyms: [{ word: "reply to", ipa: "/rɪˈplaɪ tuː/" }] }] },
+                { word: "Inquiry", pos: "n", ipa: "/ˈɪnkwəˌri/", meanings: [{ meaning: "câu hỏi", synonyms: [{ word: "query", ipa: "/ˈkwɪri/" }, { word: "question", ipa: "/ˈkwestʃən/" }] }] }
+            ]
+        },
+        {
+            question: { en: "173. What is suggested about Ms. Muyiwa?", vi: "Cái gì được đề xuất về cô Muyiwa?" },
+            options: [
+                { label: "A", en: "She is employed in the healthcare field.", vi: "cô ấy làm việc trong lĩnh vực y tế" },
+                { label: "B", en: "She was asked to research self-service kiosks.", vi: "cô ấy đã yêu cầu nghiên cứu những quầy tự phục vụ" },
+                { label: "C", en: "She is usually stationed at a front desk.", vi: "cô ấy thường xuyên được đặt trước cái quầy" },
+                { label: "D", en: "She uses customized scheduling software.", vi: "cô ấy sử dụng phần mềm lên lịch tùy chỉnh" }
+            ],
+            vocab: [
+                { word: "Employ", pos: "v", ipa: "/ɪmˈplɔɪ/", meanings: [{ meaning: "tuyển dụng", synonyms: [{ word: "hire", ipa: "/ˈhaɪər/" }, { word: "recruit", ipa: "/rɪˈkruːt/" }] }] },
+                { word: "Station", pos: "v", ipa: "/ˈsteɪʃn/", meanings: [{ meaning: "đặt / để", synonyms: [{ word: "position", ipa: "/pəˈzɪʃn/" }, { word: "put", ipa: "/pʊt/" }, { word: "place", ipa: "/pleɪs/" }] }] },
+                { word: "Customized", pos: "adj", ipa: "/ˈkʌstəmaɪzd/", meanings: [{ meaning: "tùy chỉnh", synonyms: [{ word: "personalized", ipa: "/ˈpɜːrsənəlaɪzd/" }, { word: "custom", ipa: "/ˈkʌstəm/" }] }] }
+            ]
+        },
+        {
+            question: { en: "174. According to the e-mail, what can the RRVK care system do?", vi: "Theo như email, hệ thống RRVK có thể làm gì?" },
+            options: [
+                { label: "A", en: "Manage inventory", vi: "quản lí hàng hóa" },
+                { label: "B", en: "Send appointment reminders", vi: "gửi những lời nhắc về cuộc họp" },
+                { label: "C", en: "Track visitors’ arrivals", vi: "theo dõi sự xuất hiện của những vị khách" },
+                { label: "D", en: "Process payments", vi: "xử lí thanh toán" }
+            ],
+            vocab: [
+                { word: "Inventory", pos: "n", ipa: "/ˈɪnvəntɔːri/", meanings: [{ meaning: "hàng hóa / hàng tồn kho", synonyms: [{ word: "stock", ipa: "/stɑːk/" }] }] },
+                { word: "Process", pos: "v", ipa: "/ˈprɑːses/", meanings: [{ meaning: "xử lý", synonyms: [{ word: "handle", ipa: "/ˈhændl/" }, { word: "address", ipa: "/əˈdres/" }, { word: "deal with", ipa: "/diːl wɪð/" }] }] }
+            ]
+        },
+        {
+            question: { en: "175. In which of the positions marked [1], [2], [3], and [4] does the following sentence best belong? \"Reading over it should make it very clear how the RRVK can help your organization.\"", vi: "Đọc qua nó sẽ giúp bạn hiểu rõ cách RRVK có thể giúp tổ chức của bạn. Câu này nằm ở vị trí nào?" },
+            options: [
+                { label: "A", en: "[1]", vi: "[1]" },
+                { label: "B", en: "[2]", vi: "[2]" },
+                { label: "C", en: "[3]", vi: "[3]" },
+                { label: "D", en: "[4]", vi: "[4]" }
+            ]
+        }
+    ]
+});
 const app=document.getElementById("app-content");
 
 
@@ -944,78 +2040,41 @@ function renderApp() {
     /* ===============================
         PASSAGE BLOCK
     =============================== */
-    let passageHTML = `
-      <div class="question-block">
-        <div class="question-header">PASSAGE ${ex.title}</div>
-        <div class="sub-section-title">I. Dịch đoạn văn</div>
-    `;
+    // Tìm đoạn này trong hàm renderApp và thêm nút Button vào
+let passageHTML = `
+  <div class="question-block">
+    <div class="question-header">PASSAGE ${ex.title}</div>
+    <div class="sub-section-title">I. Dịch đoạn văn</div>
+    <button class="btn btn-blue" style="margin-bottom:15px; background:var(--blue);" onclick="toggleTrans(${exIndex})">
+        Hiện / Ẩn dịch cả đoạn văn
+    </button>
+`;
 
-    ex.sentences.forEach((s, i) => {
-      passageHTML += `
-        <div class="sentence-row">
-          <div>
-            ${s.en}
-          </div>
-          <div class="vi-col" id="tr-${exIndex}-${i}">
-            ${s.vi}
-          </div>
-        </div>
-      `;
-    });
-
+// Tìm đoạn này trong hàm renderApp và thay thế:
+ex.sentences.forEach((s, i) => {
     passageHTML += `
-      <button class="btn btn-yellow" onclick="toggleTrans(${exIndex})">
-        Hiện / Ẩn dịch đoạn văn
-      </button>
-
-      <div class="sub-section-title">II. Từ vựng đoạn văn</div>
-      <div class="vocab-grid">
+        <div class="sentence-row">
+            <div class="en-col">
+                ${s.en}
+            </div>
+            <div class="vi-col" id="tr-${exIndex}-${i}">
+                <b>Dịch:</b> ${s.vi}
+            </div>
+        </div>
+    `;
+});
+   passageHTML += `
+      <div class="sub-section-title">II. Từ vựng đoạn văn (Nhấn để lật)</div>
+      <div class="flash-grid">
     `;
 
-    ex.vocab.forEach((v, vIndex) => {
-      let meaningHTML = "";
-      v.meanings.forEach((m, mIndex) => {
-        let synHTML = "";
-        if (m.synonyms && m.synonyms.length) {
-          m.synonyms.forEach((syn, sIdx) => {
-            synHTML += `
-              <div style="margin-left:14px;margin-top:4px">
-                <input type="text" id="s-${exIndex}-${vIndex}-${mIndex}-${sIdx}">
-                <div class="answer-text" id="sa-${exIndex}-${vIndex}-${mIndex}-${sIdx}">
-                  ${syn}
-                </div>
-              </div>
-            `;
-          });
-        } else {
-          synHTML = `<i style="color:#aaa">Không có</i>`;
-        }
-
-        meaningHTML += `
-          <div class="meaning-block">
-            <input type="text" id="m-${exIndex}-${vIndex}-${mIndex}">
-            <div class="answer-text" id="ma-${exIndex}-${vIndex}-${mIndex}">
-              ${m.meaning}
-            </div>
-            <div><b>Đồng nghĩa</b>${synHTML}</div>
-          </div>
-        `;
-      });
-
-      passageHTML += `
-        <div class="vocab-card">
-          <div class="vocab-header">
-            <div class="vocab-word">${v.word} (${v.pos})
-            <span class="speaker-icon" onclick="speak('${v.word}')">🔊</span></div>
-          </div>
-          ${meaningHTML}
-          <div class="vocab-controls">
-            <button class="btn btn-green" onclick="showAns(${exIndex},${vIndex})">Đáp án</button>
-            <button class="btn btn-red" onclick="checkVocab(${exIndex},${vIndex})">Kiểm tra</button>
-          </div>
-        </div>
-      `;
+    ex.vocab.forEach((v) => {
+        passageHTML += renderFlashcard(v);
     });
+
+    passageHTML += `</div></div>`; // Đóng flash-grid và question-block
+
+    
 
     passageHTML += `</div></div>`;
     app.innerHTML += passageHTML;
@@ -1050,47 +2109,10 @@ function renderApp() {
         if (q.vocab && q.vocab.length) {
           questionHTML += `
             <div class="sub-section-title">IV. Từ vựng câu hỏi</div>
-            <div class="vocab-grid">
+            <div class="flash-grid">
           `;
-          q.vocab.forEach((qv, qvIdx) => {
-            let qmHTML = "";
-            qv.meanings.forEach((m, mIdx) => {
-              let qsHTML = "";
-              if (m.synonyms && m.synonyms.length) {
-                m.synonyms.forEach((syn, sIdx) => {
-                  qsHTML += `
-                    <div style="margin-left:14px;margin-top:4px">
-                      <input type="text" id="qs-${exIndex}-${qIndex}-${qvIdx}-${mIdx}-${sIdx}">
-                      <div class="answer-text" id="qsa-${exIndex}-${qIndex}-${qvIdx}-${mIdx}-${sIdx}">
-                        ${syn}
-                      </div>
-                    </div>
-                  `;
-                });
-              } else { qsHTML = `<i>Không có</i>`; }
-
-              qmHTML += `
-                <div class="meaning-block">
-                  <input type="text" id="qm-${exIndex}-${qIndex}-${qvIdx}-${mIdx}">
-                  <div class="answer-text" id="qma-${exIndex}-${qIndex}-${qvIdx}-${mIdx}">${m.meaning}</div>
-                  <div><b>Đồng nghĩa</b>${qsHTML}</div>
-                </div>
-              `;
-            });
-
-              questionHTML += `
-                <div class="vocab-card">
-                  <div class="vocab-word">
-                    ${qv.word} (${qv.pos})
-                    <span class="speaker-icon" onclick="speak('${qv.word}')">🔊</span>
-                  </div>
-                  ${qmHTML}
-                <div class="vocab-controls">
-                  <button class="btn btn-green" onclick="showQAns(${exIndex},${qIndex},${qvIdx})">Đáp án</button>
-                  <button class="btn btn-red" onclick="checkQVocab(${exIndex},${qIndex},${qvIdx})">Kiểm tra</button>
-                </div>
-              </div>
-            `;
+          q.vocab.forEach((qv) => {
+            questionHTML += renderFlashcard(qv);
           });
           questionHTML += `</div>`;
         }
@@ -1101,6 +2123,58 @@ function renderApp() {
   });
 }
 
+function renderFlashcard(v) {
+    const meaningCount = v.meanings ? v.meanings.length : 0;
+    let totalSynonyms = 0;
+
+    if (v.meanings) {
+        v.meanings.forEach(m => {
+            if (m.synonyms) totalSynonyms += m.synonyms.length;
+        });
+    }
+
+    const meaningsHTML = v.meanings.map(m => {
+    // Luôn hiển thị nghĩa chính dù có synonyms hay không
+    const mainMeaning = `<div class="card-meaning" style="color:var(--green); font-weight:bold;">${m.meaning}</div>`;
+    
+    let synHTML = "";
+    if (m.synonyms && m.synonyms.length > 0) {
+        synHTML = m.synonyms.map(syn => {
+            // Kiểm tra xem syn là object hay string
+            const word = typeof syn === 'object' ? syn.word : syn;
+            const ipa = (typeof syn === 'object' && syn.ipa) ? ` <span style="color:#666; font-size:0.9em;">${syn.ipa}</span>` : '';
+            
+            return `<div class="syn-item">• ${word}${ipa} <span class="small-speaker" onclick="event.stopPropagation(); speak('${word}')">🔊</span></div>`;
+        }).join("");
+    }
+
+    return `
+        <div style="margin-bottom: 12px; width: 100%; text-align: left;"> 
+            ${mainMeaning}
+            ${synHTML}
+        </div>
+    `;
+}).join("<hr style='width:100%; border:0; border-top:1px solid #ddd; margin:8px 0;'>");
+    return `
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="front">
+                    <div class="card-word">${v.word}</div>
+                    <div class="card-pos">(${v.pos || 'n/a'})</div>
+                    ${v.ipa ? `<div style="color:#0056b3; font-size:0.85em; margin-top:3px;">${v.ipa}</div>` : ''}
+                    <span class="speaker-icon" style="margin: 10px 0;" onclick="event.stopPropagation(); speak('${v.word}')">🔊</span>
+                    <div style="font-size: 0.75em; margin-top: 5px;">
+                        <span style="color: var(--blue); background: #eef4ff; padding: 2px 6px; border-radius: 5px;">${meaningCount} nghĩa</span>
+                        ${totalSynonyms > 0 ? `<span style="color: var(--green); background: #e8f5e9; padding: 2px 6px; border-radius: 5px; margin-left:5px;">${totalSynonyms} đồng nghĩa</span>` : ''}
+                    </div>
+                </div>
+                <div class="back">
+                    ${meaningsHTML}
+                </div>
+            </div>
+        </div>
+    `;
+}
 
 // Hàm mới: Chỉ toggle class "visible" cho đúng ID của câu hỏi được chọn
 function toggleSingleQuestionTrans(exIndex, qIndex) {

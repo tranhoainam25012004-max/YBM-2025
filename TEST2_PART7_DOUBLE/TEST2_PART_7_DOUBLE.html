@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TOEIC - Vocabulary Practice</title>
+
+<style>
+:root {
+    --green:#28a745; --red:#dc3545; --yellow:#ffc107; --blue:#007bff;
+    --dark:#343a40; --bg:#f0f2f5;
+}
+body {
+    font-family: system-ui, sans-serif;
+    background: #e9ecef; /* Màu nền xám đậm hơn một chút */
+    margin: 0;
+    padding: 15px;
+    color: var(--dark);
+}
+.main-container{max-width:900px;margin:auto}
+h1{text-align:center;color:#0056b3}
+
+
+.question-header{
+    font-size:1.3em;font-weight:bold;margin-bottom:15px
+}
+.sub-section-title{
+    font-weight:bold;color:#0056b3;
+    border-left:4px solid #0056b3;padding-left:10px;
+    margin:20px 0 15px
+}
+
+
+input[type=text]{
+    width:100%;padding:8px;border:1px solid #ccc;border-radius:5px
+}
+input.correct{border-color:var(--green);background:#d4edda}
+input.incorrect{border-color:var(--red);background:#f8d7da}
+
+.vocab-grid{
+    display:grid;grid-template-columns:1fr;gap:15px
+}
+@media(min-width:768px){
+    .vocab-grid{grid-template-columns:1fr 1fr}
+}
+
+
+.vocab-header{
+    display:flex;justify-content:space-between;
+    border-bottom:1px dashed #eee;margin-bottom:10px
+}
+.vocab-word{font-size:1.2em;font-weight:bold}
+.speaker-icon{
+    cursor:pointer;background:#eef4ff;
+    border-radius:50%;width:30px;height:30px;
+    display:flex;align-items:center;justify-content:center
+}
+.answer-text{display:none;color:var(--green);font-weight:bold;font-size:.9em}
+.vocab-controls{
+    display:flex;justify-content:flex-end;gap:10px;margin-top:10px
+}
+.btn{
+    border:none;border-radius:6px;
+    padding:6px 14px;color:#fff;font-weight:bold;cursor:pointer
+}
+.btn-green{background:var(--green)}
+.btn-red{background:var(--red)}
+.btn-yellow{background:var(--yellow);color:#333}
+
+.vocab-section {
+  margin-top: 12px;
+}
+
+.vocab-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.vocab-word {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.word-text {
+  color: #1aa33a;
+}
+
+.meaning-block {
+  margin-top: 10px;
+}
+
+.meaning-label {
+  color: #1aa33a;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.meaning-input,
+.synonym-input {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.synonym-title {
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.no-syn {
+  font-style: italic;
+  color: #999;
+  margin-left: 6px;
+}
+
+.synonym-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.synonym-text {
+  color: #1aa33a;
+  min-width: 80px;
+}
+
+.speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+.answer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    color: var(--green);
+}
+
+
+/* Khung cho từng dòng câu tiếng Anh - Việt */
+.sentence-row {
+    display: block; /* Chuyển từ grid sang block để các phần tử xếp chồng lên nhau */
+    margin-bottom: 15px;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    border: 2px solid var(--blue); 
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1); 
+    transition: all 0.2s ease;
+}
+
+.en-col {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--dark);
+    padding-right: 0; /* Bỏ padding cũ */
+    border-right: none; /* Xóa đường kẻ dọc */
+    margin-bottom: 8px; /* Tạo khoảng cách với phần dịch khi hiện lên */
+    font-weight: 500;
+}
+
+.vi-col {
+    display: none; 
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+    font-style: italic;
+    background: #f0f7ff; /* Màu nền nhẹ cho phần dịch */
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--blue); /* Thêm điểm nhấn bên trái cho phần dịch */
+    animation: fadeIn 0.3s ease; /* Hiệu ứng hiện ra mượt mà */
+}
+
+.vi-col.visible {
+    display: block; /* Hiện khi nhấn nút */
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Khung lớn bao quanh từng bài tập */
+.question-block {
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px; /* Bo góc tròn hơn tạo cảm giác mềm mại */
+    /* Đổ bóng sâu hơn để tạo độ nổi khối 3D */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+    margin-bottom: 50px;
+    border-top: 6px solid var(--blue);
+    transition: transform 0.3s ease; /* Hiệu ứng khi di chuột vào */
+}
+
+.question-block:hover {
+    transform: translateY(-2px); /* Nhấc nhẹ box lên khi di chuột */
+}
+
+/* Khung cho từng thẻ từ vựng */
+.vocab-card {
+    border: none; /* Bỏ viền cứng nhắc */
+    border-radius: 15px;
+    padding: 20px;
+    background: #ffffff;
+    /* Đổ bóng giúp card từ vựng trông như đang đặt trên mặt bàn */
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.vocab-card:hover {
+    box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+    border-color: var(--blue);
+}
+/* Layout cho lưới Flashcard */
+.flash-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 15px; 
+    margin-top: 15px;
+}
+
+/* Cấu trúc thẻ lật */
+.card {
+    height: 150px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    transition: transform 0.6s; 
+    transform-style: preserve-3d; 
+}
+
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+.front, .back { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    backface-visibility: hidden; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    border: 2px solid var(--blue); 
+    padding: 10px; 
+    box-sizing: border-box; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.front { background: #fff; }
+.back { 
+    background: #f0f7ff; 
+    transform: rotateY(180deg); 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    /* Căn các khối nội dung về bên trái */
+    align-items: flex-start; 
+    /* Căn văn bản về bên trái */
+    text-align: left;
+    padding: 15px; 
+}
+.card-word { font-size: 1.2em; font-weight: bold; color: var(--blue); }
+.card-pos { font-style: italic; color: #666; font-size: 0.9em; }
+.card-meaning { 
+    color: var(--green); 
+    font-weight: bold; 
+    margin-bottom: 5px;
+    /* Đảm bảo chữ luôn bám lề trái */
+    width: 100%; 
+}
+.card-syn { font-size: 0.85em; color: #555; }
+.syn-item {
+    display: flex;
+    align-items: center;
+    /* Căn icon loa và chữ về bên trái */
+    justify-content: flex-start; 
+    gap: 5px;
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 2px;
+    width: 100%;
+}
+.small-speaker {
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--blue);
+}
+.meaning-count {
+    font-size: 0.75em;
+    color: var(--blue);
+    background: #eef4ff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+/* Hiệu ứng khi di chuột vào từng khung câu */
+.sentence-row:hover {
+    background: #f8fbff;
+    transform: scale(1.01);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+}
+.back { 
+    background: #f0f7ff; 
+    transform: rotateY(180deg); 
+    overflow-y: auto; /* Cho phép cuộn nếu quá nhiều từ */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; /* Căn từ trên xuống thay vì ở giữa */
+    padding: 15px 10px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+<div class="main-container">
+<h1>Luyện TOEIC Part 7– Đoạn đôi</h1>
+<div id="app-content"></div>
+</div>
+
+<script>
+const exercises =
+    [{
+    id: "176-180",
+    title: "176-180: refer to the following Web page and e-mail.",
+    sentences: [
+        { en: "Wendell Green has been represented by Locke and Hanley Literary Agents since his debut.", vi: "Wendell Green đã được đại diện bởi những người đại diện văn học Locke và Hanley từ khi ra mắt." },
+        { en: "His first full-length work, Race Against Time, was included in the SLP 10, the Society of Library Professionals' yearly list of the best novels aimed at teenagers.", vi: "Tác phẩm đầu tay của anh ấy, Race Against Time, đã được thêm vào SLP 10, danh sách hàng năm của hiệp hội những chuyên gia thư viện của những quyển sách hay nhất cho thanh thiếu niên." },
+        { en: "He now writes in a variety of genres.", vi: "Bây giờ ông ấy viết đa dạng thể loại." },
+        { en: "Before becoming a full-time author, Mr. Green taught history to high school students.", vi: "Trước khi trở thành một tác giả toàn thời gian, ông Green đã dạy lịch sử cho học sinh trung học." },
+        { en: "He lives in Armenta with his wife.", vi: "Ông ấy sống ở Armenta với vợ." },
+        { en: "Recent Works by Wendell Green", vi: "Những tác phẩm gần đây được viết bởi Wendell Green" },
+        { en: "In Wylie Cove", vi: "In Wylie Cove" },
+        { en: "Adventurous journalist Tony Bradley learns a startling secret while investigating strange occurrences in his small coastal town. Over two million copies sold!", vi: "Một nhà báo thám hiểm Tony Bradley biết một bí mật trong khi điều tra những sự kiện kỳ lạ ở thị trấn nhỏ ven biển. Khoảng 2 triệu bản đã bán." },
+        { en: "Swing Away", vi: "Swing Away" },
+        { en: "The players on the Spriggs Academy baseball team have very different personalities. Can they figure out how to work together before the season ends?", vi: "Những người chơi về đội bóng chày Spriggs Academy có những tính cách khác nhau. Họ có thể tìm ra cách để làm việc cùng nhau trước khi mùa giải kết thúc không?" },
+        { en: "Fraser's Quarterly called this 'a must-read for young baseball fans.'", vi: "Fraser's Quaterly đã gọi tác phẩm này là 'phải đọc cho những người hâm mộ bóng chày trẻ'." },
+        { en: "Sarah Saves the World", vi: "Sarah Saves the World" },
+        { en: "Middle-school student Sarah Fitch tries to keep her new superpowers a secret from her friends and family. A fun and touching graphic novel featuring illustrations by Eva Pineda.", vi: "Học sinh trung học cố gắng giữ cho siêu năng lực mới của cô ấy là một bí mật bạn và gia đình cô ấy. Một tiểu thuyết đồ họa vui và cảm động gồm những hình ảnh minh họa bởi Eva Pineda." },
+        { en: "Nails on a Chalkboard", vi: "Nails on a Chalkboard" },
+        { en: "Teaching may be difficult, but it is never boring! This collection of essays about the profession touches on its humorous, frustrating, and heartbreaking aspects.", vi: "Dạy học có thể khó khăn nhưng không bao giờ buồn chán! Sự thu thập những bài luận này về nghề nghiệp đề cập đến những khía cạnh hài hước, đầy thất vọng và buồn." },
+        { en: "E-Mail", vi: "E-Mail" },
+        { en: "I got a call this week from a producer at Hickson Media about developing a film based on your latest book.", vi: "Tôi đã nhận được cuộc gọi vào tuần này của nhà sản xuất của Hickson Media về phát triển một bộ phim dựa trên quyển sách mới nhất của bạn." },
+        { en: "Her name is Maura Dayton, and she seemed very enthusiastic about the project.", vi: "Tên của cô ấy là Maura Dayton, và cô ấy dường như rất là đam mê về dự án này." },
+        { en: "She said that Tony Bradley is a great character and they could probably attract a top actor for the part.", vi: "Cô ấy nói rằng Tony Bradley là một nhân vật tuyệt vời và họ có thể thu hút một diễn viên hàng đầu cho vai diễn đó." },
+        { en: "Ms. Dayton would like to meet with both of us to present her idea for the adaptation. Could you come in to our office for that sometime this month? Let me know.", vi: "Cô Dayton muốn gặp hai chúng ta để trình bày ý tưởng của cô ấy về việc chuyển thể. Bạn có thể đến văn phòng của chúng tôi một lúc nào đó trong tháng này không? Cho tôi biết với." },
+        { en: "Best, Katherine Hanley, Literary Agent", vi: "Trân trọng, Katherine Hanley, Người đại diện văn học" }
+    ],
+    vocab: [
+        { word: "Represent", pos: "v", ipa: "/ˌreprɪˈzent/", meanings: [{ meaning: "đại diện", synonyms: [] }] },
+        { word: "Work", pos: "n", ipa: "/wɜːrk/", meanings: [{ meaning: "tác phẩm", synonyms: [{ word: "piece", ipa: "/piːs/" }] }] },
+        { word: "Society", pos: "n", ipa: "/səˈsaɪəti/", meanings: [{ meaning: "hiệp hội", synonyms: [{ word: "Association", ipa: "/əˌsoʊsiˈeɪʃn/" }, { word: "Alliance", ipa: "/əˈlaɪəns/" }, { word: "Coalition", ipa: "/ˌkoʊəˈlɪʃn/" }] }] },
+        { word: "Professional", pos: "n", ipa: "/prəˈfeʃənl/", meanings: [{ meaning: "chuyên gia", synonyms: [{ word: "expert", ipa: "/ˈekspɜːrt/" }, { word: "specialist", ipa: "/ˈspeʃəlɪst/" }] }] },
+        { word: "Professional", pos: "adj", ipa: "/prəˈfeʃənl/", meanings: [{ meaning: "chuyên nghiệp", synonyms: [{ word: "expert", ipa: "/ˈekspɜːrt/" }] }] },
+        { word: "Aim at sth", pos: "v", ipa: "/eɪm æt/", meanings: [{ meaning: "nhắm đến", synonyms: [] }] },
+        { word: "A variety of", pos: "phrase", ipa: "/ə vəˈraɪəti əv/", meanings: [{ meaning: "nhiều", synonyms: [{ word: "An assortment of", ipa: "/ə əˈsɔːrtmənt əv/" }, { word: "an array of", ipa: "/ən əˈreɪ əv/" }, { word: "a wide range of", ipa: "/ə waɪd reɪndʒ əv/" }, { word: "a broad range of", ipa: "/ə brɔːd reɪndʒ əv/" }] }] },
+        { word: "Genre", pos: "n", ipa: "/ˈʒɑːnrə/", meanings: [{ meaning: "thể loại", synonyms: [] }] },
+        { word: "Adventure", pos: "n", ipa: "/ədˈventʃər/", meanings: [{ meaning: "cuộc phiêu lưu", synonyms: [] }] },
+        { word: "Adventurous", pos: "adj", ipa: "/ədˈventʃərəs/", meanings: [{ meaning: "thích phiêu lưu", synonyms: [] }] },
+        { word: "Startle", pos: "v", ipa: "/ˈstɑːrtl/", meanings: [{ meaning: "ngạc nhiên", synonyms: [{ word: "surprise", ipa: "/sərˈpraɪz/" }] }] },
+        { word: "Startling", pos: "adj", ipa: "/ˈstɑːrtlɪŋ/", meanings: [{ meaning: "ngạc nhiên", synonyms: [{ word: "surprising", ipa: "/sərˈpraɪzɪŋ/" }] }] },
+        { word: "Investigate", pos: "v", ipa: "/ɪnˈvestɪɡeɪt/", meanings: [{ meaning: "điều tra", synonyms: [] }] },
+        { word: "Occurrences", pos: "n", ipa: "/əˈkɜːrənsɪz/", meanings: [{ meaning: "sự kiện", synonyms: [{ word: "events", ipa: "/ɪˈvents/" }] }] },
+        { word: "Coastal", pos: "adj", ipa: "/ˈkoʊstl/", meanings: [{ meaning: "bờ biển", synonyms: [] }] },
+        { word: "Personality", pos: "n", ipa: "/ˌpɜːrsəˈnæləti/", meanings: [{ meaning: "tính cách", synonyms: [{ word: "character", ipa: "/ˈkærəktər/" }] }] },
+        { word: "Figure out", pos: "v", ipa: "/ˈfɪɡjər aʊt/", meanings: [{ meaning: "tìm hiểu/tìm ra", synonyms: [] }] },
+        { word: "Touching", pos: "adj", ipa: "/ˈtʌtʃɪŋ/", meanings: [{ meaning: "cảm động", synonyms: [] }] },
+        { word: "Feature", pos: "v", ipa: "/ˈfiːtʃər/", meanings: [{ meaning: "bao gồm/có/về", synonyms: [{ word: "include", ipa: "/ɪnˈkluːd/" }, { word: "boast", ipa: "/boʊst/" }] }] },
+        { word: "Illustration", pos: "n", ipa: "/ˌɪləˈstreɪʃn/", meanings: [{ meaning: "hình ảnh minh họa", synonyms: [] }] },
+        { word: "Profession", pos: "n", ipa: "/prəˈfeʃn/", meanings: [{ meaning: "nghề nghiệp/công việc", synonyms: [{ word: "career", ipa: "/kəˈrɪr/" }, { word: "job", ipa: "/dʒɑːb/" }] }] },
+        { word: "Touch on", pos: "v", ipa: "/tʌtʃ ɑːn/", meanings: [{ meaning: "đề cập", synonyms: [{ word: "refer to", ipa: "/rɪˈfɜːr tuː/" }, { word: "mention", ipa: "/ˈmenʃn/" }] }] },
+        { word: "Humorous", pos: "adj", ipa: "/ˈhjuːmərəs/", meanings: [{ meaning: "hài hước", synonyms: [{ word: "comical", ipa: "/ˈkɑːmɪkl/" }] }] },
+        { word: "Frustrating", pos: "adj", ipa: "/ˈfrʌstreɪtɪŋ/", meanings: [{ meaning: "thất vọng", synonyms: [{ word: "disappointing", ipa: "/ˌdɪsəˈpɔɪntɪŋ/" }] }] },
+        { word: "Heartbreaking", pos: "adj", ipa: "/ˈhɑːrtbreɪkɪŋ/", meanings: [{ meaning: "buồn/đau lòng", synonyms: [{ word: "sad", ipa: "/sæd/" }] }] },
+        { word: "Enthusiastic about", pos: "adj", ipa: "/ɪnˌθuːziˈæstɪk/", meanings: [{ meaning: "nhiệt tình/đam mê", synonyms: [{ word: "passionate about", ipa: "/ˈpæʃənət əˈbaʊt/" }] }] },
+        { word: "Based on", pos: "v", ipa: "/beɪst ɑːn/", meanings: [{ meaning: "dựa trên", synonyms: [] }] },
+        { word: "Present", pos: "v", ipa: "/prɪˈzent/", meanings: [
+            { meaning: "trình bày/thuyết trình", synonyms: [] },
+            { meaning: "xuất trình", synonyms: [] },
+            { meaning: "gây ra/dẫn đến", synonyms: [{ word: "lead to", ipa: "/liːd tuː/" }, { word: "result in", ipa: "/rɪˈzʌlt ɪn/" }, { word: "pose", ipa: "/poʊz/" }] }
+        ] },
+        { word: "Adaptation", pos: "n", ipa: "/ˌædæpˈteɪʃn/", meanings: [{ meaning: "sự thay thế", synonyms: [] }, { meaning: "sự chuyển thể", synonyms: [] }] }
+    ],
+    questions: [
+        {
+            question: { en: "176. What is the SLP 10 a list of?", vi: "176. SLP 10 là danh sách của cái gì?" },
+            options: [
+                { label: "A", en: "Fictional characters", vi: "Những nhân vật hư cấu" },
+                { label: "B", en: "First-time authors", vi: "Những tác giả ra mắt lần đầu" },
+                { label: "C", en: "Books for youth", vi: "Những quyển sách cho giới trẻ" },
+                { label: "D", en: "Public libraries", vi: "Những thư viện công cộng" }
+            ],
+            vocab: [
+                { word: "Fictional", pos: "adj", ipa: "/ˈfɪkʃənl/", meanings: [{ meaning: "hư cấu", synonyms: [] }] },
+                { word: "fiction", pos: "n", ipa: "/ˈfɪkʃn/", meanings: [{ meaning: "tiểu thuyết", synonyms: [{ word: "novel", ipa: "/ˈnɑːvl/" }] }] },
+                { word: "Character", pos: "n", ipa: "/ˈkærəktər/", meanings: [{ meaning: "tính cách", synonyms: [{ word: "personality", ipa: "/ˌpɜːrsəˈnæləti/" }] },
+                                                                                { meaning: "nhân vật", synonyms: [] }] },
+                { word: "Author", pos: "n", ipa: "/ˈɔːθər/", meanings: [{ meaning: "tác giả", synonyms: [{ word: "novelist", ipa: "/ˈnɑːvəlɪst/" }, { word: "writer", ipa: "/ˈraɪtər/" }] }] }
+            ]
+        },
+        {
+            question: { en: "177. What is indicated about Mr. Green?", vi: "177. Cái gì được chỉ ra về ông Green?" },
+            options: [
+                { label: "A", en: "He lives near the ocean.", vi: "Ông ấy sống gần biển" },
+                { label: "B", en: "He collaborates with a family member.", vi: "Ông ấy cộng tác với một thành viên trong gia đình" },
+                { label: "C", en: "He has written about his previous career.", vi: "Ông ấy đã viết về công việc trước đây" },
+                { label: "D", en: "He sometimes contributes to Fraser's Quarterly.", vi: "Ông ấy thỉnh thoảng đóng góp cho tờ báo Fraser's Quarterly" }
+            ],
+            vocab: [
+                { word: "Collaborate with", pos: "v", ipa: "/kəˈlæbəreɪt wɪð/", meanings: [{ meaning: "hợp tác", synonyms: [{ word: "cooperate with", ipa: "/koʊˈɑːpəreɪt wɪð/" }, { word: "partner with", ipa: "/ˈpɑːrtnər wɪð/" }] }] },
+                { word: "Previous", pos: "adj", ipa: "/ˈpriːviəs/", meanings: [{ meaning: "trước đây", synonyms: [{ word: "former", ipa: "/ˈfɔːrmər/" }] }] },
+                { word: "Contribute to", pos: "v", ipa: "/kənˈtrɪbjuːt tuː/", meanings: [{ meaning: "đóng góp", synonyms: [] }] }
+            ]
+        },
+        {
+            question: { en: "178. In the e-mail, the word 'part' in paragraph 1, line 4, is closest in meaning to", vi: "178. Từ 'part' trong đoạn 1 dòng 4 gần nghĩa nhất với:" },
+            options: [
+                { label: "A", en: "component", vi: "phụ tùng/bộ phận" },
+                { label: "B", en: "section", vi: "phần" },
+                { label: "C", en: "portion", vi: "phần" },
+                { label: "D", en: "role", vi: "vai trò/vai diễn" }
+            ],
+            vocab: [
+                { word: "Adapt", pos: "v", ipa: "/əˈdæpt/", meanings: [
+                    { meaning: "thay đổi", synonyms: [{ word: "adjust", ipa: "/əˈdʒʌst/" }, { word: "modify", ipa: "/ˈmɑːdɪfaɪ/" }, { word: "revise", ipa: "/rɪˈvaɪz/" }, { word: "change", ipa: "/tʃeɪndʒ/" }] },
+                    { meaning: "chuyển thể", synonyms: [] }
+                ] },
+                { word: "Lawyer", pos: "n", ipa: "/ˈlɔɪər/", meanings: [{ meaning: "luật sư", synonyms: [{ word: "attorney", ipa: "/əˈtɜːrni/" }] }] }
+            ]
+        },
+        {
+            question: { en: "179. According to the e-mail, which book may be adapted into a film?", vi: "179. Theo email quyển sách nào có thể chuyển thể thành bộ phim?" },
+            options: [
+                { label: "A", en: "In Wylie Cove", vi: "In Wylie Cove" },
+                { label: "B", en: "Swing Away", vi: "Swing Away" },
+                { label: "C", en: "Sarah Saves the World", vi: "Sarah Saves the World" },
+                { label: "D", en: "Nails on a Chalkboard", vi: "Nails on a Chalkboard" }
+            ],
+            vocab: [
+                { word: "Proposal", pos: "n", ipa: "/prəˈpoʊzl/", meanings: [{ meaning: "đề xuất", synonyms: [{ word: "suggestion", ipa: "/səˈdʒestʃən/" }, { word: "recommendation", ipa: "/ˌrekəmənˈdeɪʃn/" }] }] }
+            ]
+        },
+        {
+            question: { en: "180. What does Ms. Hanley ask Mr. Green to do in March?", vi: "180. Cô Hanley yêu cầu ông Green làm gì vào tháng ba?" },
+            options: [
+                { label: "A", en: "Meet with a lawyer", vi: "Gặp luật sư" },
+                { label: "B", en: "Listen to a proposal", vi: "Nghe một đề xuất" },
+                { label: "C", en: "Make an announcement", vi: "Làm một thông báo" },
+                { label: "D", en: "Edit some writing", vi: "Sửa chữa vài bài viết" }
+            ],
+            vocab: [
+                { word: "Proposal", pos: "n", ipa: "/prəˈpoʊzl/", meanings: [{ meaning: "đề xuất (suggestion/recommendation)", synonyms: [] }] }
+            ]
+        }
+    ]
+      }
+];
+exercises.push({
+    id: "181-185",
+    title: "181-185: refer to the following e-mail and form.",
+    sentences: [
+        { en: "To: Member list / From: Otis Community Center / Date: February 3 / Subject: Cooking classes / Attachment: Flyer", vi: "Đến: Danh sách thành viên / Từ: Trung tâm cộng đồng Otis / Ngày: 3 tháng 2 / Chủ đề: Các lớp học nấu ăn / Đính kèm: Tờ rơi" },
+        { en: "As part of our ongoing efforts to celebrate cultural diversity, Otis Community Center will hold a series of one-time cooking classes on Asian dishes this spring.", vi: "Như là một phần của nỗ lực liên tục của chúng tôi để tôn vinh sự đa dạng văn hóa, trung tâm cộng đồng Otis sẽ tổ chức một chuỗi các lớp học nấu ăn một lần về những món ăn Châu Á vào mùa xuân tới." },
+        { en: "The classes will be held on the first Wednesday evening of each month from March through June.", vi: "Những lớp học sẽ được tổ chức vào tối thứ tư đầu tiên của mỗi tháng từ tháng ba đến tháng sáu." },
+        { en: "In order, the dishes covered will be Vietnamese chicken curry, Korean kimchi stew, Thai spring rolls, and Cantonese stir-fry beef.", vi: "Theo thứ tự, các món ăn được bao gồm sẽ là cà ri gà Việt Nam, kim chi Hàn Quốc, chả giò Thái Lan, và bò xào Quảng Đông." },
+        { en: "Guest instructors from Roark Culinary Academy will teach the classes in our dedicated cooking classroom.", vi: "Những giáo viên khách mời từ học viện ẩm thực Roark sẽ dạy các lớp học trong những phòng học nấu ăn chuyên dụng của chúng tôi." },
+        { en: "Advance registration and payment are required, and participants will be asked to show proof of registration to their instructor.", vi: "Đăng ký và thanh toán trước là yêu cầu bắt buộc, và những người tham gia sẽ được yêu cầu xuất trình bằng chứng đăng ký của họ cho người hướng dẫn." },
+        { en: "Registration can be completed at our front desk from February 15 for all classes.", vi: "Việc đăng ký có thể hoàn tất ở quầy lễ tân từ ngày 15 tháng 2 cho tất cả các lớp." },
+        { en: "Those who are not members of Otis Community Center will be required to pay a $5 registration fee.", vi: "Những người mà không phải là thành viên của trung tâm cộng đồng Otis sẽ được yêu cầu thanh toán 5 đô phí đăng ký." },
+        { en: "Questions about the classes may be directed to Heather Tate, our programming specialist.", vi: "Các câu hỏi về lớp học có thể được hướng dẫn đến Heather Tate, chuyên gia lập trình của chúng tôi." },
+        { en: "Akio Hayashi, Director", vi: "Akio Hayashi, Giám đốc" },
+        { en: "OTIS COMMUNITY CENTER - CLASS REGISTRATION CONFIRMATION FORM", vi: "TRUNG TÂM CỘNG ĐỒNG OTIS - ĐƠN XÁC NHẬN ĐĂNG KÝ LỚP HỌC" },
+        { en: "Name: Kayla Shull / Membership Number: 499560 / Class Title: Thai Spring Rolls / Instructor: David Somsri", vi: "Tên: Kayla Shull / Số thẻ thành viên: 499560 / Tên lớp học: Chả giò Thái Lan / Người hướng dẫn: David Somsri" },
+        { en: "Date & Time: May 6, 5 P.M. / Registration Fee: WAIVED / Materials Fee: $15 (Paid) / Processed by: Eric Woodard", vi: "Ngày & Giờ: 6 tháng 5, 5 giờ chiều / Phí đăng ký: ĐƯỢC MIỄN / Phí nguyên liệu: 15$ (Đã thanh toán) / Xử lý bởi: Eric Woodard" },
+        { en: "Note: Refunds of class fees are only issued for cancellations made at least one week before the class date.", vi: "Ghi chú: Việc hoàn lại học phí của lớp chỉ được phát hành dành cho việc hủy lớp ít nhất một tuần trước ngày học." }
+    ],
+    vocab: [
+        { word: "Ongoing", pos: "adj", ipa: "/ˈɑːnɡoʊɪŋ/", meanings: [{ meaning: "liên tục", synonyms: [{ word: "continuous", ipa: "/kənˈtɪnjuəs/" }, { word: "constant", ipa: "/ˈkɑːnstənt/" }] }] },
+        { word: "Effort", pos: "n", ipa: "/ˈefərt/", meanings: [{ meaning: "nỗ lực", synonyms: [{ word: "attempt", ipa: "/əˈtempt/" }, { word: "endeavor", ipa: "/ɪnˈdevər/" }] }] },
+        { word: "Diversity", pos: "n", ipa: "/daɪˈvɜːrsəti/", meanings: [{ meaning: "đa dạng", synonyms: [{ word: "variety", ipa: "/vəˈraɪəti/" }, { word: "assortment", ipa: "/əˈsɔːrtmənt/" }, { word: "range", ipa: "/reɪndʒ/" }] }] },
+        { word: "Order", pos: "n", ipa: "/ˈɔːrdər/", meanings: [{ meaning: "thứ tự", synonyms: [] }, { meaning: "đơn hàng", synonyms: [] }, { meaning: "mệnh lệnh", synonyms: [] }] },
+        { word: "Cover", pos: "v", ipa: "/ˈkʌvər/", meanings: [{ meaning: "bao gồm", synonyms: [] }, { meaning: "bao phủ", synonyms: [] }, { meaning: "chi trả", synonyms: [] }, { meaning: "đưa tin", synonyms: [] }] },
+        { word: "Stir-fry", pos: "n", ipa: "/ˈstɜːr fraɪ/", meanings: [{ meaning: "xào", synonyms: [] }] },
+        { word: "Instructor", pos: "n", ipa: "/ɪnˈstrʌktər/", meanings: [{ meaning: "người hướng dẫn/giáo viên", synonyms: [] }] },
+        { word: "Dedicated", pos: "adj", ipa: "/ˈdedɪkeɪtɪd/", meanings: [{ meaning: "chuyên dụng", synonyms: [] }, { meaning: "tận tụy/cam kết", synonyms: [] }] },
+        { word: "Advance", pos: "adj", ipa: "/ədˈvæns/", meanings: [{ meaning: "trước", synonyms: [{ word: "prior", ipa: "/ˈpraɪər/" }, { word: "former", ipa: "/ˈfɔːrmər/" }, { word: "previous", ipa: "/ˈpriːviəs/" }] }] },
+        { word: "Advance", pos: "v/n", ipa: "/ədˈvæns/", meanings: [{ meaning: "tiến bộ", synonyms: [{ word: "progress", ipa: "/ˈprɑːɡres/" }] }] },
+        { word: "Proof", pos: "n", ipa: "/pruːf/", meanings: [{ meaning: "bằng chứng", synonyms: [{ word: "evidence", ipa: "/ˈevɪdəns/" }] }] },
+        { word: "Attach", pos: "v", ipa: "/əˈtætʃ/", meanings: [{ meaning: "đính kèm", synonyms: [{ word: "enclose", ipa: "/ɪnˈkloʊz/" }] }] },
+        { word: "Flyer", pos: "n", ipa: "/ˈflaɪər/", meanings: [{ meaning: "tờ rơi", synonyms: [{ word: "pamphlet", ipa: "/ˈpæmflət/" }] }] },
+        { word: "Vary", pos: "v", ipa: "/ˈveri/", meanings: [{ meaning: "khác nhau", synonyms: [{ word: "differ", ipa: "/ˈdɪfər/" }] }] },
+        { word: "Direct", pos: "v", ipa: "/dəˈrekt/", meanings: [{ meaning: "hướng dẫn", synonyms: [{ word: "guide", ipa: "/ɡaɪd/" }, { word: "instruct", ipa: "/ɪnˈstrʌkt/" }] }, { meaning: "gửi", synonyms: [{ word: "send", ipa: "/send/" }] }] },
+        { word: "Specialist", pos: "n", ipa: "/ˈspeʃəlɪst/", meanings: [{ meaning: "chuyên gia", synonyms: [{ word: "expert", ipa: "/ˈekspɜːrt/" }, { word: "professional", ipa: "/prəˈfeʃənl/" }] }] },
+        { word: "Process", pos: "v", ipa: "/ˈprɑːses/", meanings: [{ meaning: "xử lý", synonyms: [{ word: "handle", ipa: "/ˈhændl/" }, { word: "address", ipa: "/əˈdres/" }, { word: "deal with", ipa: "/diːl wɪð/" }] }] }
+    ],
+    questions: [
+        {
+            id: 181,
+            question: { en: "181. Why was the e-mail written?", vi: "181. Tại sao email được viết?" },
+            options: [
+                { label: "A", en: "To recruit volunteer workers", vi: "để tuyển nhân viên tình nguyện" },
+                { label: "B", en: "To issue invitations to special dinners", vi: "để mời đến dự buổi tiệc tối đặc biệt" },
+                { label: "C", en: "To ask for feedback about a program", vi: "để yêu cầu phản hồi về một chương trình" },
+                { label: "D", en: "To publicize some learning opportunities", vi: "để quảng bá một vài cơ hội học tập" }
+            ],
+            vocab: [
+                { word: "Publicize", pos: "v", ipa: "/ˈpʌblɪsaɪz/", meanings: [{ meaning: "quảng cáo/quảng bá", synonyms: [{ word: "advertise", ipa: "/ˈædvərtaɪz/" }, { word: "promote", ipa: "/prəˈmoʊt/" }] }] },
+                { word: "Culinary", pos: "adj", ipa: "/ˈkʌlɪneri/", meanings: [{ meaning: "ẩm thực", synonyms: [{ word: "cuisine", pos: "n", ipa: "/kwɪˈziːn/" }] }] },
+                { word: "Academy", pos: "n", ipa: "/əˈkædəmi/", meanings: [{ meaning: "học viện", synonyms: [{ word: "institute", ipa: "/ˈɪnstɪtuːt/" }] }] }
+            ]
+        },
+        {
+            id: 182,
+            question: { en: "182. Where will a community activity take place?", vi: "182. Hoạt động cộng đồng được tổ chức ở đâu?" },
+            options: [
+                { label: "A", en: "On a city street", vi: "trên một con đường thành phố" },
+                { label: "B", en: "At Otis Community Center", vi: "tại trung tâm cộng đồng Otis" },
+                { label: "C", en: "At several local restaurants", vi: "tại một vài nhà hàng địa phương" },
+                { label: "D", en: "At Roark Culinary Academy", vi: "tại học viện ẩm thực Roark" }
+            ]
+        },
+        {
+            id: 183,
+            question: { en: "183. What dish will be cooked in March?", vi: "183. Món ăn nào sẽ được nấu vào tháng ba?" },
+            options: [
+                { label: "A", en: "Vietnamese chicken curry", vi: "Cà ri gà Việt Nam" },
+                { label: "B", en: "Korean kimchi stew", vi: "Kim chi Hàn Quốc" },
+                { label: "C", en: "Thai spring rolls", vi: "Chả giò Thái Lan" },
+                { label: "D", en: "Cantonese stir-fry beef", vi: "Bò xào Quảng Đông" }
+            ]
+        },
+        {
+            id: 184,
+            question: { en: "184. Why was a fee waived for Ms. Shull?", vi: "184. Tại sao một cái phí được miễn cho cô Shull?" },
+            options: [
+                { label: "A", en: "She will provide some materials herself.", vi: "Cô ấy sẽ tự chuẩn bị một vài nguyên liệu" },
+                { label: "B", en: "She is a community center member.", vi: "Cô ấy là thành viên trung tâm cộng đồng Otis" },
+                { label: "C", en: "She registered before a certain date.", vi: "Cô ấy đã đăng ký trước một ngày nhất định" },
+                { label: "D", en: "She attended each session of a class.", vi: "Cô ấy đã tham gia mỗi buổi của một lớp học" }
+            ],
+            vocab: [
+                { word: "Waived", pos: "v", ipa: "/weɪvd/", meanings: [{ meaning: "được miễn (phí)", synonyms: [] }] },
+                { word: "Register", pos: "v", ipa: "/ˈredʒɪstər/", meanings: [{ meaning: "đăng ký", synonyms: [{ word: "sign up", ipa: "/saɪn ʌp/" }, { word: "enrolling", ipa: "/ɪnˈroʊlɪŋ/" }] }] },
+                { word: "Certain", pos: "adj", ipa: "/ˈsɜːrtn/", meanings: [{ meaning: "nhất định/chắc chắn", synonyms: [] }] }
+            ]
+        },
+        {
+            id: 185,
+            question: { en: "185. To whom should Ms. Shull show her confirmation form?", vi: "185. Cô Shull xuất trình đơn xác nhận cho người nào?" },
+            options: [
+                { label: "A", en: "Ms. Tate", vi: "Cô Tate" },
+                { label: "B", en: "Mr. Hayashi", vi: "Ông Hayashi" },
+                { label: "C", en: "Mr. Somsri", vi: "Ông Somsri" },
+                { label: "D", en: "Mr. Woodard", vi: "Ông Woodard" }
+            ]
+        }
+    ]
+});
+
+const app=document.getElementById("app-content");
+
+
+function renderApp() {
+  app.innerHTML = "";
+
+  exercises.forEach((ex, exIndex) => {
+    /* ===============================
+        PASSAGE BLOCK
+    =============================== */
+    // Tìm đoạn này trong hàm renderApp và thêm nút Button vào
+let passageHTML = `
+  <div class="question-block">
+    <div class="question-header">PASSAGE ${ex.title}</div>
+    <div class="sub-section-title">I. Dịch đoạn văn</div>
+    <button class="btn btn-blue" style="margin-bottom:15px; background:var(--blue);" onclick="toggleTrans(${exIndex})">
+        Hiện / Ẩn dịch cả đoạn văn
+    </button>
+`;
+
+   ex.sentences.forEach((s, i) => {
+    passageHTML += `
+        <div class="sentence-row">
+            <div class="en-col">
+                ${s.en}
+            </div>
+            <div class="vi-col" id="tr-${exIndex}-${i}">
+                ${s.vi}
+            </div>
+        </div>
+    `;
+});
+   passageHTML += `
+      <div class="sub-section-title">II. Từ vựng đoạn văn (Nhấn để lật)</div>
+      <div class="flash-grid">
+    `;
+
+    ex.vocab.forEach((v) => {
+        passageHTML += renderFlashcard(v);
+    });
+
+    passageHTML += `</div></div>`; // Đóng flash-grid và question-block
+
+    
+
+    passageHTML += `</div></div>`;
+    app.innerHTML += passageHTML;
+
+    /* ===============================
+        QUESTION BLOCK
+    =============================== */
+    if (ex.questions && ex.questions.length) {
+      let questionHTML = `
+        <div class="question-block" style="border-top-color:var(--green)">
+          <div class="question-header">QUESTIONS ${ex.title}</div>
+          <div class="sub-section-title">III. Câu hỏi</div>
+      `;
+
+      ex.questions.forEach((q, qIndex) => {
+    questionHTML += `
+      <div class="sentence-row" style="grid-template-columns:1fr">
+        <b>${q.question.en}</b>
+        ${q.options.map(o => `<div>(${o.label}) ${o.en}</div>`).join("")}
+        
+        <div class="vi-col" id="qv-${exIndex}-${qIndex}">
+          <b>Dịch:</b> ${q.question.vi}
+          <ul>${q.options.map(o => `<li>(${o.label}) ${o.vi}</li>`).join("")}</ul>
+        </div>
+      </div>
+      
+      <button class="btn btn-yellow" style="margin-bottom:20px" onclick="toggleSingleQuestionTrans(${exIndex}, ${qIndex})">
+        Hiện / Ẩn dịch câu hỏi này
+      </button>
+    `;
+
+        if (q.vocab && q.vocab.length) {
+          questionHTML += `
+            <div class="sub-section-title">IV. Từ vựng câu hỏi</div>
+            <div class="flash-grid">
+          `;
+          q.vocab.forEach((qv) => {
+            questionHTML += renderFlashcard(qv);
+          });
+          questionHTML += `</div>`;
+        }
+      });
+      questionHTML += `</div>`;
+      app.innerHTML += questionHTML;
+    }
+  });
+}
+
+function renderFlashcard(v) {
+    const meaningCount = v.meanings ? v.meanings.length : 0;
+    let totalSynonyms = 0;
+
+    if (v.meanings) {
+        v.meanings.forEach(m => {
+            if (m.synonyms) totalSynonyms += m.synonyms.length;
+        });
+    }
+
+    const meaningsHTML = v.meanings.map(m => {
+    // Luôn hiển thị nghĩa chính dù có synonyms hay không
+    const mainMeaning = `<div class="card-meaning" style="color:var(--green); font-weight:bold;">${m.meaning}</div>`;
+    
+    let synHTML = "";
+    if (m.synonyms && m.synonyms.length > 0) {
+        synHTML = m.synonyms.map(syn => {
+            // Kiểm tra xem syn là object hay string
+            const word = typeof syn === 'object' ? syn.word : syn;
+            const ipa = (typeof syn === 'object' && syn.ipa) ? ` <span style="color:#666; font-size:0.9em;">${syn.ipa}</span>` : '';
+            
+            return `<div class="syn-item">• ${word}${ipa} <span class="small-speaker" onclick="event.stopPropagation(); speak('${word}')">🔊</span></div>`;
+        }).join("");
+    }
+    return `
+        <div style="margin-bottom: 12px; width: 100%; text-align: left;"> 
+            ${mainMeaning}
+            ${synHTML}
+        </div>
+    `;
+}).join("<hr style='width:100%; border:0; border-top:1px solid #ddd; margin:8px 0;'>");
+    return `
+        <div class="card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="front">
+                    <div class="card-word">${v.word}</div>
+                    <div class="card-pos">(${v.pos || 'n/a'})</div>
+                    ${v.ipa ? `<div style="color:#0056b3; font-size:0.85em; margin-top:3px;">${v.ipa}</div>` : ''}
+                    <span class="speaker-icon" style="margin: 10px 0;" onclick="event.stopPropagation(); speak('${v.word}')">🔊</span>
+                    <div style="font-size: 0.75em; margin-top: 5px;">
+                        <span style="color: var(--blue); background: #eef4ff; padding: 2px 6px; border-radius: 5px;">${meaningCount} nghĩa</span>
+                        ${totalSynonyms > 0 ? `<span style="color: var(--green); background: #e8f5e9; padding: 2px 6px; border-radius: 5px; margin-left:5px;">${totalSynonyms} đồng nghĩa</span>` : ''}
+                    </div>
+                </div>
+                <div class="back">
+                    ${meaningsHTML}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Hàm mới: Chỉ toggle class "visible" cho đúng ID của câu hỏi được chọn
+function toggleSingleQuestionTrans(exIndex, qIndex) {
+    const target = document.getElementById(`qv-${exIndex}-${qIndex}`);
+    if (target) {
+        target.classList.toggle("visible");
+    }
+}
+
+
+function toggleTrans(exIndex){
+    exercises[exIndex].sentences.forEach((_,i)=>{
+        document.getElementById(`tr-${exIndex}-${i}`).classList.toggle("visible");
+    });
+}
+
+function checkVocab(exIndex,vIndex){
+    const v=exercises[exIndex].vocab[vIndex];
+
+    v.meanings.forEach((m,mIndex)=>{
+        const inp=document.getElementById(
+            `m-${exIndex}-${vIndex}-${mIndex}`
+        );
+        const ok=inp.value.trim().toLowerCase()
+            === m.meaning.toLowerCase();
+        inp.className= ok ? "correct":"incorrect";
+
+        m.synonyms.forEach((syn,sIdx)=>{
+            const sinp=document.getElementById(
+                `s-${exIndex}-${vIndex}-${mIndex}-${sIdx}`
+            );
+            const sok=sinp.value.trim().toLowerCase()
+                === syn.toLowerCase();
+            sinp.className= sok ? "correct":"incorrect";
+        });
+    });
+}
+
+function checkQVocab(exIndex, qIndex, vIndex) {
+    const v = exercises[exIndex].questions[qIndex].vocab[vIndex];
+    v.meanings.forEach((m, mIndex) => {
+        // Kiểm tra nghĩa chính
+        const inp = document.getElementById(`qm-${exIndex}-${qIndex}-${vIndex}-${mIndex}`);
+        const ok = inp.value.trim().toLowerCase() === m.meaning.toLowerCase();
+        inp.className = ok ? "correct" : "incorrect";
+
+        // Kiểm tra đồng nghĩa
+        if (m.synonyms && m.synonyms.length) {
+            m.synonyms.forEach((syn, sIdx) => {
+                const sinp = document.getElementById(`qs-${exIndex}-${qIndex}-${vIndex}-${mIndex}-${sIdx}`);
+                const sok = sinp.value.trim().toLowerCase() === syn.toLowerCase();
+                sinp.className = sok ? "correct" : "incorrect";
+            });
+        }
+    });
+}
+
+
+/* Các hàm showAns bổ sung loa nhỏ */
+function showAns(exIndex, vIndex) {
+  const v = exercises[exIndex].vocab[vIndex];
+  v.meanings.forEach((m, mIndex) => {
+    document.getElementById(`ma-${exIndex}-${vIndex}-${mIndex}`).style.display = "block";
+    m.synonyms.forEach((syn, sIdx) => {
+      const el = document.getElementById(`sa-${exIndex}-${vIndex}-${mIndex}-${sIdx}`);
+      el.innerHTML = `${syn} <span class="speaker-icon" style="width:20px;height:20px;font-size:12px;display:inline-flex;margin-left:5px" onclick="speak('${syn}')">🔊</span>`;
+      el.style.display = "block";
+    });
+  });
+}
+
+function showQAns(exIndex, qIndex, vIndex) {
+  const v = exercises[exIndex].questions[qIndex].vocab[vIndex];
+  v.meanings.forEach((m, mIndex) => {
+    const ma = document.getElementById(`qma-${exIndex}-${qIndex}-${vIndex}-${mIndex}`);
+    if(ma) ma.style.display = "block";
+    m.synonyms.forEach((syn, sIdx) => {
+      const el = document.getElementById(`qsa-${exIndex}-${qIndex}-${vIndex}-${mIndex}-${sIdx}`);
+      if(el) {
+        el.innerHTML = `${syn} <span class="speaker-icon" style="width:20px;height:20px;font-size:12px;display:inline-flex;margin-left:5px" onclick="speak('${syn}')">🔊</span>`;
+        el.style.display = "block";
+      }
+    });
+  });
+}
+
+
+function speak(text){
+    if("speechSynthesis" in window){
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang="en-US";
+        speechSynthesis.speak(u);
+    }
+}
+
+
+renderApp();
+</script>
+</body>
+</html>
