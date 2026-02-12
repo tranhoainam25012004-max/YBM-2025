@@ -20,7 +20,26 @@ body {
 .main-container{max-width:900px;margin:auto}
 h1{text-align:center;color:#0056b3}
 
+.btn-blue {
+    background-color: var(--blue);
+    color: white;
+}
+/* Màu cho nút bình thường */
+.nav-btn {
+    background: var(--blue);
+    opacity: 0.8;
+}
 
+/* Màu cho nút đang được chọn */
+.nav-btn.active-nav {
+    background: #004085 !important; /* Màu xanh đậm hẳn */
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    border: 2px solid #fff;
+}
+.btn-blue:hover {
+    background-color: #0056b3; /* Màu đậm hơn khi di chuột vào */
+}
 .question-header{
     font-size:1.3em;font-weight:bold;margin-bottom:15px
 }
@@ -274,6 +293,7 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
     text-align: left;
     padding: 15px; 
 }
+
 .card-word { font-size: 1.2em; font-weight: bold; color: var(--blue); }
 .card-pos { font-style: italic; color: #666; font-size: 0.9em; }
 .card-meaning { 
@@ -309,6 +329,7 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
     margin-top: 5px;
 }
 
+
 /* Hiệu ứng khi di chuột vào từng khung câu */
 .sentence-row:hover {
     background: #f8fbff;
@@ -325,6 +346,63 @@ input.incorrect{border-color:var(--red);background:#f8d7da}
     justify-content: flex-start; /* Căn từ trên xuống thay vì ở giữa */
     padding: 15px 10px;
     text-align: center;
+}
+/* Menu chọn nhanh */
+.nav-menu {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-bottom: 25px;
+    border-radius: 0 0 12px 12px;
+}
+.nav-btn {
+    background: var(--blue);
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.nav-btn:hover {
+    background: #0056b3;
+}
+/* Hiệu ứng cuộn mượt khi nhấn menu */
+html {
+    scroll-behavior: smooth;
+}
+/* Container cho nút chuyển câu */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.pagination-controls .page-info {
+    font-weight: bold;
+    color: var(--blue);
+    font-size: 1.1em;
+}
+
+/* Ẩn các bài tập không phải hiện tại */
+.exercise-wrapper {
+    display: none;
+}
+.exercise-wrapper.active {
+    display: block;
 }
 </style>
 </head>
@@ -577,93 +655,125 @@ exercises.push({
 const app=document.getElementById("app-content");
 
 
+let currentExIndex = 0; 
+
 function renderApp() {
-  app.innerHTML = "";
+    app.innerHTML = "";
 
-  exercises.forEach((ex, exIndex) => {
-    /* ===============================
-        PASSAGE BLOCK
-    =============================== */
-    // Tìm đoạn này trong hàm renderApp và thêm nút Button vào
-let passageHTML = `
-  <div class="question-block">
-    <div class="question-header">PASSAGE ${ex.title}</div>
-    <div class="sub-section-title">I. Dịch đoạn văn</div>
-    <button class="btn btn-blue" style="margin-bottom:15px; background:var(--blue);" onclick="toggleTrans(${exIndex})">
-        Hiện / Ẩn dịch cả đoạn văn
-    </button>
-`;
+   // 1. Menu chọn nhanh (Cập nhật logic class active-nav)
+    let navHTML = `<div class="nav-menu">`;
+    exercises.forEach((ex, idx) => {
+        let shortTitle = ex.title.split(':')[0]; 
+        
+        // Kiểm tra nếu idx trùng với currentExIndex thì thêm class active-nav
+        const activeClass = (idx === currentExIndex) ? 'active-nav' : '';
+        
+        navHTML += `<a href="javascript:void(0)" 
+                       onclick="goToExercise(${idx})" 
+                       class="nav-btn ${activeClass}">${shortTitle}</a>`;
+    });
+    navHTML += `</div>`;
+    app.innerHTML = navHTML;
 
-   ex.sentences.forEach((s, i) => {
+    // 2. Render nội dung bài tập (Chỉ hiển thị bài currentExIndex)
+    const ex = exercises[currentExIndex];
+    
+    let exWrapper = document.createElement('div');
+    exWrapper.className = "exercise-wrapper active";
+
+    let passageHTML = `
+        <div class="question-block">
+            <div class="question-header">PASSAGE ${ex.title}</div>
+            <div class="sub-section-title">I. Dịch đoạn văn</div>
+            <button class="btn btn-blue" style="margin-bottom:15px; background:var(--blue);" onclick="toggleTrans(${currentExIndex})">
+                Hiện / Ẩn dịch cả đoạn văn
+            </button>
+    `;
+
+    ex.sentences.forEach((s, i) => {
+        passageHTML += `
+            <div class="sentence-row">
+                <div class="en-col">${s.en}</div>
+                <div class="vi-col" id="tr-${currentExIndex}-${i}">
+                    <b>Dịch:</b> ${s.vi}
+                </div>
+            </div>
+        `;
+    });
+
     passageHTML += `
-        <div class="sentence-row">
-            <div class="en-col">
-                ${s.en}
-            </div>
-            <div class="vi-col" id="tr-${exIndex}-${i}">
-                ${s.vi}
-            </div>
-        </div>
+        <div class="sub-section-title">II. Từ vựng đoạn văn (Nhấn để lật)</div>
+        <div class="flash-grid">
     `;
-});
-   passageHTML += `
-      <div class="sub-section-title">II. Từ vựng đoạn văn (Nhấn để lật)</div>
-      <div class="flash-grid">
-    `;
-
     ex.vocab.forEach((v) => {
         passageHTML += renderFlashcard(v);
     });
+    passageHTML += `</div></div>`; 
 
-    passageHTML += `</div></div>`; // Đóng flash-grid và question-block
-
-    
-
-    passageHTML += `</div></div>`;
-    app.innerHTML += passageHTML;
-
-    /* ===============================
-        QUESTION BLOCK
-    =============================== */
+    // Câu hỏi
     if (ex.questions && ex.questions.length) {
-      let questionHTML = `
-        <div class="question-block" style="border-top-color:var(--green)">
-          <div class="question-header">QUESTIONS ${ex.title}</div>
-          <div class="sub-section-title">III. Câu hỏi</div>
-      `;
+        passageHTML += `
+            <div class="question-block" style="border-top-color:var(--green)">
+                <div class="question-header">QUESTIONS ${ex.title}</div>
+                <div class="sub-section-title">III. Câu hỏi</div>
+        `;
 
-      ex.questions.forEach((q, qIndex) => {
-    questionHTML += `
-      <div class="sentence-row" style="grid-template-columns:1fr">
-        <b>${q.question.en}</b>
-        ${q.options.map(o => `<div>(${o.label}) ${o.en}</div>`).join("")}
-        
-        <div class="vi-col" id="qv-${exIndex}-${qIndex}">
-          <b>Dịch:</b> ${q.question.vi}
-          <ul>${q.options.map(o => `<li>(${o.label}) ${o.vi}</li>`).join("")}</ul>
+        ex.questions.forEach((q, qIndex) => {
+            passageHTML += `
+                <div class="sentence-row" style="grid-template-columns:1fr">
+                    <b>${q.question.en}</b>
+                    ${q.options.map(o => `<div>(${o.label}) ${o.en}</div>`).join("")}
+                    <div class="vi-col" id="qv-${currentExIndex}-${qIndex}">
+                        <b>Dịch:</b> ${q.question.vi}
+                        <ul>${q.options.map(o => `<li>(${o.label}) ${o.vi}</li>`).join("")}</ul>
+                    </div>
+                </div>
+                <button class="btn btn-yellow" style="margin-bottom:20px" onclick="toggleSingleQuestionTrans(${currentExIndex}, ${qIndex})">
+                    Hiện / Ẩn dịch câu hỏi này
+                </button>
+            `;
+
+            if (q.vocab && q.vocab.length) {
+                passageHTML += `<div class="flash-grid">`;
+                q.vocab.forEach((qv) => {
+                    passageHTML += renderFlashcard(qv);
+                });
+                passageHTML += `</div>`;
+            }
+        });
+        passageHTML += `</div>`;
+    }
+
+    // Tìm đoạn này trong hàm renderApp() của bạn và thay thế:
+
+    // 3. THÊM NÚT ĐIỀU HƯỚNG DƯỚI CÙNG
+    passageHTML += `
+        <div class="pagination-controls">
+            <button class="btn btn-blue" 
+                    onclick="goToExercise(${currentExIndex - 1})" 
+                    ${currentExIndex === 0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+                ← Câu trước
+            </button>
+            <div class="page-info">Câu ${currentExIndex + 1} / ${exercises.length}</div>
+            <button class="btn btn-blue" 
+                    onclick="goToExercise(${currentExIndex + 1})" 
+                    ${currentExIndex === exercises.length - 1 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+                Câu sau →
+            </button>
         </div>
-      </div>
-      
-      <button class="btn btn-yellow" style="margin-bottom:20px" onclick="toggleSingleQuestionTrans(${exIndex}, ${qIndex})">
-        Hiện / Ẩn dịch câu hỏi này
-      </button>
     `;
 
-        if (q.vocab && q.vocab.length) {
-          questionHTML += `
-            <div class="sub-section-title">IV. Từ vựng câu hỏi</div>
-            <div class="flash-grid">
-          `;
-          q.vocab.forEach((qv) => {
-            questionHTML += renderFlashcard(qv);
-          });
-          questionHTML += `</div>`;
-        }
-      });
-      questionHTML += `</div>`;
-      app.innerHTML += questionHTML;
+    exWrapper.innerHTML = passageHTML;
+    app.appendChild(exWrapper);
+}
+
+// Hàm bổ trợ để chuyển trang
+function goToExercise(index) {
+    if (index >= 0 && index < exercises.length) {
+        currentExIndex = index;
+        renderApp();
+        window.scrollTo(0, 0); // Cuộn lên đầu trang khi chuyển câu
     }
-  });
 }
 
 function renderFlashcard(v) {
@@ -690,6 +800,7 @@ function renderFlashcard(v) {
             return `<div class="syn-item">• ${word}${ipa} <span class="small-speaker" onclick="event.stopPropagation(); speak('${word}')">🔊</span></div>`;
         }).join("");
     }
+
     return `
         <div style="margin-bottom: 12px; width: 100%; text-align: left;"> 
             ${mainMeaning}

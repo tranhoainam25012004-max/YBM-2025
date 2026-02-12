@@ -16,7 +16,9 @@
             border-radius: 20px;
             background: #ffffff;
         }
-        
+        .p-practice.show { display: block !important; }
+.feedback.correct { color: #28a745; font-weight: bold; }
+.feedback.correct::before { content: "✓ Chính xác! "; }
         .group-header { text-align: center; margin-bottom: 20px; }
         .group-title { 
             display: inline-block; color: white; background: var(--brand-blue); 
@@ -57,6 +59,79 @@
         .vocab-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
         .vocab-info { display: flex; flex-direction: column; }
         .speak-btn { font-size: 1.3rem; cursor: pointer; }
+        
+        /* Menu điều hướng nhanh */
+.lesson-nav {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+.nav-item {
+    background: #e7f3ff;
+    color: var(--brand-blue);
+    padding: 5px 15px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+.nav-item:hover {
+    background: var(--brand-blue);
+    color: white;
+}
+/* Ẩn tất cả các bài học mặc định */
+.lesson-group { 
+    display: none; 
+    border: 2px dashed var(--brand-blue); 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    border-radius: 20px;
+    background: #ffffff;
+}
+
+/* Chỉ hiển thị bài học có class .active */
+.lesson-group.active {
+    display: block;
+}
+
+/* Định dạng cụm nút chuyển trang */
+.pagination-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+.pagination-nav button {
+    min-width: 120px;
+    padding: 12px 20px;
+    background: white;
+    color: var(--brand-blue);
+    border: 2px solid var(--brand-blue);
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.pagination-nav button:disabled {
+    border-color: #ccc;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-nav button:hover:not(:disabled) {
+    background: var(--brand-blue);
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -1378,6 +1453,8 @@ const allLessons = [
 }
 ];
 
+let currentLessonIndex = 0; // Biến theo dõi bài học hiện tại
+
 function speak(text) {
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = 'en-US';
@@ -1398,14 +1475,41 @@ function toggleGroupContent(btn, className) {
     btn.classList.toggle('active-btn');
 }
 
+// Hàm chuyển bài học
+function goToLesson(index) {
+    if (index >= 0 && index < allLessons.length) {
+        currentLessonIndex = index;
+        render();
+        window.scrollTo(0, 0); // Cuộn lên đầu trang khi chuyển bài
+    }
+}
+
 function render() {
     const app = document.getElementById('app');
     
-    app.innerHTML = allLessons.map((lesson) => `
-        <div class="lesson-group">
+    // 1. Menu nhanh (vẫn giữ để người dùng nhảy nhanh đến câu)
+    const navHtml = `
+        <div class="lesson-nav">
+            ${allLessons.map((lesson, index) => `
+                <a href="javascript:void(0)" 
+                   onclick="goToLesson(${index})" 
+                   class="nav-item ${currentLessonIndex === index ? 'active-btn' : ''}"
+                   style="${currentLessonIndex === index ? 'background: #007bff; color: white;' : ''}">
+                   ${lesson.title}
+                </a>
+            `).join('')}
+        </div>
+    `;
+
+    // 2. Tạo nội dung cho bài học hiện tại
+    const lesson = allLessons[currentLessonIndex];
+    const contentHtml = `
+        <div class="lesson-group active">
             <div class="group-header">
                 <div class="group-title">${lesson.title}</div><br>
-                <audio class="audio-player" controls><source src="${lesson.audioUrl}" type="audio/mpeg"></audio>
+                <audio class="audio-player" controls key="${currentLessonIndex}">
+                    <source src="${lesson.audioUrl}" type="audio/mpeg">
+                </audio>
             </div>
             
             <div class="section">
@@ -1415,15 +1519,23 @@ function render() {
                     <button onclick="toggleGroupContent(this, 'p-ipa')">IPA</button>
                     <button onclick="toggleGroupContent(this, 'p-guide')">Cách phát âm</button>
                     <button onclick="toggleGroupContent(this, 'p-vi')">Việt</button>
-                </div>
-                ${lesson.passage.map(item => `
-                    <div class="content-line">
-                        <div class="en-text p-en"><strong>${item.en}</strong></div>
-                        <div class="ipa-text p-ipa">${item.ipa}</div>
-                        <div class="guide-text p-guide">🗣️ ${item.guide || 'Đang cập nhật...'}</div>
-                        <div class="vi-text p-vi">${item.vi}</div>
-                    </div>
-                `).join('')}
+                    <button onclick="toggleGroupContent(this, 'p-practice')">Luyện viết</button>
+                </div>${lesson.passage.map((item, idx) => `
+    <div class="content-line">
+        <div class="en-text p-en"><strong>${item.en}</strong></div>
+        <div class="ipa-text p-ipa">${item.ipa}</div>
+        <div class="guide-text p-guide">🗣️ ${item.guide || 'Đang cập nhật...'}</div>
+        <div class="vi-text p-vi">${item.vi}</div>
+        
+        <div class="practice-box p-practice" style="display:none; margin-top:10px;">
+            <input type="text" 
+                   placeholder="Nhập lại câu Anh hoặc Việt..." 
+                   style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"
+                   onkeyup="checkPractice(this, '${item.en.replace(/'/g, "\\'")}', '${item.vi.replace(/'/g, "\\'")}')">
+            <div class="feedback" style="font-size: 0.8rem; margin-top: 4px;"></div>
+        </div>
+    </div>
+`).join('')}
             </div>
 
             <div class="section">
@@ -1478,8 +1590,47 @@ function render() {
                     `).join('')}
                 </div>
             </div>
+
+            <div class="pagination-nav">
+                <button onclick="goToLesson(${currentLessonIndex - 1})" ${currentLessonIndex === 0 ? 'disabled' : ''}>
+                    ← Câu trước
+                </button>
+                <span style="font-weight: bold; align-self: center;">
+                    ${currentLessonIndex + 1} / ${allLessons.length}
+                </span>
+                <button onclick="goToLesson(${currentLessonIndex + 1})" ${currentLessonIndex === allLessons.length - 1 ? 'disabled' : ''}>
+                    Câu sau →
+                </button>
+            </div>
         </div>
-    `).join('');
+    `;
+
+    app.innerHTML = navHtml + contentHtml;
+}
+function checkPractice(input, correctEn, correctVi) {
+    const userValue = input.value.trim().toLowerCase();
+    const feedback = input.nextElementSibling;
+    
+    // Làm sạch chuỗi (loại bỏ dấu câu cơ bản để so sánh chính xác hơn)
+    const clean = (str) => str.toLowerCase().replace(/[.,?!]/g, "").trim();
+
+    if (userValue === "") {
+        feedback.innerHTML = "";
+        input.style.borderColor = "#ccc";
+        return;
+    }
+
+    if (clean(userValue) === clean(correctEn) || clean(userValue) === clean(correctVi)) {
+        feedback.innerHTML = "Tuyệt vời!";
+        feedback.className = "feedback correct";
+        input.style.borderColor = "#28a745";
+        input.style.backgroundColor = "#eafff0";
+    } else {
+        feedback.innerHTML = "Tiếp tục cố gắng...";
+        feedback.className = "feedback";
+        input.style.borderColor = "#ff4d4f";
+        input.style.backgroundColor = "#fff1f0";
+    }
 }
 
 render();
