@@ -59,6 +59,18 @@
         .vocab-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
         .vocab-info { display: flex; flex-direction: column; }
         .speak-btn { font-size: 1.3rem; cursor: pointer; }
+        /* Style cho phần bối cảnh */
+.context-text { 
+    display: none; 
+    margin-bottom: 5px; 
+    font-style: italic; 
+    color: #6c757d; 
+    background: #e9ecef; 
+    padding: 5px 10px; 
+    border-radius: 5px; 
+    font-size: 0.9rem;
+}
+.context-text.show { display: block !important; }
         
         /* Menu điều hướng nhanh */
 .lesson-nav {
@@ -132,6 +144,18 @@
     background: var(--brand-blue);
     color: white;
 }
+.grammar-text {
+    display: none;
+    margin-top: 5px;
+    padding: 10px;
+    background: #fff8e1; /* Màu vàng nhạt */
+    border-left: 5px solid #ffc107;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    color: #5d4037;
+    line-height: 1.5;
+}
+.grammar-text.show { display: block !important; }
     </style>
 </head>
 <body>
@@ -144,43 +168,55 @@ const allLessons = [
         title: "Questions 32 - 34",
         audioUrl: "Test 02_Part 3_32-34.mp3",
         
-  passage: [
-  {
-    "en": "Hi, Nancy. I just saw you through the window, so I thought I'd stop in.",
-    "ipa": "/haɪ, ˈnænsi. aɪ dʒʌst sɔː juː θruː ðə ˈwɪndoʊ, soʊ aɪ θɔːt aɪd stɑːp ɪn./",
-    "guide": "haɪ, ˈnænsi <span class='intonation'>⤵</span>. aɪ <b>dʒʌs‿sɔː</b> juː θruː ðə ˈwɪndoʊ <span class='intonation'>⤴</span>, soʊ aɪ <b>θɔː‿daɪd</b> <b>stɑːp‿ɪn</b> <span class='intonation'>⤵</span>",
-    "vi": "Chào Nancy. Tôi vừa thấy bạn qua cửa sổ, nên tôi nghĩ mình sẽ ghé vào."
-  },
-  {
-    "en": "As a fellow Main Street business owner, I'm glad to see you're getting the bookstore ready for reopening.",
-    "ipa": "/æz ə ˈfɛloʊ meɪn striːt ˈbɪznəs ˈoʊnər, aɪm ɡlæd tuː siː jʊər ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi fɔːr riːˈoʊpnɪŋ./",
-    "guide": "<b>æz‿ə</b> ˈfɛloʊ ˈmeɪn <span class='stop'>striːt</span> ˈbɪznə<b>s‿oʊnər</b> <span class='intonation'>⤴</span>, aɪm <b>ɡlæd‿tə</b> siː <b>jər</b> ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi <b>fər</b> riːˈoʊpnɪŋ <span class='intonation'>⤵</span>",
-    "vi": "Là một chủ doanh nghiệp trên phố Main, tôi rất vui khi thấy bạn đang chuẩn bị cho hiệu sách sẵn sàng mở cửa trở lại."
-  },
-  {
-    "en": "Yes, we'll finally reopen this weekend. What do you think of the changes to the layout?",
-    "ipa": "/jɛs, wiːl ˈfaɪnəli riːˈoʊpən ðɪs ˈwiːkˌɛnd. wʌt duː juː θɪŋk ʌv ðə ˈtʃeɪndʒəz tuː ðə ˈleɪˌaʊt?/",
-    "guide": "jɛs <span class='intonation'>⤵</span>, wiːl ˈfaɪnəli riːˈoʊpən ðɪs <b>ˈwiːk‿ɛn</b> <span class='intonation'>⤵</span>. <b>wʌt‿də‿ju</b> θɪŋ<b>k‿əv</b> ðə ˈtʃeɪndʒɪz tə ðə <b>ˈleɪˌaʊ<span class='stop'>t</span></b> <span class='intonation'>⤵</span>",
-    "vi": "Vâng, cuối cùng chúng tôi cũng sẽ mở cửa lại vào cuối tuần này. Bạn nghĩ gì về những thay đổi trong cách bố trí?"
-  },
-  {
-    "en": "We'll have staff selling coffee and tea from that counter, and customers will be able to relax at the tables with their drinks and books.",
-    "ipa": "/wiːl hæv stæf ˈsɛlɪŋ ˈkɔːfi ænd tiː frʌm ðæt ˈkaʊntər, ænd ˈkʌstəmərz wɪl biː ˈeɪbl tuː rɪˈlæks æt ðə ˈteɪbəlz wɪθ ðɛr drɪŋks ænd bʊks./",
-    "guide": "wiːl <b>hæv‿stæf</b> ˈsɛlɪŋ ˈkɔːfi <b>ən</b> tiː frəm <b>ðæt‿ˈkaʊntər</b> <span class='intonation'>⤴</span>, <b>ən</b> ˈkʌstəmərz wɪl bi <b>ˈeɪbl‿tə</b> rɪˈlæks <b>æt‿ðə</b> ˈteɪbəlz wɪθ ðər <b>drɪŋks‿ən</b> bʊks <span class='intonation'>⤵</span>",
-    "vi": "Chúng tôi sẽ có nhân viên bán cà phê và trà từ quầy đó, và khách hàng có thể thư giãn tại bàn với đồ uống và sách của họ."
-  },
-  {
-    "en": "Sounds nice. Will you serve snacks too, or just drinks?",
-    "ipa": "/saʊndz naɪs. wɪl juː sɜːrv snæks tuː, ɔːr dʒʌst drɪŋks?/",
-    "guide": "<b>saʊn</b>dz naɪs <span class='intonation'>⤵</span>. wɪl <b>jə</b> sɜːrv snæks tuː <span class='intonation'>⤴</span>, ɔːr <b>dʒʌs‿drɪŋks</b> <span class='intonation'>⤵</span>",
-    "vi": "Nghe hay đấy. Bạn sẽ phục vụ cả đồ ăn nhẹ nữa hay chỉ đồ uống?"
-  },
-  {
-    "en": "We'll sell a few baked goods. Oh, that reminds me I need to head out now to buy the plates and silverware we'll need.",
-    "ipa": "/wiːl sɛl ə fjuː beɪkt ɡʊdz. oʊ, ðæt rɪˈmaɪndz miː aɪ niːd tuː hɛd aʊt naʊ tuː baɪ ðə pleɪts ænd ˈsɪlvərˌwɛr wiːl niːd./",
-    "guide": "wiːl sɛl ə fjuː <b>beɪk‿ɡʊdz</b> <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, ðæt <b>rɪˈmaɪn</b>z‿mi aɪ <b>niːd‿tə</b> <b>hɛd‿aʊt</b> naʊ <span class='intonation'>⤴</span> tə baɪ ðə <b>pleɪts‿ən</b> ˈsɪlvərˌwɛr wiːl niːd <span class='intonation'>⤵</span>",
-    "vi": "Chúng tôi sẽ bán một vài loại bánh nướng. Ồ, điều đó nhắc tôi nhớ rằng tôi cần phải đi ngay bây giờ để mua đĩa và dụng cụ ăn uống bạc mà chúng tôi sẽ cần."
-  }
+passage:[
+    {
+        "en": "Hi, Nancy. I just saw you through the window, so I thought I'd stop in.",
+        "ipa": "/haɪ, ˈnænsi. aɪ dʒʌst sɔː juː θruː ðə ˈwɪndoʊ, soʊ aɪ θɔːt aɪd stɑːp ɪn./",
+        "guide": "haɪ, ˈnænsi <span class='intonation'>⤵</span>. aɪ <b>dʒʌs‿sɔː</b> juː θruː ðə ˈwɪndoʊ <span class='intonation'>⤴</span>, soʊ aɪ <b>θɔː‿daɪd</b> <b>stɑːp‿ɪn</b> <span class='intonation'>⤵</span>",
+        "vi": "Chào Nancy. Tôi vừa thấy bạn qua cửa sổ, nên tôi nghĩ mình sẽ ghé vào.",
+        "context": "📍 Lời chào mở đầu và giải thích lý do người đàn ông ghé thăm cửa hàng.",
+        "grammar": "• <b>I just saw:</b> Quá khứ đơn đi với 'just' (vừa mới) thường dùng trong Anh-Mỹ thay cho Hiện tại hoàn thành.<br>• <b>I'd (I would):</b> Diễn tả một quyết định nảy ra tức thời tại thời điểm quá khứ.<br>• <b>Stop in:</b> Cụm động từ (Phrasal verb) nghĩa là ghé thăm nhanh một nơi nào đó khi đang trên đường đi đâu đó.<br>• <b>Through the window:</b> Giới từ 'through' chỉ sự xuyên thấu qua một vật thể."
+    },
+    {
+        "en": "As a fellow Main Street business owner, I'm glad to see you're getting the bookstore ready for reopening.",
+        "ipa": "/æz ə ˈfɛloʊ meɪn striːt ˈbɪznəs ˈoʊnər, aɪm ɡlæd tuː siː jʊər ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi fɔːr riːˈoʊpnɪŋ./",
+        "guide": "<b>æz‿ə</b> ˈfɛloʊ ˈmeɪn <span class='stop'>striːt</span> ˈbɪznə<b>s‿oʊnər</b> <span class='intonation'>⤴</span>, aɪm <b>ɡlæd‿tə</b> siː <b>jər</b> ˈɡɛtɪŋ ðə ˈbʊkstɔːr ˈrɛdi <b>fər</b> riːˈoʊpnɪŋ <span class='intonation'>⤵</span>",
+        "vi": "Là một chủ doanh nghiệp trên phố Main, tôi rất vui khi thấy bạn đang chuẩn bị cho hiệu sách sẵn sàng mở cửa trở lại.",
+        "context": "🤝 Thiết lập mối quan hệ đồng nghiệp và nêu chủ đề chính.",
+        "grammar": "• <b>As a...:</b> 'As' đóng vai trò giới từ chỉ chức danh/vị trí thực tế (Với tư cách là).<br>• <b>Be glad to do something:</b> Cấu trúc tính từ + to-V để bày tỏ cảm xúc về một hành động.<br>• <b>Get something ready:</b> Cấu trúc 'Get + Tân ngữ + Tính từ' (Làm cho cái gì trở nên sẵn sàng).<br>• <b>Fellow:</b> Tính từ dùng để chỉ những người cùng cảnh ngộ, cùng nghề nghiệp hoặc cùng hội nhóm."
+    },
+    {
+        "en": "Yes, we'll finally reopen this weekend. What do you think of the changes to the layout?",
+        "ipa": "/jɛs, wiːl ˈfaɪnəli riːˈoʊpən ðɪs ˈwiːkˌɛnd. wʌt duː juː θɪŋk ʌv ðə ˈtʃeɪndʒəz tuː ðə ˈleɪˌaʊt?/",
+        "guide": "jɛs <span class='intonation'>⤵</span>, wiːl ˈfaɪnəli riːˈoʊpən ðɪs <b>ˈwiːk‿ɛn</b> <span class='intonation'>⤵</span>. <b>wʌt‿də‿ju</b> θɪŋ<b>k‿əv</b> ðə ˈtʃeɪndʒɪz tə ðə <b>ˈleɪˌaʊ<span class='stop'>t</span></b> <span class='intonation'>⤵</span>",
+        "vi": "Vâng, cuối cùng chúng tôi cũng sẽ mở cửa lại vào cuối tuần này. Bạn nghĩ gì về những thay đổi trong cách bố trí?",
+        "context": "🗓️ Nancy xác nhận thời gian và hỏi xin ý kiến.",
+        "grammar": "• <b>Finally:</b> Trạng từ chỉ kết quả sau một thời gian dài chờ đợi hoặc nỗ lực.<br>• <b>What do you think of...?:</b> Cách hỏi ý kiến phổ biến về một đối tượng cụ thể (thay 'of' bằng 'about' cũng được).<br>• <b>Changes to:</b> Danh từ 'change' đi với giới từ 'to' để chỉ sự thay đổi tác động lên cái gì.<br>• <b>Layout:</b> Danh từ ghép (Compound noun) chỉ sơ đồ mặt bằng hoặc cách sắp xếp không gian."
+    },
+    {
+        "en": "We'll have staff selling coffee and tea from that counter, and customers will be able to relax at the tables with their drinks and books.",
+        "ipa": "/wiːl hæv stæf ˈsɛlɪŋ ˈkɔːfi ænd tiː frʌm ðæt ˈkaʊntər, ænd ˈkʌstəmərz wɪl biː ˈeɪbl tuː rɪˈlæks æt ðə ˈteɪbəlz wɪθ ðɛr drɪŋks ænd bʊks./",
+        "guide": "wiːl <b>hæv‿stæf</b> ˈsɛlɪŋ ˈkɔːfi <b>ən</b> tiː frəm <b>ðæt‿ˈkaʊntər</b> <span class='intonation'>⤴</span>, <b>ən</b> ˈkʌstəmərz wɪl bi <b>ˈeɪbl‿tə</b> rɪˈlæks <b>æt‿ðə</b> ˈteɪbəlz wɪθ ðər <b>drɪŋks‿ən</b> bʊks <span class='intonation'>⤵</span>",
+        "vi": "Chúng tôi sẽ có nhân viên bán cà phê và trà từ quầy đó, và khách hàng có thể thư giãn tại bàn với đồ uống và sách của họ.",
+        "context": "☕ Mô tả tính năng mới của hiệu sách.",
+        "grammar": "• <b>Have someone doing something:</b> Cấu trúc chỉ việc sắp xếp, bố trí ai đó làm việc gì (nhấn mạnh tình trạng diễn ra).<br>• <b>Will be able to:</b> Dạng tương lai của 'can', dùng để chỉ khả năng hoặc cơ hội trong tương lai.<br>• <b>From that counter:</b> Giới từ 'from' chỉ nguồn gốc hoặc vị trí xuất phát của hành động bán hàng.<br>• <b>Relax at:</b> Giới từ 'at' dùng cho một địa điểm cụ thể (tại bàn)."
+    },
+    {
+        "en": "Sounds nice. Will you serve snacks too, or just drinks?",
+        "ipa": "/saʊndz naɪs. wɪl juː sɜːrv snæks tuː, ɔːr dʒʌst drɪŋks?/",
+        "guide": "<b>saʊn</b>dz naɪs <span class='intonation'>⤵</span>. wɪl <b>jə</b> sɜːrv snæks tuː <span class='intonation'>⤴</span>, ɔːr <b>dʒʌs‿drɪŋks</b> <span class='intonation'>⤵</span>",
+        "vi": "Nghe hay đấy. Bạn sẽ phục vụ cả đồ ăn nhẹ nữa hay chỉ đồ uống?",
+        "context": "🥨 Người đàn ông hỏi thêm chi tiết về thực đơn.",
+        "grammar": "• <b>Sounds nice:</b> Rút gọn chủ ngữ 'It/That', thường dùng trong văn nói để phản hồi nhanh.<br>• <b>Will you... or...:</b> Câu hỏi lựa chọn (Alternative question) yêu cầu người nghe chọn một trong hai phương án.<br>• <b>Serve:</b> Động từ mang nghĩa phục vụ đồ ăn/thức uống trong ngữ cảnh nhà hàng/quán ăn."
+    },
+    {
+        "en": "We'll sell a few baked goods. Oh, that reminds me I need to head out now to buy the plates and silverware we'll need.",
+        "ipa": "/wiːl sɛl ə fjuː beɪkt ɡʊdz. oʊ, ðæt rɪˈmaɪndz miː aɪ niːd tuː hɛd aʊt naʊ tuː baɪ ðə pleɪts ænd ˈsɪlvərˌwɛr wiːl niːd./",
+        "guide": "wiːl sɛl ə fjuː <b>beɪk‿ɡʊdz</b> <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, ðæt <b>rɪˈmaɪn</b>z‿mi aɪ <b>niːd‿tə</b> <b>hɛd‿aʊt</b> naʊ <span class='intonation'>⤴</span> tə baɪ ðə <b>pleɪts‿ən</b> ˈsɪlvərˌwɛr wiːl niːd <span class='intonation'>⤵</span>",
+        "vi": "Chúng tôi sẽ bán một vài loại bánh nướng. Ồ, điều đó nhắc tôi nhớ rằng tôi cần phải đi ngay bây giờ để mua đĩa và dụng cụ ăn uống bạc mà chúng tôi sẽ cần.",
+        "context": "🛍️ Nancy nhớ ra việc cần làm tiếp theo.",
+        "grammar": "• <b>A few:</b> Đi với danh từ đếm được số nhiều, mang nghĩa 'một vài' (đủ dùng).<br>• <b>Remind someone:</b> 'That reminds me' là một cụm từ cố định dùng khi đột ngột nhớ ra việc gì đó do tác động của câu chuyện.<br>• <b>Head out:</b> Cụm động từ đồng nghĩa với 'leave' hoặc 'start a journey' (rời đi, khởi hành).<br>• <b>Mệnh đề quan hệ rút gọn:</b> 'silverware (that) we'll need' - đại từ 'that' bị lược bỏ vì đóng vai trò tân ngữ."
+    }
 ],
     questions: [
         {
@@ -262,43 +298,55 @@ const allLessons = [
   "title": "Questions 35 - 37",
   "audioUrl": "Test 02_Part 3_35-37.mp3",
   "passage": [
-    {
-      "en": "Hi, this is Marco Amato. I'm a new member at the gym.",
-      "ipa": "/haɪ, ðɪs ɪz ˈmɑːrkoʊ əˈmɑːtoʊ. aɪm ə nuː ˈmɛmbər æt ðə dʒɪm./",
-      "guide": "haɪ <span class='intonation'>⤴</span>, <b>ðɪs‿ɪz</b> ˈmɑːrkoʊ əˈmɑːtoʊ <span class='intonation'>⤵</span>. aɪm ə nuː ˈmɛmbər <b>æt‿ðə</b> dʒɪm <span class='intonation'>⤵</span>",
-      "vi": "Xin chào, tôi là Macro Amato. Tôi là thành viên mới tại trung tâm thể dục."
-    },
-    {
-      "en": "Uh, I was supposed to have a personal training session with Tim yesterday at seven, but I missed it because of rush-hour traffic.",
-      "ipa": "/ʌ, aɪ wʌz səˈpoʊzd tuː hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ æt ˈsɛvn, bʌt aɪ mɪst ɪt bɪˈkɔːz ʌv ˈrʌʃˌaʊər ˈtræfɪk./",
-      "guide": "ʌ <span class='intonation'>⤴</span>, aɪ wəz <b>səˈpoʊz‿tə</b> hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ <b>æt‿ˈsɛvn</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>mɪst‿ɪt</b> bɪˈkəz‿əv ˈrʌʃˌaʊər ˈtræfɪk <span class='intonation'>⤵</span>",
-      "vi": "Tôi đáng lẽ phải có một buổi tập luyện cá nhân với Tim hôm qua vào lúc 7 giờ, nhưng tôi đã bỏ lỡ nó bởi vì kẹt xe giờ cao điểm."
-    },
-    {
-      "en": "I see. Well, I'm sorry, but our gym doesn't issue refunds for missed sessions.",
-      "ipa": "/aɪ siː. wɛl, aɪm ˈsɔːri, bʌt ˈaʊər dʒɪm ˈdʌznt ˈɪʃuː ˈriːfʌndz fɔːr mɪst ˈsɛʃnz./",
-      "guide": "aɪ siː <span class='intonation'>⤵</span>. wɛl <span class='intonation'>⤴</span>, aɪm ˈsɔːri <span class='intonation'>⤵</span>, bʌt ˈaʊər dʒɪm ˈdʌznt <b>ˈɪʃuː‿ˈriːfʌndz</b> fər <b>mɪst‿ˈsɛʃnz</b> <span class='intonation'>⤵</span>",
-      "vi": "Tôi hiểu rồi. Tôi xin lỗi nhưng phòng tập của chúng tôi không có hoàn tiền cho những buổi tập bị bỏ lỡ."
-    },
-    {
-      "en": "Oh, I know. I was wondering if I could move my future sessions later so that this doesn't happen again.",
-      "ipa": "/oʊ, aɪ noʊ. aɪ wʌz ˈwʌndərɪŋ ɪf aɪ kʊd muːv maɪ ˈfjuːtʃər ˈsɛʃnz ˈleɪtər soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn./",
-      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ noʊ <span class='intonation'>⤵</span>. aɪ wəz ˈwʌndərɪŋ <b>ɪf‿aɪ</b> kʊd <b>muːv‿maɪ</b> ˈfjuːtʃər ˈsɛʃnz ˈleɪtər <span class='intonation'>⤴</span> soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn <span class='intonation'>⤵</span>",
-      "vi": "Tôi biết. Tôi tự hỏi liệu rằng tôi có thể chuyển những buổi tập trong tương lai muộn hơn để việc này không xảy ra lần nữa."
-    },
-    {
-      "en": "Tim isn't available later. I could schedule you with Derek, though. He has openings at eight.",
-      "ipa": "/tɪm ˈɪznt əˈveɪləbl ˈleɪtər. aɪ kʊd ˈskɛdʒuːl juː wɪθ ˈdɛrɪk, ðoʊ. hiː hæz ˈoʊpnɪŋz æt eɪt./",
-      "guide": "tɪm ˈɪzn<b>t‿əˈveɪləbl</b> ˈleɪtər <span class='intonation'>⤵</span>. aɪ kʊd ˈskɛdʒuːl ju wɪθ ˈdɛrɪk <span class='intonation'>⤴</span>, ðoʊ. <b>hiː‿hæz</b> ˈoʊpnɪŋ<b>z‿æt</b> eɪt <span class='intonation'>⤵</span>",
-      "vi": "Tim không rảnh vào sau đó. Mặc dù vậy tôi có thể xếp lịch cho bạn cùng Derek. Anh ấy có lịch trống vào 8 giờ."
-    },
-    {
-      "en": "Perfect—that will give me enough time to get there after finishing work.",
-      "ipa": "/ˈpɜːrfɪkt—ðæt wɪl ɡɪv miː ɪˈnʌf taɪm tuː ɡɛt ðɛr ˈæftər ˈfɪnɪʃɪŋ wɜːrk./",
-      "guide": "ˈpɜːrfɪkt <span class='intonation'>⤵</span>—ðæt wɪl <b>ɡɪv‿mi</b> ɪˈnʌf taɪm tə <b>ɡɛt‿ðɛr</b> ˈæftər ˈfɪnɪʃɪŋ wɜːrk <span class='intonation'>⤵</span>",
-      "vi": "Hoàn hảo-việc này sẽ cho tôi có đủ thời gian đi đến phòng tập sau khi tan làm."
-    }
-  ],
+  {
+    "en": "Hi, this is Marco Amato. I'm a new member at the gym.",
+    "ipa": "/haɪ, ðɪs ɪz ˈmɑːrkoʊ əˈmɑːtoʊ. aɪm ə nuː ˈmɛmbər æt ðə dʒɪm./",
+    "guide": "haɪ <span class='intonation'>⤴</span>, <b>ðɪs‿ɪz</b> ˈmɑːrkoʊ əˈmɑːtoʊ <span class='intonation'>⤵</span>. aɪm ə nuː ˈmɛmbər <b>æt‿ðə</b> dʒɪm <span class='intonation'>⤵</span>",
+    "vi": "Xin chào, tôi là Marco Amato. Tôi là hội viên mới của phòng tập.",
+    "context": "📍 **Thiết lập vị thế (Establishing Identity):** Trong dịch vụ khách hàng tại Âu Mỹ, việc nêu rõ 'I'm a new member' giúp nhân viên biết bạn cần hỗ trợ kỹ hơn về quy trình hoặc hệ thống.",
+    "grammar": "• <b>This is...:</b> Cấu trúc chuẩn mực để giới thiệu tên khi gọi điện hoặc khi đối phương không nhìn thấy mặt.<br>• <b>At the gym:</b> Dùng 'at' vì coi đây là một đơn vị dịch vụ/tổ chức, không chỉ đơn thuần là không gian vật lý (in the gym)."
+  },
+  {
+    "en": "Uh, I was supposed to have a personal training session with Tim yesterday at seven, but I missed it because of rush-hour traffic.",
+    "ipa": "/ʌ, aɪ wʌz səˈpoʊzd tuː hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ æt ˈsɛvn, bʌt aɪ mɪst ɪt bɪˈkɔːz ʌv ˈrʌʃˌaʊər ˈtræfɪk./",
+    "guide": "ʌ <span class='intonation'>⤴</span>, aɪ wəz <b>səˈpoʊz‿tə</b> hæv ə ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn wɪθ tɪm ˈjɛstərdeɪ <b>æt‿ˈsɛvn</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>mɪst‿ɪt</b> bɪˈkəz‿əv ˈrʌʃˌaʊər ˈtræfɪk <span class='intonation'>⤵</span>",
+    "vi": "Ờ, đáng lẽ tôi có buổi tập riêng với Tim lúc 7 giờ tối qua, nhưng tôi bị lỡ mất vì kẹt xe giờ cao điểm.",
+    "context": "📍 **Giải thích lịch sự (Apologetic Explanation):** Người nói bắt đầu bằng 'Uh' và dùng cách nói gián tiếp để giảm bớt sự khó xử khi vi phạm lịch hẹn đã chốt.",
+    "grammar": "• <b>Be supposed to:</b> Cấu trúc cực hay để nói về một nghĩa vụ hoặc kế hoạch đã định sẵn nhưng thực tế lại không xảy ra.<br>• <b>Rush-hour traffic:</b> Cụm danh từ ghép (Compound Noun) phổ biến để chỉ tình trạng giao thông đặc thù.<br>• <b>Zero Article:</b> Lưu ý không dùng mạo từ trước các danh từ chỉ thời gian như 'seven' hay 'yesterday'."
+  },
+  {
+    "en": "I see. Well, I'm sorry, but our gym doesn't issue refunds for missed sessions.",
+    "ipa": "/aɪ siː. wɛl, aɪm ˈsɔːri, bʌt ˈaʊər dʒɪm ˈdʌznt ˈɪʃuː ˈriːfʌndz fɔːr mɪst ˈsɛʃnz./",
+    "guide": "aɪ siː <span class='intonation'>⤵</span>. wɛl <span class='intonation'>⤴</span>, aɪm ˈsɔːri <span class='intonation'>⤵</span>, bʌt ˈaʊər dʒɪm ˈdʌznt <b>ˈɪʃuː‿ˈriːfʌndz</b> fər <b>mɪst‿ˈsɛʃnz</b> <span class='intonation'>⤵</span>",
+    "vi": "Tôi hiểu rồi. Rất tiếc, nhưng phòng tập của chúng tôi không có chính sách hoàn tiền cho những buổi vắng mặt.",
+    "context": "📍 **Thực thi quy định (Policy Enforcement):** Nhân viên dùng 'I see' và 'Well' để thể hiện sự thấu hiểu (empathy) trước khi đưa ra lời từ chối, giúp thông tin bớt nặng nề.",
+    "grammar": "• <b>Issue refunds:</b> Thuật ngữ chuyên môn trong dịch vụ khách hàng (thay vì nói 'give money back' bình dân).<br>• <b>Missed (Past Participle):</b> Ở đây đóng vai trò tính từ miêu tả trạng thái của danh từ 'sessions'."
+  },
+  {
+    "en": "Oh, I know. I was wondering if I could move my future sessions later so that this doesn't happen again.",
+    "ipa": "/oʊ, aɪ noʊ. aɪ wʌz ˈwʌndərɪŋ ɪf aɪ kʊd muːv maɪ ˈfjuːtʃər ˈsɛʃnz ˈleɪtər soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn./",
+    "guide": "oʊ <span class='intonation'>⤴</span>, aɪ noʊ <span class='intonation'>⤵</span>. aɪ wəz ˈwʌndərɪŋ <b>ɪf‿aɪ</b> kʊd <b>muːv‿maɪ</b> ˈfjuːtʃər ˈsɛʃnz ˈleɪtər <span class='intonation'>⤴</span> soʊ ðæt ðɪs ˈdʌznt ˈhæpən əˈɡɛn <span class='intonation'>⤵</span>",
+    "vi": "Ồ tôi biết chứ. Tôi đang tự hỏi liệu tôi có thể dời các buổi tập sau này muộn hơn một chút để không bị lặp lại tình trạng này không.",
+    "context": "📍 **Đề xuất khéo léo (Soft Request):** Người nói chấp nhận lỗi sai (I know) và đưa ra giải pháp thay thế thay vì đòi quyền lợi vô lý.",
+    "grammar": "• <b>I was wondering if:</b> Cấu trúc 'thần thánh' để đưa ra yêu cầu một cách cực kỳ lịch sự, tránh cảm giác ép buộc người nghe.<br>• <b>Move something later:</b> Cách dùng trạng từ thời gian linh hoạt trong văn nói để điều chỉnh lịch trình.<br>• <b>So that + clause:</b> Liên từ chỉ mục đích cho một hệ quả mong muốn trong tương lai."
+  },
+  {
+    "en": "Tim isn't available later. I could schedule you with Derek, though. He has openings at eight.",
+    "ipa": "/tɪm ˈɪznt əˈveɪləbl ˈleɪtər. aɪ kʊd ˈskɛdʒuːl juː wɪθ ˈdɛrɪk, ðoʊ. hiː hæz ˈoʊpnɪŋz æt eɪt./",
+    "guide": "tɪm ˈɪzn<b>t‿əˈveɪləbl</b> ˈleɪtər <span class='intonation'>⤵</span>. aɪ kʊd ˈskɛdʒuːl ju wɪθ ˈdɛrɪk <span class='intonation'>⤴</span>, ðoʊ. <b>hiː‿hæz</b> ˈoʊpnɪŋ<b>z‿æt</b> eɪt <span class='intonation'>⤵</span>",
+    "vi": "Sau giờ đó thì Tim không còn lịch trống. Tuy nhiên, tôi có thể xếp bạn tập với Derek. Anh ấy có giờ trống lúc 8 giờ.",
+    "context": "📍 **Giải pháp thay thế (Offering Alternatives):** Đây là kỹ năng xử lý tình huống trong dịch vụ: khi không đáp ứng được yêu cầu gốc, hãy đưa ra một lựa chọn khác (Derek) ngay lập tức.",
+    "grammar": "• <b>Available:</b> Tính từ chuyên nghiệp hơn 'free' khi nói về lịch làm việc.<br>• <b>Though (Adverb):</b> Đứng cuối câu để mang nghĩa 'tuy nhiên', là đặc trưng cực kỳ phổ biến của văn nói bản ngữ.<br>• <b>Openings:</b> Danh từ chỉ các 'khe thời gian' chưa có người đặt chỗ."
+  },
+  {
+    "en": "Perfect—that will give me enough time to get there after finishing work.",
+    "ipa": "/ˈpɜːrfɪkt—ðæt wɪl ɡɪv miː ɪˈnʌf taɪm tuː ɡɛt ðɛr ˈæftər ˈfɪnɪʃɪŋ wɜːrk./",
+    "guide": "ˈpɜːrfɪkt <span class='intonation'>⤵</span>—ðæt wɪl <b>ɡɪv‿mi</b> ɪˈnʌf taɪm tə <b>ɡɛt‿ðɛr</b> ˈæftər ˈfɪnɪʃɪŋ wɜːrk <span class='intonation'>⤵</span>",
+    "vi": "Tuyệt quá—như vậy tôi sẽ có đủ thời gian để đến đó sau khi tan làm.",
+    "context": "📍 **Xác nhận sự hài lòng (Confirmation):** Người nói giải thích tại sao giải pháp mới lại hoàn hảo, giúp củng cố mối quan hệ giữa khách hàng và phòng tập.",
+    "grammar": "• <b>Enough + Noun + To-V:</b> Cấu trúc chỉ sự đáp ứng đủ nguồn lực (thời gian) để thực hiện mục đích.<br>• <b>Get there:</b> Cụm từ thông dụng thay thế cho 'arrive at that place'.<br>• <b>After + V-ing:</b> Sau giới từ, động từ phải chuyển về dạng danh động từ."
+  }
+],
   "questions": [
     {
       "q": "35 Where most likely does the woman work?",
@@ -384,55 +432,55 @@ const allLessons = [
   "title": "Questions 38 - 40",
   "audioUrl": "Test 02_Part 3_38-40.mp3",
  "passage": [
-    {
-      "en": "Jutaro, this invoice from Turnbull Appliances just arrived in the mail.",
-      "ipa": "/dʒuːˈtɑːroʊ, ðɪs ˈɪnvɔɪs frʌm ˈtɜːrnbʊl əˈplaɪənsɪz dʒʌst əˈraɪvd ɪn ðə meɪl./",
-      "guide": "dʒuːˈtɑːroʊ <span class='intonation'>⤴</span>, ðɪs ˈɪnvɔɪs frəm ˈtɜːrnbʊl əˈplaɪənsɪz <b>dʒʌs<span class='stop'>t</span>‿əˈraɪv</b><b>d‿ɪn</b> ðə meɪl <span class='intonation'>⤵</span>",
-      "vi": "Jutaro, hóa đơn từ Turnbull Appliances vừa được gửi đến qua đường bưu điện."
-    },
-    {
-      "en": "It's for the installation of our new office fridge last month.",
-      "ipa": "/ɪts fɔːr ðɪ ˌɪnstəˈleɪʃn ʌv ˈaʊər nuː ˈɑːfɪs frɪdʒ læst mʌnθ./",
-      "guide": "<b>ɪts‿fər</b> ðɪ ˌɪnstəˈleɪʃn əv ˈaʊər nuː <b>ˈɑːfɪs‿frɪdʒ</b> <b>læs<span class='stop'>t</span>‿mʌnθ</b> <span class='intonation'>⤵</span>",
-      "vi": "Hóa đơn này cho sự lắp đặt tủ lạnh mới cho văn phòng của chúng ta tháng trước."
-    },
-    {
-      "en": "That wasn't free?",
-      "ipa": "/ðæt ˈwʌznt friː?/",
-      "guide": "ðæt <b>ˈwʌzn<span class='stop'>t</span></b> friː <span class='intonation'>⤴</span>?",
-      "vi": "Nó không miễn phí hả?"
-    },
-    {
-      "en": "The technicians had to do some extra work to set up the wiring.",
-      "ipa": "/ðə tɛkˈnɪʃnz hæd tuː duː sʌm ˈɛkstrə wɜːrk tuː sɛt ʌp ðə ˈwaɪərɪŋ./",
-      "guide": "ðə tɛkˈnɪʃnz <b>hæd‿tə</b> du sʌm ˈɛkstrə wɜːrk tə <b>sɛt‿ʌp</b> ðə ˈwaɪərɪŋ <span class='intonation'>⤵</span>",
-      "vi": "Những kỹ thuật viên phải làm thêm một vài công việc để lắp đặt hệ thống dây điện."
-    },
-    {
-      "en": "That isn't part of the standard installation, so it costs extra.",
-      "ipa": "/ðæt ˈɪznt pɑːrt ʌv ðə ˈstændərd ˌɪnstəˈleɪʃn, soʊ ɪt kɔːsts ˈɛkstrə./",
-      "guide": "ðæt ˈɪzn<span class='stop'>t</span> <b>pɑːr<span class='stop'>t</span>‿əv</b> ðə ˈstændərd ˌɪnstəˈleɪʃn <span class='intonation'>⤴</span>, soʊ <b>ɪ<span class='stop'>t</span>‿kɔːsts</b> ˈɛkstrə <span class='intonation'>⤵</span>",
-      "vi": "Việc đó không phải là một phần của gói lắp đặt tiêu chuẩn, vì vậy nó tốn thêm tiền."
-    },
-    {
-      "en": "Oh, that's not good. The price of the fridge was close to the limit Ms. Brent approved for the replacement.",
-      "ipa": "/oʊ, ðæts nɑːt ɡʊd. ðə praɪs ʌv ðə frɪdʒ wʌz kloʊs tuː ðə ˈlɪmɪt ˌmɪz brɛnt əˈpruːvd fɔːr ðə rɪˈpleɪsmənt./",
-      "guide": "oʊ <span class='intonation'>⤴</span>, <b>ðæts‿nɑːt</b> ɡʊd <span class='intonation'>⤵</span>. ðə praɪs əv ðə frɪdʒ wəz <b>kloʊs‿tə</b> ðə ˈlɪmɪt ˌmɪz brɛnt <b>əˈpruːv-d</b> fər ðə rɪˈpleɪsmənt <span class='intonation'>⤵</span>",
-      "vi": "Ổ, không tốt rồi. Giá của cái tủ lạnh đã gần tới giới hạn cô Brent duyệt cho thay thế tủ lạnh."
-    },
-    {
-      "en": "With this charge, we've exceeded the budget.",
-      "ipa": "/wɪð ðɪs tʃɑːrdʒ, wiːv ɪkˈsiːdɪd ðə ˈbʌdʒɪt./",
-      "guide": "wɪð ðɪs tʃɑːrdʒ <span class='intonation'>⤴</span>, wiːv ɪkˈsiːdɪd ðə <b>ˈbʌdʒɪ<span class='stop'>t</span></b> <span class='intonation'>⤵</span>",
-      "vi": "Với khoản phí này, chúng ta đã vượt mức ngân sách rồi."
-    },
-    {
-      "en": "I see. I'll let Ms. Brent know about the situation.",
-      "ipa": "/aɪ siː. aɪl lɛt ˌmɪz brɛnt noʊ əˈbaʊt ðə ˌsɪtʃuˈeɪʃn./",
-      "guide": "aɪ siː <span class='intonation'>⤵</span>. aɪl <b>lɛ<span class='stop'>t</span>‿ˌmɪz</b> brɛnt <b>noʊ‿əˈbaʊt</b> ðə ˌsɪtʃuˈeɪʃn <span class='intonation'>⤵</span>",
-      "vi": "Tôi hiểu rồi. Tôi sẽ cho cô Brent biết về tình huống này."
-    }
-  ],
+  {
+    "en": "Jutaro, this invoice from Turnbull Appliances just arrived in the mail.",
+    "vi": "Jutaro, hóa đơn từ bên Turnbull Appliances vừa được gửi đến qua bưu điện này.",
+    "context": "📍 Thông báo nghiệp vụ: Nhận chứng từ thanh toán mới.",
+    "grammar": "• <b>Noun Phrase:</b> 'This invoice from Turnbull Appliances' đóng vai trò chủ ngữ. Cấu trúc: [Determiner + Noun + Prepositional Phrase].<br>• <b>Just + V2/ed:</b> Trạng từ 'just' đứng giữa chủ ngữ và động từ quá khứ đơn để chỉ một hành động vừa kết thúc tức thì.<br>• <b>In the mail:</b> Giới từ 'in' dùng với 'the mail' để chỉ phương thức vận chuyển vật lý."
+  },
+  {
+    "en": "It's for the installation of our new office fridge last month.",
+    "vi": "Nó là tiền công lắp đặt cái tủ lạnh mới của văn phòng mình hồi tháng trước đó.",
+    "context": "📍 Xác định nội dung chi tiêu: Khớp hóa đơn với hoạt động thực tế.",
+    "grammar": "• <b>Preposition of Purpose:</b> 'For' ở đây chỉ mục đích thanh toán (trả tiền cho cái gì).<br>• <b>Noun Adjunct:</b> 'Office fridge' (Danh từ bổ nghĩa cho danh từ). 'Office' đóng vai trò như tính từ.<br>• <b>Definite Article:</b> 'The installation' dùng 'the' vì đây là việc lắp đặt cụ thể đã xác định trong quá khứ.<br>• <b>Adverbial of Time:</b> 'Last month' buộc động từ phải chia ở quá khứ (It is -> thực tế là viết tắt của 'It is' nhưng ám chỉ nội dung hóa đơn hiện tại cho một việc quá khứ)."
+  },
+  {
+    "en": "That wasn't free?",
+    "vi": "Ủa, cái đó không được miễn phí hả?",
+    "context": "📍 Phản hồi kinh ngạc: Mong đợi dịch vụ đi kèm không tính phí.",
+    "grammar": "• <b>Negative Simple Past:</b> 'Wasn't' (Was not) dùng để phủ định một tính chất trong quá khứ.<br>• <b>Elliptical Question:</b> Đây là dạng câu trần thuật nhưng lên giọng ở cuối câu để biến thành câu hỏi, thể hiện sự nghi ngờ mạnh mẽ hơn cấu trúc 'Wasn't that free?' thông thường."
+  },
+  {
+    "en": "The technicians had to do some extra work to set up the wiring.",
+    "vi": "Mấy anh thợ kỹ thuật đã phải làm thêm một số việc để đi lại hệ thống dây điện.",
+    "context": "📍 Giải trình phát sinh: Lý do phát sinh chi phí ngoài dự kiến.",
+    "grammar": "• <b>Modal Verb in Past:</b> 'Had to' là dạng quá khứ của 'have to', diễn tả sự bắt buộc khách quan do tình huống yêu cầu.<br>• <b>Quantifier:</b> 'Some' đi với danh từ không đếm được 'work'.<br>• <b>To-Infinitive of Purpose:</b> 'To set up' dùng để chỉ mục đích của hành động 'do extra work'.<br>• <b>Gerund as Noun:</b> 'Wiring' (v) + ing tạo thành danh từ chỉ hệ thống dây điện."
+  },
+  {
+    "en": "That isn't part of the standard installation, so it costs extra.",
+    "vi": "Việc đó không nằm trong gói lắp đặt tiêu chuẩn, nên là nó tính thêm phí.",
+    "context": "📍 Làm rõ điều khoản: Phân biệt dịch vụ tiêu chuẩn và phát sinh.",
+    "grammar": "• <b>Subject-Verb Agreement:</b> 'It costs' (thêm 's') vì chủ ngữ là ngôi thứ ba số ít ở thì hiện tại đơn.<br>• <b>Intransitive Verb:</b> 'Cost' ở đây đóng vai trò nội động từ đi kèm với trạng từ 'extra' để chỉ mức độ.<br>• <b>Compound Sentence:</b> Sử dụng liên từ 'so' để nối hai mệnh đề độc lập chỉ quan hệ nguyên nhân - kết quả."
+  },
+  {
+    "en": "Oh, that's not good. The price of the fridge was close to the limit Ms. Brent approved for the replacement.",
+    "vi": "Ồ, gay go rồi đây. Giá cái tủ lạnh vốn đã suýt soát hạn mức mà cô Brent duyệt để thay đồ mới rồi.",
+    "context": "📍 Cảnh báo ngân sách: Lo ngại về việc chạm ngưỡng chi tiêu cho phép.",
+    "grammar": "• <b>Adjective Phrase:</b> 'Close to the limit' (Gần với giới hạn).<br>• <b>Reduced Relative Clause:</b> 'The limit (that/which) Ms. Brent approved'. Mệnh đề quan hệ lược bỏ đại từ quan hệ khi nó đóng vai trò tân ngữ.<br>• <b>Noun of Action:</b> 'Replacement' xuất phát từ động từ 'replace', chỉ sự việc thay thế."
+  },
+  {
+    "en": "With this charge, we've exceeded the budget.",
+    "vi": "Cộng thêm khoản phí này nữa là chúng mình đã chi vượt mức ngân sách rồi.",
+    "context": "📍 Xác nhận thực trạng: Kết luận về tình trạng tài chính hiện tại.",
+    "grammar": "• <b>Prepositional Phrase:</b> 'With this charge' đặt đầu câu để nhấn mạnh tác nhân gây ra kết quả.<br>• <b>Present Perfect Tense:</b> 'Have exceeded' dùng để diễn tả một hành động vừa xảy ra và để lại hậu quả trực tiếp ở hiện tại (hết tiền/âm tiền).<br>• <b>Collocation:</b> 'Exceed the budget' là cụm từ cố định (vượt ngân sách)."
+  },
+  {
+    "en": "I see. I'll let Ms. Brent know about the situation.",
+    "vi": "Tôi hiểu rồi. Tôi sẽ báo cho cô Brent biết về tình hình này.",
+    "context": "📍 Chốt phương án: Hành động tiếp theo sau khi nhận tin xấu.",
+    "grammar": "• <b>Causative Form:</b> 'Let + someone + V-bare' (Cho phép/Để ai đó làm gì). Lưu ý 'know' không có 'to'.<br>• <b>Simple Future (Promise):</b> 'I'll' dùng cho các quyết định hoặc lời hứa đưa ra ngay tại thời điểm nói.<br>• <b>Phrasal Verb:</b> 'Know about' (Biết về điều gì đó một cách chi tiết)."
+  }
+],
   "questions": [
     {
       "q": "38 Why does the man say “that wasn't free”?",
@@ -495,31 +543,39 @@ const allLessons = [
   "title": "Questions 41 - 43",
   "audioUrl": "Test 02_Part 3_41-43.mp3",
   "passage": [
-    {
-      "en": "Hi, I'm hoping to find out how much it would cost to rent one of your buses for an event next month.",
-      "ipa": "/haɪ, aɪm ˈhoʊpɪŋ tuː faɪnd aʊt haʊ mʌtʃ ɪt wʊd kɔːst tuː rɛnt wʌn ʌv jʊər ˈbʌsɪz fɔːr ən ɪˈvɛnt nɛkst mʌnθ./",
-      "guide": "haɪ <span class='intonation'>⤴</span>, aɪm ˈhoʊpɪŋ tə <b>faɪn-daʊt</b> haʊ mʌtʃ ɪ<span class='stop'>t</span> wəd kɔːst tə rɛnt <b>wʌn-nəv</b> jər ˈbʌsɪz fər ən ɪˈvɛn<span class='stop'>t</span> nɛks<span class='stop'>t</span> mʌnθ <span class='intonation'>⤵</span>",
-      "vi": "Xin chào, tôi hi vọng tìm hiểu được nó sẽ tốn bao nhiêu tiền để thuê một trong những chiếc xe bus của các bạn cho một sự kiện vào tháng tới."
-    },
-    {
-      "en": "It's a two-day company retreat for the pharmacy I own. We'll need transportation to and from a resort on Garris Mountain.",
-      "ipa": "/ɪts ə tuː-deɪ ˈkʌmpəni rɪˈtriːt fɔːr ðə ˈfɑːrməsi aɪ oʊn. wiːl niːd ˌtrænspɔːrˈteɪʃn tuː ænd frʌm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən./",
-      "guide": "<b>ɪts-sə</b> tuː-deɪ ˈkʌmpəni rɪˈtriːt fər ðə ˈfɑːrməsi aɪ oʊn <span class='intonation'>⤵</span>. wiːl niːd ˌtrænspɔːrˈteɪʃn <b>tuː-wən</b> frəm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən <span class='intonation'>⤵</span>",
-      "vi": "Đó là một chuyến nghỉ dưỡng của công ty kéo dài hai ngày dành cho tiệm thuốc tây tôi sở hữu. Chúng tôi cần phương tiện chuyên chở đến và từ khu nghỉ dưỡng trên núi Garris."
-    },
-    {
-      "en": "Sure. I'll just need a few more details. But first—did you know you can request a quote through our Web site? Many customers prefer to do that.",
-      "ipa": "/ʃʊər. aɪl dʒʌst niːd ə fjuː mɔːr ˈdiːteɪlz. bʌt fɜːrst—dɪd juː noʊ juː kæn rɪˈkwɛst ə kwoʊt θruː ˈaʊər wɛb saɪt? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tuː duː ðæt./",
-      "guide": "ʃʊər <span class='intonation'>⤵</span>. aɪl <b>dʒʌs-niːd</b> ə fjuː mɔːr ˈdiːteɪlz <span class='intonation'>⤵</span>. bʌt fɜːrs<span class='stop'>t</span>—dɪd ju noʊ ju kən rɪˈkwɛs-tə kwoʊt θruː ˈaʊər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tə du ðæt <span class='intonation'>⤵</span>",
-      "vi": "Chắc chắn rồi tôi chỉ cần biết thêm một vài chi tiết nữa. Nhưng đầu tiên- bạn có biết rằng bạn có thể yêu cầu bảng báo giá thông qua trang web của chúng tôi không? Nhiều khách hàng của chúng tôi thích làm điều đó hơn."
-    },
-    {
-      "en": "Oh, I tried to use the service on your Web site, but I couldn't. I couldn't understand how to fill out the request form.",
-      "ipa": "/oʊ, aɪ traɪd tuː juːz ðə ˈsɜːrvɪs ɑːn jʊər wɛb saɪt, bʌt aɪ ˈkʊdnt. aɪ ˈkʊdnt ˌʌndərˈstænd haʊ tuː fɪl aʊt ðə rɪˈkwɛst fɔːrm./",
-      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ traɪd tə juːz ðə ˈsɜːrvɪs ɑːn jər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>ˈkʊdn<span class='stop'>t</span></b> <span class='intonation'>⤵</span>. aɪ ˈkʊdn<span class='stop'>t</span> ˌʌndərˈstænd haʊ tə <b>fɪ-laʊt</b> ðə rɪˈkwɛst fɔːrm <span class='intonation'>⤵</span>",
-      "vi": "Ồ, tôi đã cố gắng sử dụng dịch vụ trên trang web của bạn nhưng tôi không thể. Tôi không thể hiểu cách điền vào biểu mẫu yêu cầu."
-    }
-  ],
+  {
+    "en": "Hi, I'm hoping to find out how much it would cost to rent one of your buses for an event next month.",
+    "ipa": "/haɪ, aɪm ˈhoʊpɪŋ tuː faɪnd aʊt haʊ mʌtʃ ɪt wʊd kɔːst tuː rɛnt wʌn ʌv jʊər ˈbʌsɪz fɔːr ən ɪˈvɛnt nɛkst mʌnθ./",
+    "guide": "haɪ <span class='intonation'>⤴</span>, aɪm ˈhoʊpɪŋ tə <b>faɪn-daʊt</b> haʊ mʌtʃ ɪ<span class='stop'>t</span> wəd kɔːst tə rɛnt <b>wʌn-nəv</b> jər ˈbʌsɪz fər ən ɪˈvɛn<span class='stop'>t</span> nɛks<span class='stop'>t</span> mʌnθ <span class='intonation'>⤵</span>",
+    "vi": "Xin chào, tôi đang hy vọng tìm hiểu xem việc thuê một chiếc xe buýt cho sự kiện vào tháng tới sẽ tốn bao nhiêu tiền.",
+    "context": "📍 **Thiết lập mục đích (Objective Setting):** Khách hàng sử dụng cấu trúc gián tiếp để hỏi về giá cả, tạo sự lịch sự và giảm bớt tính trực diện trong việc hỏi về tiền bạc.",
+    "grammar": "• <b>Continuous Aspect for Tentativeness:</b> 'I'm hoping' (thì hiện tại tiếp diễn) tạo sắc thái nhẹ nhàng, bớt áp đặt hơn 'I hope'.<br>• <b>Phrasal Verb:</b> 'Find out' là ngoại động từ không thể tách rời trong bối cảnh này, dùng để tìm kiếm thông tin.<br>• <b>Noun Clause as Object:</b> 'How much it would cost...' là mệnh đề danh ngữ đóng vai trò tân ngữ cho 'find out'. Lưu ý trật tự từ: Chủ ngữ (it) đứng trước động từ (would cost).<br>• <b>Hypothetical 'Would':</b> Sử dụng 'would' để nói về một tình huống giả định hoặc chưa chắc chắn."
+  },
+  {
+    "en": "It's a two-day company retreat for the pharmacy I own. We'll need transportation to and from a resort on Garris Mountain.",
+    "ipa": "/ɪts ə tuː-deɪ ˈkʌmpəni rɪˈtriːt fɔːr ðə ˈfɑːrməsi aɪ oʊn. wiːl niːd ˌtrænspɔːrˈteɪʃn tuː ænd frʌm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən./",
+    "guide": "<b>ɪts-sə</b> tuː-deɪ ˈkʌmpəni rɪˈtriːt fər ðə ˈfɑːrməsi aɪ oʊn <span class='intonation'>⤵</span>. wiːl niːd ˌtrænspɔːrˈteɪʃn <b>tuː-wən</b> frəm ə rɪˈzɔːrt ɑːn ˈɡærɪs ˈmaʊntən <span class='intonation'>⤵</span>",
+    "vi": "Đó là chuyến nghỉ dưỡng công ty kéo dài hai ngày cho tiệm thuốc mà tôi làm chủ. Chúng tôi sẽ cần xe đưa đón cả hai chiều đến khu nghỉ dưỡng trên núi Garris.",
+    "context": "📍 **Cung cấp thông tin chi tiết (Specifics):** Việc nêu rõ 'company retreat' và địa điểm giúp nhân viên xác định loại xe và quãng đường để tính giá.",
+    "grammar": "• <b>Compound Adjective:</b> 'Two-day' là tính từ ghép. Quy tắc: [Số đếm - Danh từ số ít]. Tuyệt đối không viết 'two-days'.<br>• <b>Reduced Relative Clause:</b> 'The pharmacy (that) I own'. Đại từ quan hệ được lược bỏ khi đóng vai trò tân ngữ.<br>• <b>Correlative Prepositions:</b> 'To and from' là cụm giới từ chỉ hành trình khứ hồi (hai chiều).<br>• <b>Future 'Will':</b> 'We'll need' dùng để diễn đạt nhu cầu thực tế sẽ phát sinh theo kế hoạch."
+  },
+  {
+    "en": "Sure. I'll just need a few more details. But first—did you know you can request a quote through our Web site? Many customers prefer to do that.",
+    "ipa": "/ʃʊər. aɪl dʒʌst niːd ə fjuː mɔːr ˈdiːteɪlz. bʌt fɜːrst—dɪd juː noʊ juː kæn rɪˈkwɛst ə kwoʊt θruː ˈaʊər wɛb saɪt? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tuː duː ðæt./",
+    "guide": "ʃʊər <span class='intonation'>⤵</span>. aɪl <b>dʒʌs-niːd</b> ə fjuː mɔːr ˈdiːteɪlz <span class='intonation'>⤵</span>. bʌt fɜːrs<span class='stop'>t</span>—dɪd ju noʊ ju kən rɪˈkwɛs-tə kwoʊt θruː ˈaʊər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>? ˈmɛni ˈkʌstəmərz prɪˈfɜːr tə du ðæt <span class='intonation'>⤵</span>",
+    "vi": "Chắc chắn rồi. Tôi chỉ cần thêm vài chi tiết nữa thôi. Nhưng trước hết—bạn có biết là bạn có thể yêu cầu báo giá qua website của chúng tôi không? Nhiều khách hàng thích làm vậy hơn.",
+    "context": "📍 **Điều hướng kênh dịch vụ (Channel Redirection):** Nhân viên gợi ý sử dụng công cụ trực tuyến để tiết kiệm thời gian cho cả hai bên.",
+    "grammar": "• <b>Determiner Phrase:</b> 'A few more details' (thêm vài chi tiết nữa). 'A few' dùng với danh từ đếm được số nhiều.<br>• <b>Business Collocation:</b> 'Request a quote' là cụm từ cố định trong giao dịch thương mại.<br>• <b>Preposition of Medium:</b> 'Through' dùng để chỉ phương tiện hoặc hệ thống trung gian.<br>• <b>Verb Patterns:</b> 'Prefer to do' dùng để nói về sở thích hoặc thói quen mang tính lựa chọn."
+  },
+  {
+    "en": "Oh, I tried to use the service on your Web site, but I couldn't. I couldn't understand how to fill out the request form.",
+    "ipa": "/oʊ, aɪ traɪd tuː juːz ðə ˈsɜːrvɪs ɑːn jʊər wɛb saɪt, bʌt aɪ ˈkʊdnt. aɪ ˈkʊdnt ˌʌndərˈstænd haʊ tuː fɪl aʊt ðə rɪˈkwɛst fɔːrm./",
+    "guide": "oʊ <span class='intonation'>⤴</span>, aɪ traɪd tə juːz ðə ˈsɜːrvɪs ɑːn jər <b>wɛb-saɪt</b> <span class='intonation'>⤴</span>, bʌt aɪ <b>ˈkʊdn<span class='stop'>t</span></b> <span class='intonation'>⤵</span>. aɪ ˈkʊdn<span class='stop'>t</span> ˌʌndərˈstænd haʊ tə <b>fɪ-laʊt</b> ðə rɪˈkwɛst fɔːrm <span class='intonation'>⤵</span>",
+    "vi": "Ồ, tôi đã thử dùng dịch vụ trên website của bạn rồi nhưng không được. Tôi không hiểu cách điền vào mẫu yêu cầu đó.",
+    "context": "📍 **Giải thích sự cố (Reporting an Issue):** Khách hàng nêu rõ khó khăn gặp phải với giao diện số để giải thích tại sao mình lại chọn cách gọi điện trực tiếp.",
+    "grammar": "• <b>Try + to-V:</b> Diễn tả một nỗ lực làm việc gì đó (thường là khó khăn hoặc không thành công). Khác với 'Try + V-ing' là thử làm gì đó để xem kết quả.<br>• <b>Past Ability (Negative):</b> 'Couldn't' (Could not) dùng để chỉ sự bất lực, không có khả năng thực hiện hành động trong quá khứ.<br>• <b>Question Word + To-infinitive:</b> 'How to fill out' là cụm danh từ làm tân ngữ, rút gọn từ mệnh đề 'how I should fill out'.<br>• <b>Separable Phrasal Verb:</b> 'Fill out' (điền vào). Ở đây tân ngữ 'the request form' đứng sau, nhưng nếu dùng đại từ 'it' thì phải là 'fill it out'."
+  }
+],
   "questions": [
     {
       "q": "41 Why is the woman calling?",
@@ -576,37 +632,47 @@ const allLessons = [
   "title": "Questions 44 - 46",
   "audioUrl": "Test 02_Part 3_44-46.mp3",
  "passage": [
-    {
-      "en": "Hi, Tamara. Oh, I see you're reading the new issue of the company newsletter. What's it about?",
-      "ipa": "/haɪ, təˈmærə. oʊ, aɪ siː jʊər ˈriːdɪŋ ðə nuː ˈɪʃuː ʌv ðə ˈkʌmpəni ˈnuːzlɛtər. wʌts ɪt əˈbaʊt?/",
-      "guide": "haɪ, təˈmærə <span class='intonation'>⤴</span>. oʊ <span class='intonation'>⤵</span>, aɪ siː jər ˈriːdɪŋ ðə nuː <b>ˈɪʃuː-wəv</b> ðə ˈkʌmpəni ˈnuːzlɛtər <span class='intonation'>⤵</span>. <b>wʌt-sɪ-təˈbaʊt</b> <span class='intonation'>⤴</span>?",
-      "vi": "Xin chào Tamara. Ồ, tôi thấy bạn đang đọc số mới của bản tin công ty. Nội dung là gì vậy?"
-    },
-    {
-      "en": "The main feature is an announcement about a contest to design a new company logo.",
-      "ipa": "/ðə meɪn ˈfiːtʃər ɪz ən əˈnaʊnsmənt əˈbaʊt ə ˈkɑːntɛst tuː dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ./",
-      "guide": "ðə meɪn ˈfiːtʃər <b>ɪ-zən</b> əˈnaʊnsmən-təˈbaʊt ə ˈkɑːntɛst tə dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ <span class='intonation'>⤵</span>",
-      "vi": "Bài báo chính là thông báo về cuộc thi thiết kế logo công ty mới."
-    },
-    {
-      "en": "Any employee can submit a design, and the CEO's going to pick the winning logo next month.",
-      "ipa": "/ˈɛni ɛmˈplɔɪiː kæn səbˈmɪt ə dɪˈzaɪn, ænd ðə siː-iː-oʊz ˈɡoʊɪŋ tuː pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ nɛkst mʌnθ./",
-      "guide": "ˈɛni ɛmˈplɔɪiː kən <b>səbˈmɪ-tə</b> dɪˈzaɪn <span class='intonation'>⤴</span>, ən ðə siː-iː-oʊz ˈɡoʊɪŋ tə pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ <b>nɛks<span class='stop'>t</span></b> mʌnθ <span class='intonation'>⤵</span>",
-      "vi": "Bất kỳ nhân viên nào cũng có thể nộp một thiết kế, và giám đốc điều hành sẽ chọn ra logo chiến thắng vào tháng tới."
-    },
-    {
-      "en": "How interesting! I'd like to enter.",
-      "ipa": "/haʊ ˈɪntrəstɪŋ! aɪd laɪk tuː ˈɛntər./",
-      "guide": "haʊ <b>ˈɪn-rəs-tɪŋ</b> <span class='intonation'>⤴</span>! aɪd <b>laɪk-tə</b> ˈɛntər <span class='intonation'>⤵</span>",
-      "vi": "Thú vị làm sao! Tôi muốn tham gia."
-    },
-    {
-      "en": "Well, the announcement includes instructions for participants. You should take a look at them.",
-      "ipa": "/wɛl, ðɪ əˈnaʊnsmənt ɪnˈkluːdz ɪnˈstrʌkʃnz fɔːr pɑːrˈtɪsɪpənts. juː ʃʊd teɪk ə lʊk æt ðɛm./",
-      "guide": "wɛl <span class='intonation'>⤴</span>, ðɪ əˈnaʊnsmən-tɪnˈkluːdz ɪnˈstrʌkʃnz fər pɑːrˈtɪsɪpənts <span class='intonation'>⤵</span>. jə ʃəd <b>teɪ-kə</b> lʊ-kæt ðəm <span class='intonation'>⤵</span>",
-      "vi": "Tốt, thông báo đã bao gồm những hướng dẫn cho những người tham gia. Bạn nên xem qua chúng."
-    }
-  ],
+  {
+    "en": "Hi, Tamara. Oh, I see you're reading the new issue of the company newsletter. What's it about?",
+    "ipa": "/haɪ, təˈmærə. oʊ, aɪ siː jʊər ˈriːdɪŋ ðə nuː ˈɪʃuː ʌv ðə ˈkʌmpəni ˈnuːzlɛtər. wʌts ɪt əˈbaʊt?/",
+    "guide": "haɪ, təˈmærə <span class='intonation'>⤴</span>. oʊ <span class='intonation'>⤵</span>, aɪ siː jər ˈriːdɪŋ ðə nuː <b>ˈɪʃuː-wəv</b> ðə ˈkʌmpəni ˈnuːzlɛtər <span class='intonation'>⤵</span>. <b>wʌt-sɪ-təˈbaʊt</b> <span class='intonation'>⤴</span>?",
+    "vi": "Chào Tamara. Ồ, tôi thấy bạn đang đọc số mới của bản tin công ty. Nội dung có gì hot không?",
+    "context": "📍 **Lời chào xã giao (Small Talk):** Đây là cách mở đầu câu chuyện phổ biến tại văn phòng khi thấy đồng nghiệp đang làm một việc gì đó công khai (như đọc báo).",
+    "grammar": "• <b>Present Continuous for Observation:</b> 'You're reading' dùng để diễn tả một hành động đang diễn ra ngay tại thời điểm nói.<br>• <b>Noun Phrase:</b> 'The new issue of...' (Số báo mới của...). 'Issue' là danh từ đếm được, dùng để chỉ một ấn bản cụ thể trong một loạt báo định kỳ.<br>• <b>Prepositional Verb:</b> 'About' trong 'What's it about?' liên kết chủ ngữ 'it' với nội dung bên trong, đây là cấu trúc hỏi chủ đề ngắn gọn nhất."
+  },
+  {
+    "en": "The main feature is an announcement about a contest to design a new company logo.",
+    "ipa": "/ðə meɪn ˈfiːtʃər ɪz ən əˈnaʊnsmənt əˈbaʊt ə ˈkɑːntɛst tuː dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ./",
+    "guide": "ðə meɪn ˈfiːtʃər <b>ɪ-zən</b> əˈnaʊnsmən-təˈbaʊt ə ˈkɑːntɛst tə dɪˈzaɪn ə nuː ˈkʌmpəni ˈloʊɡoʊ <span class='intonation'>⤵</span>",
+    "vi": "Tiêu điểm chính là thông báo về một cuộc thi thiết kế logo mới cho công ty mình.",
+    "context": "📍 **Cung cấp thông tin trọng tâm (Giving Key Info):** Người nói tóm tắt nội dung quan trọng nhất của tờ bản tin để trả lời câu hỏi trước đó.",
+    "grammar": "• <b>Subject Complement:</b> 'An announcement...' đóng vai trò là bổ ngữ cho chủ ngữ 'The main feature' thông qua động từ to-be 'is'.<br>• <b>To-infinitive as Adjective:</b> 'To design' đóng vai trò như một tính từ bổ nghĩa cho danh từ 'contest' (cuộc thi để làm gì).<br>• <b>Compound Noun:</b> 'Company logo' là cụm danh từ kép, trong đó 'company' đóng vai trò bổ nghĩa cho 'logo'."
+  },
+  {
+    "en": "Any employee can submit a design, and the CEO's going to pick the winning logo next month.",
+    "ipa": "/ˈɛni ɛmˈplɔɪiː kæn səbˈmɪt ə dɪˈzaɪn, ænd ðə siː-iː-oʊz ˈɡoʊɪŋ tuː pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ nɛkst mʌnθ./",
+    "guide": "ˈɛni ɛmˈplɔɪiː kən <b>səbˈmɪ-tə</b> dɪˈzaɪn <span class='intonation'>⤴</span>, ən ðə siː-iː-oʊz ˈɡoʊɪŋ tə pɪk ðə ˈwɪnɪŋ ˈloʊɡoʊ <b>nɛks<span class='stop'>t</span></b> mʌnθ <span class='intonation'>⤵</span>",
+    "vi": "Bất cứ nhân viên nào cũng được tham gia nộp thiết kế, và tháng tới chính tay CEO sẽ chọn ra logo thắng giải.",
+    "context": "📍 **Mô tả quy trình (Describing a Process):** Nhấn mạnh vào tính mở của cuộc thi (ai cũng có thể tham gia) và người có quyền quyết định cuối cùng.",
+    "grammar": "• <b>Determiner 'Any':</b> Nhấn mạnh tính không giới hạn (bất kể là ai).<br>• <b>Be going to:</b> 'The CEO is going to pick' diễn tả một dự định đã được lên kế hoạch sẵn bởi tổ chức.<br>• <b>Present Participle as Adjective:</b> 'Winning' (đang thắng/giành giải) bổ nghĩa cho 'logo'.<br>• <b>Compound Sentence:</b> Hai mệnh đề độc lập được nối với nhau bởi liên từ 'and' để tạo thành câu ghép."
+  },
+  {
+    "en": "How interesting! I'd like to enter.",
+    "ipa": "/haʊ ˈɪntrəstɪŋ! aɪd laɪk tuː ˈɛntər./",
+    "guide": "haʊ <b>ˈɪn-rəs-tɪŋ</b> <span class='intonation'>⤴</span>! aɪd <b>laɪk-tə</b> ˈɛntər <span class='intonation'>⤵</span>",
+    "vi": "Thú vị thế! Tôi cũng muốn tham gia cuộc thi này.",
+    "context": "📍 **Bày tỏ sự hào hứng (Expressing Interest):** Phản ứng tự nhiên khi nghe về một cơ hội hoặc tin tức tốt lành.",
+    "grammar": "• <b>Exclamatory Sentence:</b> Cấu trúc 'How + Adjective!' dùng để bộc lộ cảm xúc mạnh mẽ về một tính chất.<br>• <b>Conditional for Politeness:</b> 'I'd like to' (I would like to) là cấu trúc chuẩn mực để đưa ra yêu cầu hoặc mong muốn một cách lịch sự.<br>• <b>Intransitive Verb:</b> 'Enter' ở đây được dùng như nội động từ, mang nghĩa là đăng ký ghi danh tham gia một sự kiện/cuộc thi."
+  },
+  {
+    "en": "Well, the announcement includes instructions for participants. You should take a look at them.",
+    "ipa": "/wɛl, ðɪ əˈnaʊnsmənt ɪnˈkluːdz ɪnˈstrʌkʃnz fɔːr pɑːrˈtɪsɪpənts. juː ʃʊd teɪk ə lʊk æt ðɛm./",
+    "guide": "wɛl <span class='intonation'>⤴</span>, ðɪ əˈnaʊnsmən-tɪnˈkluːdz ɪnˈstrʌkʃnz fər pɑːrˈtɪsɪpənts <span class='intonation'>⤵</span>. jə ʃəd <b>teɪ-kə</b> lʊ-kæt ðəm <span class='intonation'>⤵</span>",
+    "vi": "À, trong thông báo có cả hướng dẫn cho người dự thi nữa đó. Bạn nên xem qua đi.",
+    "context": "📍 **Đưa ra lời khuyên (Giving Advice):** Gợi ý đồng nghiệp thực hiện hành động tiếp theo để thực hiện hóa mong muốn của họ.",
+    "grammar": "• <b>Subject-Verb Agreement:</b> 'The announcement includes' (thêm 's' vì chủ ngữ là số ít).<br>• <b>Modal Verb for Advice:</b> 'Should' dùng để đưa ra lời khuyên nhẹ nhàng.<br>• <b>Collocation:</b> 'Take a look at' là cụm từ rất phổ biến, tự nhiên hơn là chỉ dùng từ 'look' đơn lẻ.<br>• <b>Object Pronoun:</b> 'Them' thay thế cho danh từ số nhiều 'instructions' ở câu trước để tránh lặp từ."
+  }
+],
   "questions": [
     {
       "q": "44 What does the man ask the woman about?",
@@ -685,31 +751,39 @@ const allLessons = [
   "title": "Questions 47 - 49",
   "audioUrl": "Test 02_Part 3_47-49.mp3",
  "passage": [
-    {
-      "en": "Excuse me. I'm not sure which product to buy. My bathroom drain is clogged, and I need something that can clear it. What do you recommend?",
-      "ipa": "/ɪkˈskjuːs miː. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌkt tuː baɪ. maɪ ˈbæθruːm dreɪn ɪz klɑːɡd, ænd aɪ niːd ˈsʌmθɪŋ ðæt kæn klɪər ɪt. wʌt duː juː ˌrɛkəˈmɛnd?/",
-      "guide": "ɪkˈskjuːs miː <span class='intonation'>⤴</span>. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌk<b><span class='stop'>t</span>‿tə</b> baɪ <span class='intonation'>⤵</span>. maɪ ˈbæθruːm <b>dreɪ-nɪz</b> klɑːɡd <span class='intonation'>⤴</span>, <b>ən-naɪ</b> niːd ˈsʌmθɪŋ ðæt kən <b>klɪə-rɪt</b> <span class='intonation'>⤵</span>. <b>wʌt-də-ju</b> ˌrɛkəˈmɛnd <span class='intonation'>⤵</span>?",
-      "vi": "Xin lỗi, tôi không chắc nên mua sản phẩm nào. Cống thoát nước phòng tắm của tôi bị tắc, và tôi cần một vài thứ có thể làm sạch nó. Bạn có đề xuất gì không?"
-    },
-    {
-      "en": "Almost any of these products would probably work, but if you want to make sure the job gets done, I'd recommend Purifine. Purifine's the strongest drain cleaner on the market.",
-      "ipa": "/ˈɔːlmoʊst ˈɛni ʌv ðɪːz ˈprɑːdʌkts wʊd ˈprɑːbəbli wɜːrk, bʌt ɪf juː wɑːnt tuː meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn, aɪd ˌrɛkəˈmɛnd ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst dreɪn ˈkliːnər ɑːn ðə ˈmɑːrkɪt./",
-      "guide": "ˈɔːlmoʊst <b>ˈɛ-ni-jəv</b> ðɪːz ˈprɑːdʌkts wəd ˈprɑːbəbli wɜːrk <span class='intonation'>⤴</span>, bʌt ɪf ju wɑːnt tə meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn <span class='intonation'>⤵</span>, <b>aɪd-ˌrɛkəˈmɛnd</b> ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst <b>dreɪn-ˈkliːnər</b> ɑːn ðə ˈmɑːrkɪt <span class='intonation'>⤵</span>",
-      "vi": "Hầu hết các sản phẩm này có thể hiệu quả, nhưng nếu bạn muốn đảm bảo công việc được hoàn tất, tôi đề xuất Purifine. Purifine là chất thông cống mạnh nhất trên thị trường."
-    },
-    {
-      "en": "Got it. Thank you! Is there anything I should know before using it on my drain?",
-      "ipa": "/ɡɑːt ɪt. θæŋk juː! ɪz ðɛr ˈɛniθɪŋ aɪ ʃʊd noʊ bɪˈfɔːr ˈjuːzɪŋ ɪt ɑːn maɪ dreɪn?/",
-      "guide": "<b>ɡɑː-tɪt</b> <span class='intonation'>⤵</span>. θæŋk juː <span class='intonation'>⤵</span>! ɪz ðər <b>ˈɛ-ni-θɪŋ-aɪ</b> ʃəd noʊ bɪˈfɔːr <b>ˈjuːzɪ-ŋɪt</b> ɑːn maɪ dreɪn <span class='intonation'>⤴</span>?",
-      "vi": "Hiểu rồi. Cảm ơn nhé! Còn bất cứ cái gì tôi nên biết trước khi sử dụng nó trên cống thoát nước không?"
-    },
-    {
-      "en": "Yes—these kinds of chemicals can be dangerous. Make sure to look over the safety information printed on the back of the bottle before you open it up.",
-      "ipa": "/jɛs—ðɪːz kaɪndz ʌv ˈkɛmɪklz kæn biː ˈdeɪndʒərəs. meɪk ʃʊər tuː lʊk ˈoʊvər ðə ˈseɪfti ˌɪnfərˈmeɪʃn ˈprɪntɪd ɑːn ðə bæk ʌv ðə ˈbɑːtl bɪˈfɔːr juː ˈoʊpən ɪt ʌp./",
-      "guide": "jɛs <span class='intonation'>⤴</span>—ðɪːz <b>kaɪnd-zəv</b> ˈkɛmɪklz kən bi ˈdeɪndʒərəs <span class='intonation'>⤵</span>. meɪk ʃʊər tə <b>lʊ-ˈkoʊvər</b> ðə ˈseɪfti ˌɪnfərˈmeɪʃn <b>ˈprɪntɪ-dɑːn</b> ðə <b>bæ-kəv</b> ðə ˈbɑːtl bɪˈfɔːr ju <b>ˈoʊ-pə-nɪ-tʌp</b> <span class='intonation'>⤵</span>",
-      "vi": "Có—những loại hóa chất này có thể nguy hiểm. Đảm bảo xem kỹ thông tin an toàn được in ở mặt sau của chai trước khi mở nó."
-    }
-  ],
+  {
+    "en": "Excuse me. I'm not sure which product to buy. My bathroom drain is clogged, and I need something that can clear it. What do you recommend?",
+    "ipa": "/ɪkˈskjuːs miː. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌkt tuː baɪ. maɪ ˈbæθruːm dreɪn ɪz klɑːɡd, ænd aɪ niːd ˈsʌmθɪŋ ðæt kæn klɪər ɪt. wʌt duː juː ˌrɛkəˈmɛnd?/",
+    "guide": "ɪkˈskjuːs miː <span class='intonation'>⤴</span>. aɪm nɑːt ʃʊər wɪtʃ ˈprɑːdʌk<b><span class='stop'>t</span>‿tə</b> baɪ <span class='intonation'>⤵</span>. maɪ ˈbæθruːm <b>dreɪ-nɪz</b> klɑːɡd <span class='intonation'>⤴</span>, <b>ən-naɪ</b> niːd ˈsʌmθɪŋ ðæt kən <b>klɪə-rɪt</b> <span class='intonation'>⤵</span>. <b>wʌt-də-ju</b> ˌrɛkəˈmɛnd <span class='intonation'>⤵</span>?",
+    "vi": "Xin lỗi, tôi không biết nên mua sản phẩm nào. Cống phòng tắm bị tắc rồi, tôi cần cái gì đó xử lý được nó. Bạn có gợi ý gì không?",
+    "context": "📍 **Yêu cầu hỗ trợ (Seeking Assistance):** Khách hàng nêu vấn đề cụ thể (clogged drain) trước khi hỏi xin lời khuyên, giúp nhân viên thu hẹp phạm vi sản phẩm.",
+    "grammar": "• <b>Noun Clause with Infinitive:</b> 'Which product to buy' là dạng rút gọn của 'which product I should buy', dùng khi chủ ngữ của hai mệnh đề là một.<br>• <b>Passive Adjective:</b> 'Clogged' là quá khứ phân từ đóng vai trò tính từ, diễn tả trạng thái của vật bị vật cản lấp đầy.<br>• <b>Relative Clause:</b> 'That can clear it' là mệnh đề quan hệ xác định, bổ nghĩa cho đại từ bất định 'something'.<br>• <b>Verb Choice:</b> 'Clear' ở đây mang nghĩa là thông tắc, làm cho sạch thoáng."
+  },
+  {
+    "en": "Almost any of these products would probably work, but if you want to make sure the job gets done, I'd recommend Purifine. Purifine's the strongest drain cleaner on the market.",
+    "ipa": "/ˈɔːlmoʊst ˈɛni ʌv ðɪːz ˈprɑːdʌkts wʊd ˈprɑːbəbli wɜːrk, bʌt ɪf juː wɑːnt tuː meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn, aɪd ˌrɛkəˈmɛnd ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst dreɪn ˈkliːnər ɑːn ðə ˈmɑːrkɪt./",
+    "guide": "ˈɔːlmoʊst <b>ˈɛ-ni-jəv</b> ðɪːz ˈprɑːdʌkts wəd ˈprɑːbəbli wɜːrk <span class='intonation'>⤴</span>, bʌt ɪf ju wɑːnt tə meɪk ʃʊər ðə dʒɑːb ɡɛts dʌn <span class='intonation'>⤵</span>, <b>aɪd-ˌrɛkəˈmɛnd</b> ˈpjʊrɪfaɪn. ˈpjʊrɪfaɪnz ðə ˈstrɔːŋɡɪst <b>dreɪn-ˈkliːnər</b> ɑːn ðə ˈmɑːrkɪt <span class='intonation'>⤵</span>",
+    "vi": "Hầu như loại nào ở đây cũng có hiệu quả thôi, nhưng nếu bạn muốn chắc ăn nhất thì tôi khuyên dùng Purifine. Nó là chất thông cống mạnh nhất thị trường hiện nay đấy.",
+    "context": "📍 **Tư vấn chuyên môn (Professional Recommendation):** Nhân viên sử dụng lối nói giảm nói tránh (would probably) trước khi khẳng định chắc chắn về sản phẩm tốt nhất (strongest).",
+    "grammar": "• <b>Modal 'Would' for Probability:</b> Diễn tả khả năng xảy ra nhưng không chắc chắn 100%.<br>• <b>Causative 'Get':</b> 'The job gets done' (Công việc được hoàn thành). Cấu trúc: [Get + Object + V3/ed] nhấn mạnh vào kết quả cuối cùng thay vì ai là người làm.<br>• <b>Superlative:</b> 'The strongest' là dạng so sánh nhất của tính từ ngắn 'strong', bắt buộc có 'the'.<br>• <b>Agent Noun:</b> 'Cleaner' (chất làm sạch) được tạo thành từ động từ 'clean' + hậu tố '-er'."
+  },
+  {
+    "en": "Got it. Thank you! Is there anything I should know before using it on my drain?",
+    "ipa": "/ɡɑːt ɪt. θæŋk juː! ɪz ðɛr ˈɛniθɪŋ aɪ ʃʊd noʊ bɪˈfɔːr ˈjuːzɪŋ ɪt ɑːn maɪ dreɪn?/",
+    "guide": "<b>ɡɑː-tɪt</b> <span class='intonation'>⤵</span>. θæŋk juː <span class='intonation'>⤵</span>! ɪz ðər <b>ˈɛ-ni-θɪŋ-aɪ</b> ʃəd noʊ bɪˈfɔːr <b>ˈjuːzɪ-ŋɪt</b> ɑːn maɪ dreɪn <span class='intonation'>⤴</span>?",
+    "vi": "Tôi hiểu rồi, cảm ơn! Có lưu ý gì trước khi tôi đổ thứ này xuống cống không nhỉ?",
+    "context": "📍 **Hỏi về an toàn (Safety Inquiry):** Khách hàng thể hiện sự cẩn trọng bằng cách hỏi về các tác dụng phụ hoặc cách sử dụng đúng trước khi thao tác với hóa chất mạnh.",
+    "grammar": "• <b>Elliptical Expression:</b> 'Got it' là dạng nói gọn của 'I have got it' hoặc 'I understand it'.<br>• <b>Existential Question:</b> 'Is there anything...' dùng để kiểm tra sự tồn tại của thông tin bổ sung.<br>• <b>Gerund after Preposition:</b> Sau 'before' (giới từ), động từ 'use' phải chuyển sang dạng V-ing ('using').<br>• <b>Preposition 'On':</b> Dùng 'on' vì hóa chất tác động trực tiếp lên bề mặt của cống."
+  },
+  {
+    "en": "Yes—these kinds of chemicals can be dangerous. Make sure to look over the safety information printed on the back of the bottle before you open it up.",
+    "ipa": "/jɛs—ðɪːz kaɪndz ʌv ˈkɛmɪklz kæn biː ˈdeɪndʒərəs. meɪk ʃʊər tuː lʊk ˈoʊvər ðə ˈseɪfti ˌɪnfərˈmeɪʃn ˈprɪntɪd ɑːn ðə bæk ʌv ðə ˈbɑːtl bɪˈfɔːr juː ˈoʊpən ɪt ʌp./",
+    "guide": "jɛs <span class='intonation'>⤴</span>—ðɪːz <b>kaɪnd-zəv</b> ˈkɛmɪklz kən bi ˈdeɪndʒərəs <span class='intonation'>⤵</span>. meɪk ʃʊər tə <b>lʊ-ˈkoʊvər</b> ðə ˈseɪfti ˌɪnfərˈmeɪʃn <b>ˈprɪntɪ-dɑːn</b> ðə <b>bæ-kəv</b> ðə ˈbɑːtl bɪˈfɔːr ju <b>ˈoʊ-pə-nɪ-tʌp</b> <span class='intonation'>⤵</span>",
+    "vi": "Có chứ—những loại hóa chất này có thể gây nguy hiểm đấy. Nhớ kiểm tra kỹ phần thông tin an toàn in trên mặt sau chai trước khi mở nắp nhé.",
+    "context": "📍 **Cảnh báo và hướng dẫn (Warning & Instruction):** Nhân viên nhấn mạnh tầm quan trọng của việc đọc nhãn sản phẩm để tránh tai nạn do hóa chất.",
+    "grammar": "• <b>Phrasal Verb 'Look over':</b> Nghĩa là kiểm tra nhanh toàn bộ để nắm bắt thông tin quan trọng.<br>• <b>Reduced Relative Clause (Passive):</b> 'Information (which is) printed on...'. Lược bỏ đại từ và to-be, chỉ giữ lại V3/ed để làm tính từ bổ nghĩa.<br>• <b>Phrasal Verb 'Open up':</b> Thêm 'up' sau 'open' để nhấn mạnh hành động mở hoàn toàn một vật gì đó đang được niêm phong.<br>• <b>Plural Agreement:</b> 'These kinds of chemicals' - Tính từ chỉ định 'these' đi với danh từ số nhiều 'kinds'."
+  }
+],
   "questions": [
     {
       "q": "47 What does the man want to do?",
@@ -775,49 +849,63 @@ const allLessons = [
   "title": "Questions 50 - 52",
   "audioUrl": "Test 02_Part 3_50-52.mp3",
   "passage": [
-    {
-      "en": "Hi, Tanya and George. Welcome to the team here at Pritchard Airport.",
-      "ipa": "/haɪ, ˈtænjə ænd dʒɔːrdʒ. ˈwɛlkəm tuː ðə tiːm hɪər æt ˈprɪtʃərd ˈɛrpɔːrt./",
-      "guide": "haɪ <span class='intonation'>⤴</span>, ˈtænjə <b>ən-dʒɔːrdʒ</b> <span class='intonation'>⤵</span>. ˈwɛlkəm tə ðə tiːm hɪər <b>æt-ˈprɪtʃərd</b> ˈɛrpɔːrt <span class='intonation'>⤵</span>",
-      "vi": "Xin chào Tanya và George. Chào mừng đến với nhóm ở tại sân bay Pritchard."
-    },
-    {
-      "en": "We're so glad to have two more baggage handlers with our busy season coming soon.",
-      "ipa": "/wɪər soʊ ɡlæd tuː hæv tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ ˈaʊər ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn./",
-      "guide": "wɪər soʊ ɡlæd <b>tə-hæv</b> tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ <b>ˈaʊ-ər</b> ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn <span class='intonation'>⤵</span>",
-      "vi": "Chúng tôi rất vui có thêm hai nhân viên xử lý hành lý khi mùa cao điểm của chúng tôi đến gần."
-    },
-    {
-      "en": "OK, do you have any questions before I begin your orientation?",
-      "ipa": "/ˌoʊˈkeɪ, duː juː hæv ˈɛni ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jʊər ˌɔːriɛnˈteɪʃn?/",
-      "guide": "ˌoʊˈkeɪ <span class='intonation'>⤴</span>, də ju <b>hæ-və-ni</b> ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jər ˌɔːriɛnˈteɪʃn <span class='intonation'>⤵</span>?",
-      "vi": "Ok, hai bạn có bất kỳ câu hỏi gì trước khi tôi bắt đầu buổi hướng dẫn không?"
-    },
-    {
-      "en": "Yes, I do. Are there lockers where we can leave our belongings during our shifts?",
-      "ipa": "/jɛs, aɪ duː. ɑːr ðɛr ˈlɑːkərz wɛr wiː kæn liːv ˈaʊər bɪˈlɔːŋɪŋz ˈdjʊərɪŋ ˈaʊər ʃɪfts?/",
-      "guide": "jɛs, aɪ duː <span class='intonation'>⤵</span>. <b>ɑːr-ðər</b> ˈlɑːkərz wɛr wi kən <b>liː-və-waʊər</b> bɪˈlɔːŋɪŋz ˈdjʊərɪŋ <b>ˈaʊ-ər</b> ʃɪfts <span class='intonation'>⤴</span>?",
-      "vi": "Tôi có. Có tủ đựng đồ nơi mà chúng tôi có thể để đồ tư trang trong ca làm việc không?"
-    },
-    {
-      "en": "There are. You'll see them when we visit the staff breakroom later this morning.",
-      "ipa": "/ðɛr ɑːr. juːl siː ðɛm wɛn wiː ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər ðɪs ˈmɔːrnɪŋ./",
-      "guide": "<b>ðɛr-ɑːr</b> <span class='intonation'>⤵</span>. juːl siː ðəm wɛn wi ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
-      "vi": "Có. Bạn sẽ thấy chúng khi chúng ta đến phòng nghỉ của nhân viên vào cuối giờ sáng."
-    },
-    {
-      "en": "And we're supposed to wear a reflective vest and black pants, right? Where do we get those from?",
-      "ipa": "/ænd wɪər səˈpoʊzd tuː wɛr ə rɪˈflɛktɪv vɛst ænd blæk pænts, raɪt? wɛr duː wiː ɡɛt ðoʊz frʌm?/",
-      "guide": "ən wɪər <b>səˈpoʊz-tə-wɛr</b> ə rɪˈflɛktɪv vɛst ən blæk pænts <span class='intonation'>⤴</span>, raɪt? wɛr də wi <b>ɡɛ<span class='stop'>t</span>-ðoʊz</b> frəm <span class='intonation'>⤵</span>?",
-      "vi": "Chúng tôi cần phải mặc áo phản quang với quần tây đen phải không? Chúng tôi lấy nó ở đâu?"
-    },
-    {
-      "en": "We supply the vest, but you'll need to wear your own pants.",
-      "ipa": "/wiː səˈplaɪ ðə vɛst, bʌt juːl niːd tuː wɛr jʊər oʊn pænts./",
-      "guide": "wi səˈplaɪ ðə vɛst <span class='intonation'>⤴</span>, bʌt juːl <b>niːd-tə-wɛr</b> jər oʊn pænts <span class='intonation'>⤵</span>",
-      "vi": "Chúng tôi cung cấp áo phản quang nhưng bạn phải tự trang bị quần tây của riêng mình."
-    }
-  ],
+  {
+    "en": "Hi, Tanya and George. Welcome to the team here at Pritchard Airport.",
+    "ipa": "/haɪ, ˈtænjə ænd dʒɔːrdʒ. ˈwɛlkəm tuː ðə tiːm hɪər æt ˈprɪtʃərd ˈɛrpɔːrt./",
+    "guide": "haɪ <span class='intonation'>⤴</span>, ˈtænjə <b>ən-dʒɔːrdʒ</b> <span class='intonation'>⤵</span>. ˈwɛlkəm tə ðə tiːm hɪər <b>æt-ˈprɪtʃərd</b> ˈɛrpɔːrt <span class='intonation'>⤵</span>",
+    "vi": "Chào Tanya và George. Chào mừng hai bạn gia nhập đội ngũ tại sân bay Pritchard.",
+    "context": "📍 **Tiếp nhận nhân sự (Onboarding):** Quản lý thiết lập bầu không khí thân thiện và xác định vị trí làm việc cụ thể cho nhân viên mới.",
+    "grammar": "• <b>Welcome to + Organization:</b> Chào mừng gia nhập một tổ chức/đội ngũ. Lưu ý dùng 'to' thay vì các giới từ khác.<br>• <b>Preposition 'At' for Facilities:</b> Dùng 'at' cho các địa điểm chức năng lớn như sân bay, cảng, hoặc trụ sở công ty."
+  },
+  {
+    "en": "We're so glad to have two more baggage handlers with our busy season coming soon.",
+    "ipa": "/wɪər soʊ ɡlæd tuː hæv tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ ˈaʊər ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn./",
+    "guide": "wɪər soʊ ɡlæd <b>tə-hæv</b> tuː mɔːr ˈbæɡɪdʒ ˈhændlərz wɪθ <b>ˈaʊ-ər</b> ˈbɪzi ˈsiːzn ˈkʌmɪŋ suːn <span class='intonation'>⤵</span>",
+    "vi": "Rất vui khi có thêm hai nhân viên bốc xếp hành lý trong bối cảnh mùa cao điểm sắp đến rồi.",
+    "context": "📍 **Nhấn mạnh sự cấp thiết (Urgency):** Việc đề cập đến 'busy season' giúp nhân viên mới hiểu rằng họ sẽ phải bắt nhịp với cường độ công việc cao ngay lập tức.",
+    "grammar": "• <b>Baggage handler:</b> Danh từ ghép chỉ nghề nghiệp. Lưu ý 'baggage' không thêm 's' vì là danh từ không đếm được.<br>• <b>Complex Prepositional Phrase:</b> 'With + Noun + V-ing' (With our busy season coming). Cấu trúc này dùng để giải thích hoàn cảnh hoặc nguyên nhân dẫn đến cảm xúc ở mệnh đề chính (rất vui vì...).<br>• <b>Comparative for Addition:</b> 'Two more' (thêm hai người nữa) - cấu trúc chuẩn để nói về số lượng bổ sung."
+  },
+  {
+    "en": "OK, do you have any questions before I begin your orientation?",
+    "ipa": "/ˌoʊˈkeɪ, duː juː hæv ˈɛni ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jʊər ˌɔːriɛnˈteɪʃn?/",
+    "guide": "ˌoʊˈkeɪ <span class='intonation'>⤴</span>, də ju <b>hæ-və-ni</b> ˈkwɛstʃənz bɪˈfɔːr aɪ bɪˈɡɪn jər ˌɔːriɛnˈteɪʃn <span class='intonation'>⤵</span>?",
+    "vi": "Được rồi, hai bạn có thắc mắc gì trước khi tôi bắt đầu buổi hướng dẫn công việc không?",
+    "context": "📍 **Kiểm tra sự sẵn sàng (Checking Readiness):** Trước khi đi vào chi tiết kỹ thuật của 'orientation', người hướng dẫn luôn dành khoảng nghỉ để giải đáp các băn khoăn tức thời.",
+    "grammar": "• <b>Orientation:</b> Danh từ chỉ quy trình giới thiệu quy định, văn hóa cho người mới. Khác với 'training' (đào tạo kỹ năng cụ thể).<br>• <b>Time Subclause:</b> Mệnh đề thời gian bắt đầu bằng 'before'. Lưu ý trong mệnh đề này không dùng thì tương lai (will), chỉ dùng hiện tại đơn."
+  },
+  {
+    "en": "Yes, I do. Are there lockers where we can leave our belongings during our shifts?",
+    "ipa": "/jɛs, aɪ duː. ɑːr ðɛr ˈlɑːkərz wɛr wiː kæn liːv ˈaʊər bɪˈlɔːŋɪŋz ˈdjʊərɪŋ ˈaʊər ʃɪfts?/",
+    "guide": "jɛs, aɪ duː <span class='intonation'>⤵</span>. <b>ɑːr-ðər</b> ˈlɑːkərz wɛr wi kən <b>liː-və-waʊər</b> bɪˈlɔːŋɪŋz ˈdjʊərɪŋ <b>ˈaʊ-ər</b> ʃɪfts <span class='intonation'>⤴</span>?",
+    "vi": "Tôi có. Có tủ đựng đồ cá nhân để chúng tôi cất tư trang trong lúc làm ca không?",
+    "context": "📍 **Hỏi về phúc lợi/tiện ích (Facility Inquiry):** Do đặc thù công việc bốc xếp (physical labor), nhân viên cần biết nơi cất giữ đồ an toàn.",
+    "grammar": "• <b>Relative Adverb 'Where':</b> Dùng để thay thế cho 'in which', bổ nghĩa cho danh từ chỉ nơi chốn 'lockers'.<br>• <b>Plural-only Noun:</b> 'Belongings' luôn ở dạng số nhiều khi chỉ tài sản cá nhân.<br>• <b>Noun for Work Period:</b> 'Shift' (ca làm việc). Cấu trúc 'during our shifts' ám chỉ tính chất lặp lại của công việc."
+  },
+  {
+    "en": "There are. You'll see them when we visit the staff breakroom later this morning.",
+    "ipa": "/ðɛr ɑːr. juːl siː ðɛm wɛn wiː ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər ðɪs ˈmɔːrnɪŋ./",
+    "guide": "<b>ðɛr-ɑːr</b> <span class='intonation'>⤵</span>. juːl siː ðəm wɛn wi ˈvɪzɪt ðə stæf ˈbreɪkruːm ˈleɪtər <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
+    "vi": "Có chứ. Lát nữa trong sáng nay khi đi tham quan phòng nghỉ nhân viên, bạn sẽ thấy chúng ngay.",
+    "context": "📍 **Lộ trình hướng dẫn (Roadmap):** Xác nhận thông tin và lồng ghép vào lịch trình tham quan thực tế.",
+    "grammar": "• <b>Short Answer:</b> 'There are' là cách trả lời cực ngắn thay cho 'There are lockers'.<br>• <b>Compound Noun:</b> 'Staff breakroom' (phòng nghỉ nhân viên).<br>• <b>Adverbial Phrase of Time:</b> 'Later this morning' (muộn hơn trong sáng nay) - một cách nói rất tự nhiên thay vì nói giờ cụ thể."
+  },
+  {
+    "en": "And we're supposed to wear a reflective vest and black pants, right? Where do we get those from?",
+    "ipa": "/ænd wɪər səˈpoʊzd tuː wɛr ə rɪˈflɛktɪv vɛst ænd blæk pænts, raɪt? wɛr duː wiː ɡɛt ðoʊz frʌm?/",
+    "guide": "ən wɪər <b>səˈpoʊz-tə-wɛr</b> ə rɪˈflɛktɪv vɛst ən blæk pænts <span class='intonation'>⤴</span>, raɪt? wɛr də wi <b>ɡɛ<span class='stop'>t</span>-ðoʊz</b> frəm <span class='intonation'>⤵</span>?",
+    "vi": "Và chúng tôi cần phải mặc áo phản quang với quần tây đen, đúng không? Chúng tôi nhận mấy đồ đó ở đâu nhỉ?",
+    "context": "📍 **Quy định đồng phục (Dress Code & PPE):** Nhân viên xác nhận lại về trang bị bảo hộ cá nhân (Personal Protective Equipment - PPE) vì đây là yêu cầu an toàn bắt buộc tại sân bay.",
+    "grammar": "• <b>Be supposed to:</b> Cấu trúc dùng để nói về quy định, nghĩa vụ hoặc kỳ vọng chung của một tổ chức.<br>• <b>Tag Question 'Right?':</b> Dùng ở cuối câu để xác nhận lại thông tin mà mình tin là đúng.<br>• <b>Demonstrative Pronoun:</b> 'Those' thay thế cho 'reflective vest and black pants'."
+  },
+  {
+    "en": "We supply the vest, but you'll need to wear your own pants.",
+    "ipa": "/wiː səˈplaɪ ðə vɛst, bʌt juːl niːd tuː wɛr jʊər oʊn pænts./",
+    "guide": "wi səˈplaɪ ðə vɛst <span class='intonation'>⤴</span>, bʌt juːl <b>niːd-tə-wɛr</b> jər oʊn pænts <span class='intonation'>⤵</span>",
+    "vi": "Bên tôi sẽ cung cấp áo phản quang, nhưng quần thì các bạn phải tự chuẩn bị nhé.",
+    "context": "📍 **Phân định trách nhiệm (Clarifying Responsibility):** Phân biệt rõ đồ vật được cấp phát (supply) và đồ vật cá nhân phải tự trang bị (own).",
+    "grammar": "• <b>Verb Choice 'Supply':</b> Thường dùng cho tổ chức cung cấp thiết bị làm việc chính thức.<br>• <b>Emphasis with 'Own':</b> 'Your own pants' nhấn mạnh việc tự túc trang bị, không phải do công ty phát.<br>• <b>Contrastive Conjunction 'But':</b> Dùng để nối hai mệnh đề có sự đối lập về trách nhiệm giữa công ty và cá nhân."
+  }
+],
   "questions": [
     {
       "q": "50 Where is the conversation taking place?",
@@ -884,31 +972,39 @@ const allLessons = [
   "title": "Questions 53 - 55",
   "audioUrl": "Test 02_Part 3_53-55.mp3",
  "passage": [
-    {
-      "en": "Hi, Lori. Did Dean let you know that I'll be giving the interview that Tech News Weekly asked for?",
-      "ipa": "/haɪ, ˈlɔːri. dɪd diːn lɛt juː noʊ ðæt aɪl biː ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli æskt fɔːr?/",
-      "guide": "haɪ, ˈlɔːri <span class='intonation'>⤴</span>. dɪd diːn <b>lɛ-tʃu-noʊ</b> ðæt aɪl bi ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli <b>æs-kt-fɔːr</b> <span class='intonation'>⤵</span>",
-      "vi": "Xin chào Lori. Dean có cho bạn biết là tôi sẽ trả lời phỏng vấn mà Tech News Weekly yêu cầu không?"
-    },
-    {
-      "en": "He's quite busy this week, and I also know a lot about the products the interviewer wants to discuss.",
-      "ipa": "/hiːz kwaɪt ˈbɪzi ðɪs wiːk, ænd aɪ ˈɔːlsoʊ noʊ ə lɑːt əˈbaʊt ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər wɑːnts tuː dɪˈskʌs./",
-      "guide": "hiːz kwaɪt ˈbɪzi ðɪs wiːk <span class='intonation'>⤴</span>, <b>ən-naɪ</b> ˈɔːlsoʊ <b>noʊ-ə-lɑː-təˈbaʊt</b> ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər <b>wɑːn-tsə</b> dɪˈskʌs <span class='intonation'>⤵</span>",
-      "vi": "Anh ấy khá bận vào tuần này, và tôi cũng biết nhiều về những sản phẩm người phỏng vấn muốn thảo luận."
-    },
-    {
-      "en": "Really? Last time we spoke, he said that he would come here to the public relations department so we could prepare him for it. That was this morning.",
-      "ipa": "/ˈrɪəli? læst taɪm wiː spoʊk, hiː sɛd ðæt hiː wʊd kʌm hɪər tuː ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wiː kʊd prɪˈpɛr hɪm fɔːr ɪt. ðæt wʌz ðɪs ˈmɔːrnɪŋ./",
-      "guide": "ˈrɪəli <span class='intonation'>⤴</span>? <b>læs-taɪm</b> wi spoʊk <span class='intonation'>⤴</span>, hi sɛd ðæt hi wəd kʌm hɪər tə ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wi kəd <b>prɪˈpɛr-ɪm</b> fər ɪt <span class='intonation'>⤵</span>. ðæt wəz <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
-      "vi": "Thật sao? Lần cuối chúng tôi nói chuyện, anh ấy đã nói rằng anh ấy sẽ đến bộ phận quan hệ công chúng để chúng ta có thể chuẩn bị cho anh ấy cho buổi phỏng vấn này. Đó là vào sáng nay."
-    },
-    {
-      "en": "Well, I spoke with him after lunch. You can call him to confirm if you'd like.",
-      "ipa": "/wɛl, aɪ spoʊk wɪθ hɪm ˈæftər lʌntʃ. juː kæn kɔːl hɪm tuː kənˈfɜːrm ɪf juːd laɪk./",
-      "guide": "wɛl <span class='intonation'>⤴</span>, aɪ <b>spoʊ-kwɪ-ðɪm</b> ˈæftər lʌntʃ <span class='intonation'>⤵</span>. ju kən <b>kɔː-lɪm</b> tə kənˈfɜːrm <b>ɪ-fjud-laɪk</b> <span class='intonation'>⤵</span>",
-      "vi": "Tốt, tôi đã nói chuyện với anh ấy sau bữa ăn trưa. Bạn có thể gọi anh ấy để xác nhận nếu bạn muốn."
-    }
-  ],
+  {
+    "en": "Hi, Lori. Did Dean let you know that I'll be giving the interview that Tech News Weekly asked for?",
+    "ipa": "/haɪ, ˈlɔːri. dɪd diːn lɛt juː noʊ ðæt aɪl biː ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli æskt fɔːr?/",
+    "guide": "haɪ, ˈlɔːri <span class='intonation'>⤴</span>. dɪd diːn <b>lɛ-tʃu-noʊ</b> ðæt aɪl bi ˈɡɪvɪŋ ðɪ ˈɪntərvjuː ðæt tɛk nuːz ˈwiːkli <b>æs-kt-fɔːr</b> <span class='intonation'>⤵</span>",
+    "vi": "Chào Lori. Dean có báo với bạn là tôi sẽ đại diện trả lời phỏng vấn theo yêu cầu của tờ Tech News Weekly không?",
+    "context": "📍 **Thông báo thay đổi nhân sự (Staffing Update):** Trong PR, việc thay đổi người phát ngôn cần được thông báo sớm để đội ngũ chuẩn bị kịch bản (briefing) phù hợp.",
+    "grammar": "• <b>Causative Form:</b> 'Let you know' (để bạn biết). Cấu trúc: [Let + Object + V-bare].<br>• <b>Future Continuous:</b> 'I'll be giving' nhấn mạnh vào một sự việc đã được lên lịch trình và sẽ diễn ra trong tương lai.<br>• <b>Double Relative Clauses:</b> 'The interview (that) Tech News Weekly asked for'. 'That' đóng vai trò tân ngữ của 'asked for' và có thể được lược bỏ.<br>• <b>Phrasal Verb:</b> 'Ask for' nghĩa là yêu cầu/đề đạt."
+  },
+  {
+    "en": "He's quite busy this week, and I also know a lot about the products the interviewer wants to discuss.",
+    "ipa": "/hiːz kwaɪt ˈbɪzi ðɪs wiːk, ænd aɪ ˈɔːlsoʊ noʊ ə lɑːt əˈbaʊt ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər wɑːnts tuː dɪˈskʌs./",
+    "guide": "hiːz kwaɪt ˈbɪzi ðɪs wiːk <span class='intonation'>⤴</span>, <b>ən-naɪ</b> ˈɔːlsoʊ <b>noʊ-ə-lɑː-təˈbaʊt</b> ðə ˈprɑːdʌkts ðɪ ˈɪntərvjuːər <b>wɑːn-tsə</b> dɪˈskʌs <span class='intonation'>⤵</span>",
+    "vi": "Tuần này anh ấy khá bận, vả lại tôi cũng nắm rất rõ về những sản phẩm mà phóng viên muốn thảo luận.",
+    "context": "📍 **Cung cấp lý do (Rationalizing):** Người nói đưa ra hai lý do thuyết phục: Sự bận rộn của người cũ và năng lực chuyên môn của bản thân.",
+    "grammar": "• <b>Degree Adverb:</b> 'Quite' bổ nghĩa cho 'busy'. Trong tiếng Anh-Anh, 'quite' đôi khi mang nghĩa 'hoàn toàn', nhưng ở đây (tiếng Anh-Mỹ) nó mang nghĩa 'khá là'.<br>• <b>Zero Relative Pronoun:</b> 'The products (which) the interviewer wants to discuss'. Đại từ quan hệ 'which' bị lược bỏ vì đóng vai trò tân ngữ.<br>• <b>Transitive Verb:</b> 'Discuss' là ngoại động từ, không bao giờ dùng 'discuss about' (lỗi phổ biến của người Việt)."
+  },
+  {
+    "en": "Really? Last time we spoke, he said that he would come here to the public relations department so we could prepare him for it. That was this morning.",
+    "ipa": "/ˈrɪəli? læst taɪm wi spoʊk, hi sɛd ðæt hi wəd kʌm hɪər tə ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wi kəd prɪˈpɛr-ɪm fər ɪt. ðæt wəz ðɪ-smɔːrnɪŋ./",
+    "guide": "ˈrɪəli <span class='intonation'>⤴</span>? <b>læs-taɪm</b> wi spoʊk <span class='intonation'>⤴</span>, hi sɛd ðæt hi wəd kʌm hɪər tə ðə ˈpʌblɪk rɪˈleɪʃnz dɪˈpɑːrtmənt soʊ wi kəd <b>prɪˈpɛr-ɪm</b> fər ɪt <span class='intonation'>⤵</span>. ðæt wəz <b>ðɪ-smɔːrnɪŋ</b> <span class='intonation'>⤵</span>",
+    "vi": "Thật á? Sáng nay khi trao đổi, anh ấy còn bảo sẽ sang bộ phận PR để chúng tôi hỗ trợ chuẩn bị nội dung phỏng vấn mà.",
+    "context": "📍 **Xác thực thông tin (Cross-checking):** Lori thể hiện sự hoài nghi vì thông tin bị mâu thuẫn (contradictory) chỉ trong vài giờ ngắn ngủi.",
+    "grammar": "• <b>Reported Speech (Backshifting):</b> 'He said that he would...' (Lùi thì từ 'will' sang 'would' vì động từ dẫn 'said' ở quá khứ).<br>• <b>Adverbial Phrase of Time:</b> 'Last time we spoke' đóng vai trò trạng ngữ chỉ thời gian.<br>• <b>Collocation:</b> 'Prepare someone for something' (chuẩn bị cho ai cái gì).<br>• <b>Purpose Clause:</b> 'So (that) we could...' dùng để chỉ mục đích của hành động phía trước."
+  },
+  {
+    "en": "Well, I spoke with him after lunch. You can call him to confirm if you'd like.",
+    "ipa": "/wɛl, aɪ spoʊk wɪθ hɪm ˈæftər lʌntʃ. juː kæn kɔːl hɪm tuː kənˈfɜːrm ɪf juːd laɪk./",
+    "guide": "wɛl <span class='intonation'>⤴</span>, aɪ <b>spoʊ-kwɪ-ðɪm</b> ˈæftər lʌntʃ <span class='intonation'>⤵</span>. ju kən <b>kɔː-lɪm</b> tə kənˈfɜːrm <b>ɪ-fjud-laɪk</b> <span class='intonation'>⤵</span>",
+    "vi": "À, tôi mới trao đổi với anh ấy sau giờ nghỉ trưa xong. Bạn có thể gọi xác nhận lại với anh ấy nếu muốn.",
+    "context": "📍 **Chốt chặn thông tin (Closing the loop):** Người nói khẳng định thông tin của mình mới hơn ('after lunch' vs 'this morning') để kết thúc sự hoài nghi.",
+    "grammar": "• <b>Prepositional Verb:</b> 'Spoke with' (Trò chuyện cùng) tạo cảm giác hai bên đã thảo luận kỹ, trang trọng hơn 'talked to'.<br>• <b>Infinitive of Purpose:</b> 'To confirm' chỉ mục đích của việc gọi điện.<br>• <b>Conditional Type 1 (Implicit):</b> 'If you'd like' là dạng lịch sự của 'If you want to', thường dùng trong giao tiếp công sở để tôn trọng quyết định của đối phương."
+  }
+],
   "questions": [
     {
       "q": "53 What is the conversation about?",
@@ -973,49 +1069,63 @@ const allLessons = [
   "title": "Questions 56 - 58",
   "audioUrl": "Test 02_Part 3_56-58.mp3",
   "passage": [
-    {
-      "en": "Scott, what do you think of the company's new internal Web site? To me, it seems to have a lot of helpful features.",
-      "ipa": "/skɑːt, wʌt duː juː θɪŋk ʌv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt? tuː miː, ɪt siːmz tuː hæv ə lɑːt ʌv ˈhɛlpfl ˈfiːtʃərz./",
-      "guide": "skɑːt <span class='intonation'>⤴</span>, <b>wʌt-də-ju</b> θɪŋ-kəv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt <span class='intonation'>⤵</span>? tuː miː <span class='intonation'>⤴</span>, ɪt siːmz tə <b>hæ-və-lɑː-təv</b> ˈhɛlpfl ˈfiːtʃərz <span class='intonation'>⤵</span>",
-      "vi": "Scott, bạn nghĩ gì về trang web nội bộ mới của công ty? Với tôi, dường như nó có nhiều tính năng hữu ích."
-    },
-    {
-      "en": "Yes, I like it. I was especially happy to see that we can share documents through it.",
-      "ipa": "/jɛs, aɪ laɪk ɪt. aɪ wʌz ɪˈspɛʃəli ˈhæpi tuː siː ðæt wiː kæn ʃɛr ˈdɑːkjumənts θruː ɪt./",
-      "guide": "jɛs <span class='intonation'>⤵</span>, aɪ <b>laɪ-kɪt</b>. aɪ wəz ɪˈspɛʃəli ˈhæpi tə siː ðæt wi kən ʃɛr ˈdɑːkjumənts <b>θruː-wɪt</b> <span class='intonation'>⤵</span>",
-      "vi": "Vâng, tôi thích nó. Tôi đặc biệt vui mừng khi thấy rằng chúng ta có thể chia sẻ tài liệu thông qua nó."
-    },
-    {
-      "en": "That should make it easier for teams to collaborate.",
-      "ipa": "/ðæt ʃʊd meɪk ɪt ˈiːziər fɔːr tiːmz tuː kəˈlæbəreɪt./",
-      "guide": "ðæt ʃəd <b>meɪ-kɪt</b> ˈiːziər fər tiːmz tə kəˈlæbəreɪt <span class='intonation'>⤵</span>",
-      "vi": "Điều đó giúp cho các nhóm cộng tác dễ dàng hơn."
-    },
-    {
-      "en": "I agree. And the companywide forum page is going to improve collaboration, too. I wonder how they thought of including that in the Web site.",
-      "ipa": "/aɪ əˈɡriː. ænd ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tuː ɪmˈpruːv kəˌlæbəˈreɪʃn, tuː. aɪ ˈwʌndər haʊ ðeɪ θɔːt ʌv ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt./",
-      "guide": "aɪ əˈɡriː <span class='intonation'>⤵</span>. ən ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tə ɪmˈpruːv kəˌlæbəˈreɪʃn <span class='intonation'>⤵</span>, tuː. aɪ ˈwʌndər haʊ ðeɪ <b>θɔː-təv</b> ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt <span class='intonation'>⤵</span>",
-      "vi": "Tôi đồng ý. Và trang diễn đàn toàn công ty sẽ cải thiện khả năng hợp tác nữa. Tôi tự hỏi cách họ nghĩ ra việc đưa điều đó vào trang Web công ty."
-    },
-    {
-      "en": "Well, Alexis might know, since she works for the IT department.",
-      "ipa": "/wɛl, əˈlɛksɪs maɪt noʊ, sɪns ʃiː wɜːrks fɔːr ðɪ aɪ-tiː dɪˈpɑːrtmənt./",
-      "guide": "wɛl <span class='intonation'>⤴</span>, əˈlɛksɪs maɪt noʊ <span class='intonation'>⤵</span>, sɪns ʃi <b>wɜːrk-sfər</b> ðɪ aɪ-tiː dɪˈpɑːrtmənt <span class='intonation'>⤵</span>",
-      "vi": "Ờ, Alexis có thể biết, bởi vì cô ấy làm việc cho phòng IT."
-    },
-    {
-      "en": "Hey, Alexis? Scott and I are curious—where did the inspiration for the new Web site's forum page come from?",
-      "ipa": "/heɪ, əˈlɛksɪs? skɑːt ænd aɪ ɑːr ˈkjʊriəs—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fɔːr ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ kʌm frʌm?/",
-      "guide": "heɪ, əˈlɛksɪs <span class='intonation'>⤴</span>? skɑːt <b>ən-naɪ</b> ɑːr ˈkjʊriəs <span class='intonation'>⤵</span>—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fər ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ <b>kʌm-frʌm</b> <span class='intonation'>⤵</span>?",
-      "vi": "Hey, Alexis? Scott và tôi thật tò mò nguồn cảm hứng cho trang diễn đàn của trang Web mới đến từ đâu vậy?"
-    },
-    {
-      "en": "I think it was proposed by Courtney Gray in Human Resources. She had a lot of good suggestions, actually.",
-      "ipa": "/aɪ θɪŋk ɪt wʌz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz. ʃiː hæd ə lɑːt ʌv ɡʊd səˈdʒɛstʃənz, ˈæktʃuəli./",
-      "guide": "aɪ <b>θɪŋ-kɪt</b> wəz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz <span class='intonation'>⤵</span>. ʃi <b>hæ-də-lɑː-təv</b> ɡʊd səˈdʒɛstʃənz <span class='intonation'>⤴</span>, ˈæktʃuəli <span class='intonation'>⤵</span>",
-      "vi": "Tôi nghĩ nó đã được đề xuất bởi Courtney Gray ở bộ phận nhân sự. Cô ấy đã có nhiều đề xuất tốt thật vậy."
-    }
-  ],
+  {
+    "en": "Scott, what do you think of the company's new internal Web site? To me, it seems to have a lot of helpful features.",
+    "ipa": "/skɑːt, wʌt duː juː θɪŋk ʌv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt? tuː miː, ɪt siːmz tuː hæv ə lɑːt ʌv ˈhɛlpfl ˈfiːtʃərz./",
+    "guide": "skɑːt <span class='intonation'>⤴</span>, <b>wʌt-də-ju</b> θɪŋ-kəv ðə ˈkʌmpəniz nuː ɪnˈtɜːrnl wɛb saɪt <span class='intonation'>⤵</span>? tuː miː <span class='intonation'>⤴</span>, ɪt siːmz tə <b>hæ-və-lɑː-təv</b> ˈhɛlpfl ˈfiːtʃərz <span class='intonation'>⤵</span>",
+    "vi": "Scott, bạn thấy trang web nội bộ mới của công ty mình thế nào? Với tôi thì dường như nó có rất nhiều tính năng hữu ích.",
+    "context": "📍 **Thăm dò ý kiến (Gathering Feedback):** Trong môi trường công sở, khi một hệ thống mới được triển khai, nhân viên thường thảo luận để đánh giá mức độ tương thích với công việc hàng ngày.",
+    "grammar": "• <b>Think of vs. Think about:</b> 'Think of' thường dùng để hỏi về quan điểm/nhận xét tức thời, trong khi 'think about' dùng cho việc xem xét kỹ lưỡng.<br>• <b>Internal (Adj):</b> Tính từ chỉ tính chất nội bộ. Ngược nghĩa là 'External'.<br>• <b>Seem + to-V:</b> Cấu trúc dùng để đưa ra nhận định mang tính chủ quan, giảm bớt sự khẳng định tuyệt đối."
+  },
+  {
+    "en": "Yes, I like it. I was especially happy to see that we can share documents through it.",
+    "ipa": "/jɛs, aɪ laɪk ɪt. aɪ wʌz ɪˈspɛʃəli ˈhæpi tuː siː ðæt wiː kæn ʃɛr ˈdɑːkjumənts θruː ɪt./",
+    "guide": "jɛs <span class='intonation'>⤵</span>, aɪ <b>laɪ-kɪt</b>. aɪ wəz ɪˈspɛʃəli ˈhæpi tə siː ðæt wi kən ʃɛr ˈdɑːkjumənts <b>θruː-wɪt</b> <span class='intonation'>⤵</span>",
+    "vi": "Ừ, tôi thích nó chứ. Tôi đặc biệt hài lòng khi thấy chúng ta có thể chia sẻ tài liệu trực tiếp qua đó.",
+    "context": "📍 **Xác nhận giá trị (Value Validation):** Người nói nhấn mạnh vào tính năng 'file-sharing' - một yếu tố then chốt giúp tối ưu hóa quy trình làm việc không giấy tờ.",
+    "grammar": "• <b>Adjective + to-V:</b> 'Happy to see' - Dùng động từ nguyên mẫu có 'to' để giải thích lý do cho cảm xúc của tính từ đứng trước.<br>• <b>Noun Clause as Object:</b> 'That we can share...' là mệnh đề danh ngữ làm tân ngữ cho động từ 'see'.<br>• <b>Through (Prep):</b> Chỉ phương thức hoặc công cụ trung gian."
+  },
+  {
+    "en": "That should make it easier for teams to collaborate.",
+    "ipa": "/ðæt ʃʊd meɪk ɪt ˈiːziər fɔːr tiːmz tuː kəˈlæbəreɪt./",
+    "guide": "ðæt ʃəd <b>meɪ-kɪt</b> ˈiːziər fər tiːmz tə kəˈlæbəreɪt <span class='intonation'>⤵</span>",
+    "vi": "Điều đó chắc chắn sẽ giúp các nhóm cộng tác với nhau dễ dàng hơn nhiều.",
+    "context": "📍 **Dự đoán lợi ích (Predicting Benefits):** Phân tích tác động tích cực của tính năng mới đối với văn hóa làm việc nhóm (teamwork).",
+    "grammar": "• <b>Modal 'Should' for Expectation:</b> 'Should' ở đây không phải là lời khuyên, mà dùng để dự đoán một kết quả gần như chắc chắn dựa trên logic.<br>• <b>Complex Object Structure:</b> 'Make + it (giả) + Adj + for someone + to-V'. Đây là cấu trúc cực kỳ quan trọng để nói về việc tạo điều kiện cho ai làm gì."
+  },
+  {
+    "en": "I agree. And the companywide forum page is going to improve collaboration, too. I wonder how they thought of including that in the Web site.",
+    "ipa": "/aɪ əˈɡriː. ænd ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tuː ɪmˈpruːv kəˌlæbəˈreɪʃn, tuː. aɪ ˈwʌndər haʊ ðeɪ θɔːt ʌv ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt./",
+    "guide": "aɪ əˈɡriː <span class='intonation'>⤵</span>. ən ðə ˈkʌmpəniˌwaɪd ˈfɔːrəm peɪdʒ ɪz ˈɡoʊɪŋ tə ɪmˈpruːv kəˌlæbəˈreɪʃn <span class='intonation'>⤵</span>, tuː. aɪ ˈwʌndər haʊ ðeɪ <b>θɔː-təv</b> ɪnˈkluːdɪŋ ðæt ɪn ðə wɛb saɪt <span class='intonation'>⤵</span>",
+    "vi": "Tôi đồng ý. Với lại trang diễn đàn toàn công ty cũng sẽ giúp tăng cường sự hợp tác nữa. Tôi cứ thắc mắc không biết sao họ lại nghĩ ra việc đưa mục đó vào trang web nhỉ.",
+    "context": "📍 **Mở rộng thảo luận (Expanding Discussion):** Chuyển sang tính năng 'forum' - một công cụ giúp kết nối nhân viên ở quy mô lớn (companywide).",
+    "grammar": "• <b>Suffix '-wide':</b> Kết hợp với danh từ để tạo tính từ mang nghĩa 'bao phủ toàn bộ' (ví dụ: nationwide, worldwide).<br>• <b>Indirect Question:</b> 'I wonder how they thought...' - Lưu ý trật tự từ như câu trần thuật, không đảo trợ động từ lên trước.<br>• <b>Think of + Gerund:</b> 'Think of including' - Sau giới từ 'of' động từ phải ở dạng V-ing."
+  },
+  {
+    "en": "Well, Alexis might know, since she works for the IT department.",
+    "ipa": "/wɛl, əˈlɛksɪs maɪt noʊ, sɪns ʃiː wɜːrks fɔːr ðɪ aɪ-tiː dɪˈpɑːrtmənt./",
+    "guide": "wɛl <span class='intonation'>⤴</span>, əˈlɛksɪs maɪt noʊ <span class='intonation'>⤵</span>, sɪns ʃi <b>wɜːrk-sfər</b> ðɪ aɪ-tiː dɪˈpɑːrtmənt <span class='intonation'>⤵</span>",
+    "vi": "À, có lẽ Alexis biết đấy, vì cô ấy làm bên bộ phận IT mà.",
+    "context": "📍 **Giới thiệu chuyên gia (Referral):** Điều hướng người hỏi đến đúng bộ phận có trách nhiệm (IT department) để có câu trả lời chính xác nhất.",
+    "grammar": "• <b>Modal 'Might' for Possibility:</b> Diễn tả khả năng thấp hoặc không chắc chắn.<br>• <b>Conjunction 'Since':</b> Đồng nghĩa với 'Because' hoặc 'As', dùng để đưa ra lý do cho nhận định phía trước.<br>• <b>Work for vs. Work in:</b> 'Work for' thường đi với tên tổ chức/bộ phận; 'Work in' thường đi với lĩnh vực/ngành nghề."
+  },
+  {
+    "en": "Hey, Alexis? Scott and I are curious—where did the inspiration for the new Web site's forum page come from?",
+    "ipa": "/heɪ, əˈlɛksɪs? skɑːt ænd aɪ ɑːr ˈkjʊriəs—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fɔːr ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ kʌm frʌm?/",
+    "guide": "heɪ, əˈlɛksɪs <span class='intonation'>⤴</span>? skɑːt <b>ən-naɪ</b> ɑːr ˈkjʊriəs <span class='intonation'>⤵</span>—wɛr dɪd ðɪ ˌɪnspəˈreɪʃn fər ðə nuː wɛb saɪts ˈfɔːrəm peɪdʒ <b>kʌm-frʌm</b> <span class='intonation'>⤵</span>?",
+    "vi": "Này Alexis? Scott với tôi đang tò mò chút — nguồn cảm hứng cho trang diễn đàn trên web mới là từ đâu ra thế?",
+    "context": "📍 **Truy xuất nguồn gốc (Inquiry):** Đặt câu hỏi trực diện về 'Inspiration' (nguồn cảm hứng) để hiểu về tư duy thiết kế đằng sau hệ thống.",
+    "grammar": "• <b>Adjective 'Curious':</b> Diễn tả trạng thái muốn biết thông tin.<br>• <b>Preposition at the end:</b> Trong câu hỏi 'Where... come from?', giới từ 'from' thường đặt ở cuối câu trong văn nói tự nhiên.<br>• <b>Possessive ('s):</b> 'Web site's forum page' - Sở hữu cách cho vật (trang diễn đàn của website)."
+  },
+  {
+    "en": "I think it was proposed by Courtney Gray in Human Resources. She had a lot of good suggestions, actually.",
+    "ipa": "/aɪ θɪŋk ɪt wʌz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz. ʃiː hæd ə lɑːt ʌv ɡʊd səˈdʒɛstʃənz, ˈæktʃuəli./",
+    "guide": "aɪ <b>θɪŋ-kɪt</b> wəz prəˈpoʊzd baɪ ˈkɔːrtni ɡreɪ ɪn ˈhjuːmən rɪˈsɔːrsɪz <span class='intonation'>⤵</span>. ʃi <b>hæ-də-lɑː-təv</b> ɡʊd səˈdʒɛstʃənz <span class='intonation'>⤴</span>, ˈæktʃuəli <span class='intonation'>⤵</span>",
+    "vi": "Tôi nghĩ người đề xuất là Courtney Gray bên phòng Nhân sự. Thực tế là cô ấy đã đóng góp rất nhiều ý kiến hay.",
+    "context": "📍 **Ghi nhận công lao (Giving Credit):** Tiết lộ rằng ý tưởng không đến từ bộ phận kỹ thuật (IT) mà từ người dùng trực tiếp (HR), cho thấy sự phối hợp liên phòng ban.",
+    "grammar": "• <b>Passive Voice (Past Simple):</b> 'Was proposed by' - Nhấn mạnh vào hành động đề xuất và người thực hiện.<br>• <b>Human Resources (HR):</b> Danh từ luôn ở số nhiều 'Resources'.<br>• <b>Adverb 'Actually':</b> Dùng để đính chính một thông tin hoặc đưa ra thông tin gây bất ngờ, thực tế hóa nhận định."
+  }
+],
   "questions": [
     {
       "q": "56 What did the speakers' company recently do?",
@@ -1081,43 +1191,55 @@ const allLessons = [
   "title": "Questions 59 - 61",
   "audioUrl": "Test 02_Part 3_59-61.mp3",
   "passage": [
-    {
-      "en": "Louis, I heard that you're going to be posting about our work on social media.",
-      "ipa": "/ˈluːɪs, aɪ hɜːrd ðæt jʊər ˈɡoʊɪŋ tuː biː ˈpoʊstɪŋ əˈbaʊt ˈaʊər wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə./",
-      "guide": "ˈluːɪs <span class='intonation'>⤴</span>, aɪ hɜːrd ðæt jər ˈɡoʊ-ɪn-tə bi ˈpoʊstɪŋ <b>əˈbaʊ-ˈtaʊ-ər</b> wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
-      "vi": "Louis, tôi nghe nói rằng bạn sẽ đăng về công việc của chúng ta trên mạng xã hội."
-    },
-    {
-      "en": "I think that's smart. A lot of people don't know about the services that a tailor shop like this provides.",
-      "ipa": "/aɪ θɪŋk ðæts smɑːrt. ə lɑːt ʌv ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz./",
-      "guide": "aɪ θɪŋk <b>ðæts-smɑːrt</b> <span class='intonation'>⤵</span>. ə <b>lɑː-təv</b> ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz <span class='intonation'>⤵</span>",
-      "vi": "Tôi nghĩ điều này thông minh. Nhiều người không biết về những dịch vụ mà một tiệm may giống vậy cung cấp."
-    },
-    {
-      "en": "Right! Ms. Lam made the decision when she found out that I'm active on social media.",
-      "ipa": "/raɪt! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃiː faʊnd aʊt ðæt aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə./",
-      "guide": "raɪ<b><span class='stop'>t</span></b> <span class='intonation'>⤵</span>! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃi <b>faʊn-daʊ-ðæt</b> aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
-      "vi": "Đúng vậy! Cô Lam đã ra quyết định khi cô ấy phát hiện ra rằng tôi hoạt động tích cực trên mạng xã hội."
-    },
-    {
-      "en": "She'd been wanting to increase the shop's Internet presence. So now one of my duties will be managing our accounts on social media sites.",
-      "ipa": "/ʃiːd biːn ˈwɑːntɪŋ tuː ɪnˈkriːs ðə ʃɑːps ˈɪntərnɛt ˈprɛzns. soʊ naʊ wʌn ʌv maɪ ˈduːtiz wɪl biː ˈmænɪdʒɪŋ ˈaʊər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts./",
-      "guide": "ʃiːd biːn ˈwɑːntɪŋ tə ɪnˈkriːs ðə ʃɑːp<b>s‿ˈɪn-tər-nɛ<span class='stop'>t</span></b> ˈprɛzns <span class='intonation'>⤵</span>. soʊ naʊ <b>wʌ-nəv-maɪ</b> ˈduːtiz wɪl bi ˈmænɪdʒɪŋ ˈaʊ-ər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts <span class='intonation'>⤵</span>",
-      "vi": "Cô ấy đã muốn gia tăng sự hiện diện trên mạng của cửa hàng. Vì vậy bây giờ một trong những nhiệm vụ của tôi là quản lý tài khoản trên mạng xã hội."
-    },
-    {
-      "en": "That's great. What kinds of content are you going to post?",
-      "ipa": "/ðæts ɡreɪt. wʌt kaɪndz ʌv ˈkɑːntɛnt ɑːr juː ˈɡoʊɪŋ tuː poʊst?/",
-      "guide": "ðæts ɡreɪt <span class='intonation'>⤵</span>. wʌt <b>kaɪnd-zəv</b> ˈkɑːntɛnt <b>ɑːr-ju</b> ˈɡoʊ-ɪn-tə poʊst <span class='intonation'>⤴</span>?",
-      "vi": "Tuyệt vời. Bạn sẽ đăng loại nội dung nào?"
-    },
-    {
-      "en": "Well, I definitely want to show pictures of clothes before and after tailoring. But I'm not sure what else yet. If you have any ideas, please let me know!",
-      "ipa": "/wɛl, aɪ ˈdɛfɪnətli wɑːnt tuː ʃoʊ ˈpɪktʃərz ʌv kloʊðz bɪˈfɔːr ænd ˈæftər ˈteɪlərɪŋ. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt. ɪf juː hæv ˈɛni aɪˈdiəz, pliːz lɛt miː noʊ!/",
-      "guide": "wɛl <span class='intonation'>⤴</span>, aɪ ˈdɛfɪnətli <b>wɑːn-tə</b> ʃoʊ ˈpɪktʃər-<b>zəv-kloʊðz</b> bɪˈfɔː-rən ˈæftər ˈteɪlərɪŋ <span class='intonation'>⤵</span>. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt <span class='intonation'>⤵</span>. ɪf ju <b>hæ-və-ni</b> aɪˈdiəz <span class='intonation'>⤴</span>, pliːz <b>lɛt-mi-noʊ</b> <span class='intonation'>⤵</span>!",
-      "vi": "Ờ, tôi chắc chắn muốn đăng hình của quần áo trước và sau khi may. Nhưng tôi không chắc còn gì nữa không. Nếu có bất kỳ đề xuất gì, vui lòng cho tôi biết!"
-    }
-  ],
+  {
+    "en": "Louis, I heard that you're going to be posting about our work on social media.",
+    "ipa": "/ˈluːɪs, aɪ hɜːrd ðæt jʊər ˈɡoʊɪŋ tuː biː ˈpoʊstɪŋ əˈbaʊt ˈaʊər wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə./",
+    "guide": "ˈluːɪs <span class='intonation'>⤴</span>, aɪ hɜːrd ðæt jər ˈɡoʊ-ɪn-tə bi ˈpoʊstɪŋ <b>əˈbaʊ-ˈtaʊ-ər</b> wɜːrk ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
+    "vi": "Louis này, nghe nói là cậu sắp đảm nhận việc đăng bài về công việc của tụi mình lên mạng xã hội hả.",
+    "context": "📍 **Mở đầu bằng tin hành lang (Opening with Rumors):** Trong công sở, cấu trúc 'I heard that' là cách cực kỳ phổ biến để bắt đầu một cuộc trò chuyện dựa trên thông tin chưa chính thức hoặc mới nhận được.",
+    "grammar": "• <b>Future Continuous with Intention:</b> 'Be going to be V-ing' là sự kết hợp giữa dự định (going to) và tính chất kéo dài của hành động (be posting). Nó cho thấy đây là một nhiệm vụ dài hạn chứ không phải chỉ đăng một bài duy nhất.<br>• <b>Work (Uncountable):</b> Ở đây 'work' là danh từ không đếm được, chỉ chung các sản phẩm/công việc mà tiệm may làm ra."
+  },
+  {
+    "en": "I think that's smart. A lot of people don't know about the services that a tailor shop like this provides.",
+    "ipa": "/aɪ θɪŋk ðæts smɑːrt. ə lɑːt ʌv ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz./",
+    "guide": "aɪ θɪŋk <b>ðæts-smɑːrt</b> <span class='intonation'>⤵</span>. ə <b>lɑː-təv</b> ˈpiːpl doʊnt noʊ əˈbaʊt ðə ˈsɜːrvɪsɪz ðæt ə ˈteɪlər ʃɑːp laɪk ðɪs prəˈvaɪdz <span class='intonation'>⤵</span>",
+    "vi": "Tôi thấy cách đó thông minh đấy. Chứ nhiều người đâu có biết tiệm may kiểu này cung cấp những dịch vụ gì đâu.",
+    "context": "📍 **Đánh giá chiến lược (Strategic Evaluation):** Người nói tán thành ý tưởng vì nó giải quyết được vấn đề 'thiếu thông tin' của khách hàng mục tiêu.",
+    "grammar": "• <b>Defining Relative Clause:</b> 'The services that a tailor shop... provides'. Mệnh đề 'that' xác định cụ thể loại dịch vụ đang được nhắc tới.<br>• <b>Like this (Comparison):</b> Dùng để chỉ một đối tượng cụ thể đang hiện hữu ngay tại đó (chính cái tiệm may này).<br>• <b>Subject-Verb Agreement:</b> 'A tailor shop' (số ít) đi với 'provides' (thêm s)."
+  },
+  {
+    "en": "Right! Ms. Lam made the decision when she found out that I'm active on social media.",
+    "ipa": "/raɪt! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃiː faʊnd aʊt ðæt aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə./",
+    "guide": "raɪ<b><span class='stop'>t</span></b> <span class='intonation'>⤵</span>! ˌmɪz læm meɪd ðə dɪˈsɪʒn wɛn ʃi <b>faʊn-daʊ-ðæt</b> aɪm ˈæktɪv ɑːn ˈsoʊʃl ˈmiːdiə <span class='intonation'>⤵</span>",
+    "vi": "Chuẩn luôn! Cô Lam quyết định vậy khi biết tôi là người hay dùng mạng xã hội đấy.",
+    "context": "📍 **Lý giải nguyên nhân (Explaining Rationale):** Louis tiết lộ rằng kỹ năng cá nhân (năng nổ trên mạng xã hội) chính là lý do anh được chọn.",
+    "grammar": "• <b>Collocation 'Make a decision':</b> Người bản xứ không nói 'do a decision'. Luôn dùng 'make'.<br>• <b>Phrasal Verb 'Find out':</b> Diễn tả việc tìm ra thông tin một cách tình cờ hoặc sau khi tìm hiểu.<br>• <b>Adjective 'Active':</b> Trong bối cảnh này, 'active' có nghĩa là thường xuyên đăng bài, tương tác (social media presence)."
+  },
+  {
+    "en": "She'd been wanting to increase the shop's Internet presence. So now one of my duties will be managing our accounts on social media sites.",
+    "ipa": "/ʃiːd biːn ˈwɑːntɪŋ tuː ɪnˈkriːs ðə ʃɑːps ˈɪntərnɛt ˈprɛzns. soʊ naʊ wʌn ʌv maɪ ˈduːtiz wɪl biː ˈmænɪdʒɪŋ ˈaʊər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts./",
+    "guide": "ʃiːd biːn ˈwɑːntɪŋ tə ɪnˈkriːs ðə ʃɑːp<b>s</b> ˈɪn-tər-nɛ<b>t</b> ˈprɛzns <span class='intonation'>⤵</span>. soʊ naʊ <b>wʌ-nəv-maɪ</b> ˈduːtiz wɪl bi ˈmænɪdʒɪŋ ˈaʊ-ər əˈkaʊnts ɑːn ˈsoʊʃl ˈmiːdiə saɪts <span class='intonation'>⤵</span>",
+    "vi": "Cô ấy đã nung nấu ý định tăng mức độ nhận diện trên mạng của tiệm từ lâu rồi. Nên giờ một trong những nhiệm vụ của tôi là quản lý mấy cái tài khoản mạng xã hội này.",
+    "context": "📍 **Mô tả vai trò mới (Role Description):** Sử dụng thuật ngữ chuyên môn 'Internet presence' để chỉ việc xây dựng thương hiệu trực tuyến.",
+    "grammar": "• <b>Past Perfect Continuous:</b> 'She'd been wanting' (She had been wanting). Nhấn mạnh một mong muốn đã kéo dài liên tục từ quá khứ cho đến tận thời điểm ra quyết định.<br>• <b>One of + Plural Noun:</b> Sau 'one of' luôn là danh từ số nhiều 'duties', nhưng động từ theo sau (nếu có) sẽ chia số ít.<br>• <b>Gerund as Complement:</b> 'Managing' đóng vai trò là danh động từ làm bổ ngữ cho câu, định nghĩa cụ thể nhiệm vụ đó là gì."
+  },
+  {
+    "en": "That's great. What kinds of content are you going to post?",
+    "ipa": "/ðæts ɡreɪt. wʌt kaɪndz ʌv ˈkɑːntɛnt ɑːr juː ˈɡoʊɪŋ tuː poʊst?/",
+    "guide": "ðæts ɡreɪt <span class='intonation'>⤵</span>. wʌt <b>kaɪnd-zəv</b> ˈkɑːntɛnt <b>ɑːr-ju</b> ˈɡoʊ-ɪn-tə poʊst <span class='intonation'>⤴</span>?",
+    "vi": "Hay quá nhỉ. Thế cậu định đăng những nội dung kiểu gì?",
+    "context": "📍 **Khai thác chi tiết (Digging for Details):** Câu hỏi này chuyển từ việc xác nhận thông tin sang thảo luận về mặt chuyên môn (Content strategy).",
+    "grammar": "• <b>Collective Noun 'Content':</b> 'Content' ở đây là danh từ không đếm được khi nói về nội dung truyền thông chung chung.<br>• <b>Near Future 'Be going to':</b> Dùng để hỏi về những kế hoạch đã có dự định từ trước."
+  },
+  {
+    "en": "Well, I definitely want to show pictures of clothes before and after tailoring. But I'm not sure what else yet. If you have any ideas, please let me know!",
+    "ipa": "/wɛl, aɪ ˈdɛfɪnətli wɑːnt tuː ʃoʊ ˈpɪktʃərz ʌv kloʊðz bɪˈfɔːr ænd ˈæftər ˈteɪlərɪŋ. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt. ɪf juː hæv ˈɛni aɪˈdiəz, pliːz lɛt miː noʊ!/",
+    "guide": "wɛl <span class='intonation'>⤴</span>, aɪ ˈdɛfɪnətli <b>wɑːn-tə</b> ʃoʊ ˈpɪktʃər-<b>zəv-kloʊðz</b> bɪˈfɔː-rən ˈæftər ˈteɪlərɪŋ <span class='intonation'>⤵</span>. bʌt aɪm nɑːt ʃʊər wʌt ɛls jɛt <span class='intonation'>⤵</span>. ɪf ju <b>hæ-və-ni</b> aɪˈdiəz <span class='intonation'>⤴</span>, pliːz <b>lɛt-mi-noʊ</b> <span class='intonation'>⤵</span>!",
+    "vi": "À, chắc chắn là tôi muốn đăng ảnh quần áo kiểu trước và sau khi sửa rồi. Nhưng còn gì khác nữa không thì tôi chưa chắc. Nếu bạn có ý tưởng gì thì bảo tôi với nhé!",
+    "context": "📍 **Lời mời hợp tác (Call for Collaboration):** Louis chia sẻ ý tưởng sơ khai (Before/After) và khéo léo nhờ vả sự sáng tạo của đồng nghiệp.",
+    "grammar": "• <b>Adverb of Certainty:</b> 'Definitely' dùng để khẳng định một ý định chắc chắn.<br>• <b>Noun Phrase 'Before and after':</b> Một thuật ngữ cực kỳ phổ biến trong marketing để chứng minh hiệu quả dịch vụ.<br>• <b>Noun Clause:</b> 'What else (I will post)' - mệnh đề danh ngữ rút gọn.<br>• <b>Conditional Type 1:</b> 'If you have... please let me know' - dùng để đưa ra lời yêu cầu dựa trên một điều kiện có thể xảy ra."
+  }
+],
   "questions": [
     {
       "q": "59 Where do the speakers work?",
@@ -1169,49 +1291,63 @@ const allLessons = [
   "title": "Questions 62 - 64",
   "audioUrl": "Test 02_Part 3_62-64.mp3",
   "passage": [
-    {
-      "en": "Welcome to the Beldwin Ferry East Terminal. Would you like to purchase a ticket?",
-      "ipa": "/ˈwɛlkəm tuː ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl. wʊd juː laɪk tuː ˈpɜːrtʃəs ə ˈtɪkɪt?/",
-      "guide": "ˈwɛlkəm tə ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl <span class='intonation'>⤵</span>. wəd ju <b>laɪ-k-tə</b> ˈpɜːrtʃə-sə ˈtɪkɪt <span class='intonation'>⤴</span>?",
-      "vi": "Chào mừng đến với Beldwin Ferry East Terminal. Bạn có muốn mua một vé không?"
-    },
-    {
-      "en": "Yes, for the next ferry. I'm a photographer, and I'm planning to spend the day taking pictures of the plant life on Beldwin Island. I've heard it's beautiful.",
-      "ipa": "/jɛs, fɔːr ðə nɛkst ˈfɛri. aɪm ə fəˈtɑːɡrəfər, ænd aɪm ˈplænɪŋ tuː spɛnd ðə deɪ ˈteɪkɪŋ ˈpɪktʃərz ʌv ðə plænt laɪf ɑːn ˈbɛldwɪn ˈaɪlənd. aɪv hɜːrd ɪts ˈbjuːtɪfl./",
-      "guide": "jɛs <span class='intonation'>⤵</span>, fər ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri. aɪ-mə fəˈtɑːɡrəfər <span class='intonation'>⤴</span>, <b>ən-naɪm</b> ˈplænɪŋ tə spɛnd ðə deɪ ˈteɪkɪŋ <b>ˈpɪktʃər-zəv</b> ðə <b>plæn-tlaɪf</b> ɑːn ˈbɛldwɪn ˈaɪlənd <span class='intonation'>⤵</span>. aɪv hɜːr-<b>dɪts</b> ˈbjuːtɪfl <span class='intonation'>⤵</span>",
-      "vi": "Có, cho chuyến phà tiếp theo. Tôi là một nhiếp ảnh gia, và tôi dự định dành một ngày chụp hình cho hệ thực vật ở đảo Beldwin. Tôi đã nghe nói về vẻ đẹp của nó."
-    },
-    {
-      "en": "Yes, very! Four dollars, please.",
-      "ipa": "/jɛs, ˈvɛri! fɔːr ˈdɑːlərz, pliːz./",
-      "guide": "jɛs, ˈvɛri <span class='intonation'>⤴</span>! fɔːr ˈdɑːlərz, pliːz <span class='intonation'>⤵</span>",
-      "vi": "Vâng, rất đẹp! Làm ơn 4 đô."
-    },
-    {
-      "en": "Oh, I thought the fare was higher than that... Ah, I see.",
-      "ipa": "/oʊ, aɪ θɔːt ðə fɛr wʌz ˈhaɪər ðæn ðæt... ɑː, aɪ siː./",
-      "guide": "oʊ <span class='intonation'>⤴</span>, aɪ θɔːt ðə <b>fɛr-wəz</b> ˈhaɪər ðən ðæt... ɑː <span class='intonation'>⤴</span>, aɪ siː <span class='intonation'>⤵</span>",
-      "vi": "Ổ, tôi đã nghĩ giá vé đã cao hơn như vậy... À tôi hiểu rồi."
-    },
-    {
-      "en": "Yes. Here's your ticket. As you can see, the next ferry departs in about half an hour.",
-      "ipa": "/jɛs. hɪərz jʊər ˈtɪkɪt. æz juː kæn siː, ðə nɛkst ˈfɛri dɪˈpɑːrts ɪn əˈbaʊt hæf ən ˈaʊər./",
-      "guide": "jɛs <span class='intonation'>⤵</span>. hɪərz jər ˈtɪkɪt. <b>æ-zju-kən-siː</b> <span class='intonation'>⤴</span>, ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri dɪˈpɑːrts ɪ-nəˈbaʊt <b>hæ-fə-ˈnaʊ-ər</b> <span class='intonation'>⤵</span>",
-      "vi": "Vâng. Đây là vé của bạn. Như bạn có thể thấy, chuyến phà tiếp theo khởi hành trong nửa giờ."
-    },
-    {
-      "en": "Hmm... In that case, is there a restaurant or cafeteria around here? I'd like to grab a bite to eat before getting on the ferry.",
-      "ipa": "/hm̩... ɪn ðæt keɪs, ɪz ðɛr ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪriə əˈraʊnd hɪər? aɪd laɪk tuː ɡræb ə baɪt tuː iːt bɪˈfɔːr ˈɡɛtɪŋ ɑːn ðə ˈfɛri./",
-      "guide": "hm̩... ɪn ðæt keɪs <span class='intonation'>⤴</span>, ɪ-zðər ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪri-jə əˈraʊnd hɪər <span class='intonation'>⤴</span>? aɪd <b>laɪ-k-tə</b> ɡræ-bə-baɪ<b><span class='stop'>t</span></b>-tə-iː<b><span class='stop'>t</span></b> bɪˈfɔːr ˈɡɛtɪŋ <b>ɑːn-ðə-ˈfɛri</b> <span class='intonation'>⤵</span>",
-      "vi": "Hmm... trong trường hợp đó, có nhà hàng hay căn tin nào xung quanh đây không? Tôi muốn ăn một chút trước khi lên phà."
-    },
-    {
-      "en": "Yes, there's a place around that corner.",
-      "ipa": "/jɛs, ðɛrz ə pleɪs əˈraʊnd ðæt ˈkɔːrnər./",
-      "guide": "jɛs <span class='intonation'>⤵</span>, <b>ðɛr-zə-pleɪs</b> əˈraʊnd ðæt ˈkɔːrnər <span class='intonation'>⤵</span>",
-      "vi": "Vâng, có một nơi ở quanh góc đó."
-    }
-  ],
+  {
+    "en": "Welcome to the Beldwin Ferry East Terminal. Would you like to purchase a ticket?",
+    "ipa": "/ˈwɛlkəm tuː ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl. wʊd juː laɪk tuː ˈpɜːrtʃəs ə ˈtɪkɪt?/",
+    "guide": "ˈwɛlkəm tə ðə ˈbɛldwɪn ˈfɛri iːst ˈtɜːrmɪnl <span class='intonation'>⤵</span>. wəd ju <b>laɪ-k-tə</b> ˈpɜːrtʃə-sə ˈtɪkɪt <span class='intonation'>⤴</span>?",
+    "vi": "Chào mừng quý khách đến với bến phà phía Đông Beldwin. Quý khách muốn mua vé phải không ạ?",
+    "context": "📍 **Tiếp đón khách hàng (Customer Greeting):** Nhân viên tại quầy bán vé thực hiện quy trình chào hỏi tiêu chuẩn và chủ động đề xuất dịch vụ.",
+    "grammar": "• <b>Terminal:</b> Nhà ga/Bến bãi. Khác với 'station' (ga nhỏ), 'terminal' thường là điểm cuối hoặc trạm trung chuyển lớn.<br>• <b>Purchase (Verb):</b> Từ vựng trang trọng (formal) thay cho 'buy', thường dùng trong các giao dịch thương mại hoặc thông báo chính thức.<br>• <b>Polite Inquiry:</b> Cấu trúc 'Would you like to' dùng để hỏi ý định khách hàng một cách lịch sự, chuyên nghiệp."
+  },
+  {
+    "en": "Yes, for the next ferry. I'm a photographer, and I'm planning to spend the day taking pictures of the plant life on Beldwin Island. I've heard it's beautiful.",
+    "ipa": "/jɛs, fɔːr ðə nɛkst ˈfɛri. aɪm ə fəˈtɑːɡrəfər, ænd aɪm ˈplænɪŋ tuː spɛnd ðə deɪ ˈteɪkɪŋ ˈpɪktʃərz ʌv ðə plænt laɪf ɑːn ˈbɛldwɪn ˈaɪlənd. aɪv hɜːrd ɪts ˈbjuːtɪfl./",
+    "guide": "jɛs <span class='intonation'>⤵</span>, fər ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri. aɪ-mə fəˈtɑːɡrəfər <span class='intonation'>⤴</span>, <b>ən-naɪm</b> ˈplænɪŋ tə spɛnd ðə deɪ ˈteɪkɪŋ <b>ˈpɪktʃər-zəv</b> ðə <b>plæn-tlaɪf</b> ɑːn ˈbɛldwɪn ˈaɪlənd <span class='intonation'>⤵</span>. aɪv hɜːr-<b>dɪts</b> ˈbjuːtɪfl <span class='intonation'>⤵</span>",
+    "vi": "Vâng, cho chuyến phà sớm nhất nhé. Tôi là nhiếp ảnh gia, tôi định dành cả ngày hôm nay để chụp ảnh hệ thực vật trên đảo Beldwin. Nghe nói trên đó đẹp lắm.",
+    "context": "📍 **Chia sẻ mục đích (Stating Purpose):** Khách hàng không chỉ mua vé mà còn chia sẻ lộ trình. Việc nhắc đến 'plant life' (hệ thực vật) cho thấy đây là một chuyến đi chuyên môn hoặc sở thích cá nhân.",
+    "grammar": "• <b>Spend + Time + V-ing:</b> Cấu trúc kinh điển: 'Spend the day taking pictures'. Không dùng 'to take'.<br>• <b>Plant life:</b> Danh từ không đếm được, dùng để chỉ tất cả các loài thực vật trong một vùng. Nghe tự nhiên và chuyên sâu hơn từ 'plants' thông thường.<br>• <b>Present Perfect for Rumors:</b> 'I've heard' (Tôi nghe danh/nghe nói). Dùng thì hiện tại hoàn thành vì trải nghiệm nghe này diễn ra trong quá khứ và vẫn còn ghi nhớ đến hiện tại."
+  },
+  {
+    "en": "Yes, very! Four dollars, please.",
+    "ipa": "/jɛs, ˈvɛri! fɔːr ˈdɑːlərz, pliːz./",
+    "guide": "jɛs, ˈvɛri <span class='intonation'>⤴</span>! fɔːr ˈdɑːlərz, pliːz <span class='intonation'>⤵</span>",
+    "vi": "Vâng, đẹp lắm ạ! Của quý khách hết 4 đô.",
+    "context": "📍 **Xác nhận và Thanh toán (Confirmation & Payment):** Nhân viên đồng tình với khách hàng để tạo thiện cảm (rapport) và nhanh chóng chuyển sang bước thanh toán.",
+    "grammar": "• <b>Ellipsis (Lược bớt):</b> 'Very!' là cách nói ngắn gọn của 'It is very beautiful!'.<br>• <b>Request for Payment:</b> Cấu trúc [Số tiền + please] là cách yêu cầu thanh toán ngắn gọn và thông dụng nhất tại các quầy dịch vụ."
+  },
+  {
+    "en": "Oh, I thought the fare was higher than that... Ah, I see.",
+    "ipa": "/oʊ, aɪ θɔːt ðə fɛr wʌz ˈhaɪər ðæn ðæt... ɑː, aɪ siː./",
+    "guide": "oʊ <span class='intonation'>⤴</span>, aɪ θɔːt ðə <b>fɛr-wəz</b> ˈhaɪər ðən ðæt... ɑː <span class='intonation'>⤴</span>, aɪ siː <span class='intonation'>⤵</span>",
+    "vi": "Ồ, tôi cứ tưởng giá vé phải cao hơn thế chứ... À, tôi hiểu rồi.",
+    "context": "📍 **Phản ứng về chi phí (Reaction to Price):** Khách hàng ngạc nhiên vì giá vé rẻ (có thể do họ đã nhìn thấy bảng giá hoặc vé giảm giá trên quầy).",
+    "grammar": "• <b>Fare (Noun):</b> Tiền vé cho các phương tiện di chuyển. Đừng nhầm với 'Fee' (phí dịch vụ) hay 'Price' (giá hàng hóa).<br>• <b>Past Thought:</b> 'I thought' dùng để chỉ một quan điểm sai lầm trong quá khứ đã được đính chính ngay lúc nói.<br>• <b>Idiom 'I see':</b> Tương đương với 'I understand'. Dùng khi đột nhiên nhận ra điều gì đó (ví dụ nhìn thấy bảng thông báo hoặc giải thích)."
+  },
+  {
+    "en": "Yes. Here's your ticket. As you can see, the next ferry departs in about half an hour.",
+    "ipa": "/jɛs. hɪərz jʊər ˈtɪkɪt. æz juː kæn siː, ðə nɛkst ˈfɛri dɪˈpɑːrts ɪn əˈbaʊt hæf ən ˈaʊər./",
+    "guide": "jɛs <span class='intonation'>⤵</span>. hɪərz jər ˈtɪkɪt. <b>æ-zju-kən-siː</b> <span class='intonation'>⤴</span>, ðə nɛks<b><span class='stop'>t</span></b> ˈfɛri dɪˈpɑːrts ɪ-nəˈbaʊt <b>hæ-fə-ˈnaʊ-ər</b> <span class='intonation'>⤵</span>",
+    "vi": "Vâng ạ. Vé của quý khách đây. Như quý khách thấy đấy, chuyến phà tiếp theo sẽ khởi hành sau khoảng nửa tiếng nữa.",
+    "context": "📍 **Cung cấp thông tin hành trình (Providing Information):** Nhân viên bàn giao vé và nhắc nhở khách về thời gian khởi hành để khách chủ động sắp xếp.",
+    "grammar": "• <b>Depart (Verb):</b> Từ chuyên dùng trong ngành vận tải (khởi hành/xuất phát). Trái nghĩa là 'Arrive'.<br>• <b>Time Preposition 'In':</b> 'In half an hour' nghĩa là sau nửa tiếng nữa hành động mới xảy ra (thì hiện tại đơn dùng cho lịch trình tương lai).<br>• <b>Reference Phrase:</b> 'As you can see' dùng để dẫn dắt khách nhìn vào thông tin in trên vé."
+  },
+  {
+    "en": "Hmm... In that case, is there a restaurant or cafeteria around here? I'd like to grab a bite to eat before getting on the ferry.",
+    "ipa": "/hm̩... ɪn ðæt keɪs, ɪz ðɛr ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪriə əˈraʊnd hɪər? aɪd laɪk tuː ɡræb ə baɪt tuː iːt bɪˈfɔːr ˈɡɛtɪŋ ɑːn ðə ˈfɛri./",
+    "guide": "hm̩... ɪn ðæt keɪs <span class='intonation'>⤴</span>, ɪ-zðər ə ˈrɛstrɑːnt ɔːr ˌkæfəˈtɪri-jə əˈraʊnd hɪər <span class='intonation'>⤴</span>? aɪd <b>laɪ-k-tə</b> ɡræ-bə-baɪ<b><span class='stop'>t</span></b>-tə-iː<b><span class='stop'>t</span></b> bɪˈfɔːr ˈɡɛtɪŋ <b>ɑːn-ðə-ˈfɛri</b> <span class='intonation'>⤵</span>",
+    "vi": "Hmm... Nếu vậy thì quanh đây có nhà hàng hay quán ăn tự phục vụ nào không? Tôi muốn ăn chút gì đó trước khi lên phà.",
+    "context": "📍 **Tận dụng thời gian chờ (Killing Time):** Vì còn 30 phút, khách hàng quyết định tìm chỗ ăn nhanh.",
+    "grammar": "• <b>Transition 'In that case':</b> Cụm từ nối dùng để đưa ra quyết định dựa trên thông tin vừa biết.<br>• <b>Idiom 'Grab a bite to eat':</b> Cách nói rất phổ biến để chỉ việc đi ăn một bữa nhanh, không quá cầu kỳ.<br>• <b>Gerund after 'Before':</b> 'Before getting on'. Sau giới từ 'before/after' cộng động từ thêm -ing.<br>• <b>Phrasal Verb 'Get on':</b> Dùng cho các phương tiện có sàn lớn mà bạn có thể đi lại bên trong (ferry, bus, train, plane)."
+  },
+  {
+    "en": "Yes, there's a place around that corner.",
+    "ipa": "/jɛs, ðɛrz ə pleɪs əˈraʊnd ðæt ˈkɔːrnər./",
+    "guide": "jɛs <span class='intonation'>⤵</span>, <b>ðɛr-zə-pleɪs</b> əˈraʊnd ðæt ˈkɔːrnər <span class='intonation'>⤵</span>",
+    "vi": "Vâng, ngay góc đằng kia có một tiệm đấy ạ.",
+    "context": "📍 **Chỉ dẫn (Giving Directions):** Nhân viên chỉ cho khách địa điểm ăn uống gần nhất.",
+    "grammar": "• <b>Generic Noun 'Place':</b> Ở đây 'place' dùng để thay thế cho quán ăn đã nhắc ở trên, giúp câu văn tự nhiên và tránh lặp từ.<br>• <b>Prepositional Phrase:</b> 'Around the corner' là một thành ngữ chỉ khoảng cách rất gần, ngay góc đường."
+  }
+],
   "questions": [
     {
       "q": "62 What is the purpose of the man's trip?",
@@ -1265,37 +1401,47 @@ const allLessons = [
   "title": "Questions 65 - 67",
   "audioUrl": "Test 02_Part 3_65-67.mp3",
   "passage": [
-    {
-      "en": "Thanks for helping me with the charity drive to collect gently used items. Our patients have donated a lot, right?",
-      "ipa": "/θæŋks fɔːr ˈhɛlpɪŋ miː wɪθ ðə ˈtʃærəti draɪv tuː kəˈlɛkt ˈdʒɛntli juːzd ˈaɪtəmz. ˈaʊər ˈpeɪʃnts hæv ˈdoʊneɪtɪd ə lɑːt, raɪt?/",
-      "guide": "θæŋks fər <b>ˈhɛlpɪŋ-mi</b> wɪθ ðə ˈtʃærəti draɪv tə kəˈlɛkt ˈdʒɛntli <b>juːz-daɪtəmz</b> <span class='intonation'>⤵</span>. ˈaʊər ˈpeɪʃnts həv <b>ˈdoʊneɪtɪ-də-lɑːt</b> <span class='intonation'>⤴</span>, raɪt <span class='intonation'>⤵</span>?",
-      "vi": "Cảm ơn giúp đỡ tôi với chiến dịch từ thiện để thu gom những món đồ đã qua sử dụng nhẹ. Những bệnh nhân của chúng ta đã quyên góp nhiều phải không?"
-    },
-    {
-      "en": "Yes. Someone's just dropped off all of these board games, dolls, and blocks. They're in great condition.",
-      "ipa": "/jɛs. ˈsʌmwʌnz dʒʌst drɑːpt ɔːf ɔːl ʌv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ænd blɑːks. ðɛr ɪn ɡreɪt kənˈdɪʃn./",
-      "guide": "jɛs <span class='intonation'>⤵</span>. ˈsʌmwʌnz <b>dʒʌs<span class='stop'>t</span>-drɑːp-tɔːf</b> ɔːl-ləv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ən blɑːks <span class='intonation'>⤵</span>. <b>ðɛr-ɪn</b> ɡreɪt kənˈdɪʃn <span class='intonation'>⤵</span>",
-      "vi": "Đúng. Một ai đó đã đưa tất cả những trò chơi bàn cờ, búp bê và khối xếp hình này; chúng đều còn rất mới."
-    },
-    {
-      "en": "And the medical staff and visitors have also been bringing things in.",
-      "ipa": "/ænd ðə ˈmɛdɪkl stæf ænd ˈvɪzɪtərz hæv ˈɔːlsoʊ biːn ˈbrɪŋɪŋ θɪŋz ɪn./",
-      "guide": "<b>ən-ðə</b> ˈmɛdɪkl stæf ən ˈvɪzɪtərz həv ˈɔːlsoʊ biːn <b>ˈbrɪŋɪŋ-θɪŋ-zɪn</b> <span class='intonation'>⤵</span>",
-      "vi": "Và những nhân viên y tế cũng như những vị khách cũng đem đồ đến nữa."
-    },
-    {
-      "en": "Wonderful! The collection boxes are in the hall by the administration office. But don't put them in all together, as the pieces may get mixed up.",
-      "ipa": "/ˈwʌndərfl! ðə kəˈlɛkʃn ˈbɑːksɪz ɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs. bʌt doʊnt pʊt ðɛm ɪn ɔːl təˈɡɛðər, æz ðə ˈpiːsɪz meɪ ɡɛt mɪkst ʌp./",
-      "guide": "ˈwʌndərfl <span class='intonation'>⤴</span>! ðə kəˈlɛkʃn ˈbɑːksɪ-zɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs <span class='intonation'>⤵</span>. bʌt <b>doʊn<span class='stop'>t</span>-pʊ-ðəm-ɪn</b> ɔːl təˈɡɛðər <span class='intonation'>⤴</span>, æz ðə <b>ˈpiːsɪz-meɪ</b> ɡɛt <b>mɪks-tʌp</b> <span class='intonation'>⤵</span>",
-      "vi": "Tuyệt vời! Những hộp đựng đồ đang nằm trong hành lang kế bên phòng hành chính. Nhưng đừng đặt những cái hộp này cùng với nhau bởi vì những mảnh ghép có thể bị lẫn lộn."
-    },
-    {
-      "en": "I brought some plastic bags to separate each item.",
-      "ipa": "/aɪ brɔːt sʌm ˈplæstɪk bæɡz tuː ˈsɛpəreɪt iːtʃ ˈaɪtəm./",
-      "guide": "aɪ <b>brɔː-sʌm</b> ˈplæstɪk bæɡz tə ˈsɛpəreɪ-tiːtʃ <b>ˈaɪtəm</b> <span class='intonation'>⤵</span>",
-      "vi": "Tôi đã mang một vài túi nhựa để tách biệt một vài món đồ."
-    }
-  ],
+  {
+    "en": "Thanks for helping me with the charity drive to collect gently used items. Our patients have donated a lot, right?",
+    "ipa": "/θæŋks fɔːr ˈhɛlpɪŋ miː wɪθ ðə ˈtʃærəti draɪv tuː kəˈlɛkt ˈdʒɛntli juːzd ˈaɪtəmz. ˈaʊər ˈpeɪʃnts hæv ˈdoʊneɪtɪd ə lɑːt, raɪt?/",
+    "guide": "θæŋks fər <b>ˈhɛlpɪŋ-mi</b> wɪθ ðə ˈtʃærəti draɪv tə kəˈlɛkt ˈdʒɛntli <b>juːz-daɪtəmz</b> <span class='intonation'>⤵</span>. ˈaʊər ˈpeɪʃnts həv <b>ˈdoʊneɪtɪ-də-lɑːt</b> <span class='intonation'>⤴</span>, raɪt <span class='intonation'>⤵</span>?",
+    "vi": "Cảm ơn bạn đã giúp tôi trong chiến dịch từ thiện thu gom đồ cũ còn tốt nhé. Bệnh nhân của mình quyên góp được nhiều lắm đúng không?",
+    "context": "📍 **Khởi động thảo luận (Initiating Conversation):** Người nói mở đầu bằng lời cảm ơn để ghi nhận sự đóng góp của đồng nghiệp và dẫn dắt vào chủ đề tiến độ công việc.",
+    "grammar": "• <b>Charity drive:</b> 'Drive' ở đây là danh từ, chỉ một cuộc vận động có mục tiêu cụ thể. <br>• <b>Gently used:</b> Một cách nói giảm nhẹ (euphemism) cực kỳ phổ biến trong từ thiện, thay vì nói 'second-hand' (đồ cũ), 'gently used' nhấn mạnh vào chất lượng đồ vẫn còn rất tốt.<br>• <b>Present Perfect (Have donated):</b> Dùng thì hiện tại hoàn thành để nhấn mạnh kết quả tích lũy được cho đến thời điểm hiện tại."
+  },
+  {
+    "en": "Yes. Someone's just dropped off all of these board games, dolls, and blocks. They're in great condition.",
+    "ipa": "/jɛs. ˈsʌmwʌnz dʒʌst drɑːpt ɔːf ɔːl ʌv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ænd blɑːks. ðɛr ɪn ɡreɪt kənˈdɪʃn./",
+    "guide": "jɛs <span class='intonation'>⤵</span>. ˈsʌmwʌnz <b>dʒʌs<span class='stop'>t</span>-drɑːp-tɔːf</b> ɔːl-ləv ðɪːz bɔːrd ɡeɪmz, dɑːlz, ən blɑːks <span class='intonation'>⤵</span>. <b>ðɛr-ɪn</b> ɡreɪt kənˈdɪʃn <span class='intonation'>⤵</span>",
+    "vi": "Đúng vậy. Vừa có người đem tới một đống trò chơi cờ bàn, búp bê với khối xếp hình này. Chúng vẫn còn mới tinh luôn.",
+    "context": "📍 **Báo cáo hiện vật (Reporting Inventory):** Liệt kê cụ thể các món đồ chơi dành cho trẻ em, cho thấy chiến dịch này nhắm tới đối tượng bệnh nhi hoặc trẻ em nghèo.",
+    "grammar": "• <b>Phrasal Verb 'Drop off':</b> Nghĩa là mang thứ gì đó đến một địa điểm và để lại đó. <br>• <b>Adverb 'Just':</b> Nhấn mạnh hành động vừa mới xảy ra tức thì.<br>• <b>Phrase 'In great condition':</b> Cấu trúc: [In + Adj + Condition] để chỉ tình trạng vật lý của hàng hóa.<br>• <b>Indefinite Pronoun 'Someone':</b> Sử dụng khi không biết rõ hoặc không cần thiết phải nêu đích danh người tặng."
+  },
+  {
+    "en": "And the medical staff and visitors have also been bringing things in.",
+    "ipa": "/ænd ðə ˈmɛdɪkl stæf ænd ˈvɪzɪtərz hæv ˈɔːlsoʊ biːn ˈbrɪŋɪŋ θɪŋz ɪn./",
+    "guide": "<b>ən-ðə</b> ˈmɛdɪkl stæf ən ˈvɪzɪtərz həv ˈɔːlsoʊ biːn <b>ˈbrɪŋɪŋ-θɪŋ-zɪn</b> <span class='intonation'>⤵</span>",
+    "vi": "Cả đội ngũ y tế với khách thăm bệnh cũng đang liên tục mang đồ đến quyên góp nữa.",
+    "context": "📍 **Mở rộng phạm vi (Broadening Participation):** Thông tin này cho thấy sự lan tỏa của chiến dịch, không chỉ giới hạn ở bệnh nhân mà còn cả cộng đồng xung quanh.",
+    "grammar": "• <b>Present Perfect Continuous:</b> 'Have been bringing' nhấn mạnh tính liên tục, kéo dài của hành động từ quá khứ đến hiện tại và còn tiếp diễn.<br>• <b>Phrasal Verb 'Bring in':</b> Mang thứ gì đó vào bên trong một tổ chức hoặc tòa nhà.<br>• <b>Collective Noun 'Staff':</b> Danh từ tập hợp chỉ đội ngũ nhân viên, thường đi với số ít hoặc số nhiều tùy bối cảnh nhưng ở đây được coi là một nhóm chung."
+  },
+  {
+    "en": "Wonderful! The collection boxes are in the hall by the administration office. But don't put them in all together, as the pieces may get mixed up.",
+    "ipa": "/ˈwʌndərfl! ðə kəˈlɛkʃn ˈbɑːksɪz ɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs. bʌt doʊnt pʊt ðɛm ɪn ɔːl təˈɡɛðər, æz ðə ˈpiːsɪz meɪ ɡɛt mɪkst ʌp./",
+    "guide": "ˈwʌndərfl <span class='intonation'>⤴</span>! ðə kəˈlɛkʃn ˈbɑːksɪ-zɑːr ɪn ðə hɔːl baɪ ðɪ ædˌmɪnɪˈstreɪʃn ˈɑːfɪs <span class='intonation'>⤵</span>. bʌt <b>doʊn<span class='stop'>t</span>-pʊ-ðəm-ɪn</b> ɔːl təˈɡɛðər <span class='intonation'>⤴</span>, æz ðə <b>ˈpiːsɪz-meɪ</b> ɡɛt <b>mɪks-tʌp</b> <span class='intonation'>⤵</span>",
+    "vi": "Tuyệt quá! Mấy cái thùng quyên góp để ở hành lang cạnh phòng hành chính ấy. Nhưng đừng có bỏ lộn xộn hết vào nhé, vì mấy mảnh ghép của đồ chơi dễ bị lẫn vào nhau lắm.",
+    "context": "📍 **Chỉ dẫn và Cảnh báo (Guidance & Warning):** Người nói chỉ chỗ để đồ và đưa ra lưu ý kỹ thuật về việc phân loại, tránh tình trạng đồ chơi bị mất linh kiện (như mảnh ghép puzzle hay cờ).",
+    "grammar": "• <b>Preposition of Place 'By':</b> Có nghĩa là 'cạnh bên' hoặc 'gần'.<br>• <b>Negative Imperative:</b> 'Don't put' là câu mệnh lệnh phủ định dùng để đưa ra hướng dẫn.<br>• <b>Conjunction 'As':</b> Dùng để đưa ra lý do, tương đương với 'Because' nhưng nghe nhẹ nhàng và tự nhiên hơn trong văn nói.<br>• <b>Phrasal Verb 'Mix up':</b> Bị xáo trộn hoặc nhầm lẫn giữa các vật với nhau."
+  },
+  {
+    "en": "I brought some plastic bags to separate each item.",
+    "ipa": "/aɪ brɔːt sʌm ˈplæstɪk bæɡz tuː ˈsɛpəreɪt iːtʃ ˈaɪtəm./",
+    "guide": "aɪ <b>brɔː-sʌm</b> ˈplæstɪk bæɡz tə ˈsɛpəreɪ-tiːtʃ <b>ˈaɪtəm</b> <span class='intonation'>⤵</span>",
+    "vi": "Tôi có mang theo mấy cái túi nilon để bọc riêng từng món đây rồi.",
+    "context": "📍 **Giải quyết vấn đề (Problem Solving):** Thể hiện sự chuẩn bị chu đáo và tinh thần chủ động trong công việc.",
+    "grammar": "• <b>Infinitive of Purpose:</b> 'To separate' (để phân loại/chia tách) giải thích cho lý do tại sao người nói mang túi nilon theo.<br>• <b>Determiner 'Each':</b> 'Each + singular noun' (mỗi món đồ). Nhấn mạnh vào từng cá thể riêng biệt trong một nhóm.<br>• <b>Noun Phrase 'Plastic bags':</b> Danh từ ghép chỉ chất liệu và loại vật dụng."
+  }
+],
   "questions": [
     {
       "q": "65 Where most likely are the speakers?",
@@ -1354,55 +1500,71 @@ const allLessons = [
   "title": "Questions 68 - 70",
   "audioUrl": "Test 02_Part 3_68-70.mp3",
   "passage": [
-    {
-      "en": "Hi, could you help me?",
-      "ipa": "/haɪ, kʊd juː hɛlp miː?/",
-      "guide": "haɪ <span class='intonation'>⤴</span>, <b>kʊ-dʒu</b> hɛlp mi <span class='intonation'>⤴</span>?",
-      "vi": "Chào, bạn có thể giúp tôi được không?"
-    },
-    {
-      "en": "Absolutely. What brings you to the Randholm Building today?",
-      "ipa": "/ˌæbsəˈluːtli. wʌt brɪŋz juː tuː ðə ˈrændhoʊm ˈbɪldɪŋ tuˈdeɪ?/",
-      "guide": "ˌæbsəˈluːtli <span class='intonation'>⤵</span>. <b>wʌt-brɪŋ-zju</b> tə ðə ˈrændhoʊm ˈbɪldɪŋ təˈdeɪ <span class='intonation'>⤵</span>?",
-      "vi": "Chắc chắn rồi. Điều gì đem bạn tới tòa nhà Randholm hôm nay?"
-    },
-    {
-      "en": "I'm looking for the convenience store. I have a job interview there in a few minutes.",
-      "ipa": "/aɪm ˈlʊkɪŋ fɔːr ðə kənˈviːniəns stɔːr. aɪ hæv ə dʒɑːb ˈɪntərvjuː ðɛr ɪn ə fjuː ˈmɪnɪts./",
-      "guide": "aɪm <b>ˈlʊkɪŋ-fər</b> ðə kənˈviːniəns stɔːr <span class='intonation'>⤵</span>. aɪ <b>hæ-və-dʒɑː-bɪn-tərvjuː</b> ðɛr ɪ-nə fjuː ˈmɪnɪts <span class='intonation'>⤵</span>",
-      "vi": "Tôi đang tìm kiếm cửa hàng tiện lợi. Tôi có một buổi phỏng vấn công việc ở đó ít phút nữa."
-    },
-    {
-      "en": "OK. Here's the floor plan for the ground floor. You're here, at the information desk.",
-      "ipa": "/ˌoʊˈkeɪ. hɪərz ðə flɔːr plæn fɔːr ðə ɡraʊnd flɔːr. jʊər hɪər, æt ðɪ ˌɪnfərˈmeɪʃn dɛsk./",
-      "guide": "ˌoʊˈkeɪ <span class='intonation'>⤵</span>. hɪərz ðə <b>flɔːr-plæn</b> fər ðə ɡraʊnd flɔːr <span class='intonation'>⤵</span>. jər hɪər <span class='intonation'>⤴</span>, <b>æt-ðɪ</b> ˌɪnfərˈmeɪʃn dɛsk <span class='intonation'>⤵</span>",
-      "vi": "Ok. Đây là sơ đồ của tầng trệt. Bạn đang ở đây, tại bàn thông tin."
-    },
-    {
-      "en": "Just walk around the potted trees there. The convenience store is across from Uncle Freddie's.",
-      "ipa": "/dʒʌst wɔːk əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr. ðə kənˈviːniəns stɔːr ɪz əˈkrɔːs frʌm ˈʌŋkl ˈfrɛdiz./",
-      "guide": "<b>dʒʌs<span class='stop'>t</span>-wɔːk</b> əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr <span class='intonation'>⤵</span>. ðə kənˈviːniəns stɔːr <b>ɪ-zəˈkrɔːs</b> frəm ˈʌŋkl ˈfrɛdiz <span class='intonation'>⤵</span>",
-      "vi": "Chỉ cần đi bộ vòng qua những chậu cây đó. Cửa hàng tiện lợi đối diện Uncle Freddie's."
-    },
-    {
-      "en": "I see. Thank you.",
-      "ipa": "/aɪ siː. θæŋk juː./",
-      "guide": "aɪ siː <span class='intonation'>⤵</span>. <b>θæŋ-kju</b> <span class='intonation'>⤵</span>",
-      "vi": "Tôi hiểu rồi. Cảm ơn bạn."
-    },
-    {
-      "en": "Sure. Oh, and afterwards, come back out this way. The other entrance is closed today.",
-      "ipa": "/ʃʊər. oʊ, ænd ˈæftərwərdz, kʌm bæk aʊt ðɪs weɪ. ðɪ ˈʌðər ˈɛntrəns ɪz kloʊzd tuˈdeɪ./",
-      "guide": "ʃʊər <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, <b>ən-ˈæftərwərdz</b> <span class='intonation'>⤴</span>, kʌm <b> bæ-kaʊ-ðɪs</b> weɪ <span class='intonation'>⤵</span>. ðɪ ˈʌðər <b>ˈɛn-trən-sɪz</b> kloʊzd təˈdeɪ <span class='intonation'>⤵</span>",
-      "vi": "Được. Ồ và sau đó hãy quay trở lại lối này. Lối vào còn lại bị đóng cửa hôm nay."
-    },
-    {
-      "en": "That's good to know.",
-      "ipa": "/ðæts ɡʊd tuː noʊ./",
-      "guide": "ðæts <b>ɡʊ-tə-noʊ</b> <span class='intonation'>⤵</span>",
-      "vi": "Thật tốt để biết chuyện này."
-    }
-  ],
+  {
+    "en": "Hi, could you help me?",
+    "ipa": "/haɪ, kʊd juː hɛlp miː?/",
+    "guide": "haɪ <span class='intonation'>⤴</span>, <b>kʊ-dʒu</b> hɛlp mi <span class='intonation'>⤴</span>?",
+    "vi": "Chào bạn, bạn giúp tôi một chút được không?",
+    "context": "📍 **Tiếp cận và nhờ vả (Approach):** Cách mở đầu kinh điển khi bạn cần sự trợ giúp từ người lạ hoặc nhân viên chức năng. Dùng 'could' thay vì 'can' để tạo sự lịch sự ngay từ đầu.",
+    "grammar": "• <b>Modal 'Could' for Requests:</b> Dùng để đưa ra lời yêu cầu nhẹ nhàng, tạo khoảng cách lịch sự cần thiết.<br>• <b>Direct Object:</b> 'Help' là ngoại động từ đi kèm trực tiếp với tân ngữ 'me' mà không cần giới từ."
+  },
+  {
+    "en": "Absolutely. What brings you to the Randholm Building today?",
+    "ipa": "/ˌæbsəˈluːtli. wʌt brɪŋz juː tuː ðə ˈrændhoʊm ˈbɪldɪŋ tuˈdeɪ?/",
+    "guide": "ˌæbsəˈluːtli <span class='intonation'>⤵</span>. <b>wʌt-brɪŋ-zju</b> tə ðə ˈrændhoʊm ˈbɪldɪŋ təˈdeɪ <span class='intonation'>⤵</span>?",
+    "vi": "Tất nhiên rồi. Điều gì đưa bạn đến tòa nhà Randholm hôm nay vậy?",
+    "context": "📍 **Hỏi thăm mục đích (Inquiring Purpose):** Thay vì hỏi 'Why are you here?' (nghe hơi thô lỗ), nhân viên dùng cấu trúc 'What brings you to...' để tạo cảm giác hiếu khách.",
+    "grammar": "• <b>Adverb of Affirmation:</b> 'Absolutely' mạnh hơn 'Yes', thể hiện sự sẵn lòng giúp đỡ tối đa.<br>• <b>Idiomatic Question:</b> 'What brings you to...' là cách hỏi lý do hiện diện chuyên nghiệp và lịch sự nhất trong tiếng Anh giao tiếp.<br>• <b>Proper Noun:</b> 'Randholm Building' luôn phải viết hoa vì là tên riêng của tòa nhà."
+  },
+  {
+    "en": "I'm looking for the convenience store. I have a job interview there in a few minutes.",
+    "ipa": "/aɪm ˈlʊkɪŋ fɔːr ðə kənˈviːniəns stɔːr. aɪ hæv ə dʒɑːb ˈɪntərvjuː ðɛr ɪn ə fjuː ˈmɪnɪts./",
+    "guide": "aɪm <b>ˈlʊkɪŋ-fər</b> ðə kənˈviːniəns stɔːr <span class='intonation'>⤵</span>. aɪ <b>hæ-və-dʒɑː-bɪn-tərvjuː</b> ðɛr ɪ-nə fjuː ˈmɪnɪts <span class='intonation'>⤵</span>",
+    "vi": "Tôi đang tìm cửa hàng tiện lợi. Tôi có buổi phỏng vấn xin việc ở đó vài phút nữa.",
+    "context": "📍 **Nêu lý do và tính khẩn cấp (Providing Context):** Khách hàng nêu rõ mục tiêu và giới hạn thời gian (vài phút nữa) để nhân viên biết cần chỉ đường nhanh và ngắn gọn nhất.",
+    "grammar": "• <b>Phrasal Verb 'Look for':</b> Nghĩa là tìm kiếm thứ gì đó đang thất lạc hoặc chưa thấy.<br>• <b>In + Time Period:</b> 'In a few minutes' dùng giới từ 'in' để chỉ một thời điểm trong tương lai tính từ bây giờ.<br>• <b>Compound Noun:</b> 'Job interview' (phỏng vấn việc làm) và 'Convenience store' (cửa hàng tiện lợi)."
+  },
+  {
+    "en": "OK. Here's the floor plan for the ground floor. You're here, at the information desk.",
+    "ipa": "/ˌoʊˈkeɪ. hɪərz ðə flɔːr plæn fɔːr ðə ɡraʊnd flɔːr. jʊər hɪər, æt ðɪ ˌɪnfərˈmeɪʃn dɛsk./",
+    "guide": "ˌoʊˈkeɪ <span class='intonation'>⤵</span>. hɪərz ðə <b>flɔːr-plæn</b> fər ðə ɡraʊnd flɔːr <span class='intonation'>⤵</span>. jər hɪər <span class='intonation'>⤴</span>, <b>æt-ðɪ</b> ˌɪnfərˈmeɪʃn dɛsk <span class='intonation'>⤵</span>",
+    "vi": "Được rồi. Đây là sơ đồ mặt bằng tầng trệt. Bạn đang đứng ở đây, ngay quầy thông tin này.",
+    "context": "📍 **Định vị trực quan (Visual Orientation):** Sử dụng công cụ (sơ đồ) để khách hàng có cái nhìn tổng thể về không gian trước khi đi vào chi tiết.",
+    "grammar": "• <b>Floor plan:</b> Danh từ chuyên ngành kiến trúc/quản lý tòa nhà (sơ đồ mặt bằng).<br>• <b>Ground floor:</b> Tầng trệt. Lưu ý ở Mỹ thường gọi là 'First floor', nhưng ở Anh và nhiều nơi khác, 'Ground floor' là tầng 0/tầng mặt đất.<br>• <b>Preposition of Place 'At':</b> Dùng 'at' để chỉ một điểm chính xác trong một không gian lớn."
+  },
+  {
+    "en": "Just walk around the potted trees there. The convenience store is across from Uncle Freddie's.",
+    "ipa": "/dʒʌst wɔːk əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr. ðə kənˈviːniəns stɔːr ɪz əˈkrɔːs frʌm ˈʌŋkl ˈfrɛdiz./",
+    "guide": "<b>dʒʌs<span class='stop'>t</span>-wɔːk</b> əˈraʊnd ðə ˈpɑːtɪd triːz ðɛr <span class='intonation'>⤵</span>. ðə kənˈviːniəns stɔːr <b>ɪ-zəˈkrɔːs</b> frəm ˈʌŋkl ˈfrɛdiz <span class='intonation'>⤵</span>",
+    "vi": "Cứ đi vòng qua mấy cây cảnh đằng kia. Cửa hàng tiện lợi nằm ngay đối diện tiệm Uncle Freddie's đó.",
+    "context": "📍 **Chỉ dẫn bằng mốc (Landmark Navigation):** Dùng các vật thể dễ thấy (cây cảnh, cửa hàng tên tuổi) để khách hàng không bị lạc.",
+    "grammar": "• <b>Participial Adjective:</b> 'Potted' (được trồng trong chậu) xuất phát từ danh từ 'pot'.<br>• <b>Preposition of Direction 'Around':</b> Chỉ hành động đi vòng quanh vật cản.<br>• <b>Preposition of Place 'Across from':</b> Cụm giới từ cố định nghĩa là 'đối diện'.<br>• <b>Possessive 's:</b> 'Uncle Freddie's' - lược bỏ danh từ 'store/shop' đằng sau vì đã ngầm hiểu."
+  },
+  {
+    "en": "I see. Thank you.",
+    "ipa": "/aɪ siː. θæŋk juː./",
+    "guide": "aɪ siː <span class='intonation'>⤵</span>. <b>θæŋ-kju</b> <span class='intonation'>⤵</span>",
+    "vi": "Tôi hiểu rồi. Cảm ơn bạn nhé.",
+    "context": "📍 **Xác nhận (Acknowledgement):** Câu 'I see' cho thấy khách hàng đã hình dung được đường đi trên sơ đồ.",
+    "grammar": "• <b>Idiom 'I see':</b> Cách nói cực kỳ tự nhiên thay cho 'I understand'.<br>• <b>Transitive Verb:</b> 'Thank' đi kèm tân ngữ 'you' tạo thành lời cảm ơn tiêu chuẩn."
+  },
+  {
+    "en": "Sure. Oh, and afterwards, come back out this way. The other entrance is closed today.",
+    "ipa": "/ʃʊər. oʊ, ænd ˈæftərwərdz, kʌm bæk aʊt ðɪs weɪ. ðɪ ˈʌðər ˈɛntrəns ɪz kloʊzd tuˈdeɪ./",
+    "guide": "ʃʊər <span class='intonation'>⤵</span>. oʊ <span class='intonation'>⤴</span>, <b>ən-ˈæftərwərdz</b> <span class='intonation'>⤴</span>, kʌm <b> bæ-kaʊ-ðɪs</b> weɪ <span class='intonation'>⤵</span>. ðɪ ˈʌðər <b>ˈɛn-trən-sɪz</b> kloʊzd təˈdeɪ <span class='intonation'>⤵</span>",
+    "vi": "Không có chi. À mà xong việc thì bạn hãy quay ra bằng lối này nhé. Cửa bên kia hôm nay đóng rồi.",
+    "context": "📍 **Lưu ý hậu kỳ (Follow-up Warning):** Nhân viên cung cấp thêm thông tin quan trọng để khách không bị lúng túng khi rời tòa nhà.",
+    "grammar": "• <b>Adverb 'Afterwards':</b> Có nghĩa là 'sau đó' (sau khi buổi phỏng vấn kết thúc).<br>• <b>Phrasal Verb 'Come back out':</b> Cụm động từ 3 chữ mang nghĩa quay trở lại lối ra.<br>• <b>Determiner 'The other':</b> Dùng để chỉ cái còn lại duy nhất trong số hai cái (hai lối vào).<br>• <b>Adjective 'Closed':</b> Tính từ chỉ trạng thái đóng cửa."
+  },
+  {
+    "en": "That's good to know.",
+    "ipa": "/ðæts ɡʊd tuː noʊ./",
+    "guide": "ðæts <b>ɡʊ-tə-noʊ</b> <span class='intonation'>⤵</span>",
+    "vi": "Thông tin này hữu ích quá, cảm ơn bạn.",
+    "context": "📍 **Ghi nhận lưu ý (Information Receipt):** Cách phản hồi lịch sự khi ai đó đưa ra một cảnh báo hoặc thông tin 'nằm ngoài dự tính' nhưng có ích.",
+    "grammar": "• <b>Structure:</b> [It/That + is + Adj + to-V]. Cấu trúc câu giả định để nhận xét về một thông tin/hành động."
+  }
+],
   "questions": [
     {
       "q": "68 What does the man plan to do?",
@@ -1520,6 +1682,8 @@ function render() {
                     <button onclick="toggleGroupContent(this, 'p-guide')">Cách phát âm</button>
                     <button onclick="toggleGroupContent(this, 'p-vi')">Việt</button>
                     <button onclick="toggleGroupContent(this, 'p-practice')">Luyện viết</button>
+                    <button onclick="toggleGroupContent(this, 'p-context')">Bối cảnh</button> 
+                    <button onclick="toggleGroupContent(this, 'p-grammar')">Ngữ pháp</button>
                 </div>${lesson.passage.map((item, idx) => `
     <div class="content-line">
         <div class="en-text p-en"><strong>${item.en}</strong></div>
@@ -1534,6 +1698,8 @@ function render() {
                    onkeyup="checkPractice(this, '${item.en.replace(/'/g, "\\'")}', '${item.vi.replace(/'/g, "\\'")}')">
             <div class="feedback" style="font-size: 0.8rem; margin-top: 4px;"></div>
         </div>
+        <div class="context-text p-context">${item.context || 'Chưa có thông tin bối cảnh'}</div> 
+        <div class="grammar-text p-grammar">📝 <b>Phân tích:</b><br>${item.grammar || 'Dữ liệu ngữ pháp đang được cập nhật...'}</div>
     </div>
 `).join('')}
             </div>
