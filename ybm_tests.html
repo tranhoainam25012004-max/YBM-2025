@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YBM 2025 - Chọn Đề</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #f59e0b;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Thanh tiêu đề trên cùng */
+        .top-nav {
+            width: 100%;
+            background: var(--white);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-container {
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+
+        .back-link:hover { color: var(--primary-dark); }
+
+        .title-section {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .title-section h1 {
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Bố cục lưới cho các Test */
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 800px;
+            padding-bottom: 50px;
+        }
+
+        .test-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            text-decoration: none;
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .test-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        /* Biểu tượng và nhãn */
+        .test-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .test-number {
+            background: #eff6ff;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 600;
+        }
+
+        .test-card h3 {
+            margin: 10px 0 5px 0;
+            font-size: 1.4rem;
+        }
+
+        .test-card p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .test-card:hover .btn-start {
+            background: var(--primary-dark);
+        }
+
+        /* Đồ họa trang trí nhỏ */
+        .test-card::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            opacity: 0.03;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="nav-container">
+            <a href="index.html" class="back-link">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
+                Trang chủ
+            </a>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <p style="color: var(--primary); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Academy 2026</p>
+        <h1>Luyện Thi YBM 2025</h1>
+    </div>
+
+    <div class="test-grid">
+        <a href="list_test2.html" class="test-card">
+            <div class="test-card-header">
+                <div class="test-number">02</div>
+                <span class="status-badge">Sẵn sàng</span>
+            </div>
+            <h3>Bộ đề Test 02</h3>
+            <p>Bao gồm Part 1, 2, 3 và Part 7 (Single/Double). Đã cập nhật cấu trúc mới nhất.</p>
+            <div class="btn-start">Bắt đầu học ngay</div>
+        </a>
+
+        <a href="list_test3.html" class="test-card">
+            <div class="test-card-header">
+                <div class="test-number">03</div>
+                <span class="status-badge">Sẵn sàng</span>
+            </div>
+            <h3>Bộ đề Test 03</h3>
+            <p>Luyện tập các dạng câu hỏi mới về Reading và Listening của Test 03.</p>
+            <div class="btn-start">Bắt đầu học ngay</div>
+        </a>
+
+        <a href="#" class="test-card" style="opacity: 0.7; pointer-events: none;">
+            <div class="test-card-header">
+                <div class="test-number" style="background: #f1f5f9; color: #94a3b8;">04</div>
+                <span class="status-badge" style="background: #fee2e2; color: #991b1b;">Sắp có</span>
+            </div>
+            <h3>Bộ đề Test 04</h3>
+            <p>Đang trong quá trình cập nhật dữ liệu. Vui lòng quay lại sau.</p>
+            <div class="btn-start" style="background: #cbd5e1;">Chưa mở</div>
+        </a>
+    </div>
+
+</body>
+</html>
