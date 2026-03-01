@@ -4,159 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Học TOEIC - Tách dòng từ vựng</title>
-    <style>
-        :root { --brand-blue: #007bff; --bg-light-blue: #f8fbff; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; padding: 10px; margin: 0; }
-        .container { max-width: 1000px; margin: auto; }
-        
-        .lesson-group { 
-            border: 2px dashed var(--brand-blue); 
-            padding: 20px; 
-            margin-bottom: 40px; 
-            border-radius: 20px;
-            background: #ffffff;
-        }
-        .p-practice.show { display: block !important; }
-.feedback.correct { color: #28a745; font-weight: bold; }
-.feedback.correct::before { content: "✓ Chính xác! "; }
-        .group-header { text-align: center; margin-bottom: 20px; }
-        .group-title { 
-            display: inline-block; color: white; background: var(--brand-blue); 
-            padding: 8px 25px; border-radius: 20px; font-size: 1.2rem; margin-bottom: 15px;
-        }
-
-        .audio-player { width: 100%; max-width: 400px; height: 40px; }
-
-        .section { background: #f8fbff; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        h2 { color: var(--brand-blue); font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px solid #d1e3ff; padding-bottom: 5px; }
-        
-        .btn-group { margin-bottom: 15px; display: flex; gap: 8px; overflow-x: auto; }
-        button { white-space: nowrap; background: white; color: var(--brand-blue); border: 2px solid var(--brand-blue); padding: 6px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
-        button.active-btn { background: var(--brand-blue); color: white; }
-
-        /* Quan trọng: Mặc định ẩn các lớp này */
-        .en-text, .ipa-text, .vi-text, .guide-text { display: none; margin-bottom: 5px; line-height: 1.6; }
-        .show { display: block !important; }
-
-        .content-line { background: #fff; border-left: 5px solid var(--brand-blue); padding: 10px; border-radius: 8px; margin-bottom: 8px; }
-
-        /* Định dạng Ngữ điệu & Âm chặn */
-        .intonation { color: #ff5722; font-weight: bold; font-size: 1.2rem; margin: 0 2px; }
-        
-        .guide-text { color: #2c3e50; font-family: 'Segoe UI', sans-serif; background: #fff0f6; padding: 5px 10px; border-radius: 5px; border: 1px dashed #d63384; }
-        
-        /* Style cho Âm chặn (Stop Sound) */
-        .stop { color: #e74c3c; font-weight: bold; border-bottom: 2px solid #e74c3c; }
-        .stop::after { content: "|"; margin-left: 1px; }
-
-        /* Flashcard Styles */
-        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .card { perspective: 1000px; min-height: 180px; cursor: pointer; }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
-        .card.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 2px solid var(--brand-blue); background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
-        .card-back { background-color: var(--brand-blue); color: white; transform: rotateY(180deg); justify-content: flex-start; align-items: stretch; overflow-y: auto; }
-        .vocab-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .vocab-info { display: flex; flex-direction: column; }
-        .speak-btn { font-size: 1.3rem; cursor: pointer; }
-        /* Style cho phần bối cảnh */
-.context-text { 
-    display: none; 
-    margin-bottom: 5px; 
-    font-style: italic; 
-    color: #6c757d; 
-    background: #e9ecef; 
-    padding: 5px 10px; 
-    border-radius: 5px; 
-    font-size: 0.9rem;
-}
-.context-text.show { display: block !important; }
-        
-        /* Menu điều hướng nhanh */
-.lesson-nav {
-    position: sticky;
-    top: 0;
-    background: white;
-    padding: 10px;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    margin-bottom: 20px;
-}
-.nav-item {
-    background: #e7f3ff;
-    color: var(--brand-blue);
-    padding: 5px 15px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-.nav-item:hover {
-    background: var(--brand-blue);
-    color: white;
-}
-/* Ẩn tất cả các bài học mặc định */
-.lesson-group { 
-    display: none; 
-    border: 2px dashed var(--brand-blue); 
-    padding: 20px; 
-    margin-bottom: 20px; 
-    border-radius: 20px;
-    background: #ffffff;
-}
-
-/* Chỉ hiển thị bài học có class .active */
-.lesson-group.active {
-    display: block;
-}
-
-/* Định dạng cụm nút chuyển trang */
-.pagination-nav {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-}
-
-.pagination-nav button {
-    min-width: 120px;
-    padding: 12px 20px;
-    background: white;
-    color: var(--brand-blue);
-    border: 2px solid var(--brand-blue);
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.pagination-nav button:disabled {
-    border-color: #ccc;
-    color: #ccc;
-    cursor: not-allowed;
-}
-
-.pagination-nav button:hover:not(:disabled) {
-    background: var(--brand-blue);
-    color: white;
-}
-.grammar-text {
-    display: none;
-    margin-top: 5px;
-    padding: 10px;
-    background: #fff8e1; /* Màu vàng nhạt */
-    border-left: 5px solid #ffc107;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    color: #5d4037;
-    line-height: 1.5;
-}
-.grammar-text.show { display: block !important; }
-    </style>
+      <link rel="stylesheet" href="css/style_listen.css">
 </head>
 <body>
 
@@ -254,45 +102,163 @@ passage:[
         }
     ],
    vocabulary: [
-        { vi: "Bạn đồng chí (n)", words: [{ en: "Fellow", ipa: "/ˈfɛloʊ/" }] },
-        { vi: "Sự mở cửa lại (n)", words: [{ en: "Reopening", ipa: "/riːˈoʊpnɪŋ/" }] },
-        { vi: "Bố cục (n)", words: [{ en: "Layout", ipa: "/ˈleɪˌaʊt/" }] },
-        { vi: "Bánh nướng (n)", words: [{ en: "Baked goods", ipa: "/beɪkt ɡʊdz/" }] },
-        { vi: "Dụng cụ ăn uống bằng bạc (n)", words: [{ en: "Silverware", ipa: "/ˈsɪlvərˌwɛr/" }] },
-        { vi: "Sự xuất bản (n)", words: [{ en: "Publication", ipa: "/ˌpʌblɪˈkeɪʃn/" }] },
-        { 
-            vi: "Ấn phẩm (n)", 
-            words: [
-                { en: "Publication", ipa: "/ˌpʌblɪˈkeɪʃn/" },
-                { en: "Issue", ipa: "/ˈɪʃuː/" }
-            ] 
-        },
-        { vi: "Xuất bản (v)", words: [{ en: "Publish", ipa: "/ˈpʌblɪʃ/" }] },
-        { vi: "Phiếu quà tặng (n)", words: [{ en: "Gift certificate", ipa: "/ɡɪft sərˈtɪfɪkət/" }] },
-        { vi: "Buổi đọc sách của tác giả (n)", words: [{ en: "Author reading", ipa: "/ˈɔːθər ˈriːdɪŋ/" }] },
-        { 
-            vi: "Tác giả (n)", 
-            words: [
-                { en: "Author", ipa: "/ˈɔːθər/" },
-                { en: "Novelist", ipa: "/ˈnɑːvəlɪst/" },
-                { en: "Writer", ipa: "/ˈraɪtər/" }
-            ] 
-        },
-        { 
-            vi: "Mua (v)", 
-            words: [
-                { en: "Purchase", ipa: "/ˈpɜːrtʃəs/" },
-                { en: "Buy", ipa: "/baɪ/" }
-            ] 
-        },
-        { 
-            vi: "Vật tư/ vật dụng (n)", 
-            words: [
-                { en: "Supplies", ipa: "/səˈplaɪz/" }
-            ] 
-        },
-        { vi: "Bài đăng tuyển dụng (n)", words: [{ en: "Job posting", ipa: "/dʒɑːb ˈpoʊstɪŋ/" }] }
-    ]
+    { 
+        vi: "Bạn đồng chí (n)", 
+        words: [{ 
+            en: "Fellow", 
+            ipa: "/ˈfɛloʊ/", 
+            example: "As a fellow business owner, I understand your challenges.", 
+            exVi: "Với tư cách là một chủ doanh nghiệp đồng nghiệp, tôi hiểu những thách thức của bạn." 
+        }] 
+    },
+    { 
+        vi: "Sự mở cửa lại (n)", 
+        words: [{ 
+            en: "Reopening", 
+            ipa: "/riːˈoʊpnɪŋ/", 
+            example: "The store is getting ready for its grand reopening this Sunday.", 
+            exVi: "Cửa hàng đang chuẩn bị cho sự khai trương lại hoành tráng vào Chủ nhật này." 
+        }] 
+    },
+    { 
+        vi: "Bố cục (n)", 
+        words: [{ 
+            en: "Layout", 
+            ipa: "/ˈleɪˌaʊt/", 
+            example: "I really like the new layout of the bookstore.", 
+            exVi: "Tôi thực sự thích bố cục mới của hiệu sách." 
+        }] 
+    },
+    { 
+        vi: "Bánh nướng (n)", 
+        words: [{ 
+            en: "Baked goods", 
+            ipa: "/beɪkt ɡʊdz/", 
+            example: "The bakery is famous for its fresh baked goods.", 
+            exVi: "Tiệm bánh nổi tiếng với các loại bánh nướng tươi ngon." 
+        }] 
+    },
+    { 
+        vi: "Dụng cụ ăn uống bằng bạc (n)", 
+        words: [{ 
+            en: "Silverware", 
+            ipa: "/ˈsɪlvərˌwɛr/", 
+            example: "Please help me set the table with the polished silverware.", 
+            exVi: "Làm ơn giúp tôi bày bàn với bộ dụng cụ ăn uống bằng bạc đã được đánh bóng." 
+        }] 
+    },
+    { 
+        vi: "Sự xuất bản (n)", 
+        words: [{ 
+            en: "Publication", 
+            ipa: "/ˌpʌblɪˈkeɪʃn/", 
+            example: "The publication of his first novel was a huge success.", 
+            exVi: "Việc xuất bản cuốn tiểu thuyết đầu tay của anh ấy đã thành công rực rỡ." 
+        }] 
+    },
+    { 
+        vi: "Ấn phẩm (n)", 
+        words: [
+            { 
+                en: "Publication", 
+                ipa: "/ˌpʌblɪˈkeɪʃn/", 
+                example: "This monthly publication covers local news.", 
+                exVi: "Ấn phẩm hàng tháng này đưa tin về tin tức địa phương." 
+            },
+            { 
+                en: "Issue", 
+                ipa: "/ˈɪʃuː/", 
+                example: "Have you read the latest issue of the magazine?", 
+                exVi: "Bạn đã đọc số ấn phẩm mới nhất của tờ tạp chí chưa?" 
+            }
+        ] 
+    },
+    { 
+        vi: "Xuất bản (v)", 
+        words: [{ 
+            en: "Publish", 
+            ipa: "/ˈpʌblɪʃ/", 
+            example: "The company plans to publish a new cookbook next month.", 
+            exVi: "Công ty dự định xuất bản một cuốn sách nấu ăn mới vào tháng tới." 
+        }] 
+    },
+    { 
+        vi: "Phiếu quà tặng (n)", 
+        words: [{ 
+            en: "Gift certificate", 
+            ipa: "/ɡɪft sərˈtɪfɪkət/", 
+            example: "I received a $50 gift certificate for my birthday.", 
+            exVi: "Tôi đã nhận được một phiếu quà tặng trị giá 50 đô la vào ngày sinh nhật." 
+        }] 
+    },
+    { 
+        vi: "Buổi đọc sách của tác giả (n)", 
+        words: [{ 
+            en: "Author reading", 
+            ipa: "/ˈɔːθər ˈriːdɪŋ/", 
+            example: "The library is hosting an author reading this Friday night.", 
+            exVi: "Thư viện sẽ tổ chức một buổi đọc sách của tác giả vào tối thứ Sáu tuần này." 
+        }] 
+    },
+    { 
+        vi: "Tác giả (n)", 
+        words: [
+            { 
+                en: "Author", 
+                ipa: "/ˈɔːθər/", 
+                example: "The author signed copies of her book after the talk.", 
+                exVi: "Tác giả đã ký tặng vào các bản sao cuốn sách của mình sau buổi trò chuyện." 
+            },
+            { 
+                en: "Novelist", 
+                ipa: "/ˈnɑːvəlɪst/", 
+                example: "She is a famous novelist known for mystery stories.", 
+                exVi: "Cô ấy là một tiểu thuyết gia nổi tiếng với những câu chuyện thần bí." 
+            },
+            { 
+                en: "Writer", 
+                ipa: "/ˈraɪtər/", 
+                example: "He works as a freelance writer for several newspapers.", 
+                exVi: "Anh ấy làm việc như một người viết lách tự do cho vài tờ báo." 
+            }
+        ] 
+    },
+    { 
+        vi: "Mua (v)", 
+        words: [
+            { 
+                en: "Purchase", 
+                ipa: "/ˈpɜːrtʃəs/", 
+                example: "Tickets can be purchased online or at the box office.", 
+                exVi: "Vé có thể được mua trực tuyến hoặc tại quầy bán vé." 
+            },
+            { 
+                en: "Buy", 
+                ipa: "/baɪ/", 
+                example: "Where did you buy those beautiful flowers?", 
+                exVi: "Bạn đã mua những bông hoa đẹp đó ở đâu vậy?" 
+            }
+        ] 
+    },
+    { 
+        vi: "Vật tư/ vật dụng (n)", 
+        words: [{ 
+            en: "Supplies", 
+            ipa: "/səˈplaɪz/", 
+            example: "The office is running low on stationery supplies.", 
+            exVi: "Văn phòng đang sắp hết vật tư văn phòng phẩm." 
+        }] 
+    },
+    { 
+        vi: "Bài đăng tuyển dụng (n)", 
+        words: [{ 
+            en: "Job posting", 
+            ipa: "/dʒɑːb ˈpoʊstɪŋ/", 
+            example: "I saw your job posting on the company website.", 
+            exVi: "Tôi đã thấy bài đăng tuyển dụng của bạn trên trang web của công ty." 
+        }] 
+    }
+]
     },
     {
   "title": "Questions 35 - 37",
@@ -383,50 +349,168 @@ passage:[
     }
   ],
   "vocabulary": [
-    { "vi": "Đáng lẽ phải/ cần phải", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
-    { "vi": "Sẽ", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
-    { "vi": "Buổi tập luyện cá nhân", "words": [{ "en": "Personal training session", "ipa": "/ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn/" }] },
-    { "vi": "Giờ cao điểm", "words": [{ "en": "Rush-hour", "ipa": "/ˈrʌʃˌaʊər/" }] },
-    { "vi": "Hoàn tiền", "words": [{ "en": "Refunds", "ipa": "/ˈriːfʌndz/" }] },
-    { "vi": "Tự hỏi", "words": [{ "en": "Wonder", "ipa": "/ˈwʌndər/" }] },
-    { "vi": "Liệu rằng (từ nối)", "words": [{ "en": "If", "ipa": "/ɪf/" }, { "en": "Whether", "ipa": "/ˈwɛðər/" }] },
-    { "vi": "Có sẵn", "words": [{ "en": "Available", "ipa": "/əˈveɪləbl/" }] },
-    { "vi": "Rảnh-người", "words": [{ "en": "Available", "ipa": "/əˈveɪləbl/" }] },
-    { "vi": "Những buổi tập", "words": [{ "en": "Sessions", "ipa": "/ˈsɛʃnz/" }] },
     { 
-      "vi": "Những phần", 
-      "words": [
-        { "en": "Sections", "ipa": "/ˈsɛkʃnz/" }, 
-        { "en": "Parts", "ipa": "/pɑːrts/" }, 
-        { "en": "Portions", "ipa": "/ˈpɔːrʃnz/" }, 
-        { "en": "Segments", "ipa": "/ˈsɛɡmənts/" }
-      ] 
+        "vi": "Đáng lẽ phải/ cần phải (v phr)", 
+        "words": [{ 
+            "en": "Be supposed to do something", 
+            "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/",
+            "example": "You are supposed to finish the report by 5 PM.",
+            "exVi": "Bạn đáng lẽ phải hoàn thành bản báo cáo trước 5 giờ chiều."
+        }] 
     },
-    { "vi": "Bất động sản", "words": [{ "en": "Real estate", "ipa": "/ˈriːəl ɪˈsteɪt/" }, { "en": "Property", "ipa": "/ˈprɑːpərti/" }] },
     { 
-      "vi": "Công ty", 
-      "words": [
-        { "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, 
-        { "en": "Company", "ipa": "/ˈkʌmpəni/" }, 
-        { "en": "Firm", "ipa": "/fɜːrm/" },
-        { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }
-      ] 
+        "vi": "Sẽ (v phr)", 
+        "words": [{ 
+            "en": "Be supposed to do something", 
+            "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/",
+            "example": "It is supposed to rain tonight according to the forecast.",
+            "exVi": "Trời sẽ mưa vào tối nay theo như dự báo thời tiết."
+        }] 
     },
-    { "vi": "Trung tâm thể dục", "words": [{ "en": "Fitness center", "ipa": "/ˈfɪtnəs ˈsɛntər/" }, { "en": "Gym", "ipa": "/dʒɪm/" }] },
     { 
-      "vi": "Tìm kiếm", 
-      "words": [
-        { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, 
-        { "en": "Find", "ipa": "/faɪnd/" }, 
-        { "en": "Seek", "ipa": "/siːk/" },
-        { "en": "Look for", "ipa": "/lʊk fɔːr/" },
-        { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }
-      ] 
+        "vi": "Buổi tập luyện cá nhân (n)", 
+        "words": [{ 
+            "en": "Personal training session", 
+            "ipa": "/ˈpɜːrsənl ˈtreɪnɪŋ ˈsɛʃn/",
+            "example": "I have a personal training session at the gym tomorrow.",
+            "exVi": "Tôi có một buổi tập luyện cá nhân tại phòng gym vào ngày mai."
+        }] 
     },
-    { "vi": "Được tọa lạc", "words": [{ "en": "Located", "ipa": "/ˈloʊkeɪtɪd/" }, { "en": "Situated", "ipa": "/ˈsɪtʃueɪtɪd/" }] },
-    { "vi": "Phí", "words": [{ "en": "Fee", "ipa": "/fiː/" }, { "en": "Charge", "ipa": "/tʃɑːrdʒ/" }] },
-    { "vi": "Giá vé", "words": [{ "en": "Fare", "ipa": "/fɛr/" }] }
-  ]
+    { 
+        "vi": "Giờ cao điểm (n)", 
+        "words": [{ 
+            "en": "Rush-hour", 
+            "ipa": "/ˈrʌʃˌaʊər/",
+            "example": "Traffic is always heavy during rush-hour.",
+            "exVi": "Giao thông luôn tắc nghẽn trong suốt giờ cao điểm."
+        }] 
+    },
+    { 
+        "vi": "Hoàn tiền (n/v)", 
+        "words": [{ 
+            "en": "Refunds", 
+            "ipa": "/ˈriːfʌndz/",
+            "example": "The store offers full refunds for defective products.",
+            "exVi": "Cửa hàng cung cấp việc hoàn tiền toàn bộ cho các sản phẩm bị lỗi."
+        }] 
+    },
+    { 
+        "vi": "Tự hỏi (v)", 
+        "words": [{ 
+            "en": "Wonder", 
+            "ipa": "/ˈwʌndər/",
+            "example": "I wonder why he didn't show up at the meeting.",
+            "exVi": "Tôi tự hỏi tại sao anh ấy không xuất hiện tại cuộc họp."
+        }] 
+    },
+    { 
+        "vi": "Liệu rằng (conj)", 
+        "words": [
+            { 
+                "en": "If", "ipa": "/ɪf/",
+                "example": "Please let me know if you can come.",
+                "exVi": "Vui lòng cho tôi biết liệu rằng bạn có thể đến không."
+            }, 
+            { 
+                "en": "Whether", "ipa": "/ˈwɛðər/",
+                "example": "I'm not sure whether it will rain or not.",
+                "exVi": "Tôi không chắc liệu rằng trời sẽ mưa hay không."
+            }
+        ] 
+    },
+    { 
+        "vi": "Có sẵn (adj)", 
+        "words": [{ 
+            "en": "Available", 
+            "ipa": "/əˈveɪləbl/",
+            "example": "Is this model available in other colors?",
+            "exVi": "Mẫu này có sẵn các màu khác không?"
+        }] 
+    },
+    { 
+        "vi": "Rảnh - dùng cho người (adj)", 
+        "words": [{ 
+            "en": "Available", 
+            "ipa": "/əˈveɪləbl/",
+            "example": "The manager is not available at the moment.",
+            "exVi": "Quản lý hiện đang không rảnh vào lúc này."
+        }] 
+    },
+    { 
+        "vi": "Những buổi tập/phiên họp (n)", 
+        "words": [{ 
+            "en": "Sessions", 
+            "ipa": "/ˈsɛʃnz/",
+            "example": "The training course is divided into ten sessions.",
+            "exVi": "Khóa đào tạo được chia thành mười buổi tập."
+        }] 
+    },
+    { 
+        "vi": "Những phần/phân đoạn (n)", 
+        "words": [
+            { "en": "Sections", "ipa": "/ˈsɛkʃnz/", "example": "The book is divided into three sections.", "exVi": "Cuốn sách được chia thành ba phần." }, 
+            { "en": "Parts", "ipa": "/pɑːrts/", "example": "A car has thousands of moving parts.", "exVi": "Một chiếc xe hơi có hàng ngàn bộ phận chuyển động." }, 
+            { "en": "Portions", "ipa": "/ˈpɔːrʃnz/", "example": "The restaurant serves generous portions of food.", "exVi": "Nhà hàng phục vụ những phần ăn rất lớn." }, 
+            { "en": "Segments", "ipa": "/ˈsɛɡmənts/", "example": "The market is divided into several segments.", "exVi": "Thị trường được chia thành nhiều phân khúc/phần." }
+        ] 
+    },
+    { 
+        "vi": "Bất động sản (n)", 
+        "words": [
+            { "en": "Real estate", "ipa": "/ˈriːəl ɪˈsteɪt/", "example": "He made a fortune investing in real estate.", "exVi": "Anh ấy đã làm giàu nhờ đầu tư vào bất động sản." }, 
+            { "en": "Property", "ipa": "/ˈprɑːpərti/", "example": "The price of property in this area is rising.", "exVi": "Giá bất động sản ở khu vực này đang tăng lên." }
+        ] 
+    },
+    { 
+        "vi": "Công ty/Đại lý (n)", 
+        "words": [
+            { "en": "Agency", "ipa": "/ˈeɪdʒənsi/", "example": "I'm working with a local travel agency.", "exVi": "Tôi đang làm việc với một đại lý/công ty du lịch địa phương." }, 
+            { "en": "Company", "ipa": "/ˈkʌmpəni/", "example": "She works for a large technology company.", "exVi": "Cô ấy làm việc cho một công ty công nghệ lớn." }, 
+            { "en": "Firm", "ipa": "/fɜːrm/", "example": "He is a partner in a prestigious law firm.", "exVi": "Anh ấy là cộng sự trong một công ty luật uy tín." },
+            { "en": "Agent", "ipa": "/ˈeɪdʒənt/", "example": "You should contact a real estate agent.", "exVi": "Bạn nên liên hệ với một đại lý/người môi giới công ty bất động sản." }
+        ] 
+    },
+    { 
+        "vi": "Trung tâm thể dục (n)", 
+        "words": [
+            { "en": "Fitness center", "ipa": "/ˈfɪtnəs ˈsɛntər/", "example": "Our hotel has a fully equipped fitness center.", "exVi": "Khách sạn của chúng tôi có một trung tâm thể dục trang bị đầy đủ." }, 
+            { "en": "Gym", "ipa": "/dʒɪm/", "example": "I go to the gym three times a week.", "exVi": "Tôi đến phòng gym ba lần một tuần." }
+        ] 
+    },
+    { 
+        "vi": "Tìm kiếm/Xác định (v)", 
+        "words": [
+            { "en": "Locate", "ipa": "/loʊˈkeɪt/", "example": "We are trying to locate the source of the problem.", "exVi": "Chúng tôi đang cố gắng tìm kiếm nguồn gốc của vấn đề." }, 
+            { "en": "Find", "ipa": "/faɪnd/", "example": "Did you find your keys yet?", "exVi": "Bạn đã tìm thấy chìa khóa của mình chưa?" }, 
+            { "en": "Seek", "ipa": "/siːk/", "example": "The company is seeking a new marketing director.", "exVi": "Công ty đang tìm kiếm một giám đốc marketing mới." },
+            { "en": "Look for", "ipa": "/lʊk fɔːr/", "example": "I'm looking for a gift for my sister.", "exVi": "Tôi đang tìm kiếm một món quà cho em gái mình." },
+            { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/", "example": "The police are searching for the missing person.", "exVi": "Cảnh sát đang tìm kiếm người bị mất tích." }
+        ] 
+    },
+    { 
+        "vi": "Được tọa lạc (adj)", 
+        "words": [
+            { "en": "Located", "ipa": "/ˈloʊkeɪtɪd/", "example": "The office is conveniently located near the station.", "exVi": "Văn phòng được tọa lạc một cách thuận tiện gần nhà ga." }, 
+            { "en": "Situated", "ipa": "/ˈsɪtʃueɪtɪd/", "example": "The hotel is situated on a hill overlooking the sea.", "exVi": "Khách sạn được tọa lạc trên một ngọn đồi nhìn ra biển." }
+        ] 
+    },
+    { 
+        "vi": "Phí (n)", 
+        "words": [
+            { "en": "Fee", "ipa": "/fiː/", "example": "The entrance fee to the museum is $10.", "exVi": "Phí vào cửa bảo tàng là 10 đô la." }, 
+            { "en": "Charge", "ipa": "/tʃɑːrdʒ/", "example": "Is there an extra charge for delivery?", "exVi": "Có khoản phí thêm nào cho việc giao hàng không?" }
+        ] 
+    },
+    { 
+        "vi": "Giá vé - tàu, xe, máy bay (n)", 
+        "words": [{ 
+            "en": "Fare", 
+            "ipa": "/fɛr/",
+            "example": "How much is the bus fare to the airport?",
+            "exVi": "Giá vé xe buýt đến sân bay là bao nhiêu?"
+        }] 
+    }
+]
 },
 {
   "title": "Questions 38 - 40",
@@ -516,28 +600,167 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Hóa đơn", "words": [{ "en": "Invoice", "ipa": "/ˈɪnvɔɪs/" }, { "en": "Bill", "ipa": "/bɪl/" }, { "en": "Receipt", "ipa": "/rɪˈsiːt/" }] },
-    { "vi": "Phí", "words": [{ "en": "Charge", "ipa": "/tʃɑːrdʒ/" }, { "en": "Fee", "ipa": "/fiː/" }] },
-    { "vi": "Giá vé", "words": [{ "en": "Fare", "ipa": "/fɛr/" }] },
-    { "vi": "Hệ thống dây điện", "words": [{ "en": "Wiring", "ipa": "/ˈwaɪərɪŋ/" }] },
-    { "vi": "Dây điện", "words": [{ "en": "Wire", "ipa": "/ˈwaɪər/" }] },
-    { "vi": "Gói lắp đặt tiêu chuẩn", "words": [{ "en": "Standard installation", "ipa": "/ˈstændərd ˌɪnstəˈleɪʃn/" }] },
-    { "vi": "Duyệt", "words": [{ "en": "Approve", "ipa": "/əˈpruːv/" }, { "en": "Grant", "ipa": "/ɡrænt/" }] },
-    { "vi": "Sự từ chối", "words": [{ "en": "Refusal", "ipa": "/rɪˈfjuːzl/" }] },
-    { "vi": "Từ chối", "words": [{ "en": "Refuse", "ipa": "/rɪˈfjuːz/" }, { "en": "Reject", "ipa": "/rɪˈdʒɛkt/" }, { "en": "Decline", "ipa": "/dɪˈklaɪn/" }, { "en": "Turn down", "ipa": "/tɜːrn daʊn/" }] },
-    { "vi": "Hoàn lại chi phí", "words": [{ "en": "Reimbursement", "ipa": "/ˌriːɪmˈbɜːrsmənt/" }] },
-    { "vi": "Nhấn mạnh", "words": [{ "en": "Emphasize", "ipa": "/ˈɛmfəsaɪz/" }, { "en": "Stress", "ipa": "/strɛs/" }] },
-    { "vi": "Thiết bị điện", "words": [{ "en": "Appliance", "ipa": "/əˈplaɪəns/" }] },
-    { "vi": "Hư/hỏng", "words": [{ "en": "Break down", "ipa": "/breɪk daʊn/" }, { "en": "Damage", "ipa": "/ˈdæmɪdʒ/" }, { "en": "Malfunction", "ipa": "/ˌmælˈfʌŋkʃn/" }] },
-    { "vi": "Kỹ thuật viên", "words": [{ "en": "Technician", "ipa": "/tɛkˈnɪʃn/" }] },
-    { "vi": "Kỹ thuật", "words": [{ "en": "Technique", "ipa": "/tɛkˈniːk/" }] },
-    { "vi": "Thuộc về kỹ thuật", "words": [{ "en": "Technical", "ipa": "/ˈtɛknɪkl/" }] },
-    { "vi": "Không có sẵn/Không rảnh", "words": [{ "en": "Unavailable", "ipa": "/ˌʌnəˈveɪləbl/" }] },
-    { "vi": "Vượt quá", "words": [{ "en": "Exceed", "ipa": "/ɪkˈsiːd/" }, { "en": "Surpass", "ipa": "/sərˈpæs/" }] },
-    { "vi": "Tìm kiếm", "words": [{ "en": "Look for", "ipa": "/lʊk fɔːr/" }, { "en": "Find", "ipa": "/faɪnd/" }, { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, { "en": "Seek", "ipa": "/siːk/" }, { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }] },
-    { "vi": "Sách hướng dẫn", "words": [{ "en": "Manual", "ipa": "/ˈmænjuəl/" }] }
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Hóa đơn (n)", 
+        "words": [
+            { "en": "Invoice", "ipa": "/ˈɪnvɔɪs/", "example": "Please pay the outstanding invoice by Friday.", "exVi": "Vui lòng thanh toán hóa đơn còn nợ trước thứ Sáu." }, 
+            { "en": "Bill", "ipa": "/bɪl/", "example": "The waiter brought the bill to our table.", "exVi": "Người bồi bàn đã mang hóa đơn đến bàn của chúng tôi." }, 
+            { "en": "Receipt", "ipa": "/rɪˈsiːt/", "example": "Keep your receipt in case you need to return the item.", "exVi": "Hãy giữ lại biên lai trong trường hợp bạn cần trả lại hàng." }
+        ] 
+    },
+    { 
+        "vi": "Phí (n)", 
+        "words": [
+            { "en": "Charge", "ipa": "/tʃɑːrdʒ/", "example": "There is no extra charge for delivery.", "exVi": "Không có thêm phí cho việc giao hàng." }, 
+            { "en": "Fee", "ipa": "/fiː/", "example": "You have to pay a small processing fee.", "exVi": "Bạn phải trả một khoản phí xử lý nhỏ." }
+        ] 
+    },
+    { 
+        "vi": "Giá vé - tàu, xe, máy bay (n)", 
+        "words": [{ 
+            "en": "Fare", "ipa": "/fɛr/", 
+            "example": "Train fares have increased significantly this year.", 
+            "exVi": "Giá vé tàu đã tăng đáng kể trong năm nay." 
+        }] 
+    },
+    { 
+        "vi": "Hệ thống dây điện (n)", 
+        "words": [{ 
+            "en": "Wiring", "ipa": "/ˈwaɪərɪŋ/", 
+            "example": "The electrical wiring in this old house needs to be replaced.", 
+            "exVi": "Hệ thống dây điện trong ngôi nhà cũ này cần được thay thế." 
+        }] 
+    },
+    { 
+        "vi": "Dây điện (n)", 
+        "words": [{ 
+            "en": "Wire", "ipa": "/ˈwaɪər/", 
+            "example": "Be careful not to touch that live wire.", 
+            "exVi": "Cẩn thận đừng chạm vào sợi dây điện đang có điện đó." 
+        }] 
+    },
+    { 
+        "vi": "Gói lắp đặt tiêu chuẩn (n phr)", 
+        "words": [{ 
+            "en": "Standard installation", "ipa": "/ˈstændərd ˌɪnstəˈleɪʃn/", 
+            "example": "The price includes standard installation of the appliance.", 
+            "exVi": "Mức giá đã bao gồm gói lắp đặt tiêu chuẩn cho thiết bị." 
+        }] 
+    },
+    { 
+        "vi": "Duyệt / Chấp thuận (v)", 
+        "words": [
+            { "en": "Approve", "ipa": "/əˈpruːv/", "example": "The manager needs to approve your vacation request.", "exVi": "Quản lý cần phê duyệt yêu cầu nghỉ phép của bạn." }, 
+            { "en": "Grant", "ipa": "/ɡrænt/", "example": "The council decided to grant the permission.", "exVi": "Hội đồng đã quyết định cấp/duyệt quyền cho phép." }
+        ] 
+    },
+    { 
+        "vi": "Sự từ chối (n)", 
+        "words": [{ 
+            "en": "Refusal", "ipa": "/rɪˈfjuːzl/", 
+            "example": "His refusal to help us was very disappointing.", 
+            "exVi": "Sự từ chối giúp đỡ của anh ấy thật là đáng thất vọng." 
+        }] 
+    },
+    { 
+        "vi": "Từ chối (v)", 
+        "words": [
+            { "en": "Refuse", "ipa": "/rɪˈfjuːz/", "example": "I politely refuse his invitation.", "exVi": "Tôi lịch sự từ chối lời mời của anh ấy." }, 
+            { "en": "Reject", "ipa": "/rɪˈdʒɛkt/", "example": "The machine will reject any damaged coins.", "exVi": "Máy sẽ từ chối bất kỳ đồng xu nào bị hư hỏng." }, 
+            { "en": "Decline", "ipa": "/dɪˈklaɪn/", "example": "She declined to comment on the matter.", "exVi": "Cô ấy đã từ chối bình luận về vấn đề này." }, 
+            { "en": "Turn down", "ipa": "/tɜːrn daʊn/", "example": "They turned down my job application.", "exVi": "Họ đã từ chối đơn xin việc của tôi." }
+        ] 
+    },
+    { 
+        "vi": "Hoàn lại chi phí (n)", 
+        "words": [{ 
+            "en": "Reimbursement", "ipa": "/ˌriːɪmˈbɜːrsmənt/", 
+            "example": "You will receive reimbursement for your travel expenses.", 
+            "exVi": "Bạn sẽ nhận được khoản hoàn lại cho các chi phí đi lại của mình." 
+        }] 
+    },
+    { 
+        "vi": "Nhấn mạnh (v)", 
+        "words": [
+            { "en": "Emphasize", "ipa": "/ˈɛmfəsaɪz/", "example": "The teacher emphasized the importance of regular practice.", "exVi": "Giáo viên nhấn mạnh tầm quan trọng của việc luyện tập thường xuyên." }, 
+            { "en": "Stress", "ipa": "/strɛs/", "example": "I must stress that this information is confidential.", "exVi": "Tôi phải nhấn mạnh rằng thông tin này là bảo mật." }
+        ] 
+    },
+    { 
+        "vi": "Thiết bị điện (n)", 
+        "words": [{ 
+            "en": "Appliance", "ipa": "/əˈplaɪəns/", 
+            "example": "The kitchen is equipped with modern appliances.", 
+            "exVi": "Nhà bếp được trang bị các thiết bị điện hiện đại." 
+        }] 
+    },
+    { 
+        "vi": "Hư / Hỏng / Trục trặc (v)", 
+        "words": [
+            { "en": "Break down", "ipa": "/breɪk daʊn/", "example": "Our car broke down on the way to the airport.", "exVi": "Xe của chúng tôi đã bị hỏng trên đường đến sân bay." }, 
+            { "en": "Damage", "ipa": "/ˈdæmɪdʒ/", "example": "The storm caused severe damage to the roof.", "exVi": "Cơn bão đã gây ra hư hỏng nặng cho mái nhà." }, 
+            { "en": "Malfunction", "ipa": "/ˌmælˈfʌŋkʃn/", "example": "The cooling system is malfunctioning.", "exVi": "Hệ thống làm mát đang bị trục trặc/hỏng." }
+        ] 
+    },
+    { 
+        "vi": "Kỹ thuật viên (n)", 
+        "words": [{ 
+            "en": "Technician", "ipa": "/tɛkˈnɪʃn/", 
+            "example": "We need a technician to fix the internet connection.", 
+            "exVi": "Chúng tôi cần một kỹ thuật viên để sửa kết nối internet." 
+        }] 
+    },
+    { 
+        "vi": "Kỹ thuật - phương pháp thực hiện (n)", 
+        "words": [{ 
+            "en": "Technique", "ipa": "/tɛkˈniːk/", 
+            "example": "She uses a special technique to paint these portraits.", 
+            "exVi": "Cô ấy sử dụng một kỹ thuật đặc biệt để vẽ những bức chân dung này." 
+        }] 
+    },
+    { 
+        "vi": "Thuộc về kỹ thuật (adj)", 
+        "words": [{ 
+            "en": "Technical", "ipa": "/ˈtɛknɪkl/", 
+            "example": "The manual is full of difficult technical terms.", 
+            "exVi": "Sách hướng dẫn đầy những thuật ngữ kỹ thuật khó." 
+        }] 
+    },
+    { 
+        "vi": "Không có sẵn / Không rảnh (adj)", 
+        "words": [{ 
+            "en": "Unavailable", "ipa": "/ˌʌnəˈveɪləbl/", 
+            "example": "I'm sorry, the manager is unavailable at the moment.", 
+            "exVi": "Tôi xin lỗi, quản lý hiện không rảnh vào lúc này." 
+        }] 
+    },
+    { 
+        "vi": "Vượt quá (v)", 
+        "words": [
+            { "en": "Exceed", "ipa": "/ɪkˈsiːd/", "example": "The cost must not exceed the budget.", "exVi": "Chi phí không được vượt quá ngân sách." }, 
+            { "en": "Surpass", "ipa": "/sərˈpæs/", "example": "His performance surpassed all expectations.", "exVi": "Màn trình diễn của anh ấy đã vượt quá mọi mong đợi." }
+        ] 
+    },
+    { 
+        "vi": "Tìm kiếm (v)", 
+        "words": [
+            { "en": "Look for", "ipa": "/lʊk fɔːr/", "example": "I'm looking for my glasses.", "exVi": "Tôi đang tìm kính của mình." }, 
+            { "en": "Find", "ipa": "/faɪnd/", "example": "I can't find my keys anywhere.", "exVi": "Tôi không thể tìm thấy chìa khóa ở bất cứ đâu." }, 
+            { "en": "Locate", "ipa": "/loʊˈkeɪt/", "example": "The GPS helped us locate the restaurant.", "exVi": "GPS đã giúp chúng tôi xác định vị trí nhà hàng." }, 
+            { "en": "Seek", "ipa": "/siːk/", "example": "They are seeking professional advice.", "exVi": "Họ đang tìm kiếm lời khuyên chuyên nghiệp." }, 
+            { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/", "example": "Rescue teams are searching for survivors.", "exVi": "Các đội cứu hộ đang tìm kiếm những người sống sót." }
+        ] 
+    },
+    { 
+        "vi": "Sách hướng dẫn (n)", 
+        "words": [{ 
+            "en": "Manual", "ipa": "/ˈmænjuəl/", 
+            "example": "Please read the instruction manual carefully.", 
+            "exVi": "Vui lòng đọc kỹ sách hướng dẫn sử dụng." 
+        }] 
+    }
+]
 },
 {
   "title": "Questions 41 - 43",
@@ -612,21 +835,118 @@ passage:[
     }
   ],
   "vocabulary": [
-    { "vi": "Sở hữu (v)", "words": [{ "en": "Own", "ipa": "/oʊn/" }, { "en": "Possess", "ipa": "/pəˈzɛs/" }] },
-    { "vi": "Chuyến nghỉ dưỡng (n)", "words": [{ "en": "Retreat", "ipa": "/rɪˈtriːt/" }] },
-    { "vi": "Phương tiện chuyên chở (n)", "words": [{ "en": "Transportation", "ipa": "/ˌtrænspɔːrˈteɪʃn/" }] },
-    { "vi": "Sự ước tính (n)", "words": [{ "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/" }] },
-    { "vi": "Bảng báo giá (n)", "words": [{ "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/" }, { "en": "Quote", "ipa": "/kwoʊt/" }] },
-    { "vi": "Đặt trước (v)", "words": [{ "en": "Reserve", "ipa": "/rɪˈzɜːrv/" }, { "en": "Book", "ipa": "/bʊk/" }] },
-    { "vi": "Địa điểm (n)", "words": [{ "en": "Venue", "ipa": "/ˈvɛnjuː/" }, { "en": "Site", "ipa": "/saɪt/" }, { "en": "Location", "ipa": "/loʊˈkeɪʃn/" }, { "en": "Spot", "ipa": "/spɑːt/" }] },
-    { "vi": "Tuyến đường / Lộ trình (n)", "words": [{ "en": "Route", "ipa": "/ruːt/" }] },
-    { "vi": "Công ty / Đại lý (n)", "words": [{ "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, { "en": "Company", "ipa": "/ˈkʌmpəni/" }, { "en": "Firm", "ipa": "/fɜːrm/" }, { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }] },
-    { "vi": "Gây bối rối / Khó hiểu (adj)", "words": [{ "en": "Confusing", "ipa": "/kənˈfjuːzɪŋ/" }] },
-    { "vi": "Biết / Quan tâm về cái gì (adj)", "words": [{ "en": "Aware of something", "ipa": "/əˈwɛr ʌv ˈsʌmθɪŋ/" }] },
-    { "vi": "Bị hư / Trục trặc (phrase)", "words": [{ "en": "Is down", "ipa": "/ɪz daʊn/" }] },
-    { "vi": "Ngừng hẳn / Đã hỏng (phrase)", "words": [{ "en": "Was down", "ipa": "/wʌz daʊn/" }] },
-    { "vi": "Cũ / Lỗi thời (adj)", "words": [{ "en": "Outdated", "ipa": "/ˌaʊtˈdeɪtɪd/" }, { "en": "Out-of-date", "ipa": "/ˌaʊt əv ˈdeɪt/" }, { "en": "Old", "ipa": "/oʊld/" }] }
-  ]
+    { 
+        "vi": "Sở hữu (v)", 
+        "words": [
+            { "en": "Own", "ipa": "/oʊn/", "example": "Does he own the building or just rent a room?", "exVi": "Anh ấy sở hữu tòa nhà hay chỉ thuê một phòng?" }, 
+            { "en": "Possess", "ipa": "/pəˈzɛs/", "example": "He was found to possess rare technical skills.", "exVi": "Anh ấy được nhận thấy là sở hữu những kỹ năng kỹ thuật hiếm có." }
+        ] 
+    },
+    { 
+        "vi": "Chuyến nghỉ dưỡng (n)", 
+        "words": [{ 
+            "en": "Retreat", "ipa": "/rɪˈtriːt/", 
+            "example": "The company is organizing a weekend retreat for all employees.", 
+            "exVi": "Công ty đang tổ chức một chuyến nghỉ dưỡng cuối tuần cho tất cả nhân viên." 
+        }] 
+    },
+    { 
+        "vi": "Phương tiện chuyên chở (n)", 
+        "words": [{ 
+            "en": "Transportation", "ipa": "/ˌtrænspɔːrˈteɪʃn/", 
+            "example": "Public transportation is the best way to get around the city.", 
+            "exVi": "Phương tiện giao thông công cộng là cách tốt nhất để đi lại quanh thành phố." 
+        }] 
+    },
+    { 
+        "vi": "Sự ước tính (n)", 
+        "words": [{ 
+            "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/", 
+            "example": "We need a rough estimate of how many people will attend.", 
+            "exVi": "Chúng ta cần một sự ước tính sơ bộ về việc có bao nhiêu người sẽ tham dự." 
+        }] 
+    },
+    { 
+        "vi": "Bảng báo giá (n)", 
+        "words": [
+            { "en": "Estimate", "ipa": "/ˈɛstɪmeɪt/", "example": "The repair shop gave me a free estimate for the fix.", "exVi": "Tiệm sửa chữa đã cho tôi một bảng báo giá miễn phí cho việc sửa chữa." }, 
+            { "en": "Quote", "ipa": "/kwoʊt/", "example": "I'm waiting for a quote from the construction company.", "exVi": "Tôi đang chờ bảng báo giá từ công ty xây dựng." }
+        ] 
+    },
+    { 
+        "vi": "Đặt trước (v)", 
+        "words": [
+            { "en": "Reserve", "ipa": "/rɪˈzɜːrv/", "example": "I'd like to reserve a table for two at 7 PM.", "exVi": "Tôi muốn đặt trước một bàn cho hai người vào lúc 7 giờ tối." }, 
+            { "en": "Book", "ipa": "/bʊk/", "example": "You should book your flights at least a month in advance.", "exVi": "Bạn nên đặt trước vé máy bay ít nhất một tháng." }
+        ] 
+    },
+    { 
+        "vi": "Địa điểm (n)", 
+        "words": [
+            { "en": "Venue", "ipa": "/ˈvɛnjuː/", "example": "The hotel is an ideal venue for wedding receptions.", "exVi": "Khách sạn là một địa điểm lý tưởng cho các buổi tiệc cưới." }, 
+            { "en": "Site", "ipa": "/saɪt/", "example": "This is the future site of our new headquarters.", "exVi": "Đây là địa điểm tương lai của trụ sở mới của chúng ta." }, 
+            { "en": "Location", "ipa": "/loʊˈkeɪʃn/", "example": "The map shows the exact location of the property.", "exVi": "Bản đồ hiển thị vị trí chính xác của bất động sản." }, 
+            { "en": "Spot", "ipa": "/spɑːt/", "example": "This is a great spot for a picnic.", "exVi": "Đây là một địa điểm tuyệt vời để đi dã ngoại." }
+        ] 
+    },
+    { 
+        "vi": "Tuyến đường / Lộ trình (n)", 
+        "words": [{ 
+            "en": "Route", "ipa": "/ruːt/", 
+            "example": "Which is the fastest route to the airport?", 
+            "exVi": "Tuyến đường nào là nhanh nhất để đến sân bay?" 
+        }] 
+    },
+    { 
+        "vi": "Công ty / Đại lý (n)", 
+        "words": [
+            { "en": "Agency", "ipa": "/ˈeɪdʒənsi/", "example": "She works for an advertising agency in the city.", "exVi": "Cô ấy làm việc cho một đại lý quảng cáo trong thành phố." }, 
+            { "en": "Company", "ipa": "/ˈkʌmpəni/", "example": "The company has over 500 employees.", "exVi": "Công ty có hơn 500 nhân viên." }, 
+            { "en": "Firm", "ipa": "/fɜːrm/", "example": "He recently joined a prestigious law firm.", "exVi": "Anh ấy vừa gia nhập một công ty luật uy tín." }, 
+            { "en": "Agent", "ipa": "/ˈeɪdʒənt/", "example": "Contact your travel agent to confirm the booking.", "exVi": "Hãy liên hệ với đại lý du lịch của bạn để xác nhận việc đặt chỗ." }
+        ] 
+    },
+    { 
+        "vi": "Gây bối rối / Khó hiểu (adj)", 
+        "words": [{ 
+            "en": "Confusing", "ipa": "/kənˈfjuːzɪŋ/", 
+            "example": "The instructions on the box are very confusing.", 
+            "exVi": "Các hướng dẫn trên chiếc hộp rất khó hiểu." 
+        }] 
+    },
+    { 
+        "vi": "Biết / Quan tâm về cái gì (adj)", 
+        "words": [{ 
+            "en": "Aware of something", "ipa": "/əˈwɛr ʌv ˈsʌmθɪŋ/", 
+            "example": "Are you aware of the new safety regulations?", 
+            "exVi": "Bạn có biết về các quy định an toàn mới không?" 
+        }] 
+    },
+    { 
+        "vi": "Bị hư / Trục trặc (phrase)", 
+        "words": [{ 
+            "en": "Is down", "ipa": "/ɪz daʊn/", 
+            "example": "The office network is down, so we can't send emails.", 
+            "exVi": "Mạng văn phòng đang bị trục trặc, nên chúng tôi không thể gửi email." 
+        }] 
+    },
+    { 
+        "vi": "Ngừng hẳn / Đã hỏng (phrase)", 
+        "words": [{ 
+            "en": "Was down", "ipa": "/wʌz daʊn/", 
+            "example": "The system was down for several hours yesterday.", 
+            "exVi": "Hệ thống đã bị ngừng hoạt động trong vài giờ vào ngày hôm qua." 
+        }] 
+    },
+    { 
+        "vi": "Cũ / Lỗi thời (adj)", 
+        "words": [
+            { "en": "Outdated", "ipa": "/ˌaʊtˈdeɪtɪd/", "example": "The software is outdated and needs an update.", "exVi": "Phần mềm này đã lỗi thời và cần được cập nhật." }, 
+            { "en": "Out-of-date", "ipa": "/ˌaʊt əv ˈdeɪt/", "example": "These statistics are completely out-of-date.", "exVi": "Những số liệu thống kê này hoàn toàn đã cũ." }, 
+            { "en": "Old", "ipa": "/oʊld/", "example": "This is an old model of the controller.", "exVi": "Đây là một mẫu cũ của bộ điều khiển." }
+        ] 
+    }
+]
 },
 {
   "title": "Questions 44 - 46",
@@ -705,46 +1025,369 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Phát hành / Vấn đề", "words": [{ "en": "Issue", "ipa": "/ˈɪʃuː/" }] },
-    { "vi": "Ấn phẩm", "words": [{ "en": "Issue", "ipa": "/ˈɪʃuː/" }, { "en": "Publication", "ipa": "/ˌpʌblɪˈkeɪʃn/" }] },
-    { "vi": "Tính năng / Bài báo chính", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Function", "ipa": "/ˈfʌŋkʃn/" }] },
-    { "vi": "Bài báo", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Article", "ipa": "/ˈɑːrtɪkl/" }] },
-    { "vi": "Kiểm tra / Cuộc thi", "words": [{ "en": "Contest", "ipa": "/ˈkɑːntɛst/" }, { "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }] },
-    { "vi": "Nộp", "words": [{ "en": "Submit", "ipa": "/səbˈmɪt/" }, { "en": "Turn in", "ipa": "/tɜːrn ɪn/" }, { "en": "File", "ipa": "/faɪl/" }] },
-    { "vi": "Chọn", "words": [{ "en": "Pick", "ipa": "/pɪk/" }, { "en": "Choose", "ipa": "/tʃuːz/" }] },
-    { "vi": "Hướng dẫn", "words": [{ "en": "Instruction", "ipa": "/ɪnˈstrʌkʃn/" }, { "en": "Guideline", "ipa": "/ˈɡaɪdlaɪn/" }, { "en": "Direction", "ipa": "/dəˈrɛkʃn/" }] },
-    { "vi": "Người tham gia", "words": [{ "en": "Participant", "ipa": "/pɑːrˈtɪsɪpənt/" }, { "en": "Attendee", "ipa": "/əˌtɛnˈdiː/" }] },
-    { "vi": "Lãnh đạo / Dẫn dắt", "words": [{ "en": "Lead", "ipa": "/liːd/" }] },
-    { "vi": "Bao phủ / Bao gồm / Chi trả / Đưa tin", "words": [{ "en": "Cover", "ipa": "/ˈkʌvər/" }] },
-    { "vi": "Giám đốc điều hành", "words": [{ "en": "Executive", "ipa": "/ɪɡˈzɛkjətɪv/" }] },
-    { "vi": "Bài đánh giá / Sự xem xét", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }] },
-    { "vi": "Đánh giá / Xem xét", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }] },
-    { "vi": "Tái cơ cấu", "words": [{ "en": "Restructure", "ipa": "/ˌriːˈstrʌktʃər/" }, { "en": "Reorganize", "ipa": "/riːˈɔːrɡənaɪz/" }] },
-    { "vi": "Xuất bản", "words": [{ "en": "Publish", "ipa": "/ˈpʌblɪʃ/" }, { "en": "Issue", "ipa": "/ˈɪʃuː/" }] },
-    { 
-      "vi": "Thay đổi / Chỉnh sửa", 
+"vocabulary": [
+    {
+      "vi": "Phát hành / Vấn đề (v/n)",
       "words": [
-        { "en": "Revise", "ipa": "/rɪˈvaɪz/" }, 
-        { "en": "Alter", "ipa": "/ˈɔːltər/" }, 
-        { "en": "Adapt", "ipa": "/əˈdæpt/" }, 
-        { "en": "Adjust", "ipa": "/əˈdʒʌst/" }, 
-        { "en": "Modify", "ipa": "/ˈmɑːdɪfaɪ/" }, 
-        { "en": "Change", "ipa": "/tʃeɪndʒ/" }
-      ] 
+        {
+          "en": "Issue",
+          "ipa": "/ˈɪʃuː/",
+          "example": "The company will issue a formal statement regarding the problem.",
+          "exVi": "Công ty sẽ phát hành một thông báo chính thức liên quan đến vấn đề này."
+        }
+      ]
     },
-    { "vi": "Cuộc thi", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }, { "en": "Contest", "ipa": "/ˈkɑːntɛst/" }] },
-    { "vi": "Sự cạnh tranh", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }] },
-    { "vi": "Đối thủ cạnh tranh", "words": [{ "en": "Competition", "ipa": "/ˌkɑːmpəˈtɪʃn/" }, { "en": "Competitors", "ipa": "/kəmˈpɛtɪtərz/" }] },
-    { "vi": "Bản thiết kế", "words": [{ "en": "Blueprint", "ipa": "/ˈbluːprɪnt/" }] },
-    { 
-      "vi": "Đề xuất", 
+    {
+      "vi": "Ấn phẩm (n)",
       "words": [
-        { "en": "Proposal", "ipa": "/prəˈpoʊzl/" }, 
-        { "en": "Suggestion", "ipa": "/səˈdʒɛstʃən/" }, 
-        { "en": "Recommendation", "ipa": "/ˌrɛkəmɛnˈdeɪʃn/" }, 
-        { "en": "Idea", "ipa": "/aɪˈdiə/" }
-      ] 
+        {
+          "en": "Issue",
+          "ipa": "/ˈɪʃuː/",
+          "example": "Have you seen the July issue of the magazine?",
+          "exVi": "Bạn đã thấy ấn phẩm số tháng Bảy của tờ tạp chí chưa?"
+        },
+        {
+          "en": "Publication",
+          "ipa": "/ˌpʌblɪˈkeɪʃn/",
+          "example": "The scientific publication is updated every quarter.",
+          "exVi": "Ấn phẩm khoa học này được cập nhật mỗi quý."
+        }
+      ]
+    },
+    {
+      "vi": "Tính năng / Chức năng (n)",
+      "words": [
+        {
+          "en": "Feature",
+          "ipa": "/ˈfiːtʃər/",
+          "example": "This new phone has a unique face-recognition feature.",
+          "exVi": "Chiếc điện thoại mới này có một tính năng nhận diện khuôn mặt độc đáo."
+        },
+        {
+          "en": "Function",
+          "ipa": "/ˈfʌŋkʃn/",
+          "example": "The main function of this software is to organize files.",
+          "exVi": "Chức năng chính của phần mềm này là để sắp xếp các tệp tin."
+        }
+      ]
+    },
+    {
+      "vi": "Bài báo / Chuyên mục đặc biệt (n)",
+      "words": [
+        {
+          "en": "Feature",
+          "ipa": "/ˈfiːtʃər/",
+          "example": "The magazine ran a special feature on renewable energy.",
+          "exVi": "Tờ tạp chí đã đăng một bài báo đặc biệt về năng lượng tái tạo."
+        },
+        {
+          "en": "Article",
+          "ipa": "/ˈɑːrtɪkl/",
+          "example": "I read an interesting article about AI today.",
+          "exVi": "Hôm nay tôi đã đọc một bài báo thú vị về trí tuệ nhân tạo."
+        }
+      ]
+    },
+    {
+      "vi": "Cuộc thi / Sự cạnh tranh (n)",
+      "words": [
+        {
+          "en": "Contest",
+          "ipa": "/ˈkɑːntɛst/",
+          "example": "He entered a photo contest and won first prize.",
+          "exVi": "Anh ấy đã tham gia một cuộc thi ảnh và giành giải nhất."
+        },
+        {
+          "en": "Competition",
+          "ipa": "/ˌkɑːmpəˈtɪʃn/",
+          "example": "There is a lot of competition for this job.",
+          "exVi": "Có rất nhiều sự cạnh tranh cho công việc này."
+        }
+      ]
+    },
+    {
+      "vi": "Nộp (v)",
+      "words": [
+        {
+          "en": "Submit",
+          "ipa": "/səbˈmɪt/",
+          "example": "Please submit your application before the deadline.",
+          "exVi": "Vui lòng nộp đơn đăng ký của bạn trước thời hạn."
+        },
+        {
+          "en": "Turn in",
+          "ipa": "/tɜːrn ɪn/",
+          "example": "Don't forget to turn in your homework.",
+          "exVi": "Đừng quên nộp bài tập về nhà của bạn."
+        },
+        {
+          "en": "File",
+          "ipa": "/faɪl/",
+          "example": "You need to file your taxes by mid-April.",
+          "exVi": "Bạn cần nộp hồ sơ thuế trước giữa tháng Tư."
+        }
+      ]
+    },
+    {
+      "vi": "Chọn (v)",
+      "words": [
+        {
+          "en": "Pick",
+          "ipa": "/pɪk/",
+          "example": "Pick a card, any card.",
+          "exVi": "Hãy chọn một lá bài, bất kỳ lá nào."
+        },
+        {
+          "en": "Choose",
+          "ipa": "/tʃuːz/",
+          "example": "You can choose between chocolate or vanilla.",
+          "exVi": "Bạn có thể chọn giữa sô-cô-la hoặc va-ni."
+        }
+      ]
+    },
+    {
+      "vi": "Hướng dẫn / Chỉ dẫn (n)",
+      "words": [
+        {
+          "en": "Instruction",
+          "ipa": "/ɪnˈstrʌkʃn/",
+          "example": "Follow the instructions on the back of the box.",
+          "exVi": "Làm theo các hướng dẫn ở mặt sau của hộp."
+        },
+        {
+          "en": "Guideline",
+          "ipa": "/ˈɡaɪdlaɪn/",
+          "example": "The government issued new health guidelines.",
+          "exVi": "Chính phủ đã ban hành các hướng dẫn/nguyên tắc sức khỏe mới."
+        },
+        {
+          "en": "Direction",
+          "ipa": "/dəˈrɛkʃn/",
+          "example": "I need clear directions on how to get to your house.",
+          "exVi": "Tôi cần những chỉ dẫn rõ ràng về cách đi đến nhà bạn."
+        }
+      ]
+    },
+    {
+      "vi": "Người tham gia / Người tham dự (n)",
+      "words": [
+        {
+          "en": "Participant",
+          "ipa": "/pɑːrˈtɪsɪpənt/",
+          "example": "All participants will receive a certificate.",
+          "exVi": "Tất cả những người tham gia sẽ nhận được một giấy chứng nhận."
+        },
+        {
+          "en": "Attendee",
+          "ipa": "/əˌtɛnˈdiː/",
+          "example": "The conference had over 500 attendees.",
+          "exVi": "Hội nghị đã có hơn 500 người tham dự."
+        }
+      ]
+    },
+    {
+      "vi": "Lãnh đạo / Dẫn dắt (v/n)",
+      "words": [
+        {
+          "en": "Lead",
+          "ipa": "/liːd/",
+          "example": "She was chosen to lead the marketing project.",
+          "exVi": "Cô ấy đã được chọn để dẫn dắt dự án marketing."
+        }
+      ]
+    },
+    {
+      "vi": "Bao phủ / Chi trả / Đưa tin (v)",
+      "words": [
+        {
+          "en": "Cover",
+          "ipa": "/ˈkʌvər/",
+          "example": "Does the insurance cover accidental damage?",
+          "exVi": "Bảo hiểm có chi trả cho những hư hỏng do tai nạn không?"
+        }
+      ]
+    },
+    {
+      "vi": "Giám đốc điều hành / Quản lý cấp cao (n)",
+      "words": [
+        {
+          "en": "Executive",
+          "ipa": "/ɪɡˈzɛkjətɪv/",
+          "example": "He is a senior executive at a global tech firm.",
+          "exVi": "Ông ấy là một giám đốc điều hành cấp cao tại một công ty công nghệ toàn cầu."
+        }
+      ]
+    },
+    {
+      "vi": "Sự đánh giá / Bài phê bình (n)",
+      "words": [
+        {
+          "en": "Review",
+          "ipa": "/rɪˈvjuː/",
+          "example": "The restaurant received a positive review in the newspaper.",
+          "exVi": "Nhà hàng đã nhận được một bài đánh giá tích cực trên báo."
+        }
+      ]
+    },
+    {
+      "vi": "Đánh giá / Xem xét lại (v)",
+      "words": [
+        {
+          "en": "Review",
+          "ipa": "/rɪˈvjuː/",
+          "example": "We need to review the budget for next year.",
+          "exVi": "Chúng ta cần xem xét/đánh giá lại ngân sách cho năm tới."
+        }
+      ]
+    },
+    {
+      "vi": "Tái cơ cấu / Tổ chức lại (v)",
+      "words": [
+        {
+          "en": "Restructure",
+          "ipa": "/ˌriːˈstrʌktʃər/",
+          "example": "The company decided to restructure its sales department.",
+          "exVi": "Công ty đã quyết định tái cơ cấu bộ phận bán hàng."
+        },
+        {
+          "en": "Reorganize",
+          "ipa": "/riːˈɔːrɡənaɪz/",
+          "example": "I need to reorganize my bookshelf.",
+          "exVi": "Tôi cần tổ chức/sắp xếp lại kệ sách của mình."
+        }
+      ]
+    },
+    {
+      "vi": "Xuất bản / Phát hành (v)",
+      "words": [
+        {
+          "en": "Publish",
+          "ipa": "/ˈpʌblɪʃ/",
+          "example": "They plan to publish the results of the study.",
+          "exVi": "Họ dự định xuất bản các kết quả của nghiên cứu."
+        },
+        {
+          "en": "Issue",
+          "ipa": "/ˈɪʃuː/",
+          "example": "The bank will issue a new credit card to you.",
+          "exVi": "Ngân hàng sẽ phát hành/xuất bản một thẻ tín dụng mới cho bạn."
+        }
+      ]
+    },
+    {
+      "vi": "Thay đổi / Chỉnh sửa / Điều chỉnh (v)",
+      "words": [
+        {
+          "en": "Revise",
+          "ipa": "/rɪˈvaɪz/",
+          "example": "I need to revise my essay before submitting it.",
+          "exVi": "Tôi cần chỉnh sửa bài luận của mình trước khi nộp."
+        },
+        {
+          "en": "Alter",
+          "ipa": "/ˈɔːltər/",
+          "example": "The tailor will alter the dress to fit her better.",
+          "exVi": "Thợ may sẽ sửa chiếc váy để nó vừa vặn với cô ấy hơn."
+        },
+        {
+          "en": "Adapt",
+          "ipa": "/əˈdæpt/",
+          "example": "It takes time to adapt to a new environment.",
+          "exVi": "Cần thời gian để thích nghi/thay đổi phù hợp với môi trường mới."
+        },
+        {
+          "en": "Adjust",
+          "ipa": "/əˈdʒʌst/",
+          "example": "You can adjust the height of the chair.",
+          "exVi": "Bạn có thể điều chỉnh độ cao của chiếc ghế."
+        },
+        {
+          "en": "Modify",
+          "ipa": "/ˈmɑːdɪfaɪ/",
+          "example": "The design was modified to reduce costs.",
+          "exVi": "Thiết kế đã được chỉnh sửa để giảm chi phí."
+        },
+        {
+          "en": "Change",
+          "ipa": "/tʃeɪndʒ/",
+          "example": "The weather can change quickly in the mountains.",
+          "exVi": "Thời tiết có thể thay đổi nhanh chóng ở vùng núi."
+        }
+      ]
+    },
+    {
+      "vi": "Cuộc thi (n)",
+      "words": [
+        {
+          "en": "Competition",
+          "ipa": "/ˌkɑːmpəˈtɪʃn/",
+          "example": "He won the swimming competition.",
+          "exVi": "Anh ấy đã thắng cuộc thi bơi lội."
+        },
+        {
+          "en": "Contest",
+          "ipa": "/ˈkɑːntɛst/",
+          "example": "The spelling contest will start at 10 AM.",
+          "exVi": "Cuộc thi đánh vần sẽ bắt đầu lúc 10 giờ sáng."
+        }
+      ]
+    },
+    {
+      "vi": "Sự cạnh tranh / Đối thủ (n)",
+      "words": [
+        {
+          "en": "Competition",
+          "ipa": "/ˌkɑːmpəˈtɪʃn/",
+          "example": "Global competition is getting tougher for small businesses.",
+          "exVi": "Sự cạnh tranh toàn cầu đang trở nên gay gắt hơn đối với các doanh nghiệp nhỏ."
+        },
+        {
+          "en": "Competitors",
+          "ipa": "/kəmˈpɛtɪtərz/",
+          "example": "Our main competitors are lowering their prices.",
+          "exVi": "Các đối thủ cạnh tranh chính của chúng ta đang hạ giá của họ."
+        }
+      ]
+    },
+    {
+      "vi": "Bản thiết kế / Kế hoạch chi tiết (n)",
+      "words": [
+        {
+          "en": "Blueprint",
+          "ipa": "/ˈbluːprɪnt/",
+          "example": "The architects are drawing the blueprints for the new museum.",
+          "exVi": "Các kiến trúc sư đang vẽ bản thiết kế cho bảo tàng mới."
+        }
+      ]
+    },
+    {
+      "vi": "Đề xuất / Ý tưởng / Gợi ý (n)",
+      "words": [
+        {
+          "en": "Proposal",
+          "ipa": "/prəˈpoʊzl/",
+          "example": "The board is considering your proposal.",
+          "exVi": "Ban điều hành đang xem xét đề xuất của bạn."
+        },
+        {
+          "en": "Suggestion",
+          "ipa": "/səˈdʒɛstʃən/",
+          "example": "Do you have any suggestions for a good restaurant?",
+          "exVi": "Bạn có gợi ý nào về một nhà hàng ngon không?"
+        },
+        {
+          "en": "Recommendation",
+          "ipa": "/ˌrɛkəmɛnˈdeɪʃn/",
+          "example": "I followed his recommendation and bought the laptop.",
+          "exVi": "Tôi đã làm theo lời đề nghị của anh ấy và mua chiếc laptop đó."
+        },
+        {
+          "en": "Idea",
+          "ipa": "/aɪˈdiə/",
+          "example": "That's a great idea for a marketing campaign.",
+          "exVi": "Đó là một ý tưởng tuyệt vời cho một chiến dịch marketing."
+        }
+      ]
     }
   ]
 },{
@@ -820,31 +1463,125 @@ passage:[
     }
   ],
   "vocabulary": [
-    { "vi": "Cống thoát nước (n)", "words": [{ "en": "Drain", "ipa": "/dreɪn/" }] },
-    { "vi": "Tắc / Nghẹt (adj)", "words": [{ "en": "Clogged", "ipa": "/klɑːɡd/" }] },
-    { "vi": "Chất thông cống (n)", "words": [{ "en": "Drain cleaner", "ipa": "/dreɪn ˈkliːnər/" }] },
-    { "vi": "Hóa chất (n)", "words": [{ "en": "Chemical", "ipa": "/ˈkɛmɪkl/" }] },
-    { "vi": "Xem kỹ (v)", "words": [{ "en": "Look over", "ipa": "/lʊk ˈoʊvər/" }] },
-    { "vi": "Rõ ràng (adj) ", "words": [{ "en": "Clear", "ipa": "/klɪər/" }] },
-    { "vi": "Vệ sinh (v)/Làm sạch (v)", "words": [{ "en": "Clear", "ipa": "/klɪər/" }] },
-    { "vi": "Vết bẩn (n)", "words": [{ "en": "Stain", "ipa": "/steɪn/" }] },
-    { "vi": "Vấy bẩn (v)", "words": [{ "en": "Stain", "ipa": "/steɪn/" }] },
-    { "vi": "Mùi (n)", "words": [{ "en": "Odor", "ipa": "/ˈoʊdər/" }, { "en": "Smell", "ipa": "/smɛl/" }] },
+    { 
+        "vi": "Cống thoát nước (n)", 
+        "words": [{ 
+            "en": "Drain", "ipa": "/dreɪn/", 
+            "example": "The water in the sink is not going down the drain.", 
+            "exVi": "Nước trong bồn rửa không thoát xuống cống được." 
+        }] 
+    },
+    { 
+        "vi": "Tắc / Nghẹt (adj)", 
+        "words": [{ 
+            "en": "Clogged", "ipa": "/klɑːɡd/", 
+            "example": "The kitchen drain is clogged with food waste.", 
+            "exVi": "Cống nhà bếp bị tắc nghẽn bởi rác thải thực phẩm." 
+        }] 
+    },
+    { 
+        "vi": "Chất thông cống (n)", 
+        "words": [{ 
+            "en": "Drain cleaner", "ipa": "/dreɪn ˈkliːnər/", 
+            "example": "You should wear gloves when using a powerful drain cleaner.", 
+            "exVi": "Bạn nên đeo găng tay khi sử dụng chất thông cống mạnh." 
+        }] 
+    },
+    { 
+        "vi": "Hóa chất (n)", 
+        "words": [{ 
+            "en": "Chemical", "ipa": "/ˈkɛmɪkl/", 
+            "example": "Always store household chemicals in a safe place.", 
+            "exVi": "Luôn cất giữ các hóa chất gia dụng ở nơi an toàn." 
+        }] 
+    },
+    { 
+        "vi": "Xem kỹ (v)", 
+        "words": [{ 
+            "en": "Look over", "ipa": "/lʊk ˈoʊvər/", 
+            "example": "The technician will look over the wiring system today.", 
+            "exVi": "Kỹ thuật viên sẽ xem kỹ hệ thống dây điện vào ngày hôm nay." 
+        }] 
+    },
+    { 
+        "vi": "Rõ ràng (adj) ", 
+        "words": [{ 
+            "en": "Clear", "ipa": "/klɪər/", 
+            "example": "The instructions are very clear and easy to follow.", 
+            "exVi": "Các hướng dẫn rất rõ ràng và dễ làm theo." 
+        }] 
+    },
+    { 
+        "vi": "Vệ sinh (v)/Làm sạch (v)", 
+        "words": [{ 
+            "en": "Clear", "ipa": "/klɪər/", 
+            "example": "We need to clear the drain before it overflows.", 
+            "exVi": "Chúng ta cần làm sạch/thông cống trước khi nó bị tràn." 
+        }] 
+    },
+    { 
+        "vi": "Vết bẩn (n)", 
+        "words": [{ 
+            "en": "Stain", "ipa": "/steɪn/", 
+            "example": "I can't get this coffee stain out of my shirt.", 
+            "exVi": "Tôi không thể tẩy vết bẩn cà phê này ra khỏi áo sơ mi." 
+        }] 
+    },
+    { 
+        "vi": "Vấy bẩn (v)", 
+        "words": [{ 
+            "en": "Stain", "ipa": "/steɪn/", 
+            "example": "Be careful not to stain the carpet with juice.", 
+            "exVi": "Cẩn thận đừng để nước hoa quả làm vấy bẩn thảm." 
+        }] 
+    },
+    { 
+        "vi": "Mùi (n)", 
+        "words": [
+            { "en": "Odor", "ipa": "/ˈoʊdər/", "example": "This spray helps eliminate unpleasant odors.", "exVi": "Loại xịt này giúp loại bỏ những mùi khó chịu." }, 
+            { "en": "Smell", "ipa": "/smɛl/", "example": "The smell of fresh bread filled the house.", "exVi": "Mùi bánh mì tươi tỏa khắp ngôi nhà." }
+        ] 
+    },
     { 
         "vi": "Nhiều (phrase)", 
         "words": [
-            { "en": "A variety of", "ipa": "/ə vəˈraɪəti ʌv/" }, 
-            { "en": "An array of", "ipa": "/ən əˈreɪ ʌv/" },
-            { "en": "An assortment of", "ipa": "/ən əˈsɔːrtmənt ʌv/" },
-            { "en": "A wide range of", "ipa": "/ə waɪd reɪndʒ ʌv/" },
-            { "en": "A broad range of", "ipa": "/ə brɔːd reɪndʒ ʌv/" }
+            { "en": "A variety of", "ipa": "/ə vəˈraɪəti ʌv/", "example": "The shop sells a variety of cleaning products.", "exVi": "Cửa hàng bán nhiều loại sản phẩm làm sạch khác nhau." }, 
+            { "en": "An array of", "ipa": "/ən əˈreɪ ʌv/", "example": "There is an array of options to choose from.", "exVi": "Có rất nhiều lựa chọn để cân nhắc." },
+            { "en": "An assortment of", "ipa": "/ən əˈsɔːrtmənt ʌv/", "example": "We bought an assortment of baked goods.", "exVi": "Chúng tôi đã mua nhiều loại bánh nướng khác nhau." },
+            { "en": "A wide range of", "ipa": "/ə waɪd reɪndʒ ʌv/", "example": "They offer a wide range of technical services.", "exVi": "Họ cung cấp nhiều loại dịch vụ kỹ thuật đa dạng." },
+            { "en": "A broad range of", "ipa": "/ə brɔːd reɪndʒ ʌv/", "example": "This book covers a broad range of topics.", "exVi": "Cuốn sách này bao phủ nhiều chủ đề rộng lớn." }
         ] 
     },
-    { "vi": "Mạnh (adj)", "words": [{ "en": "Powerful", "ipa": "/ˈpaʊərfl/" }, { "en": "Strong", "ipa": "/strɔːŋ/" }] },
-    { "vi": "Rẻ (adj)", "words": [{ "en": "Inexpensive", "ipa": "/ˌɪnɪkˈspɛnsɪv/" }, { "en": "Cheap", "ipa": "/tʃiːp/" }] },
-    { "vi": "Đắt (adj)", "words": [{ "en": "Expensive", "ipa": "/ɪkˈspɛnsɪv/" }, { "en": "Costly", "ipa": "/ˈkɔːstli/" }] },
-    { "vi": "Găng tay (n)", "words": [{ "en": "Gloves", "ipa": "/ɡlʌvz/" }] }
-  ]
+    { 
+        "vi": "Mạnh (adj)", 
+        "words": [
+            { "en": "Powerful", "ipa": "/ˈpaʊərfl/", "example": "He used a powerful vacuum to clean the rugs.", "exVi": "Anh ấy đã dùng máy hút bụi mạnh để làm sạch thảm." }, 
+            { "en": "Strong", "ipa": "/strɔːŋ/", "example": "The chemical has a very strong smell.", "exVi": "Hóa chất này có mùi rất mạnh." }
+        ] 
+    },
+    { 
+        "vi": "Rẻ (adj)", 
+        "words": [
+            { "en": "Inexpensive", "ipa": "/ˌɪnɪkˈspɛnsɪv/", "example": "Baking soda is an inexpensive way to clean.", "exVi": "Baking soda là một cách làm sạch rẻ tiền/ít tốn kém." }, 
+            { "en": "Cheap", "ipa": "/tʃiːp/", "example": "Don't buy cheap tools that break easily.", "exVi": "Đừng mua những dụng cụ rẻ tiền mà dễ hỏng." }
+        ] 
+    },
+    { 
+        "vi": "Đắt (adj)", 
+        "words": [
+            { "en": "Expensive", "ipa": "/ɪkˈspɛnsɪv/", "example": "It is too expensive to replace the whole system.", "exVi": "Quá đắt để thay thế toàn bộ hệ thống." }, 
+            { "en": "Costly", "ipa": "/ˈkɔːstli/", "example": "Making a mistake in the design could be very costly.", "exVi": "Phạm sai lầm trong thiết kế có thể gây tốn kém rất nhiều." }
+        ] 
+    },
+    { 
+        "vi": "Găng tay (n)", 
+        "words": [{ 
+            "en": "Gloves", "ipa": "/ɡlʌvz/", 
+            "example": "Always wear rubber gloves when handling bleach.", 
+            "exVi": "Luôn đeo găng tay cao su khi tiếp xúc với chất tẩy trắng." 
+        }] 
+    }
+]
 },{
   "title": "Questions 50 - 52",
   "audioUrl": "Test 02_Part 3_50-52.mp3",
@@ -941,33 +1678,134 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Đáng lẽ phải / Cần phải", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
-    { "vi": "Sẽ", "words": [{ "en": "Be supposed to do something", "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/" }] },
-    { "vi": "Mùa cao điểm", "words": [{ "en": "Busy season", "ipa": "/ˈbɪzi ˈsiːzn/" }, { "en": "Peak season", "ipa": "/piːk ˈsiːzn/" }] },
-    { "vi": "Buổi định hướng nhân viên mới", "words": [{ "en": "Orientation", "ipa": "/ˌɔːriɛnˈteɪʃn/" }] },
-    { "vi": "Phòng nghỉ nhân viên", "words": [{ "en": "Staff breakroom", "ipa": "/stæf ˈbreɪkruːm/" }] },
-    { "vi": "Áo phản quang", "words": [{ "en": "Reflective vest", "ipa": "/rɪˈflɛktɪv vɛst/" }] },
-    { "vi": "Phản ánh / Phản chiếu", "words": [{ "en": "Reflect", "ipa": "/rɪˈflɛkt/" }] },
-    { "vi": "Tư trang", "words": [{ "en": "Belonging", "ipa": "/bɪˈlɔːŋɪŋ/" }] },
-    { "vi": "Căng tin", "words": [{ "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/" }] },
-    { "vi": "Khu vực bốc hàng", "words": [{ "en": "Loading zone", "ipa": "/ˈloʊdɪŋ zoʊn/" }] },
-    { "vi": "Phòng họp", "words": [{ "en": "Conference room", "ipa": "/ˈkɑːnfərəns ruːm/" }, { "en": "Meeting room", "ipa": "/ˈmiːtɪŋ ruːm/" }] },
-    { "vi": "Chắc chắn", "words": [{ "en": "Certain", "ipa": "/ˈsɜːrtn/" }, { "en": "Definite", "ipa": "/ˈdɛfɪnət/" }, { "en": "Absolute", "ipa": "/ˈæbsəluːt/" }] },
-    { "vi": "Nhất định", "words": [{ "en": "Certain", "ipa": "/ˈsɜːrtn/" }] },
-    { "vi": "Nộp", "words": [{ "en": "Submit", "ipa": "/səbˈmɪt/" }, { "en": "Turn in", "ipa": "/tɜːrn ɪn/" }, { "en": "File", "ipa": "/faɪl/" }] },
-    { "vi": "Đạt được / Lấy được", "words": [
-      { "en": "Obtain", "ipa": "/əbˈtɛɪn/" }, 
-      { "en": "Gain", "ipa": "/ɡeɪn/" }, 
-      { "en": "Acquire", "ipa": "/əˈkwaɪər/" }, 
-      { "en": "Achieve", "ipa": "/əˈtʃiːv/" }, 
-      { "en": "Attain", "ipa": "/əˈteɪn/" }, 
-      { "en": "Secure", "ipa": "/sɪˈkjʊər/" }, 
-      { "en": "Reach", "ipa": "/riːtʃ/" }, 
-      { "en": "Get", "ipa": "/ɡɛt/" }, 
-      { "en": "Accomplish", "ipa": "/əˈkɑːmplɪʃ/" }
-    ]}
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Đáng lẽ phải / Cần phải (v phr)", 
+        "words": [{ 
+            "en": "Be supposed to do something", 
+            "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/",
+            "example": "We are supposed to wear safety gear in the factory.",
+            "exVi": "Chúng ta đáng lẽ phải mặc đồ bảo hộ trong nhà máy."
+        }] 
+    },
+    { 
+        "vi": "Sẽ (v phr)", 
+        "words": [{ 
+            "en": "Be supposed to do something", 
+            "ipa": "/biː səˈpoʊzd tuː duː ˈsʌmθɪŋ/",
+            "example": "The shipment is supposed to arrive tomorrow morning.",
+            "exVi": "Lô hàng sẽ đến vào sáng mai (theo kế hoạch)."
+        }] 
+    },
+    { 
+        "vi": "Mùa cao điểm (n)", 
+        "words": [
+            { "en": "Busy season", "ipa": "/ˈbɪzi ˈsiːzn/", "example": "We need extra staff during the busy season.", "exVi": "Chúng tôi cần thêm nhân viên trong mùa cao điểm." }, 
+            { "en": "Peak season", "ipa": "/piːk ˈsiːzn/", "example": "Hotel prices usually go up during peak season.", "exVi": "Giá khách sạn thường tăng trong mùa cao điểm." }
+        ] 
+    },
+    { 
+        "vi": "Buổi định hướng nhân viên mới (n)", 
+        "words": [{ 
+            "en": "Orientation", "ipa": "/ˌɔːriɛnˈteɪʃn/", 
+            "example": "The orientation for new hires starts at 9 AM in the lobby.", 
+            "exVi": "Buổi định hướng cho nhân viên mới bắt đầu lúc 9 giờ sáng tại sảnh." 
+        }] 
+    },
+    { 
+        "vi": "Phòng nghỉ nhân viên (n)", 
+        "words": [{ 
+            "en": "Staff breakroom", "ipa": "/stæf ˈbreɪkruːm/", 
+            "example": "You can find the microwave in the staff breakroom.", 
+            "exVi": "Bạn có thể tìm thấy lò vi sóng trong phòng nghỉ nhân viên." 
+        }] 
+    },
+    { 
+        "vi": "Áo phản quang (n)", 
+        "words": [{ 
+            "en": "Reflective vest", "ipa": "/rɪˈflɛktɪv vɛst/", 
+            "example": "Workers must wear a reflective vest when working near the road.", 
+            "exVi": "Công nhân phải mặc áo phản quang khi làm việc gần đường lộ." 
+        }] 
+    },
+    { 
+        "vi": "Phản ánh / Phản chiếu (v)", 
+        "words": [{ 
+            "en": "Reflect", "ipa": "/rɪˈflɛkt/", 
+            "example": "The windows reflect the bright sunlight.", 
+            "exVi": "Những ô cửa sổ phản chiếu ánh nắng chói chang." 
+        }] 
+    },
+    { 
+        "vi": "Tư trang / Đồ dùng cá nhân (n)", 
+        "words": [{ 
+            "en": "Belonging", "ipa": "/bɪˈlɔːŋɪŋ/", 
+            "example": "Please make sure you take all your personal belongings with you.", 
+            "exVi": "Vui lòng đảm bảo bạn mang theo tất cả tư trang cá nhân bên mình." 
+        }] 
+    },
+    { 
+        "vi": "Căng tin (n)", 
+        "words": [{ 
+            "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/", 
+            "example": "Lunch is served in the company cafeteria from noon to 1:30 PM.", 
+            "exVi": "Bữa trưa được phục vụ tại căng tin công ty từ trưa đến 1:30 chiều." 
+        }] 
+    },
+    { 
+        "vi": "Khu vực bốc hàng (n)", 
+        "words": [{ 
+            "en": "Loading zone", "ipa": "/ˈloʊdɪŋ zoʊn/", 
+            "example": "No parking is allowed in the loading zone.", 
+            "exVi": "Không được phép đỗ xe trong khu vực bốc hàng." 
+        }] 
+    },
+    { 
+        "vi": "Phòng họp (n)", 
+        "words": [
+            { "en": "Conference room", "ipa": "/ˈkɑːnfərəns ruːm/", "example": "The board meeting will be held in the main conference room.", "exVi": "Cuộc họp ban điều hành sẽ được tổ chức tại phòng họp chính." }, 
+            { "en": "Meeting room", "ipa": "/ˈmiːtɪŋ ruːm/", "example": "Is the meeting room available for our discussion?", "exVi": "Phòng họp có đang trống cho cuộc thảo luận của chúng ta không?" }
+        ] 
+    },
+    { 
+        "vi": "Chắc chắn (adj)", 
+        "words": [
+            { "en": "Certain", "ipa": "/ˈsɜːrtn/", "example": "Are you certain about the date of the event?", "exVi": "Bạn có chắc chắn về ngày diễn ra sự kiện không?" }, 
+            { "en": "Definite", "ipa": "/ˈdɛfɪnət/", "example": "We need a definite answer by the end of the day.", "exVi": "Chúng tôi cần một câu trả lời chắc chắn trước khi hết ngày." }, 
+            { "en": "Absolute", "ipa": "/ˈæbsəluːt/", "example": "You must have absolute trust in your teammates.", "exVi": "Bạn phải có sự tin tưởng tuyệt đối vào đồng đội của mình." }
+        ] 
+    },
+    { 
+        "vi": "Nhất định (adj)", 
+        "words": [{ 
+            "en": "Certain", "ipa": "/ˈsɜːrtn/", 
+            "example": "A certain amount of stress is normal in this job.", 
+            "exVi": "Một mức độ căng thẳng nhất định là bình thường trong công việc này." 
+        }] 
+    },
+    { 
+        "vi": "Nộp (v)", 
+        "words": [
+            { "en": "Submit", "ipa": "/səbˈmɪt/", "example": "Please submit your proposal by email.", "exVi": "Vui lòng nộp đề xuất của bạn qua email." }, 
+            { "en": "Turn in", "ipa": "/tɜːrn ɪn/", "example": "He forgot to turn in the warehouse keys.", "exVi": "Anh ấy đã quên nộp lại chìa khóa kho hàng." }, 
+            { "en": "File", "ipa": "/faɪl/", "example": "The lawyer will file the documents tomorrow.", "exVi": "Luật sư sẽ nộp các tài liệu vào ngày mai." }
+        ] 
+    },
+    { 
+        "vi": "Đạt được / Lấy được (v)", 
+        "words": [
+            { "en": "Obtain", "ipa": "/əbˈtɛɪn/", "example": "You must obtain permission before entering the site.", "exVi": "Bạn phải lấy được sự cho phép trước khi vào công trường." }, 
+            { "en": "Gain", "ipa": "/ɡeɪn/", "example": "This internship is a great way to gain experience.", "exVi": "Kỳ thực tập này là một cách tuyệt vời để đạt được kinh nghiệm." }, 
+            { "en": "Acquire", "ipa": "/əˈkwaɪər/", "example": "The company plans to acquire a smaller competitor.", "exVi": "Công ty dự định mua lại (đạt được quyền sở hữu) một đối thủ nhỏ hơn." }, 
+            { "en": "Achieve", "ipa": "/əˈtʃiːv/", "example": "She worked hard to achieve her sales goals.", "exVi": "Cô ấy đã làm việc chăm chỉ để đạt được mục tiêu doanh số." }, 
+            { "en": "Attain", "ipa": "/əˈteɪn/", "example": "He finally attained the rank of senior engineer.", "exVi": "Cuối cùng anh ấy đã đạt được cấp bậc kỹ sư cao cấp." }, 
+            { "en": "Secure", "ipa": "/sɪˈkjʊər/", "example": "The team managed to secure a major contract.", "exVi": "Nhóm đã xoay xở để đạt được/giành được một hợp đồng lớn." }, 
+            { "en": "Reach", "ipa": "/riːtʃ/", "example": "We hope to reach an agreement soon.", "exVi": "Chúng tôi hy vọng sẽ sớm đạt được một thỏa thuận." }, 
+            { "en": "Get", "ipa": "/ɡɛt/", "example": "Where did you get that information?", "exVi": "Bạn đã lấy được thông tin đó từ đâu?" }, 
+            { "en": "Accomplish", "ipa": "/əˈkɑːmplɪʃ/", "example": "We can accomplish a lot if we work together.", "exVi": "Chúng ta có thể đạt được nhiều thành tựu nếu làm việc cùng nhau." }
+        ]
+    }
+]
 },{
   "title": "Questions 53 - 55",
   "audioUrl": "Test 02_Part 3_53-55.mp3",
@@ -1040,30 +1878,66 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Trả lời phỏng vấn (v)", "words": [{ "en": "Give the interview", "ipa": "/ɡɪv ðɪ ˈɪntərvjuː/" }] },
+ "vocabulary": [
     { 
-      "vi": "Khá / Tương đối (adv)", 
-      "words": [
-        { "en": "Quite", "ipa": "/kwaɪt/" }, 
-        { "en": "Fairly", "ipa": "/ˈfɛrli/" }, 
-        { "en": "Pretty", "ipa": "/ˈprɪti/" },
-        { "en": "Rather", "ipa": "/ˈræðər/" },
-        { "en": "Relatively", "ipa": "/ˈrɛlətɪvli/" },
-        { "en": "Comparatively", "ipa": "/kəmˈpærətɪvli/" }
-      ] 
+        "vi": "Trả lời phỏng vấn (v phr)", 
+        "words": [{ 
+            "en": "Give the interview", 
+            "ipa": "/ɡɪv ðɪ ˈɪntərvjuː/",
+            "example": "He felt confident when he had to give the interview for the manager position.",
+            "exVi": "Anh ấy cảm thấy tự tin khi phải trả lời phỏng vấn cho vị trí quản lý."
+        }] 
     },
-    { "vi": "Quan hệ công chúng (n)", "words": [{ "en": "Public Relation", "ipa": "/ˈpʌblɪk rɪˈleɪʃn/" }] },
-    { "vi": "Một chuyến đi chơi (n)", "words": [{ "en": "A group outing", "ipa": "/ə ɡruːp ˈaʊtɪŋ/" }] },
     { 
-      "vi": "Hướng dẫn (n)", 
-      "words": [
-        { "en": "Instruction", "ipa": "/ɪnˈstrʌkʃn/" }, 
-        { "en": "Guideline", "ipa": "/ˈɡaɪdlaɪn/" }, 
-        { "en": "Direction", "ipa": "/dəˈrɛkʃn/" }
-      ] 
+        "vi": "Khá / Tương đối (adv)", 
+        "words": [
+            { "en": "Quite", "ipa": "/kwaɪt/", "example": "The exam was quite difficult, but I think I passed.", "exVi": "Kỳ thi khá khó, nhưng tôi nghĩ mình đã đậu." }, 
+            { "en": "Fairly", "ipa": "/ˈfɛrli/", "example": "I'm fairly sure that we met before.", "exVi": "Tôi khá chắc chắn rằng chúng ta đã gặp nhau trước đây." }, 
+            { "en": "Pretty", "ipa": "/ˈprɪti/", "example": "The house is pretty big for just two people.", "exVi": "Ngôi nhà này khá lớn đối với chỉ hai người ở." },
+            { "en": "Rather", "ipa": "/ˈræðər/", "example": "It's a rather complicated problem to solve.", "exVi": "Đó là một vấn đề khá phức tạp để giải quyết." },
+            { "en": "Relatively", "ipa": "/ˈrɛlətɪvli/", "example": "The new software is relatively easy to use.", "exVi": "Phần mềm mới tương đối dễ sử dụng." },
+            { "en": "Comparatively", "ipa": "/kəmˈpærətɪvli/", "example": "The prices here are comparatively low.", "exVi": "Giá cả ở đây tương đối thấp (so với những nơi khác)." }
+        ] 
+    },
+    { 
+        "vi": "Quan hệ công chúng (n)", 
+        "words": [{ 
+            "en": "Public Relation", 
+            "ipa": "/ˈpʌblɪk rɪˈleɪʃn/",
+            "example": "She works in the Public Relations department of a major tech firm.",
+            "exVi": "Cô ấy làm việc tại bộ phận Quan hệ công chúng của một công ty công nghệ lớn."
+        }] 
+    },
+    { 
+        "vi": "Một chuyến đi chơi tập thể (n)", 
+        "words": [{ 
+            "en": "A group outing", 
+            "ipa": "/ə ɡruːp ˈaʊtɪŋ/",
+            "example": "The company organized a group outing to the beach last summer.",
+            "exVi": "Công ty đã tổ chức một chuyến đi chơi tập thể ra bãi biển vào mùa hè năm ngoái."
+        }] 
+    },
+    { 
+        "vi": "Hướng dẫn (n)", 
+        "words": [
+            { 
+                "en": "Instruction", "ipa": "/ɪnˈstrʌkʃn/", 
+                "example": "Please read the instruction manual before using the machine.", 
+                "exVi": "Vui lòng đọc sách hướng dẫn trước khi sử dụng máy." 
+            }, 
+            { 
+                "en": "Guideline", "ipa": "/ˈɡaɪdlaɪn/", 
+                "example": "The company has strict guidelines for workplace safety.", 
+                "exVi": "Công ty có các hướng dẫn nghiêm ngặt về an toàn tại nơi làm việc." 
+            }, 
+            { 
+                "en": "Direction", "ipa": "/dəˈrɛkʃn/", 
+                "example": "Can you give me directions to the nearest bank?", 
+                "exVi": "Bạn có thể chỉ đường cho tôi đến ngân hàng gần nhất không?" 
+            }
+        ] 
     }
-  ]
+]
 },
 {
   "title": "Questions 56 - 58",
@@ -1162,31 +2036,119 @@ passage:[
     }
   ],
   "vocabulary": [
-    { "vi": "Toàn công ty", "words": [{ "en": "Companywide", "ipa": "/ˈkʌmpəniˌwaɪd/" }] },
-    { "vi": "Tính năng", "words": [{ "en": "Feature", "ipa": "/ˈfiːtʃər/" }, { "en": "Function", "ipa": "/ˈfʌŋkʃn/" }] },
-    { "vi": "Trang diễn đàn", "words": [{ "en": "Forum page", "ipa": "/ˈfɔːrəm peɪdʒ/" }] },
-    { "vi": "Tò mò", "words": [{ "en": "Curious", "ipa": "/ˈkjʊriəs/" }] },
-    { "vi": "Cảm hứng", "words": [{ "en": "Inspiration", "ipa": "/ˌɪnspəˈreɪʃn/" }] },
-    { "vi": "Phát hành / Ra mắt", "words": [
-      { "en": "Launch", "ipa": "/lɔːntʃ/" }, 
-      { "en": "Release", "ipa": "/rɪˈliːs/" }, 
-      { "en": "Roll out", "ipa": "/roʊl aʊt/" },
-      { "en": "Introduce", "ipa": "/ˌɪntəˈduːs/" }
-    ]},
-    { "vi": "Nâng cấp / Tu sửa", "words": [
-      { "en": "Renovate", "ipa": "/ˈrɛnəveɪt/" }, 
-      { "en": "Improve", "ipa": "/ɪmˈpruːv/" }, 
-      { "en": "Upgrade", "ipa": "/ˈʌpɡreɪd/" },
-      { "en": "Remodel", "ipa": "/ˌriːˈmɑːdl/" }
-    ]},
-    { "vi": "Thuê / Tuyển", "words": [{ "en": "Hire", "ipa": "/ˈhaɪər/" }] },
-    { "vi": "Người phát ngôn", "words": [{ "en": "Spokesperson", "ipa": "/ˈspoʊkspɜːrsn/" }] },
-    { "vi": "Giảm", "words": [{ "en": "Lower", "ipa": "/ˈloʊər/" }, { "en": "Reduce", "ipa": "/rɪˈduːs/" }, { "en": "Decrease", "ipa": "/dɪˈkriːs/" }] },
-    { "vi": "Bảo trì", "words": [{ "en": "Maintenance", "ipa": "/ˈmeɪntənəns/" }, { "en": "Service", "ipa": "/ˈsɜːrvɪs/" }] },
-    { "vi": "Sự hợp tác", "words": [{ "en": "Collaboration", "ipa": "/kəˌlæbəˈreɪʃn/" }] },
-    { "vi": "Hợp tác", "words": [{ "en": "Collaborate", "ipa": "/kəˈlæbəreɪt/" }, { "en": "Cooperate", "ipa": "/koʊˈɑːpəreɪt/" }, { "en": "Partner", "ipa": "/ˈpɑːrtnər/" }] },
-    { "vi": "Nguồn gốc", "words": [{ "en": "Origin", "ipa": "/ˈɔːrɪdʒɪn/" }] }
-  ]
+    { 
+        "vi": "Toàn công ty (adj/adv)", 
+        "words": [{ 
+            "en": "Companywide", "ipa": "/ˈkʌmpəniˌwaɪd/", 
+            "example": "The CEO announced a companywide policy change this morning.", 
+            "exVi": "Giám đốc điều hành đã thông báo một sự thay đổi chính sách trên toàn công ty vào sáng nay." 
+        }] 
+    },
+    { 
+        "vi": "Tính năng (n)", 
+        "words": [
+            { "en": "Feature", "ipa": "/ˈfiːtʃər/", "example": "The new version of the app includes a dark mode feature.", "exVi": "Phiên bản mới của ứng dụng bao gồm tính năng chế độ tối." }, 
+            { "en": "Function", "ipa": "/ˈfʌŋkʃn/", "example": "The main function of this button is to save your progress.", "exVi": "Chức năng chính của nút này là để lưu lại tiến trình của bạn." }
+        ] 
+    },
+    { 
+        "vi": "Trang diễn đàn (n)", 
+        "words": [{ 
+            "en": "Forum page", "ipa": "/ˈfɔːrəm peɪdʒ/", 
+            "example": "Users can post their questions on the community forum page.", 
+            "exVi": "Người dùng có thể đăng câu hỏi của họ trên trang diễn đàn cộng đồng." 
+        }] 
+    },
+    { 
+        "vi": "Tò mò (adj)", 
+        "words": [{ 
+            "en": "Curious", "ipa": "/ˈkjʊriəs/", 
+            "example": "I was curious to know more about the upcoming project.", 
+            "exVi": "Tôi đã tò mò muốn biết thêm về dự án sắp tới." 
+        }] 
+    },
+    { 
+        "vi": "Cảm hứng (n)", 
+        "words": [{ 
+            "en": "Inspiration", "ipa": "/ˌɪnspəˈreɪʃn/", 
+            "example": "Nature is a great source of inspiration for many artists.", 
+            "exVi": "Thiên nhiên là nguồn cảm hứng lớn cho nhiều nghệ sĩ." 
+        }] 
+    },
+    { 
+        "vi": "Phát hành / Ra mắt (v)", 
+        "words": [
+            { "en": "Launch", "ipa": "/lɔːntʃ/", "example": "The company plans to launch its new product line next month.", "exVi": "Công ty dự định ra mắt dòng sản phẩm mới vào tháng tới." }, 
+            { "en": "Release", "ipa": "/rɪˈliːs/", "example": "The studio will release the movie on Friday.", "exVi": "Studio sẽ phát hành bộ phim vào thứ Sáu." }, 
+            { "en": "Roll out", "ipa": "/roʊl aʊt/", "example": "The government is rolling out a new vaccination program.", "exVi": "Chính phủ đang triển khai/ra mắt một chương trình tiêm chủng mới." },
+            { "en": "Introduce", "ipa": "/ˌɪntəˈduːs/", "example": "They are going to introduce a new system to improve efficiency.", "exVi": "Họ sẽ giới thiệu/ra mắt một hệ thống mới để cải thiện hiệu quả." }
+        ]
+    },
+    { 
+        "vi": "Nâng cấp / Tu sửa (v)", 
+        "words": [
+            { "en": "Renovate", "ipa": "/ˈrɛnəveɪt/", "example": "They are planning to renovate the old office building.", "exVi": "Họ đang lên kế hoạch tu sửa tòa nhà văn phòng cũ." }, 
+            { "en": "Improve", "ipa": "/ɪmˈpruːv/", "example": "We are always looking for ways to improve our service.", "exVi": "Chúng tôi luôn tìm cách để cải thiện dịch vụ của mình." }, 
+            { "en": "Upgrade", "ipa": "/ˈʌpɡreɪd/", "example": "It's time to upgrade your computer software.", "exVi": "Đã đến lúc nâng cấp phần mềm máy tính của bạn rồi." },
+            { "en": "Remodel", "ipa": "/ˌriːˈmɑːdl/", "example": "The kitchen was completely remodeled last year.", "exVi": "Nhà bếp đã được tu sửa lại hoàn toàn vào năm ngoái." }
+        ]
+    },
+    { 
+        "vi": "Thuê / Tuyển (v)", 
+        "words": [{ 
+            "en": "Hire", "ipa": "/ˈhaɪər/", 
+            "example": "The firm is looking to hire three new engineers.", 
+            "exVi": "Công ty đang tìm cách thuê ba kỹ sư mới." 
+        }] 
+    },
+    { 
+        "vi": "Người phát ngôn (n)", 
+        "words": [{ 
+            "en": "Spokesperson", "ipa": "/ˈspoʊkspɜːrsn/", 
+            "example": "A spokesperson for the company denied the rumors.", 
+            "exVi": "Người phát ngôn của công ty đã phủ nhận những tin đồn." 
+        }] 
+    },
+    { 
+        "vi": "Giảm (v)", 
+        "words": [
+            { "en": "Lower", "ipa": "/ˈloʊər/", "example": "The store lowered its prices to attract more customers.", "exVi": "Cửa hàng đã hạ giá để thu hút thêm khách hàng." }, 
+            { "en": "Reduce", "ipa": "/rɪˈduːs/", "example": "We need to reduce our energy consumption.", "exVi": "Chúng ta cần giảm mức tiêu thụ năng lượng." }, 
+            { "en": "Decrease", "ipa": "/dɪˈkriːs/", "example": "There has been a decrease in sales this quarter.", "exVi": "Đã có một sự giảm sút về doanh số trong quý này." }
+        ] 
+    },
+    { 
+        "vi": "Bảo trì (n/v)", 
+        "words": [
+            { "en": "Maintenance", "ipa": "/ˈmeɪntənəns/", "example": "Regular maintenance is essential for car safety.", "exVi": "Việc bảo trì thường xuyên là cần thiết cho sự an toàn của xe hơi." }, 
+            { "en": "Service", "ipa": "/ˈsɜːrvɪs/", "example": "The elevator is out of service for maintenance.", "exVi": "Thang máy đang ngừng phục vụ để bảo trì." }
+        ] 
+    },
+    { 
+        "vi": "Sự hợp tác (n)", 
+        "words": [{ 
+            "en": "Collaboration", "ipa": "/kəˌlæbəˈreɪʃn/", 
+            "example": "The project was a collaboration between two famous designers.", 
+            "exVi": "Dự án là một sự hợp tác giữa hai nhà thiết kế nổi tiếng." 
+        }] 
+    },
+    { 
+        "vi": "Hợp tác (v)", 
+        "words": [
+            { "en": "Collaborate", "ipa": "/kəˈlæbəreɪt/", "example": "Researchers from around the world collaborate on this study.", "exVi": "Các nhà nghiên cứu từ khắp nơi trên thế giới hợp tác trong nghiên cứu này." }, 
+            { "en": "Cooperate", "ipa": "/koʊˈɑːpəreɪt/", "example": "We must cooperate to achieve our common goals.", "exVi": "Chúng ta phải hợp tác để đạt được các mục tiêu chung." }, 
+            { "en": "Partner", "ipa": "/ˈpɑːrtnər/", "example": "Our local agency decided to partner with a global firm.", "exVi": "Đại lý địa phương của chúng tôi quyết định hợp tác với một công ty toàn cầu." }
+        ] 
+    },
+    { 
+        "vi": "Nguồn gốc (n)", 
+        "words": [{ 
+            "en": "Origin", "ipa": "/ˈɔːrɪdʒɪn/", 
+            "example": "The origin of the problem was a technical glitch.", 
+            "exVi": "Nguồn gốc của vấn đề là một lỗi kỹ thuật." 
+        }] 
+    }
+]
 },{
   "title": "Questions 59 - 61",
   "audioUrl": "Test 02_Part 3_59-61.mp3",
@@ -1275,18 +2237,86 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Chắc chắn (adv)", "words": [{ "en": "Definitely", "ipa": "/ˈdɛfɪnətli/" }, { "en": "Absolutely", "ipa": "/ˈæbsəluːtli/" }, { "en": "Certainly", "ipa": "/ˈsɜːrtənli/" }] },
-    { "vi": "Tiệm may (n)", "words": [{ "en": "Tailor shop", "ipa": "/ˈteɪlər ʃɑːp/" }] },
-    { "vi": "Tư vấn / Cố vấn (v)", "words": [{ "en": "Mentor", "ipa": "/ˈmɛntɔːr/" }, { "en": "Advise", "ipa": "/ədˈvaɪz/" }] },
-    { "vi": "Người tư vấn (n)", "words": [{ "en": "Mentor", "ipa": "/ˈmɛntɔːr/" }, { "en": "Advisor", "ipa": "/ədˈvaɪzər/" }, { "en": "Counselor", "ipa": "/ˈkaʊnsələr/" }, { "en": "Consultant", "ipa": "/kənˈsʌltənt/" }] },
-    { "vi": "Giám sát (v)", "words": [{ "en": "Oversee", "ipa": "/ˌoʊvərˈsiː/" }, { "en": "Supervise", "ipa": "/ˈsuːpərvaɪz/" }, { "en": "Monitor", "ipa": "/ˈmɑːnɪtər/" }] },
-    { "vi": "Bài đánh giá (n)", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }, { "en": "Testimonial", "ipa": "/ˌtɛstɪˈmoʊniəl/" }, { "en": "Evaluation", "ipa": "/ɪˌvæljuˈeɪʃn/" }] },
-    { "vi": "Đánh giá (v)", "words": [{ "en": "Review", "ipa": "/rɪˈvjuː/" }, { "en": "Assess", "ipa": "/əˈsɛs/" }, { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/" }] },
-    { "vi": "Không gian lưu trữ (n)", "words": [{ "en": "Storage space", "ipa": "/ˈstɔːrɪdʒ speɪs/" }] },
-    { "vi": "Phân công (v)", "words": [{ "en": "Assign", "ipa": "/əˈsaɪn/" }, { "en": "Delegate", "ipa": "/ˈdɛlɪɡeɪt/" }] },
-    { "vi": "Chỉ định (v)", "words": [{ "en": "Assign", "ipa": "/əˈsaɪn/" }, { "en": "Designate", "ipa": "/ˈdɛzɪɡneɪt/" }] }
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Chắc chắn (adv)", 
+        "words": [
+            { "en": "Definitely", "ipa": "/ˈdɛfɪnətli/", "example": "I will definitely be at the meeting tomorrow.", "exVi": "Tôi chắc chắn sẽ có mặt ở cuộc họp vào ngày mai." }, 
+            { "en": "Absolutely", "ipa": "/ˈæbsəluːtli/", "example": "You are absolutely right about this plan.", "exVi": "Bạn hoàn toàn chắc chắn đúng về kế hoạch này." }, 
+            { "en": "Certainly", "ipa": "/ˈsɜːrtənli/", "example": "I can certainly help you with that report.", "exVi": "Tôi chắc chắn có thể giúp bạn làm bản báo cáo đó." }
+        ] 
+    },
+    { 
+        "vi": "Tiệm may (n)", 
+        "words": [{ 
+            "en": "Tailor shop", "ipa": "/ˈteɪlər ʃɑːp/", 
+            "example": "I need to take my suit to the tailor shop for some alterations.", 
+            "exVi": "Tôi cần mang bộ vest đến tiệm may để sửa lại một chút." 
+        }] 
+    },
+    { 
+        "vi": "Tư vấn / Cố vấn (v)", 
+        "words": [
+            { "en": "Mentor", "ipa": "/ˈmɛntɔːr/", "example": "He spent years mentoring young engineers.", "exVi": "Ông ấy đã dành nhiều năm để cố vấn cho các kỹ sư trẻ." }, 
+            { "en": "Advise", "ipa": "/ədˈvaɪz/", "example": "The lawyer will advise us on the legal aspects.", "exVi": "Luật sư sẽ tư vấn cho chúng tôi về các khía cạnh pháp lý." }
+        ] 
+    },
+    { 
+        "vi": "Người tư vấn (n)", 
+        "words": [
+            { "en": "Mentor", "ipa": "/ˈmɛntɔːr/", "example": "She has been a wonderful mentor to me throughout my career.", "exVi": "Cô ấy là một người cố vấn tuyệt vời cho tôi trong suốt sự nghiệp." }, 
+            { "en": "Advisor", "ipa": "/ədˈvaɪzər/", "example": "He acts as a financial advisor to several large firms.", "exVi": "Anh ấy đóng vai trò là cố vấn tài chính cho một vài công ty lớn." }, 
+            { "en": "Counselor", "ipa": "/ˈkaʊnsələr/", "example": "The school counselor helps students with their problems.", "exVi": "Người tư vấn học đường giúp học sinh giải quyết các vấn đề của họ." }, 
+            { "en": "Consultant", "ipa": "/kənˈsʌltənt/", "example": "We hired a marketing consultant to boost our sales.", "exVi": "Chúng tôi đã thuê một người tư vấn marketing để thúc đẩy doanh số." }
+        ] 
+    },
+    { 
+        "vi": "Giám sát (v)", 
+        "words": [
+            { "en": "Oversee", "ipa": "/ˌoʊvərˈsiː/", "example": "As a manager, she oversees the entire production process.", "exVi": "Với tư cách quản lý, cô ấy giám sát toàn bộ quy trình sản xuất." }, 
+            { "en": "Supervise", "ipa": "/ˈsuːpərvaɪz/", "example": "The workers are closely supervised to ensure safety.", "exVi": "Các công nhân được giám sát chặt chẽ để đảm bảo an toàn." }, 
+            { "en": "Monitor", "ipa": "/ˈmɑːnɪtər/", "example": "We need to monitor the system performance regularly.", "exVi": "Chúng ta cần giám sát hiệu suất hệ thống một cách thường xuyên." }
+        ] 
+    },
+    { 
+        "vi": "Bài đánh giá (n)", 
+        "words": [
+            { "en": "Review", "ipa": "/rɪˈvjuː/", "example": "The new restaurant got a great review in the magazine.", "exVi": "Nhà hàng mới đã nhận được một bài đánh giá tuyệt vời trên tạp chí." }, 
+            { "en": "Testimonial", "ipa": "/ˌtɛstɪˈmoʊniəl/", "example": "The website features many customer testimonials.", "exVi": "Trang web đăng tải nhiều bài đánh giá/lời chứng thực của khách hàng." }, 
+            { "en": "Evaluation", "ipa": "/ɪˌvæljuˈeɪʃn/", "example": "Each employee receives an annual performance evaluation.", "exVi": "Mỗi nhân viên đều nhận được một bài đánh giá hiệu suất hàng năm." }
+        ] 
+    },
+    { 
+        "vi": "Đánh giá (v)", 
+        "words": [
+            { "en": "Review", "ipa": "/rɪˈvjuː/", "example": "The committee will review your application next week.", "exVi": "Ủy ban sẽ đánh giá/xem xét đơn đăng ký của bạn vào tuần tới." }, 
+            { "en": "Assess", "ipa": "/əˈsɛs/", "example": "It's difficult to assess the impact of the new policy.", "exVi": "Thật khó để đánh giá tác động của chính sách mới." }, 
+            { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/", "example": "We need to evaluate the risks before making a decision.", "exVi": "Chúng ta cần đánh giá các rủi ro trước khi đưa ra quyết định." }
+        ] 
+    },
+    { 
+        "vi": "Không gian lưu trữ (n)", 
+        "words": [{ 
+            "en": "Storage space", "ipa": "/ˈstɔːrɪdʒ speɪs/", 
+            "example": "The new warehouse provides ample storage space for our goods.", 
+            "exVi": "Kho hàng mới cung cấp không gian lưu trữ rộng rãi cho hàng hóa của chúng tôi." 
+        }] 
+    },
+    { 
+        "vi": "Phân công (v)", 
+        "words": [
+            { "en": "Assign", "ipa": "/əˈsaɪn/", "example": "The teacher will assign a different topic to each student.", "exVi": "Giáo viên sẽ phân công một chủ đề khác nhau cho mỗi học sinh." }, 
+            { "en": "Delegate", "ipa": "/ˈdɛlɪɡeɪt/", "example": "A good leader knows how to delegate tasks to others.", "exVi": "Một nhà lãnh đạo giỏi biết cách phân công/giao phó nhiệm vụ cho người khác." }
+        ] 
+    },
+    { 
+        "vi": "Chỉ định (v)", 
+        "words": [
+            { "en": "Assign", "ipa": "/əˈsaɪn/", "example": "He was assigned to the New York branch.", "exVi": "Anh ấy đã được chỉ định làm việc tại chi nhánh New York." }, 
+            { "en": "Designate", "ipa": "/ˈdɛzɪɡneɪt/", "example": "This area has been designated as a non-smoking zone.", "exVi": "Khu vực này đã được chỉ định là khu vực không hút thuốc." }
+        ] 
+    }
+]
 },{
   "title": "Questions 62 - 64",
   "audioUrl": "Test 02_Part 3_62-64.mp3",
@@ -1383,20 +2413,97 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Mua (v)", "words": [{ "en": "Purchase", "ipa": "/ˈpɜːrtʃəs/" }, { "en": "Buy", "ipa": "/baɪ/" }] },
-    { "vi": "Khởi hành (v)", "words": [{ "en": "Depart", "ipa": "/dɪˈpɑːrt/" }, { "en": "Leave", "ipa": "/liːv/" }] },
-    { "vi": "Căng tin (n)", "words": [{ "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/" }, { "en": "Café", "ipa": "/kæˈfeɪ/" }] },
-    { "vi": "Tập thể dục (n/v)", "words": [{ "en": "Exercise", "ipa": "/ˈɛksərsaɪz/" }, { "en": "Workout", "ipa": "/ˈwɜːrkaʊt/" }] },
-    { "vi": "Cây cối / Thực vật (n)", "words": [{ "en": "Plants", "ipa": "/plænts/" }, { "en": "Flora", "ipa": "/ˈflɔːrə/" }] },
-    { "vi": "Người cao tuổi (n)", "words": [{ "en": "Senior", "ipa": "/ˈsiːnjər/" }] },
-    { "vi": "Vé đi lại / Thẻ (n)", "words": [{ "en": "Pass", "ipa": "/pæs/" }, { "en": "Ticket", "ipa": "/ˈtɪkɪt/" }] },
-    { "vi": "Bước lên / Lên phà (v)", "words": [{ "en": "Board", "ipa": "/bɔːrd/" }, { "en": "Get on", "ipa": "/ɡɛt ɑːn/" }] },
-    { "vi": "Phà chở khách (n)", "words": [{ "en": "Passenger ferry", "ipa": "/ˈpæsəndʒər ˈfɛri/" }] },
-    { "vi": "Lấy lại / Thu hồi (v)", "words": [{ "en": "Retrieve", "ipa": "/rɪˈtriːv/" }] },
-    { "vi": "Ăn nhẹ (phrase)", "words": [{ "en": "Grab a bite to eat", "ipa": "/ɡræb ə baɪt tuː iːt/" }] },
-    { "vi": "Nhiếp ảnh gia (n)", "words": [{ "en": "Photographer", "ipa": "/fəˈtɑːɡrəfər/" }] }
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Mua (v)", 
+        "words": [
+            { "en": "Purchase", "ipa": "/ˈpɜːrtʃəs/", "example": "You can purchase tickets online or at the station.", "exVi": "Bạn có thể mua vé trực tuyến hoặc tại nhà ga." }, 
+            { "en": "Buy", "ipa": "/baɪ/", "example": "I need to buy some groceries for dinner.", "exVi": "Tôi cần mua một ít hàng tạp hóa cho bữa tối." }
+        ] 
+    },
+    { 
+        "vi": "Khởi hành (v)", 
+        "words": [
+            { "en": "Depart", "ipa": "/dɪˈpɑːrt/", "example": "The train is scheduled to depart at 10:00 AM.", "exVi": "Con tàu dự kiến sẽ khởi hành vào lúc 10 giờ sáng." }, 
+            { "en": "Leave", "ipa": "/liːv/", "example": "What time does the last bus leave?", "exVi": "Chuyến xe buýt cuối cùng khởi hành lúc mấy giờ?" }
+        ] 
+    },
+    { 
+        "vi": "Căng tin / Quán cà phê (n)", 
+        "words": [
+            { "en": "Cafeteria", "ipa": "/ˌkæfəˈtɪriə/", "example": "Students usually have lunch in the school cafeteria.", "exVi": "Học sinh thường ăn trưa tại căng tin trường học." }, 
+            { "en": "Café", "ipa": "/kæˈfeɪ/", "example": "Let's meet at the small café on the corner.", "exVi": "Hãy gặp nhau tại quán cà phê nhỏ ở góc đường." }
+        ] 
+    },
+    { 
+        "vi": "Tập thể dục (n/v)", 
+        "words": [
+            { "en": "Exercise", "ipa": "/ˈɛksərsaɪz/", "example": "Regular exercise is good for your health.", "exVi": "Tập thể dục thường xuyên rất tốt cho sức khỏe của bạn." }, 
+            { "en": "Workout", "ipa": "/ˈwɜːrkaʊt/", "example": "I had a really intense workout at the gym today.", "exVi": "Hôm nay tôi đã có một buổi tập luyện cường độ cao tại phòng gym." }
+        ] 
+    },
+    { 
+        "vi": "Cây cối / Thực vật (n)", 
+        "words": [
+            { "en": "Plants", "ipa": "/plænts/", "example": "Don't forget to water the plants while I'm away.", "exVi": "Đừng quên tưới cây khi tôi đi vắng nhé." }, 
+            { "en": "Flora", "ipa": "/ˈflɔːrə/", "example": "The guide gave us a talk about the local flora.", "exVi": "Hướng dẫn viên đã nói chuyện với chúng tôi về hệ thực vật địa phương." }
+        ] 
+    },
+    { 
+        "vi": "Người cao tuổi (n)", 
+        "words": [{ 
+            "en": "Senior", "ipa": "/ˈsiːnjər/", 
+            "example": "Seniors are entitled to a discount on public transport.", 
+            "exVi": "Người cao tuổi được hưởng giảm giá khi đi phương tiện công cộng." 
+        }] 
+    },
+    { 
+        "vi": "Vé đi lại / Thẻ (n)", 
+        "words": [
+            { "en": "Pass", "ipa": "/pæs/", "example": "I bought a monthly bus pass to save money.", "exVi": "Tôi đã mua một chiếc thẻ xe buýt tháng để tiết kiệm tiền." }, 
+            { "en": "Ticket", "ipa": "/ˈtɪkɪt/", "example": "You need to show your ticket before boarding.", "exVi": "Bạn cần trình vé trước khi lên xe/tàu." }
+        ] 
+    },
+    { 
+        "vi": "Bước lên / Lên tàu (v)", 
+        "words": [
+            { "en": "Board", "ipa": "/bɔːrd/", "example": "Passengers are waiting to board the plane.", "exVi": "Hành khách đang chờ để lên máy bay." }, 
+            { "en": "Get on", "ipa": "/ɡɛt ɑːn/", "example": "I saw him get on the bus ten minutes ago.", "exVi": "Tôi đã thấy anh ấy lên xe buýt mười phút trước." }
+        ] 
+    },
+    { 
+        "vi": "Phà chở khách (n)", 
+        "words": [{ 
+            "en": "Passenger ferry", "ipa": "/ˈpæsəndʒər ˈfɛri/", 
+            "example": "The passenger ferry crosses the river every half hour.", 
+            "exVi": "Phà chở khách băng qua sông mỗi nửa giờ một lần." 
+        }] 
+    },
+    { 
+        "vi": "Lấy lại / Thu hồi (v)", 
+        "words": [{ 
+            "en": "Retrieve", "ipa": "/rɪˈtriːv/", 
+            "example": "The computer system can retrieve the lost data.", 
+            "exVi": "Hệ thống máy tính có thể lấy lại dữ liệu đã mất." 
+        }] 
+    },
+    { 
+        "vi": "Ăn nhẹ (phrase)", 
+        "words": [{ 
+            "en": "Grab a bite to eat", "ipa": "/ɡræb ə baɪt tuː iːt/", 
+            "example": "Do you want to grab a bite to eat before the movie starts?", 
+            "exVi": "Bạn có muốn đi ăn nhẹ chút gì đó trước khi phim bắt đầu không?" 
+        }] 
+    },
+    { 
+        "vi": "Nhiếp ảnh gia (n)", 
+        "words": [{ 
+            "en": "Photographer", "ipa": "/fəˈtɑːɡrəfər/", 
+            "example": "A professional photographer was hired for the wedding.", 
+            "exVi": "Một nhiếp ảnh gia chuyên nghiệp đã được thuê cho đám cưới." 
+        }] 
+    }
+]
 },{
   "title": "Questions 65 - 67",
   "audioUrl": "Test 02_Part 3_65-67.mp3",
@@ -1477,25 +2584,141 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Trả lại / Đưa cho ai đó (v)", "words": [{ "en": "Drop off", "ipa": "/drɑːp ɔːf/" }] },
-    { "vi": "Còn rất mới (adj phr)", "words": [{ "en": "In great condition", "ipa": "/ɪn ɡreɪt kənˈdɪʃn/" }] },
-    { "vi": "Chiến dịch (n)", "words": [{ "en": "Drive", "ipa": "/draɪv/" }, { "en": "Campaign", "ipa": "/kæmˈpeɪn/" }] },
-    { "vi": "Đồ đã qua sử dụng nhẹ (n phr)", "words": [{ "en": "Gently used items", "ipa": "/ˈdʒɛntli juːzd ˈaɪtəmz/" }] },
-    { "vi": "Nhẹ nhàng (adj)", "words": [{ "en": "Gentle", "ipa": "/ˈdʒɛntl/" }, { "en": "Light", "ipa": "/laɪt/" }, { "en": "Soft", "ipa": "/sɔːft/" }] },
-    { "vi": "Khối / Dãy nhà (n)", "words": [{ "en": "Block", "ipa": "/blɑːk/" }] },
-    { "vi": "Hộp đựng đồ (n)", "words": [{ "en": "Collection box", "ipa": "/kəˈlɛkʃn bɑːks/" }] },
-    { "vi": "Phòng hành chính (n)", "words": [{ "en": "Administration office", "ipa": "/ædˌmɪnɪˈstreɪʃn ˈɑːfɪs/" }] },
-    { "vi": "Lẫn lộn (v phr)", "words": [{ "en": "Mix up", "ipa": "/mɪks ʌp/" }] },
-    { "vi": "Công ty / Đại lý (n)", "words": [{ "en": "Agency", "ipa": "/ˈeɪdʒənsi/" }, { "en": "Firm", "ipa": "/fɜːrm/" }, { "en": "Agent", "ipa": "/ˈeɪdʒənt/" }, { "en": "Company", "ipa": "/ˈkʌmpəni/" }] },
-    { "vi": "Đánh giá (v)", "words": [{ "en": "Assess", "ipa": "/əˈsɛs/" }, { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/" }] },
-    { "vi": "Nội dung (n)", "words": [{ "en": "Content", "ipa": "/ˈkɑːntɛnt/" }] },
-    { "vi": "Cá nhân / Riêng lẻ (adj)", "words": [{ "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/" }, { "en": "Separate", "ipa": "/ˈsɛpərət/" }] },
-    { "vi": "Miếng / Mảnh / Tác phẩm (n)", "words": [{ "en": "Piece", "ipa": "/piːs/" }] },
-    { "vi": "Riêng biệt (adj)", "words": [{ "en": "Separate", "ipa": "/ˈsɛpərət/" }, { "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/" }] },
-    { "vi": "Tách biệt (v)", "words": [{ "en": "Separate", "ipa": "/ˈsɛpəreɪt/" }] },
-    { "vi": "Găng tay (n)", "words": [{ "en": "Gloves", "ipa": "/ɡlʌvz/" }] }
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Trả lại / Đưa cho ai đó (v)", 
+        "words": [{ 
+            "en": "Drop off", "ipa": "/drɑːp ɔːf/", 
+            "example": "I can drop off the documents at your office on my way home.", 
+            "exVi": "Tôi có thể đưa các tài liệu qua văn phòng của bạn trên đường tôi về nhà." 
+        }] 
+    },
+    { 
+        "vi": "Còn rất mới / Trong tình trạng tốt (adj phr)", 
+        "words": [{ 
+            "en": "In great condition", "ipa": "/ɪn ɡreɪt kənˈdɪʃn/", 
+            "example": "The used car I bought is still in great condition.", 
+            "exVi": "Chiếc xe cũ tôi mua vẫn còn trong tình trạng rất tốt." 
+        }] 
+    },
+    { 
+        "vi": "Chiến dịch / Cuộc vận động (n)", 
+        "words": [
+            { "en": "Drive", "ipa": "/draɪv/", "example": "The school is organizing a food drive for the local shelter.", "exVi": "Trường học đang tổ chức một chiến dịch quyên góp thực phẩm cho nhà lưu trú địa phương." }, 
+            { "en": "Campaign", "ipa": "/kæmˈpeɪn/", "example": "The marketing campaign was a huge success.", "exVi": "Chiến dịch tiếp thị đã thành công rực rỡ." }
+        ] 
+    },
+    { 
+        "vi": "Đồ đã qua sử dụng nhẹ (n phr)", 
+        "words": [{ 
+            "en": "Gently used items", "ipa": "/ˈdʒɛntli juːzd ˈaɪtəmz/", 
+            "example": "We only accept donations of gently used items.", 
+            "exVi": "Chúng tôi chỉ chấp nhận quyên góp những món đồ đã qua sử dụng nhẹ (còn mới)." 
+        }] 
+    },
+    { 
+        "vi": "Nhẹ nhàng (adj)", 
+        "words": [
+            { "en": "Gentle", "ipa": "/ˈdʒɛntl/", "example": "Be gentle with the baby; he's sleeping.", "exVi": "Hãy nhẹ nhàng với em bé; bé đang ngủ." }, 
+            { "en": "Light", "ipa": "/laɪt/", "example": "She gave him a light tap on the shoulder.", "exVi": "Cô ấy vỗ nhẹ vào vai anh ấy." }, 
+            { "en": "Soft", "ipa": "/sɔːft/", "example": "A soft breeze blew through the open window.", "exVi": "Một làn gió nhẹ thổi qua cửa sổ đang mở." }
+        ] 
+    },
+    { 
+        "vi": "Khối / Dãy nhà (n)", 
+        "words": [{ 
+            "en": "Block", "ipa": "/blɑːk/", 
+            "example": "The post office is just two blocks away from here.", 
+            "exVi": "Bưu điện chỉ cách đây hai dãy nhà." 
+        }] 
+    },
+    { 
+        "vi": "Hộp đựng đồ / Thùng thu gom (n)", 
+        "words": [{ 
+            "en": "Collection box", "ipa": "/kəˈlɛkʃn bɑːks/", 
+            "example": "Please put your old clothes in the collection box.", 
+            "exVi": "Vui lòng để quần áo cũ của bạn vào thùng thu gom." 
+        }] 
+    },
+    { 
+        "vi": "Phòng hành chính (n)", 
+        "words": [{ 
+            "en": "Administration office", "ipa": "/ædˌmɪnɪˈstreɪʃn ˈɑːfɪs/", 
+            "example": "You need to submit the form to the administration office.", 
+            "exVi": "Bạn cần nộp mẫu đơn này cho phòng hành chính." 
+        }] 
+    },
+    { 
+        "vi": "Lẫn lộn (v phr)", 
+        "words": [{ 
+            "en": "Mix up", "ipa": "/mɪks ʌp/", 
+            "example": "I'm sorry, I mixed up the dates of the meetings.", 
+            "exVi": "Tôi xin lỗi, tôi đã làm lẫn lộn ngày của các cuộc họp." 
+        }] 
+    },
+    { 
+        "vi": "Công ty / Đại lý (n)", 
+        "words": [
+            { "en": "Agency", "ipa": "/ˈeɪdʒənsi/", "example": "He works for an advertising agency.", "exVi": "Anh ấy làm việc cho một đại lý quảng cáo." }, 
+            { "en": "Firm", "ipa": "/fɜːrm/", "example": "She is a partner in a local law firm.", "exVi": "Cô ấy là cộng sự trong một công ty luật địa phương." }, 
+            { "en": "Agent", "ipa": "/ˈeɪdʒənt/", "example": "Contact your insurance agent for more details.", "exVi": "Hãy liên hệ với đại lý bảo hiểm của bạn để biết thêm chi tiết." }, 
+            { "en": "Company", "ipa": "/ˈkʌmpəni/", "example": "This company produces high-quality electrical motors.", "exVi": "Công ty này sản xuất các động cơ điện chất lượng cao." }
+        ] 
+    },
+    { 
+        "vi": "Đánh giá (v)", 
+        "words": [
+            { "en": "Assess", "ipa": "/əˈsɛs/", "example": "The committee will assess the value of the property.", "exVi": "Ủy ban sẽ đánh giá giá trị của bất động sản." }, 
+            { "en": "Evaluate", "ipa": "/ɪˈvæljueɪt/", "example": "We need to evaluate the results of the campaign.", "exVi": "Chúng ta cần đánh giá kết quả của chiến dịch." }
+        ] 
+    },
+    { 
+        "vi": "Nội dung (n)", 
+        "words": [{ 
+            "en": "Content", "ipa": "/ˈkɑːntɛnt/", 
+            "example": "The content of the book is very informative.", 
+            "exVi": "Nội dung của cuốn sách rất nhiều thông tin bổ ích." 
+        }] 
+    },
+    { 
+        "vi": "Cá nhân / Riêng lẻ (adj)", 
+        "words": [
+            { "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/", "example": "Each individual member has a voice in the decision.", "exVi": "Mỗi thành viên riêng lẻ đều có tiếng nói trong quyết định." }, 
+            { "en": "Separate", "ipa": "/ˈsɛpərət/", "example": "They have separate rooms but share a kitchen.", "exVi": "Họ có các phòng riêng rẽ nhưng dùng chung nhà bếp." }
+        ] 
+    },
+    { 
+        "vi": "Miếng / Mảnh / Tác phẩm (n)", 
+        "words": [{ 
+            "en": "Piece", "ipa": "/piːs/", 
+            "example": "This is a beautiful piece of art.", 
+            "exVi": "Đây là một tác phẩm nghệ thuật tuyệt đẹp." 
+        }] 
+    },
+    { 
+        "vi": "Riêng biệt (adj)", 
+        "words": [
+            { "en": "Separate", "ipa": "/ˈsɛpərət/", "example": "Keep the documents in separate folders.", "exVi": "Hãy để các tài liệu trong các thư mục riêng biệt." }, 
+            { "en": "Individual", "ipa": "/ˌɪndɪˈvɪdʒuəl/", "example": "Students will receive individual feedback on their work.", "exVi": "Học sinh sẽ nhận được phản hồi riêng biệt về bài làm của mình." }
+        ] 
+    },
+    { 
+        "vi": "Tách biệt / Làm tách ra (v)", 
+        "words": [{ 
+            "en": "Separate", "ipa": "/ˈsɛpəreɪt/", 
+            "example": "Please separate the white clothes from the colored ones.", 
+            "exVi": "Vui lòng tách quần áo trắng ra khỏi quần áo màu." 
+        }] 
+    },
+    { 
+        "vi": "Găng tay (n)", 
+        "words": [{ 
+            "en": "Gloves", "ipa": "/ɡlʌvz/", 
+            "example": "Wear gloves to protect your hands from the chemicals.", 
+            "exVi": "Hãy đeo găng tay để bảo vệ tay bạn khỏi hóa chất." 
+        }] 
+    }
+]
 },{
   "title": "Questions 68 - 70",
   "audioUrl": "Test 02_Part 3_68-70.mp3",
@@ -1600,206 +2823,90 @@ passage:[
       ]
     }
   ],
-  "vocabulary": [
-    { "vi": "Chắc chắn (adv)", "words": [{ "en": "Absolutely", "ipa": "/ˌæbsəˈluːtli/" }, { "en": "Definitely", "ipa": "/ˈdɛfɪnətli/" }, { "en": "Certainly", "ipa": "/ˈsɜːrtənli/" }] },
-    { "vi": "Tìm kiếm (v)", "words": [{ "en": "Look for", "ipa": "/lʊk fɔːr/" }, { "en": "Locate", "ipa": "/loʊˈkeɪt/" }, { "en": "Find", "ipa": "/faɪnd/" }, { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/" }, { "en": "Seek", "ipa": "/siːk/" }] },
-    { "vi": "Bố cục / Cách bố trí (n)", "words": [{ "en": "Floor plan", "ipa": "/flɔːr plæn/" }, { "en": "Floor map", "ipa": "/flɔːr mæp/" }, { "en": "Layout", "ipa": "/ˈleɪaʊt/" }] },
-    { "vi": "Đối diện (prep)", "words": [{ "en": "Across from", "ipa": "/əˈkrɔːs frʌm/" }, { "en": "Opposite", "ipa": "/ˈɑːpəzɪt/" }] },
-    { "vi": "Chậu cây (n)", "words": [{ "en": "Potted tree", "ipa": "/ˈpɑːtɪd triː/" }] },
-    { "vi": "Thang máy (n)", "words": [{ "en": "Elevator", "ipa": "/ˈɛləveɪtər/" }, { "en": "Lift", "ipa": "/lɪft/" }] },
-    { "vi": "Bỏ qua (v)", "words": [{ "en": "Skip", "ipa": "/skɪp/" }] },
-    { "vi": "Sự kiện bán hàng (n)", "words": [{ "en": "Sales event", "ipa": "/seɪlz ɪˈvɛnt/" }] },
-    { "vi": "Lối vào (n)", "words": [{ "en": "Entrance", "ipa": "/ˈɛntrəns/" }] },
-    { "vi": "Thông báo (v)", "words": [{ "en": "Inform", "ipa": "/ɪnˈfɔːrm/" }, { "en": "Notice", "ipa": "/ˈnoʊtɪs/" }] }
-  ]
+ "vocabulary": [
+    { 
+        "vi": "Chắc chắn (adv)", 
+        "words": [
+            { "en": "Absolutely", "ipa": "/ˌæbsəˈluːtli/", "example": "I absolutely agree with your suggestion.", "exVi": "Tôi hoàn toàn chắc chắn đồng ý với gợi ý của bạn." }, 
+            { "en": "Definitely", "ipa": "/ˈdɛfɪnətli/", "example": "We will definitely attend the sales event tomorrow.", "exVi": "Chúng tôi chắc chắn sẽ tham dự sự kiện bán hàng vào ngày mai." }, 
+            { "en": "Certainly", "ipa": "/ˈsɜːrtənli/", "example": "I can certainly help you locate the elevator.", "exVi": "Tôi chắc chắn có thể giúp bạn xác định vị trí thang máy." }
+        ] 
+    },
+    { 
+        "vi": "Tìm kiếm (v)", 
+        "words": [
+            { "en": "Look for", "ipa": "/lʊk fɔːr/", "example": "I am looking for the main entrance of the building.", "exVi": "Tôi đang tìm kiếm lối vào chính của tòa nhà." }, 
+            { "en": "Locate", "ipa": "/loʊˈkeɪt/", "example": "The GPS helped us locate the store's new branch.", "exVi": "GPS đã giúp chúng tôi xác định vị trí chi nhánh mới của cửa hàng." }, 
+            { "en": "Find", "ipa": "/faɪnd/", "example": "Did you find the layout of the office on the website?", "exVi": "Bạn có tìm thấy bố cục của văn phòng trên trang web không?" }, 
+            { "en": "Search for", "ipa": "/sɜːrtʃ fɔːr/", "example": "They are searching for a better floor plan for the house.", "exVi": "Họ đang tìm kiếm một sơ đồ tầng tốt hơn cho ngôi nhà." }, 
+            { "en": "Seek", "ipa": "/siːk/", "example": "The company is seeking a new location for its headquarters.", "exVi": "Công ty đang tìm kiếm một địa điểm mới cho trụ sở chính." }
+        ] 
+    },
+    { 
+        "vi": "Bố cục / Cách bố trí / Sơ đồ tầng (n)", 
+        "words": [
+            { "en": "Floor plan", "ipa": "/flɔːr plæn/", "example": "Please study the floor plan to know where the emergency exits are.", "exVi": "Vui lòng nghiên cứu sơ đồ tầng để biết các lối thoát hiểm ở đâu." }, 
+            { "en": "Floor map", "ipa": "/flɔːr mæp/", "example": "There is a floor map located next to the elevator.", "exVi": "Có một bản đồ tầng được đặt cạnh thang máy." }, 
+            { "en": "Layout", "ipa": "/ˈleɪaʊt/", "example": "I really like the open layout of this showroom.", "exVi": "Tôi thực sự thích cách bố trí mở của phòng trưng bày này." }
+        ] 
+    },
+    { 
+        "vi": "Đối diện (prep)", 
+        "words": [
+            { "en": "Across from", "ipa": "/əˈkrɔːs frʌm/", "example": "The cafeteria is located just across from the meeting room.", "exVi": "Căng tin nằm ngay đối diện phòng họp." }, 
+            { "en": "Opposite", "ipa": "/ˈɑːpəzɪt/", "example": "The bank is opposite the post office.", "exVi": "Ngân hàng đối diện với bưu điện." }
+        ] 
+    },
+    { 
+        "vi": "Chậu cây (n)", 
+        "words": [{ 
+            "en": "Potted tree", "ipa": "/ˈpɑːtɪd triː/", 
+            "example": "There is a large potted tree at the corner of the lobby.", 
+            "exVi": "Có một chậu cây lớn ở góc sảnh chờ." 
+        }] 
+    },
+    { 
+        "vi": "Thang máy (n)", 
+        "words": [
+            { "en": "Elevator", "ipa": "/ˈɛləveɪtər/", "example": "Please take the elevator to the 5th floor.", "exVi": "Vui lòng đi thang máy lên tầng 5." }, 
+            { "en": "Lift", "ipa": "/lɪft/", "example": "The lift is currently out of service for maintenance.", "exVi": "Thang máy hiện đang ngừng hoạt động để bảo trì." }
+        ] 
+    },
+    { 
+        "vi": "Bỏ qua (v)", 
+        "words": [{ 
+            "en": "Skip", "ipa": "/skɪp/", 
+            "example": "You can skip the introduction and go straight to the main part.", 
+            "exVi": "Bạn có thể bỏ qua phần giới thiệu và đi thẳng vào phần chính." 
+        }] 
+    },
+    { 
+        "vi": "Sự kiện bán hàng (n)", 
+        "words": [{ 
+            "en": "Sales event", "ipa": "/seɪlz ɪˈvɛnt/", 
+            "example": "The annual sales event attracts thousands of customers.", 
+            "exVi": "Sự kiện bán hàng hàng năm thu hút hàng ngàn khách hàng." 
+        }] 
+    },
+    { 
+        "vi": "Lối vào (n)", 
+        "words": [{ 
+            "en": "Entrance", "ipa": "/ˈɛntrəns/", 
+            "example": "The staff entrance is located at the back of the building.", 
+            "exVi": "Lối vào cho nhân viên nằm ở phía sau tòa nhà." 
+        }] 
+    },
+    { 
+        "vi": "Thông báo / Báo cho biết (v)", 
+        "words": [
+            { "en": "Inform", "ipa": "/ɪnˈfɔːrm/", "example": "We will inform you as soon as the floor plan is updated.", "exVi": "Chúng tôi sẽ thông báo cho bạn ngay khi sơ đồ tầng được cập nhật." }, 
+            { "en": "Notice", "ipa": "/ˈnoʊtɪs/", "example": "Did you notice the sign near the entrance?", "exVi": "Bạn có nhận thấy/để ý cái biển báo gần lối vào không?" }
+        ] 
+    }
+]
 }
 ];
-
-let currentLessonIndex = 0; // Biến theo dõi bài học hiện tại
-
-function speak(text) {
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = 'en-US';
-    window.speechSynthesis.speak(msg);
-}
-
-function toggleSingleContent(btn, className) {
-    const parent = btn.closest('.content-line'); 
-    const elements = parent.querySelectorAll('.' + className);
-    elements.forEach(el => el.classList.toggle('show'));
-    btn.classList.toggle('active-btn');
-}
-
-function toggleGroupContent(btn, className) {
-    const parent = btn.closest('.lesson-group'); 
-    const elements = parent.querySelectorAll('.' + className);
-    elements.forEach(el => el.classList.toggle('show'));
-    btn.classList.toggle('active-btn');
-}
-
-// Hàm chuyển bài học
-function goToLesson(index) {
-    if (index >= 0 && index < allLessons.length) {
-        currentLessonIndex = index;
-        render();
-        window.scrollTo(0, 0); // Cuộn lên đầu trang khi chuyển bài
-    }
-}
-
-function render() {
-    const app = document.getElementById('app');
-    
-    // 1. Menu nhanh (vẫn giữ để người dùng nhảy nhanh đến câu)
-    const navHtml = `
-        <div class="lesson-nav">
-            ${allLessons.map((lesson, index) => `
-                <a href="javascript:void(0)" 
-                   onclick="goToLesson(${index})" 
-                   class="nav-item ${currentLessonIndex === index ? 'active-btn' : ''}"
-                   style="${currentLessonIndex === index ? 'background: #007bff; color: white;' : ''}">
-                   ${lesson.title}
-                </a>
-            `).join('')}
-        </div>
-    `;
-
-    // 2. Tạo nội dung cho bài học hiện tại
-    const lesson = allLessons[currentLessonIndex];
-    const contentHtml = `
-        <div class="lesson-group active">
-            <div class="group-header">
-                <div class="group-title">${lesson.title}</div><br>
-                <audio class="audio-player" controls key="${currentLessonIndex}">
-                    <source src="${lesson.audioUrl}" type="audio/mpeg">
-                </audio>
-            </div>
-            
-            <div class="section">
-                <h2>Đoạn Hội Thoại</h2>
-                <div class="btn-group">
-                    <button onclick="toggleGroupContent(this, 'p-en')">Anh</button>
-                    <button onclick="toggleGroupContent(this, 'p-ipa')">IPA</button>
-                    <button onclick="toggleGroupContent(this, 'p-guide')">Cách phát âm</button>
-                    <button onclick="toggleGroupContent(this, 'p-vi')">Việt</button>
-                    <button onclick="toggleGroupContent(this, 'p-practice')">Luyện viết</button>
-                    <button onclick="toggleGroupContent(this, 'p-context')">Bối cảnh</button> 
-                    <button onclick="toggleGroupContent(this, 'p-grammar')">Ngữ pháp</button>
-                </div>${lesson.passage.map((item, idx) => `
-    <div class="content-line">
-        <div class="en-text p-en"><strong>${item.en}</strong></div>
-        <div class="ipa-text p-ipa">${item.ipa}</div>
-        <div class="guide-text p-guide">🗣️ ${item.guide || 'Đang cập nhật...'}</div>
-        <div class="vi-text p-vi">${item.vi}</div>
-        
-        <div class="practice-box p-practice" style="display:none; margin-top:10px;">
-            <input type="text" 
-                   placeholder="Nhập lại câu Anh hoặc Việt..." 
-                   style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"
-                   onkeyup="checkPractice(this, '${item.en.replace(/'/g, "\\'")}', '${item.vi.replace(/'/g, "\\'")}')">
-            <div class="feedback" style="font-size: 0.8rem; margin-top: 4px;"></div>
-        </div>
-        <div class="context-text p-context">${item.context || 'Chưa có thông tin bối cảnh'}</div> 
-        <div class="grammar-text p-grammar">📝 <b>Phân tích:</b><br>${item.grammar || 'Dữ liệu ngữ pháp đang được cập nhật...'}</div>
-    </div>
-`).join('')}
-            </div>
-
-            <div class="section">
-                <h2>Câu Hỏi</h2>
-                ${lesson.questions.map(item => `
-                    <div class="content-line">
-                        <div class="btn-group" style="margin-bottom: 10px;">
-                            <button onclick="toggleSingleContent(this, 'q-en')">Anh</button>
-                            <button onclick="toggleSingleContent(this, 'q-ipa')">IPA</button>
-                            <button onclick="toggleSingleContent(this, 'q-vi')">Việt</button>
-                        </div>
-                        <div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
-                            <div class="en-text q-en"><strong>${item.q}</strong></div>
-                            <div class="ipa-text q-ipa"><em>${item.ipa}</em></div>
-                            <div class="vi-text q-vi"><strong>${item.vi}</strong></div>
-                        </div>
-                        <div class="options-group" style="padding-left: 15px;">
-                            ${item.options ? item.options.map((opt, index) => `
-                                <div style="margin-bottom: 8px;">
-                                    <span class="en-text q-en">${String.fromCharCode(65 + index)}. ${opt.en}</span>
-                                    <span class="ipa-text q-ipa">(${opt.ipa})</span>
-                                    <span class="vi-text q-vi">: ${opt.vi}</span>
-                                </div>
-                            `).join('') : ''}
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <div class="section">
-                <h2>Từ Vựng (Flashcards)</h2>
-                <div class="flashcard-grid">
-                    ${lesson.vocabulary.map(v => `
-                        <div class="card" onclick="this.classList.toggle('flipped')">
-                            <div class="card-inner">
-                                <div class="card-front">
-                                    <strong style="font-size: 1.1rem; text-align: center;">${v.vi}</strong>
-                                </div>
-                                <div class="card-back">
-                                    ${v.words.map(w => `
-                                        <div class="vocab-item-row">
-                                            <div class="vocab-info">
-                                                <span class="vocab-en">${w.en}</span>
-                                                <span class="vocab-ipa">${w.ipa}</span>
-                                            </div>
-                                            <span class="speak-btn" onclick="event.stopPropagation(); speak('${w.en}')">🔊</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-
-            <div class="pagination-nav">
-                <button onclick="goToLesson(${currentLessonIndex - 1})" ${currentLessonIndex === 0 ? 'disabled' : ''}>
-                    ← Câu trước
-                </button>
-                <span style="font-weight: bold; align-self: center;">
-                    ${currentLessonIndex + 1} / ${allLessons.length}
-                </span>
-                <button onclick="goToLesson(${currentLessonIndex + 1})" ${currentLessonIndex === allLessons.length - 1 ? 'disabled' : ''}>
-                    Câu sau →
-                </button>
-            </div>
-        </div>
-    `;
-
-    app.innerHTML = navHtml + contentHtml;
-}
-function checkPractice(input, correctEn, correctVi) {
-    const userValue = input.value.trim().toLowerCase();
-    const feedback = input.nextElementSibling;
-    
-    // Làm sạch chuỗi (loại bỏ dấu câu cơ bản để so sánh chính xác hơn)
-    const clean = (str) => str.toLowerCase().replace(/[.,?!]/g, "").trim();
-
-    if (userValue === "") {
-        feedback.innerHTML = "";
-        input.style.borderColor = "#ccc";
-        return;
-    }
-
-    if (clean(userValue) === clean(correctEn) || clean(userValue) === clean(correctVi)) {
-        feedback.innerHTML = "Tuyệt vời!";
-        feedback.className = "feedback correct";
-        input.style.borderColor = "#28a745";
-        input.style.backgroundColor = "#eafff0";
-    } else {
-        feedback.innerHTML = "Tiếp tục cố gắng...";
-        feedback.className = "feedback";
-        input.style.borderColor = "#ff4d4f";
-        input.style.backgroundColor = "#fff1f0";
-    }
-}
-
-render();
 </script>
+<script src="js/script_listen.js"></script>
 </body>
 </html>

@@ -10,6 +10,8 @@
             --primary: #2563eb;
             --ybm: #e11d48;
             --vocab: #059669;
+            --structure: #7c3aed;
+            --comm: #f59e0b;
             --bg: #f8fafc;
             --text: #1e293b;
             --white: #ffffff;
@@ -24,8 +26,80 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
+        /* --- PHẦN CSS CHO MÀN HÌNH ĐĂNG NHẬP --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        .login-box h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .login-box button:hover {
+            background-color: #1d4ed8;
+        }
+
+        #error-msg {
+            color: var(--ybm);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Ẩn nội dung chính lúc đầu */
+        #main-content {
+            display: none;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- CSS CŨ CỦA BẠN --- */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -36,6 +110,7 @@
             margin: 0;
             background: linear-gradient(to right, var(--primary), #7c3aed);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -54,7 +129,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #94a3b8;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         .card {
@@ -88,21 +163,21 @@
             flex-shrink: 0;
         }
 
-        /* Màu sắc riêng cho từng loại */
         .bg-ybm { background: #fff1f2; color: var(--ybm); }
         .bg-word { background: #ecfdf5; color: var(--vocab); }
-        .bg-colo { background: #eff6ff; color: var(--primary); }
-        .bg-idiom { background: #fefce8; color: #ca8a04; }
+        .bg-mix { background: #fffbeb; color: #ca8a04; }
+        .bg-stru { background: #f5f3ff; color: var(--structure); }
+        .bg-comm { background: #fff7ed; color: var(--comm); }
 
         .info h2 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
         }
 
         .info p {
             margin: 5px 0 0;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #64748b;
         }
 
@@ -113,48 +188,110 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1>Hệ Thống Tự Học TOEIC</h1>
-        <p style="color: #64748b;">Nâng cao kỹ năng mỗi ngày cùng YBM 2025</p>
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Vui lòng đăng nhập</h2>
+            <p style="color: #64748b; font-size: 14px;">Nhập mật khẩu để truy cập tài liệu</p>
+            <input type="password" id="password-input" placeholder="Nhập mật khẩu..." onkeypress="handleEnter(event)">
+            <button onclick="checkPassword()">Đăng nhập</button>
+            <p id="error-msg">Sai mật khẩu, vui lòng thử lại!</p>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="section-title">Luyện giải đề</div>
-        
-        <a href="ybm_tests.html" class="card">
-            <div class="icon-box bg-ybm">📚</div>
-            <div class="info">
-                <h2>Giáo trình YBM</h2>
-                <p>Tổng hợp Test 2, Test 3...</p>
-            </div>
-        </a>
+    <div id="main-content">
+        <div class="header">
+            <h1>Hệ Thống Tự Học TOEIC</h1>
+            <p style="color: #64748b;">Nâng cao kỹ năng mỗi ngày cùng YBM 2025</p>
+        </div>
 
-        <div class="section-title">Kỹ năng bổ trợ (Vocabulary)</div>
+        <div class="container">
+            <div class="section-title">Luyện giải đề</div>
+            
+            <a href="ybm_tests.html" class="card">
+                <div class="icon-box bg-ybm">📚</div>
+                <div class="info">
+                    <h2>Giáo trình YBM</h2>
+                    <p>Tổng hợp Test 2, Test 3...</p>
+                </div>
+            </a>
 
-        <a href="word_formation.html" class="card">
-            <div class="icon-box bg-word">🏗️</div>
-            <div class="info">
-                <h2>Word Formation</h2>
-                <p>Cấu trúc từ và gia đình từ</p>
-            </div>
-        </a>
+            <div class="section-title">Từ vựng & Cụm từ</div>
 
-        <a href="collocation.html" class="card">
-            <div class="icon-box bg-colo">🔗</div>
-            <div class="info">
-                <h2>Collocations</h2>
-                <p>Các cụm từ thường đi cùng nhau</p>
-            </div>
-        </a>
+            <a href="word_formation.html" class="card">
+                <div class="icon-box bg-word">🏗️</div>
+                <div class="info">
+                    <h2>Word Formation</h2>
+                    <p>Cấu trúc từ và gia đình từ</p>
+                </div>
+            </a>
 
-        <a href="idioms.html" class="card">
-            <div class="icon-box bg-idiom">💡</div>
-            <div class="info">
-                <h2>Idioms</h2>
-                <p>Thành ngữ và cụm từ cố định</p>
-            </div>
-        </a>
+            <a href="collocations_idioms.html" class="card">
+                <div class="icon-box bg-mix">🔗</div>
+                <div class="info">
+                    <h2>Collocations & Idioms</h2>
+                    <p>Cụm từ và thành ngữ cố định</p>
+                </div>
+            </a>
+
+            <div class="section-title">Cấu trúc & Giao tiếp</div>
+
+            <a href="english_structures.html" class="card">
+                <div class="icon-box bg-stru">🛠️</div>
+                <div class="info">
+                    <h2>Cấu trúc Tiếng Anh</h2>
+                    <p>Các cấu trúc ngữ pháp thực tế</p>
+                </div>
+            </a>
+
+            <a href="communication_100.html" class="card">
+                <div class="icon-box bg-comm">💬</div>
+                <div class="info">
+                    <h2>100 Câu Giao Tiếp</h2>
+                    <p>Mẫu câu thông dụng hằng ngày</p>
+                </div>
+            </a>
+        </div>
     </div>
+
+    <script>
+        // MẬT KHẨU CỦA BẠN ĐẶT Ở ĐÂY
+        const CORRECT_PASSWORD = "25012004.";
+
+        // Kiểm tra xem đã đăng nhập trước đó chưa (trong phiên này)
+        window.onload = function() {
+            if (sessionStorage.getItem("isLoggedIn") === "true") {
+                showMainContent();
+            } else {
+                // Đảm bảo ẩn nội dung và hiện form đăng nhập nếu chưa login
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('main-content').style.display = 'none';
+            }
+        };
+
+        function checkPassword() {
+            const input = document.getElementById("password-input").value;
+            if (input === CORRECT_PASSWORD) {
+                // Lưu trạng thái đăng nhập
+                sessionStorage.setItem("isLoggedIn", "true");
+                showMainContent();
+            } else {
+                document.getElementById("error-msg").style.display = "block";
+                document.getElementById("password-input").value = "";
+            }
+        }
+
+        function showMainContent() {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("main-content").style.display = "flex";
+        }
+
+        // Cho phép nhấn Enter để đăng nhập
+        function handleEnter(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        }
+    </script>
 
 </body>
 </html>

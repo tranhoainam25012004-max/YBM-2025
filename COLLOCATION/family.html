@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Collocations - Pro Tool</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ebf0f3;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+
+        .nav-tabs {
+            display: flex; width: 100%; background: var(--primary);
+            position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow);
+        }
+
+        .tab-item {
+            flex: 1; text-align: center; padding: 15px 0;
+            color: #bdc3c7; text-transform: uppercase; font-weight: bold;
+            font-size: 14px; cursor: pointer; border-bottom: 4px solid transparent;
+            transition: 0.3s;
+        }
+
+        .tab-item.active {
+            color: var(--white); border-bottom: 4px solid var(--accent);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .container { width: 100%; max-width: 600px; padding: 20px; margin-top: 10px; }
+
+        /* Flashcard Section */
+        #flashcard-section { display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.5s; }
+
+        .scene { width: 100%; height: 280px; perspective: 1000px; }
+        .card {
+            width: 100%; height: 100%; position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d; cursor: pointer;
+        }
+        .card.is-flipped { transform: rotateY(180deg); }
+
+        .card__face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 25px;
+            border-radius: 20px; box-shadow: var(--shadow); text-align: center;
+        }
+
+        .card__face--front { background: var(--white); color: var(--primary); border: 2px solid var(--accent); }
+        .card__face--back { background: var(--accent); color: var(--white); transform: rotateY(180deg); }
+
+        .word-en { font-size: 1.6rem; font-weight: bold; margin-bottom: 10px; }
+        .ipa { font-family: 'Lucida Sans Unicode', sans-serif; color: #7f8c8d; font-size: 1.1rem; margin-bottom: 15px; }
+        .speaker-icon { 
+            font-size: 2rem; color: var(--accent); background: #eef7ff; 
+            padding: 10px; border-radius: 50%; transition: 0.2s;
+        }
+        .speaker-icon:hover { transform: scale(1.1); }
+
+        .example-box {
+            background: #fff; padding: 15px; border-radius: 12px;
+            border-left: 5px solid var(--accent); box-shadow: var(--shadow);
+            margin-top: 10px; line-height: 1.6;
+        }
+        .example-label { font-weight: bold; color: var(--accent); font-size: 0.9rem; display: block; margin-bottom: 5px; }
+        .ex-en { font-style: italic; color: #34495e; display: block; margin-bottom: 5px; }
+        .ex-vi { color: #27ae60; font-size: 0.95rem; border-top: 1px dashed #eee; display: none; padding-top: 5px; }
+        .show-ex-vi { display: block !important; }
+        .hide-ex-en { display: none !important; }
+
+        .controls { display: flex; align-items: center; gap: 10px; justify-content: space-between; margin-top: 10px; }
+        .btn {
+            padding: 12px 10px; border: none; border-radius: 10px;
+            background: var(--white); font-weight: bold; cursor: pointer; flex: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9rem; transition: 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-flip { background: #9b59b6; color: white; }
+
+        /* Quiz Section */
+        #quiz-section { display: none; animation: fadeIn 0.5s; }
+        .quiz-item { background: var(--white); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: var(--shadow); }
+        .quiz-question { font-weight: bold; margin-bottom: 15px; color: var(--primary); line-height: 1.4; }
+        .option {
+            display: block; width: 100%; padding: 12px; margin: 8px 0;
+            border: 1px solid #ddd; border-radius: 10px; background: #fff;
+            text-align: left; cursor: pointer; font-size: 0.95rem;
+        }
+        .option:hover { background: #f0f7ff; }
+        .option.selected { border-color: var(--accent); background: #eef7ff; }
+        .option.correct { background: var(--success) !important; color: white !important; border-color: var(--success); }
+        .option.wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger); }
+
+        .hint-btn {
+            background: #f1c40f; color: #fff; border: none; padding: 5px 12px;
+            border-radius: 5px; font-size: 0.8rem; cursor: pointer; margin-top: 10px;
+        }
+        .explanation {
+            margin-top: 12px; padding: 12px; background: #e8f4fd;
+            border-left: 4px solid var(--accent); border-radius: 4px;
+            font-size: 0.9rem; color: #2c3e50; display: none; animation: fadeIn 0.3s;
+        }
+        .show-explain { display: block !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="nav-tabs">
+        <div class="tab-item active" id="tab-flash" onclick="switchTab('flashcard')">Flashcards</div>
+        <div class="tab-item" id="tab-quiz" onclick="switchTab('quiz')">Luyện tập</div>
+    </div>
+
+    <div class="container">
+        <div id="flashcard-section">
+            <div class="scene">
+                <div class="card" id="main-card" onclick="toggleFlip(event)">
+                <div class="card__face card__face--front">
+                    <div id="word-list-container" style="width: 100%; overflow-y: auto; max-height: 100%;">
+                        </div>
+                </div>
+                    <div class="card__face card__face--back">
+                        <div style="font-size: 1.5rem; font-weight: 600;" id="text-vi">...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <span class="example-label">Ví dụ & Dịch nghĩa:</span>
+                <div class="ex-en" id="text-ex-en">"..."</div>
+                <div class="ex-vi" id="text-ex-vi">"..."</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="changeCard(-1)">Trước</button>
+                <button class="btn btn-flip" id="btn-master-flip" onclick="toggleGlobalFlip(event)">Mặt sau (Vi)</button>
+                <button class="btn" onclick="changeCard(1)">Sau</button>
+            </div>
+            <div id="counter" style="font-weight: bold; text-align: center; color: var(--primary);">1 / 12</div>
+        </div>
+
+        <div id="quiz-section">
+            <div id="quiz-list"></div>
+            <button class="btn" onclick="gradeQuiz()" style="width: 100%; margin: 20px 0 40px; background: var(--success); color: white;">Nộp bài & Kiểm tra</button>
+        </div>
+    </div>
+
+<script>
+const rawVocabulary = [
+    {
+    id: 1,
+    words: [
+      { en: "Immediate family", ipa: "/ɪˈmiːdiət ˈfæmɪli/", audioIcon: "🔊" },
+      { en: "Nuclear family", ipa: "/ˈnjuːkliə(r) ˈfæmɪli/", audioIcon: "🔊" }
+    ],
+    vi: "Gia đình ruột thịt (bao gồm ba, mẹ & anh chị em ruột)",
+    ex: "My immediate family is quite small, just my parents and my younger brother.",
+    exVi: "Gia đình ruột thịt của tôi khá nhỏ, chỉ có bố mẹ và em trai tôi."
+  },
+  {
+    id: 2,
+    words: [{ en: "Extended family", ipa: "/ɪkˈstendɪd ˈfæmɪli/", audioIcon: "🔊" }],
+    vi: "Đại gia đình (bao gồm ông bà, cô chú bác, cậu, mợ...)",
+    ex: "We usually have a big dinner with our extended family during the holidays.",
+    exVi: "Chúng tôi thường có một bữa tối lớn với đại gia đình trong các kỳ nghỉ."
+  },
+  {
+    id: 3,
+    words: [{ en: "Family tree", ipa: "/ˈfæmɪli triː/", audioIcon: "🔊" }],
+    vi: "Sơ đồ gia đình, gia phả",
+    ex: "I'm researching our family tree to find out more about our ancestors.",
+    exVi: "Tôi đang nghiên cứu sơ đồ gia phả của mình để tìm hiểu thêm về tổ tiên."
+  },
+  {
+    id: 4,
+    words: [{ en: "Distant relative", ipa: "/ˈdɪstənt ˈrelətɪv/", audioIcon: "🔊" }],
+    vi: "Họ hàng xa",
+    ex: "He’s a distant relative of mine; we only meet once every few years.",
+    exVi: "Anh ấy là họ hàng xa của tôi; chúng tôi chỉ gặp nhau vài năm một lần."
+  },
+  {
+    id: 5,
+    words: [
+      { en: "Loving family", ipa: "/ˈlʌvɪŋ ˈfæmɪli/", audioIcon: "🔊" },
+      { en: "Close-knit family", ipa: "/ˌkləʊs ˈnɪt ˈfæmɪli/", audioIcon: "🔊" }
+    ],
+    vi: "Gia đình êm ấm, khăng khít",
+    ex: "They are such a close-knit family; they always support each other.",
+    exVi: "Họ là một gia đình rất khăng khít; họ luôn hỗ trợ lẫn nhau."
+  },
+  {
+    id: 6,
+    words: [{ en: "Dysfunctional family", ipa: "/dɪsˈfʌŋkʃənl ˈfæmɪli/", audioIcon: "🔊" }],
+    vi: "Gia đình không êm ấm, bất hòa",
+    ex: "Growing up in a dysfunctional family can be very challenging for a child.",
+    exVi: "Lớn lên trong một gia đình bất hòa có thể là một thử thách lớn đối với một đứa trẻ."
+  },
+  {
+    id: 7,
+    words: [{ en: "Carefree childhood", ipa: "/ˈkeəfriː ˈtʃaɪldhʊd/", audioIcon: "🔊" }],
+    vi: "Tuổi thơ êm đềm",
+    ex: "I was lucky to have a carefree childhood playing in the countryside.",
+    exVi: "Tôi đã may mắn có một tuổi thơ êm đềm khi vui chơi ở vùng nông thôn."
+  },
+  {
+    id: 8,
+    words: [{ en: "Troubled childhood", ipa: "/ˈtrʌbld ˈtʃaɪldhʊd/", audioIcon: "🔊" }],
+    vi: "Tuổi thơ khó khăn",
+    ex: "Despite a troubled childhood, he grew up to be a very successful man.",
+    exVi: "Bất chấp tuổi thơ khó khăn, anh ấy đã lớn lên trở thành một người rất thành công."
+  },
+  {
+    id: 9,
+    words: [{ en: "Bitter divorce", ipa: "/ˈbɪtə dɪˈvɔːs/", audioIcon: "🔊" }],
+    vi: "Ly thân (do có xích mích tình cảm)",
+    ex: "They went through a bitter divorce that lasted for over two years.",
+    exVi: "Họ đã trải qua một cuộc ly hôn cay đắng kéo dài hơn hai năm."
+  },
+  {
+    id: 10,
+    words: [{ en: "Messy divorce", ipa: "/ˈmesi dɪˈvɔːs/", audioIcon: "🔊" }],
+    vi: "Ly thân và có tranh chấp tài sản",
+    ex: "It was a messy divorce because of the arguments over their house and money.",
+    exVi: "Đó là một cuộc ly hôn rắc rối vì những tranh cãi về nhà cửa và tiền bạc."
+  },
+  {
+    id: 11,
+    words: [
+      { en: "Mutual divorce", ipa: "/ˈmjuːtʃuəl dɪˈvɔːs/", audioIcon: "🔊" },
+      { en: "Mutual separation", ipa: "/ˈmjuːtʃuəl ˌsepəˈreɪʃn/", audioIcon: "🔊" }
+    ],
+    vi: "Ly hôn mà không xảy ra tranh chấp",
+    ex: "Their mutual separation was peaceful, and they remain good friends.",
+    exVi: "Sự chia tay tự nguyện của họ diễn ra trong hòa bình và họ vẫn là bạn tốt."
+  },
+  {
+    id: 12,
+    words: [{ en: "Broken home", ipa: "/ˈbrəʊkən həʊm/", audioIcon: "🔊" }],
+    vi: "Gia đình tan vỡ",
+    ex: "It's hard for children to grow up in a broken home after their parents split.",
+    exVi: "Thật khó để trẻ em lớn lên trong một gia đình tan vỡ sau khi cha mẹ chúng chia tay."
+  },
+  {
+    id: 13,
+    words: [{ en: "Single mother", ipa: "/ˈsɪŋɡl ˈmʌðə(r)/", audioIcon: "🔊" }],
+    vi: "Người mẹ đơn thân",
+    ex: "She raised three children on her own as a single mother.",
+    exVi: "Cô ấy đã tự mình nuôi nấng ba đứa con với tư cách là một người mẹ đơn thân."
+  },
+  {
+    id: 14,
+    words: [
+      { en: "Have an abortion", ipa: "/hæv ən əˈbɔːʃn/", audioIcon: "🔊" },
+      { en: "Get an abortion", ipa: "/ɡet ən əˈbɔːʃn/", audioIcon: "🔊" }
+    ],
+    vi: "Phá thai",
+    ex: "She had to make a difficult decision to get an abortion.",
+    exVi: "Cô ấy đã phải đưa ra một quyết định khó khăn là phá thai."
+  },
+  {
+    id: 15,
+    words: [{ en: "Family reunion", ipa: "/ˈfæmɪli ˌriːˈjuːniən/", audioIcon: "🔊" }],
+    vi: "Gia đình đoàn tụ",
+    ex: "We are planning a big family reunion for my grandmother's 80th birthday.",
+    exVi: "Chúng tôi đang lên kế hoạch cho một buổi đoàn tụ gia đình lớn nhân dịp sinh nhật lần thứ 80 của bà tôi."
+  },
+  {
+    id: 16,
+    words: [{ en: "Divorce settlement", ipa: "/dɪˈvɔːs ˈsetlmənt/", audioIcon: "🔊" }],
+    vi: "Giải quyết các vấn đề ly hôn",
+    ex: "The divorce settlement included the division of their shared property.",
+    exVi: "Việc giải quyết ly hôn bao gồm cả việc phân chia tài sản chung của họ."
+  },
+
+  // --- ẢNH 2 ---
+  {
+    id: 17,
+    words: [{ en: "Custody of the children", ipa: "/ˈkʌstədi əv ðə ˈtʃɪldrən/", audioIcon: "🔊" }],
+    vi: "Quyền nuôi con",
+    ex: "The court will decide who gets custody of the children.",
+    exVi: "Tòa án sẽ quyết định ai là người được quyền nuôi con."
+  },
+  {
+    id: 18,
+    words: [{ en: "Grant joint custody", ipa: "/ɡrɑːnt dʒɔɪnt ˈkʌstədi/", audioIcon: "🔊" }],
+    vi: "Vợ chồng cùng chia sẻ quyền nuôi con",
+    ex: "The judge decided to grant joint custody to both parents.",
+    exVi: "Thẩm phán đã quyết định cấp quyền nuôi con chung cho cả bố và mẹ."
+  },
+  {
+    id: 19,
+    words: [{ en: "Sole custody", ipa: "/səʊl ˈkʌstədi/", audioIcon: "🔊" }],
+    vi: "Chỉ vợ hoặc chồng có quyền nuôi con",
+    ex: "She was awarded sole custody of her daughter after the trial.",
+    exVi: "Cô ấy đã được trao quyền nuôi con duy nhất sau phiên tòa."
+  },
+  {
+    id: 20,
+    words: [{ en: "Award sole custody", ipa: "/əˈwɔːd səʊl ˈkʌstədi/", audioIcon: "🔊" }],
+    vi: "Giao quyền nuôi con",
+    ex: "The court awarded sole custody to the mother.",
+    exVi: "Tòa án đã giao quyền nuôi con duy nhất cho người mẹ."
+  },
+  {
+    id: 21,
+    words: [{ en: "Pay child support", ipa: "/peɪ tʃaɪld səˈpɔːt/", audioIcon: "🔊" }],
+    vi: "Trợ cấp tiền nuôi con",
+    ex: "He has to pay child support to his ex-wife every month.",
+    exVi: "Anh ấy phải trả tiền trợ cấp nuôi con cho vợ cũ hàng tháng."
+  },
+  {
+    id: 22,
+    words: [
+      { en: "Be on good terms with sb", ipa: "/bi ɒn ɡʊd tɜːmz wɪð/", audioIcon: "🔊" },
+      { en: "Keep on good terms with sb", ipa: "/kiːp ɒn ɡʊd tɜːmz wɪð/", audioIcon: "🔊" },
+      { en: "Keep on well with sb", ipa: "/kiːp ɒn wel wɪð/", audioIcon: "🔊" },
+      { en: "Get along with sb", ipa: "/ɡet əˈlɒŋ wɪð/", audioIcon: "🔊" },
+      { en: "Have a good relationship with sb", ipa: "/hæv ə ɡʊd rɪˈleɪʃnʃɪp wɪð/", audioIcon: "🔊" }
+    ],
+    vi: "Mối quan hệ hòa nhã, lịch thiệp, chan hòa với ai",
+    ex: "It's important to keep on good terms with your neighbors.",
+    exVi: "Việc giữ mối quan hệ hòa nhã với hàng xóm là rất quan trọng."
+  },
+  {
+    id: 23,
+    words: [{ en: "Get pregnant", ipa: "/ɡet ˈpreɡnənt/", audioIcon: "🔊" }],
+    vi: "Mang thai",
+    ex: "They were so happy when they found out she had got pregnant.",
+    exVi: "Họ đã rất hạnh phúc khi biết cô ấy đã mang thai."
+  },
+  {
+    id: 24,
+    words: [{ en: "Give the baby up for adoption", ipa: "/ɡɪv ðə ˈbeɪbi ʌp fə(r) əˈdɒpʃn/", audioIcon: "🔊" }],
+    vi: "Đem con cho người ta nhận nuôi",
+    ex: "She decided to give the baby up for adoption.",
+    exVi: "Cô ấy quyết định đem con cho người khác nhận nuôi."
+  },
+  {
+    id: 25,
+    words: [
+      { en: "Due date", ipa: "/djuː deɪt/", audioIcon: "🔊" },
+      { en: "Baby is due", ipa: "/ˈbeɪbi ɪz djuː/", audioIcon: "🔊" }
+    ],
+    vi: "Ngày dự sinh",
+    ex: "The doctor said her due date is at the end of October.",
+    exVi: "Bác sĩ nói ngày dự sinh của cô ấy là vào cuối tháng 10."
+  },
+  {
+    id: 26,
+    words: [
+      { en: "Have the baby", ipa: "/hæv ðə ˈbeɪbi/", audioIcon: "🔊" },
+      { en: "Give birth", ipa: "/ɡɪv bɜːθ/", audioIcon: "🔊" }
+    ],
+    vi: "Sinh con",
+    ex: "She gave birth to a healthy baby girl last night.",
+    exVi: "Cô ấy đã sinh một bé gái khỏe mạnh vào tối qua."
+  },
+  {
+    id: 27,
+    words: [{ en: "Adoptive parents", ipa: "/əˈdɒptɪv ˈpeərənts/", audioIcon: "🔊" }],
+    vi: "Bố mẹ nuôi",
+    ex: "He loves his adoptive parents dearly.",
+    exVi: "Anh ấy rất yêu thương bố mẹ nuôi của mình."
+  },
+  {
+    id: 28,
+    words: [
+      { en: "Raise the child", ipa: "/reɪz ðə tʃaɪld/", audioIcon: "🔊" },
+      { en: "Bring up the child", ipa: "/brɪŋ ʌp ðə tʃaɪld/", audioIcon: "🔊" }
+    ],
+    vi: "Nuôi nấng",
+    ex: "It takes a lot of patience and love to raise a child.",
+    exVi: "Cần rất nhiều sự kiên nhẫn và tình yêu để nuôi nấng một đứa trẻ."
+  },
+  {
+    id: 29,
+    words: [{ en: "Adopted child", ipa: "/əˈdɒptɪd tʃaɪld/", audioIcon: "🔊" }],
+    vi: "Con nuôi",
+    ex: "The adopted child quickly felt at home.",
+    exVi: "Đứa con nuôi nhanh chóng cảm thấy thoải mái như ở nhà."
+  },
+  {
+    id: 30,
+    words: [
+      { en: "Birth mother", ipa: "/bɜːθ ˈmʌðə(r)/", audioIcon: "🔊" },
+      { en: "Biological mother", ipa: "/ˌbaɪəˈlɒdʒɪkl ˈmʌðə(r)/", audioIcon: "🔊" }
+    ],
+    vi: "Mẹ ruột",
+    ex: "She finally met her birth mother after searching for years.",
+    exVi: "Cuối cùng cô ấy đã gặp được mẹ ruột của mình sau nhiều năm tìm kiếm."
+  },
+  {
+    id: 31,
+    words: [{ en: "A/the blue-eyed boy", ipa: "/ðə bluː aɪd bɔɪ/", audioIcon: "🔊" }],
+    vi: "Đứa con cưng",
+    ex: "He is the teacher's blue-eyed boy.",
+    exVi: "Cậu ấy là học trò cưng của giáo viên."
+  },
+  {
+    id: 32,
+    words: [{ en: "Blue blood", ipa: "/ˌbluː ˈblʌd/", audioIcon: "🔊" }],
+    vi: "Dòng giống hoàng tộc",
+    ex: "He treats everyone with respect, despite having blue blood.",
+    exVi: "Anh ấy đối xử với mọi người tôn trọng, mặc dù mang dòng máu hoàng tộc."
+  }
+];
+
+   const questions = [
+  {
+    id: 1,
+    question: "The technological advances ________ birth to the Industrial Revolution, which was the transition to new manufacturing processes in the period from about 1760 to sometime between 1820 and 1840.",
+    options: ["took", "gave", "had", "made"],
+    answer: "B",
+    explanation: "Give birth to sb/st: đẻ ra ai/cái gì (nghĩa bóng: khởi nguồn cho cái gì).",
+    translation: "Những tiến bộ công nghệ đã sinh ra cuộc cách mạng công nghiệp..."
+  },
+  {
+    id: 2,
+    question: "A number of the kids in my classroom come from ________ homes.",
+    options: ["broken", "damaged", "hurt", "separated"],
+    answer: "A",
+    explanation: "Broken home: gia đình tan vỡ.",
+    translation: "Rất nhiều đứa trẻ trong lớp tôi xuất thân từ những gia đình tan vỡ."
+  },
+  {
+    id: 3,
+    question: "After a ________ divorce from his wife of 20 years, the actor married a woman young enough to be his daughter.",
+    options: ["hostile", "unhappy", "bitter", "normal"],
+    answer: "C",
+    explanation: "Bitter divorce: ly thân/ly hôn (do có xích mích tình cảm cay đắng).",
+    translation: "Sau khi ly hôn cay đắng với người vợ đã chung sống 20 năm..."
+  },
+  {
+    id: 4,
+    question: "An ________ family is a family consisting of parents like father, mother, and their children, aunts, uncles, and cousins, all living nearby or in the same household.",
+    options: ["nuclear", "loving", "close-knit", "extended"],
+    answer: "D",
+    explanation: "Extended family: đại gia đình (bao gồm ông bà, cô chú bác, họ hàng...).",
+    translation: "Đại gia đình là gia đình gồm cha mẹ, con cái, dì, chú bác... sống gần nhau hoặc chung hộ."
+  },
+  {
+    id: 5,
+    question: "His parents died in a car accident 3 years ago and he has ________ up by his grandparents since then.",
+    options: ["grown", "brought", "taken", "made"],
+    answer: "B",
+    explanation: "Bring up: nuôi dưỡng (Dạng bị động: be brought up). Grow up: lớn lên.",
+    translation: "Bố mẹ anh ấy mất vì tai nạn 3 năm trước, từ đó anh ấy được ông bà nuôi dưỡng."
+  },
+  {
+    id: 6,
+    question: "A ________ mother is the woman who gives birth to a child, regardless of whether she is the genetic mother or subsequently brings up the child.",
+    options: ["step", "adoptive", "birth", "law"],
+    answer: "C",
+    explanation: "Birth mother: mẹ đẻ, mẹ ruột.",
+    translation: "Mẹ ruột là người phụ nữ sinh ra đứa trẻ, bất kể có nuôi nấng hay không."
+  },
+  {
+    id: 7,
+    question: "She decided to quit the job despite its high salary because she was not on good ________ with her boss.",
+    options: ["terms", "well", "relations", "relationships"],
+    answer: "A",
+    explanation: "Be/keep on good terms with sb: có mối quan hệ hòa nhã, tốt đẹp với ai.",
+    translation: "Cô ấy quyết định nghỉ việc dù lương cao vì không có quan hệ tốt với sếp."
+  },
+  {
+    id: 8,
+    question: "John had a ________ childhood, growing up with happily married parents and three brothers.",
+    options: ["carefree", "careful", "careless", "troubled"],
+    answer: "A",
+    explanation: "Carefree childhood: tuổi thơ êm đềm, không lo âu.",
+    translation: "John có một tuổi thơ êm đềm, lớn lên cùng cha mẹ hạnh phúc và 3 anh em."
+  },
+  {
+    id: 9,
+    question: "My aunt's going through a ________ divorce; she's paying a fortune in legal fees.",
+    options: ["bitter", "messy", "mutual", "carefree"],
+    answer: "B",
+    explanation: "Messy divorce: ly hôn có tranh chấp tài sản/con cái rắc rối.",
+    translation: "Dì tôi đang trải qua một vụ ly hôn rắc rối; dì đang tốn cả gia tài cho phí pháp lý."
+  },
+  {
+    id: 10,
+    question: "Some women choose to ________ an abortion rather than care for a severely disabled child.",
+    options: ["have", "give", "get", "A and C"],
+    answer: "D",
+    explanation: "Have/get an abortion: phá thai.",
+    translation: "Một số phụ nữ chọn phá thai thay vì chăm sóc một đứa trẻ khuyết tật nặng."
+  },
+  {
+    id: 11,
+    question: "A judge might ________ sole custody to the mother, and the father has to pay child support.",
+    options: ["reward", "award", "receive", "accept"],
+    answer: "B",
+    explanation: "Award sole custody: giao quyền nuôi con duy nhất cho ai.",
+    translation: "Tòa có thể giao quyền nuôi con cho mẹ, và cha phải trợ cấp nuôi dưỡng."
+  },
+  {
+    id: 12,
+    question: "He is a ________ boy in the family and his parents always give him everything he wants.",
+    options: ["blue-eyed", "naked-eyed", "black sheep", "spoiled"],
+    answer: "A",
+    explanation: "Blue-eyed boy: đứa con cưng.",
+    translation: "Anh ấy là đứa con cưng trong nhà và bố mẹ luôn cho anh ấy mọi thứ anh ấy muốn."
+  },
+  {
+    id: 13,
+    question: "My sister ________ pregnant immediately after she got married.",
+    options: ["took", "gave", "had", "got"],
+    answer: "D",
+    explanation: "Get pregnant: mang thai.",
+    translation: "Chị gái tôi có thai ngay sau khi kết hôn."
+  },
+  {
+    id: 14,
+    question: "________ is the fact of someone having been born into a family that belongs to the highest social class.",
+    options: ["Cold blood", "Blue blood", "Bad blood", "Fresh blood"],
+    answer: "B",
+    explanation: "Blue blood: dòng giống hoàng tộc, quý tộc.",
+    translation: "Dòng giống hoàng tộc là việc ai đó sinh ra trong gia đình thuộc tầng lớp cao nhất."
+  },
+  {
+    id: 15,
+    question: "My son is making a diagram of our family ________ for a school project.",
+    options: ["background", "tree", "root", "roof"],
+    answer: "B",
+    explanation: "Family tree: sơ đồ gia đình, gia phả.",
+    translation: "Con trai tôi đang vẽ sơ đồ cây gia đình cho dự án ở trường."
+  },
+  {
+    id: 16,
+    question: "My wife is pregnant with twins. They are ________ in February.",
+    options: ["come", "date", "due", "here"],
+    answer: "C",
+    explanation: "Due date: ngày dự sinh. Baby is due in...: em bé dự sinh vào tháng...",
+    translation: "Vợ tôi đang mang thai đôi. Dự kiến sinh vào tháng 2."
+  },
+  {
+    id: 17,
+    question: "If you are unable to meet the legal and moral responsibilities of parenthood, you may give the baby ________ adoption.",
+    options: ["up for", "in for", "out of", "up to"],
+    answer: "A",
+    explanation: "Give the baby up for adoption: đem con cho người khác nhận nuôi.",
+    translation: "Nếu không thể đáp ứng trách nhiệm làm cha mẹ, bạn có thể cho bé làm con nuôi."
+  },
+  {
+    id: 18,
+    question: "Sally was granted sole ________ of the children from her first marriage.",
+    options: ["keeping", "custody", "guardian", "adoptive"],
+    answer: "B",
+    explanation: "Sole custody: quyền nuôi con duy nhất.",
+    translation: "Sally được giao quyền nuôi dưỡng con từ cuộc hôn nhân đầu tiên."
+  },
+  {
+    id: 19,
+    question: "The celebrity wrote a book about his ________ family.",
+    options: ["debilitated", "defective", "dysfunctional", "effective"],
+    answer: "C",
+    explanation: "Dysfunctional family: gia đình không êm ấm, hay cãi vã, bất hòa.",
+    translation: "Người nổi tiếng đó đã viết một cuốn sách về gia đình bất hòa của mình."
+  },
+  {
+    id: 20,
+    question: "They have three biological children and two ________ children.",
+    options: ["adopted", "adoptive", "adopting", "adoptable"],
+    answer: "A",
+    explanation: "Adopted child: con nuôi. (Phân biệt với adoptive: tính từ chỉ người nhận nuôi).",
+    translation: "Họ có 3 con ruột và 2 con nuôi."
+  }
+];
+
+    let vocabulary = [];
+    let currentIdx = 0;
+    let globalDefaultFace = 'front';
+    let userChoices = Array(questions.length).fill(null);
+
+    // Hàm xáo trộn mảng (Fisher-Yates)
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // --- FLASHCARD LOGIC ---
+    function updateExampleFace() {
+        const card = document.getElementById('main-card');
+        const exEn = document.getElementById('text-ex-en');
+        const exVi = document.getElementById('text-ex-vi');
+        if (card.classList.contains('is-flipped')) {
+            exEn.classList.add('hide-ex-en'); exVi.classList.add('show-ex-vi');
+        } else {
+            exEn.classList.remove('hide-ex-en'); exVi.classList.remove('show-ex-vi');
+        }
+    }
+
+    function toggleFlip(e) {
+        if (e && e.target.classList.contains('speaker-icon')) return;
+        document.getElementById('main-card').classList.toggle('is-flipped');
+        updateExampleFace();
+    }
+
+    function toggleGlobalFlip() {
+        globalDefaultFace = (globalDefaultFace === 'front') ? 'back' : 'front';
+        const flipBtn = document.getElementById('btn-master-flip');
+        flipBtn.innerText = (globalDefaultFace === 'front') ? "Mặt sau (Vi)" : "Mặt trước (En)";
+        renderCard();
+    }
+
+   function renderCard() {
+    if (vocabulary.length === 0) return;
+    const item = vocabulary[currentIdx];
+    const card = document.getElementById('main-card');
+    const container = document.getElementById('word-list-container');
+    
+    // Xóa nội dung cũ và tạo danh sách từ mới
+    container.innerHTML = '';
+    item.words.forEach((w, index) => {
+        const wordDiv = document.createElement('div');
+        wordDiv.style.marginBottom = "15px";
+        wordDiv.innerHTML = `
+            <div class="word-en" style="margin-bottom: 2px; font-size: ${item.words.length > 3 ? '1.2rem' : '1.6rem'}">${w.en}</div>
+            <div class="ipa" style="margin-bottom: 5px; font-size: 0.9rem;">${w.ipa}</div>
+            <div class="speaker-icon" style="font-size: 1.2rem; padding: 5px; display: inline-block;" 
+                 onclick="speakSingleWord(event, '${w.en}')">🔊</div>
+        `;
+        container.appendChild(wordDiv);
+    });
+
+    // Cập nhật mặt sau và ví dụ
+    document.getElementById('text-vi').innerText = item.vi;
+    document.getElementById('text-ex-en').innerText = `"${item.ex}"`;
+    document.getElementById('text-ex-vi').innerText = `"${item.exVi}"`;
+    document.getElementById('counter').innerText = `${currentIdx + 1} / ${vocabulary.length}`;
+    
+    if (globalDefaultFace === 'back') card.classList.add('is-flipped');
+    else card.classList.remove('is-flipped');
+    updateExampleFace();
+}
+
+// Hàm phát âm từng từ riêng biệt
+function speakSingleWord(e, text) {
+    e.stopPropagation(); // Ngăn lật thẻ khi bấm vào loa
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    msg.rate = 0.9;
+    window.speechSynthesis.speak(msg);
+}
+
+
+    function changeCard(dir) {
+        currentIdx = (currentIdx + dir + vocabulary.length) % vocabulary.length;
+        renderCard();
+    }
+function speakWord(e) {
+        e.stopPropagation();
+        // Lấy danh sách từ trong mảng words
+        const words = vocabulary[currentIdx].words;
+        
+        // Tạo chuỗi văn bản bao gồm tất cả các từ tiếng Anh trong thẻ để phát âm
+        // Hoặc bạn có thể chỉ phát âm từ đầu tiên: const text = words[0].en;
+        const textToSpeak = words.map(w => w.en).join(', ');
+
+        const msg = new SpeechSynthesisUtterance(textToSpeak);
+        msg.lang = 'en-US';
+        msg.rate = 0.9; // Tốc độ nói hơi chậm lại một chút để nghe rõ hơn
+        window.speechSynthesis.speak(msg);
+    }
+
+    // --- QUIZ LOGIC ---
+  function renderQuiz() {
+    const container = document.getElementById('quiz-list');
+    container.innerHTML = '';
+    questions.forEach((q, qIdx) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-item';
+        div.innerHTML = `
+            <div class="quiz-question"><b>Câu ${qIdx + 1}:</b> ${q.question}</div>
+            <div style="color: #666; font-size: 0.85rem; margin-bottom: 10px;"><i>${q.translation}</i></div>
+            <div class="options-container">
+                ${q.options.map((opt, oIdx) => `
+                    <button class="option" id="q${qIdx}o${oIdx}" onclick="selectOption(${qIdx}, ${oIdx})">
+                        ${String.fromCharCode(65 + oIdx)}. ${opt}
+                    </button>
+                `).join('')}
+            </div>
+            <button class="hint-btn" onclick="toggleHint(${qIdx})">Xem giải thích</button>
+            <div class="explanation" id="hint-${qIdx}">
+                <div style="color: var(--success); font-weight: bold; margin-bottom: 5px;">Đáp án: ${q.answer}</div>
+                ${q.explanation}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+    function selectOption(qIdx, oIdx) {
+        userChoices[qIdx] = oIdx;
+        const opts = document.querySelectorAll(`[id^="q${qIdx}o"]`);
+        opts.forEach(btn => btn.classList.remove('selected'));
+        document.getElementById(`q${qIdx}o${oIdx}`).classList.add('selected');
+    }
+
+    function toggleHint(qIdx) {
+        document.getElementById(`hint-${qIdx}`).classList.toggle('show-explain');
+    }
+
+    function gradeQuiz() {
+    questions.forEach((q, qIdx) => {
+        document.getElementById(`hint-${qIdx}`).classList.add('show-explain');
+        const opts = document.querySelectorAll(`[id^="q${qIdx}o"]`);
+        
+        // Chuyển câu trả lời đúng từ chữ (A, B, C, D) sang số (0, 1, 2, 3)
+        const correctIdx = q.answer.charCodeAt(0) - 65;
+
+        opts.forEach((btn, oIdx) => {
+            btn.classList.remove('correct', 'wrong');
+            if (oIdx === correctIdx) {
+                btn.classList.add('correct');
+            } else if (oIdx === userChoices[qIdx]) {
+                btn.classList.add('wrong');
+            }
+        });
+    });
+    alert("Đã kiểm tra xong! Hãy xem giải thích chi tiết bên dưới mỗi câu.");
+}
+
+    function switchTab(target) {
+        document.getElementById('flashcard-section').style.display = (target === 'flashcard') ? 'flex' : 'none';
+        document.getElementById('quiz-section').style.display = (target === 'quiz') ? 'block' : 'none';
+        document.getElementById('tab-flash').classList.toggle('active', target === 'flashcard');
+        document.getElementById('tab-quiz').classList.toggle('active', target === 'quiz');
+        if (target === 'quiz') renderQuiz();
+    }
+
+    // Khởi tạo: Xáo trộn dữ liệu ngay từ đầu
+    vocabulary = shuffle([...rawVocabulary]);
+    renderCard();
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+:root {
+            --primary: #4f46e5; 
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+            --bg: #f8fafc; 
+            --text: #334155;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-text: #94a3b8;
+            --white: #ffffff;
+            --accent: #ef4444;
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- SIDEBAR RESPONSIVE --- */
+        .sidebar { 
+            width: 260px; 
+            background: var(--sidebar-bg); 
+            color: white; 
+            flex-shrink: 0; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000;
+        }
+        .sidebar-header { 
+            padding: 24px 20px; 
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        .logo-box {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: grid; place-items: center;
+        }
+        #navList { flex-grow: 1; overflow-y: auto; padding: 16px; }
+        .nav-item { 
+            padding: 12px 14px; border-radius: 10px; cursor: pointer; 
+            color: var(--sidebar-text); margin-bottom: 8px; 
+            display: flex; align-items: center; gap: 12px; font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { background: var(--sidebar-hover); color: white; transform: translateX(4px); }
+        .nav-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+            min-width: 0;
+        }
+        
+        .tab-navigation { 
+            background: var(--white); 
+            padding: 8px 20px; 
+            display: flex; gap: 8px; 
+            border-bottom: 1px solid #e2e8f0; 
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+        .tab-btn { 
+            padding: 10px 20px; border-radius: 12px; border: none;
+            background: transparent; cursor: pointer; 
+            font-weight: 600; font-size: 0.9rem; color: #64748b;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        .tab-btn.active { 
+            background: var(--primary-light); 
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 24px;
+            padding-bottom: 100px; /* Tránh bị nút đè */
+        }
+        .content-section { 
+            display: none; 
+            width: 100%; 
+            max-width: 750px; 
+            margin: 0 auto;
+        }
+        .content-section.active { 
+            display: block; 
+            animation: tabFadeIn 0.4s forwards;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- FLASHCARD PREMIUM AREA --- */
+        #flashcardArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 10px 0;
+        }
+
+
+        .card-inner { 
+            position: relative; width: 100%; height: 100%; 
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform-style: preserve-3d; 
+        }
+
+        .card-container.flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-front { 
+            background: linear-gradient(145deg, #ffffff, #f0f4ff); 
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .card-back { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            color: white; transform: rotateY(180deg); 
+        }
+
+        .card-word { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .card-ipa { color: #64748b; background: rgba(79,70,229,0.05); padding: 4px 15px; border-radius: 20px; margin-top: 10px; }
+
+        .speak-btn-circle {
+            width: 40px; height: 40px; border-radius: 50%; background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin-left: 15px; color: var(--primary); transition: 0.2s;
+        }
+        .speak-btn-circle:hover { transform: scale(1.1); background: var(--primary); color: white; }
+
+        /* --- UI LOGIC (DỊCH & ĐÁP ÁN) --- */
+.vi-line { 
+    display: none !important; 
+    color: #166534; 
+    background: #f0fdf4; 
+    padding: 12px; 
+    border-radius: 8px; 
+    margin-top: 8px; 
+    border-left: 4px solid #22c55e;
+    margin-left: 0; /* Đổi từ 25px về 0 */
+}
+
+.grammar-analysis {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 15px;
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #9a3412;
+    line-height: 1.5;
+    animation: slideIn 0.3s ease;
+    margin-left: 0; /* Đổi từ 25px về 0 */
+}
+
+.show-translation .vi-line, 
+.recall-mode .vi-line {
+    display: block !important; 
+    background: #f0fdf4;
+    border-left-color: #22c55e;
+    color: #166534;
+
+    animation: slideIn 0.3s ease; 
+}
+        .explanation { 
+            display: none; margin-top: 15px; padding: 20px; 
+            background: #eff6ff; border-left: 4px solid var(--primary); border-radius: 12px;
+        }
+        .show-answers .explanation { display: block; animation: slideIn 0.3s ease; }
+        .show-answers .is-correct-ans { background: #f0fdf4 !important; border-color: #4ade80 !important; color: #166534; font-weight: bold; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- FLOATING CONTROLS --- */
+        .controls { 
+            position: absolute; bottom: 30px; right: 30px; 
+            display: flex; flex-direction: column; gap: 12px; z-index: 2000; 
+        }
+        .btn-action { 
+            width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; 
+            cursor: pointer; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            transition: 0.3s; color: white;
+        }
+        .btn-translate { background: #334155; }
+        .btn-translate.active { background: var(--accent); }
+        .btn-submit { background: var(--primary); }
+        .btn-submit.active { background: #059669; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; height: auto; flex-direction: row; 
+                align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            #navList { display: flex; padding: 10px; gap: 10px; overflow-x: auto; }
+            .nav-item { margin-bottom: 0; white-space: nowrap; }
+            .main-container { height: calc(100vh - 70px); }
+            .controls { bottom: 20px; right: 20px; flex-direction: row; }
+            .card-container { height: 230px; }
+            .card-word { font-size: 1.8rem; }
+        }
+
+        .panel { background: var(--white); border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; }
+        .option-label { display: flex; align-items: center; padding: 15px; margin: 10px 0; border: 1px solid #f1f5f9; border-radius: 12px; cursor: pointer; background: #f8fafc; transition: 0.2s; }
+        .option-label:hover { border-color: var(--primary); }
+        /* Style cho danh sách từ trên mặt flashcard */
+.word-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.card-container { 
+    perspective: 1500px; 
+    width: 95%; 
+    max-width: 400px; 
+    min-height: 260px; /* Đổi height thành min-height */
+    height: auto; 
+    cursor: pointer;
+    position: relative;
+}
+
+.card-front, .card-back { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    backface-visibility: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px 25px; /* Giảm padding một chút để lấy thêm không gian */
+    border-radius: 24px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+}
+
+/* Khi mặt trước dài ra, đảm bảo mặt sau cũng khớp chiều cao */
+.card-inner { 
+    position: relative; 
+    width: 100%; 
+    min-height: 260px; /* Thêm min-height */
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
+    transform-style: preserve-3d; 
+}
+
+/* Thêm vào để cuộn nội dung nếu quá dài (phòng hờ) */
+.word-list {
+    max-height: 200px; 
+    overflow-y: auto;
+    padding-right: 5px;
+}
+.word-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 12px;
+    background: rgba(79, 70, 229, 0.03);
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.word-item:hover {
+    background: rgba(79, 70, 229, 0.08);
+}
+
+.word-item-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.word-main {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.word-ipa-small {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Điều chỉnh lại nút loa nhỏ cho list */
+.speak-small {
+    width: 32px !important;
+    height: 32px !important;
+    margin-left: 8px !important;
+}
+.btn-flip-all { background: #8b5cf6; } /* Màu tím cho khác biệt */
+.btn-flip-all.active { background: #6d28d9; }
+.card-type {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+/* Style cho chế độ dịch Anh - Việt (Recall Mode) */
+/* Thay đổi style cho recall-input từ input sang textarea */
+.recall-input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+    /* Các thuộc tính mới cho textarea */
+    resize: vertical; /* Cho phép người dùng kéo giãn chiều cao nếu muốn */
+    min-height: 45px;
+    line-height: 1.5;
+    display: block;
+    box-sizing: border-box;
+}
+
+.recall-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.recall-mode .en-text {
+    display: none !important; /* Thêm !important ở đây */
+}
+
+.btn-recall { background: #f59e0b; } /* Màu cam cho chế độ luyện tập */
+.btn-recall.active { background: #d97706; }
+/* Container chứa input và nút xem nhanh */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-hint {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    margin-top: 8px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+}
+
+.btn-hint:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Hiệu ứng rung khi gõ sai hoặc cần chú ý */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+.shake { animation: shake 0.2s ease-in-out 0s 2; }
+/* Khi nút hint đang ở trạng thái "Bật" */
+.btn-hint.active-hint {
+    background: var(--primary);
+    color: white;
+}
+.trap-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fff1f2; /* Màu đỏ nhạt */
+    border-left: 4px solid #f43f5e; /* Viền đỏ đậm */
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #9f1239;
+}
+/* Khi bảng Quiz hiện đáp án, đồng thời hiện luôn dịch nghĩa của các options */
+.show-answers .vi-line { 
+    display: block; 
+    animation: slideIn 0.3s ease; 
+}
+
+.show-grammar .grammar-analysis { display: block; }
+
+.btn-grammar {
+    background: #fed7aa;
+    color: #ea580c;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+    margin-top: 8px;
+}
+.btn-grammar:hover { background: #f97316; color: white; }
+.btn-grammar.active-grammar { background: #f97316; color: white; }
+.btn-grammar-all { background: #f97316; } /* Màu cam */
+.btn-grammar-all.active { background: #ea580c; }
+
+/* Class điều khiển hiển thị tất cả */
+.show-all-grammar .grammar-analysis {
+    display: block !important;
+}

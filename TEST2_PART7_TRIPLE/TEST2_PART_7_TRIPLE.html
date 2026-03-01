@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Part 7 Advanced Hub</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5; 
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+            --bg: #f8fafc; 
+            --text: #334155;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-text: #94a3b8;
+            --white: #ffffff;
+            --accent: #ef4444;
+        }
+
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- SIDEBAR RESPONSIVE --- */
+        .sidebar { 
+            width: 260px; 
+            background: var(--sidebar-bg); 
+            color: white; 
+            flex-shrink: 0; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000;
+        }
+        .sidebar-header { 
+            padding: 24px 20px; 
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        .logo-box {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: grid; place-items: center;
+        }
+        #navList { flex-grow: 1; overflow-y: auto; padding: 16px; }
+        .nav-item { 
+            padding: 12px 14px; border-radius: 10px; cursor: pointer; 
+            color: var(--sidebar-text); margin-bottom: 8px; 
+            display: flex; align-items: center; gap: 12px; font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { background: var(--sidebar-hover); color: white; transform: translateX(4px); }
+        .nav-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+            min-width: 0;
+        }
+        
+        .tab-navigation { 
+            background: var(--white); 
+            padding: 8px 20px; 
+            display: flex; gap: 8px; 
+            border-bottom: 1px solid #e2e8f0; 
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+        .tab-btn { 
+            padding: 10px 20px; border-radius: 12px; border: none;
+            background: transparent; cursor: pointer; 
+            font-weight: 600; font-size: 0.9rem; color: #64748b;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        .tab-btn.active { 
+            background: var(--primary-light); 
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 24px;
+            padding-bottom: 100px; /* Tránh bị nút đè */
+        }
+        .content-section { 
+            display: none; 
+            width: 100%; 
+            max-width: 750px; 
+            margin: 0 auto;
+        }
+        .content-section.active { 
+            display: block; 
+            animation: tabFadeIn 0.4s forwards;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- FLASHCARD PREMIUM AREA --- */
+        #flashcardArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 10px 0;
+        }
+
+
+        .card-inner { 
+            position: relative; width: 100%; height: 100%; 
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform-style: preserve-3d; 
+        }
+
+        .card-container.flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-front { 
+            background: linear-gradient(145deg, #ffffff, #f0f4ff); 
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .card-back { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            color: white; transform: rotateY(180deg); 
+        }
+
+        .card-word { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .card-ipa { color: #64748b; background: rgba(79,70,229,0.05); padding: 4px 15px; border-radius: 20px; margin-top: 10px; }
+
+        .speak-btn-circle {
+            width: 40px; height: 40px; border-radius: 50%; background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin-left: 15px; color: var(--primary); transition: 0.2s;
+        }
+        .speak-btn-circle:hover { transform: scale(1.1); background: var(--primary); color: white; }
+
+        /* --- UI LOGIC (DỊCH & ĐÁP ÁN) --- */
+.vi-line { 
+    display: none !important; 
+    color: #166534; 
+    background: #f0fdf4; 
+    padding: 12px; 
+    border-radius: 8px; 
+    margin-top: 8px; 
+    border-left: 4px solid #22c55e;
+    margin-left: 0; /* Đổi từ 25px về 0 */
+}
+
+.grammar-analysis {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 15px;
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #9a3412;
+    line-height: 1.5;
+    animation: slideIn 0.3s ease;
+    margin-left: 0; /* Đổi từ 25px về 0 */
+}
+
+.show-translation .vi-line, 
+.recall-mode .vi-line {
+    display: block !important; 
+    background: #f0fdf4;
+    border-left-color: #22c55e;
+    color: #166534;
+
+    animation: slideIn 0.3s ease; 
+}
+        .explanation { 
+            display: none; margin-top: 15px; padding: 20px; 
+            background: #eff6ff; border-left: 4px solid var(--primary); border-radius: 12px;
+        }
+        .show-answers .explanation { display: block; animation: slideIn 0.3s ease; }
+        .show-answers .is-correct-ans { background: #f0fdf4 !important; border-color: #4ade80 !important; color: #166534; font-weight: bold; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- FLOATING CONTROLS --- */
+        .controls { 
+            position: absolute; bottom: 30px; right: 30px; 
+            display: flex; flex-direction: column; gap: 12px; z-index: 2000; 
+        }
+        .btn-action { 
+            width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; 
+            cursor: pointer; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            transition: 0.3s; color: white;
+        }
+        .btn-translate { background: #334155; }
+        .btn-translate.active { background: var(--accent); }
+        .btn-submit { background: var(--primary); }
+        .btn-submit.active { background: #059669; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; height: auto; flex-direction: row; 
+                align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            #navList { display: flex; padding: 10px; gap: 10px; overflow-x: auto; }
+            .nav-item { margin-bottom: 0; white-space: nowrap; }
+            .main-container { height: calc(100vh - 70px); }
+            .controls { bottom: 20px; right: 20px; flex-direction: row; }
+            .card-container { height: 230px; }
+            .card-word { font-size: 1.8rem; }
+        }
+
+        .panel { background: var(--white); border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; }
+        .option-label { display: flex; align-items: center; padding: 15px; margin: 10px 0; border: 1px solid #f1f5f9; border-radius: 12px; cursor: pointer; background: #f8fafc; transition: 0.2s; }
+        .option-label:hover { border-color: var(--primary); }
+        /* Style cho danh sách từ trên mặt flashcard */
+.word-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.card-container { 
+    perspective: 1500px; 
+    width: 95%; 
+    max-width: 400px; 
+    min-height: 260px; /* Đổi height thành min-height */
+    height: auto; 
+    cursor: pointer;
+    position: relative;
+}
+
+.card-front, .card-back { 
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    backface-visibility: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px 25px; /* Giảm padding một chút để lấy thêm không gian */
+    border-radius: 24px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+}
+
+/* Khi mặt trước dài ra, đảm bảo mặt sau cũng khớp chiều cao */
+.card-inner { 
+    position: relative; 
+    width: 100%; 
+    min-height: 260px; /* Thêm min-height */
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
+    transform-style: preserve-3d; 
+}
+
+/* Thêm vào để cuộn nội dung nếu quá dài (phòng hờ) */
+.word-list {
+    max-height: 200px; 
+    overflow-y: auto;
+    padding-right: 5px;
+}
+.word-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 12px;
+    background: rgba(79, 70, 229, 0.03);
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.word-item:hover {
+    background: rgba(79, 70, 229, 0.08);
+}
+
+.word-item-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.word-main {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.word-ipa-small {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Điều chỉnh lại nút loa nhỏ cho list */
+.speak-small {
+    width: 32px !important;
+    height: 32px !important;
+    margin-left: 8px !important;
+}
+.btn-flip-all { background: #8b5cf6; } /* Màu tím cho khác biệt */
+.btn-flip-all.active { background: #6d28d9; }
+.card-type {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+/* Style cho chế độ dịch Anh - Việt (Recall Mode) */
+/* Thay đổi style cho recall-input từ input sang textarea */
+.recall-input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+    /* Các thuộc tính mới cho textarea */
+    resize: vertical; /* Cho phép người dùng kéo giãn chiều cao nếu muốn */
+    min-height: 45px;
+    line-height: 1.5;
+    display: block;
+    box-sizing: border-box;
+}
+
+.recall-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.recall-mode .en-text {
+    display: none !important; /* Thêm !important ở đây */
+}
+
+.btn-recall { background: #f59e0b; } /* Màu cam cho chế độ luyện tập */
+.btn-recall.active { background: #d97706; }
+/* Container chứa input và nút xem nhanh */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-hint {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    margin-top: 8px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+}
+
+.btn-hint:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Hiệu ứng rung khi gõ sai hoặc cần chú ý */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+.shake { animation: shake 0.2s ease-in-out 0s 2; }
+/* Khi nút hint đang ở trạng thái "Bật" */
+.btn-hint.active-hint {
+    background: var(--primary);
+    color: white;
+}
+.trap-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fff1f2; /* Màu đỏ nhạt */
+    border-left: 4px solid #f43f5e; /* Viền đỏ đậm */
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #9f1239;
+}
+/* Khi bảng Quiz hiện đáp án, đồng thời hiện luôn dịch nghĩa của các options */
+.show-answers .vi-line { 
+    display: block; 
+    animation: slideIn 0.3s ease; 
+}
+
+.show-grammar .grammar-analysis { display: block; }
+
+.btn-grammar {
+    background: #fed7aa;
+    color: #ea580c;
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+    margin-top: 8px;
+}
+.btn-grammar:hover { background: #f97316; color: white; }
+.btn-grammar.active-grammar { background: #f97316; color: white; }
+.btn-grammar-all { background: #f97316; } /* Màu cam */
+.btn-grammar-all.active { background: #ea580c; }
+
+/* Class điều khiển hiển thị tất cả */
+.show-all-grammar .grammar-analysis {
+    display: block !important;
+}
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box"><i class="material-icons" style="color:white; font-size:20px;">school</i></div>
+            <h3 style="margin:0; font-size: 1.1rem; display: block;">Toeic</h3>
+        </div>
+        <div id="navList"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('flashcard')">
+                <i class="material-icons">style</i> Từ vựng
+            </button>
+            <button class="tab-btn" onclick="switchTab('passage')">
+                <i class="material-icons">description</i> Bài đọc
+            </button>
+            <button class="tab-btn" onclick="switchTab('quiz')">
+                <i class="material-icons">task_alt</i> Câu hỏi
+            </button>
+        </div>
+        <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
+                <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.5s;"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="section-flashcard" class="content-section active">
+                <div class="panel"><div id="flashcardArea"></div></div>
+            </div>
+
+            <div id="section-passage" class="content-section">
+                <div class="panel" id="readingPanel">
+                    <div id="passagesBody"></div>
+                </div>
+            </div>
+
+            <div id="section-quiz" class="content-section">
+                <div class="panel" id="quizPanel">
+                    <div id="questionsBody"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+    <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+        <i class="material-icons">edit_note</i>
+    </button>
+    <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+        <i class="material-icons">architecture</i>
+    </button>
+    <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+        <i class="material-icons">translate</i>
+    </button>
+
+    <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+        <i class="material-icons">import_export</i>
+    </button>
+
+    <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+        <i class="material-icons">visibility</i>
+    </button>
+</div>
+    </div>
+
+<script>
+// Giữ nguyên mảng dữ liệu allSets và logic JavaScript của bạn
+const allSets = [
+    {
+        id: 1,
+        range: "176-180",
+        title: "Wendell Green Biography & E-mail",
+        flashcards: [
+    { 
+        "word": "Represent", 
+        "ipa": "/ˌreprɪˈzent/", 
+        "type": "Verb",
+        "example": "The lawyer was chosen to represent the company in court.",
+        "meaning": "Đại diện",
+        "exMeaning": "Luật sư đã được chọn để đại diện cho công ty tại tòa."
+    },
+    { 
+        "word": "Work/ Piece", 
+        "ipa": "/wɜːrk/ /piːs/", 
+        "type": "Noun",
+        "example": "This sculpture is a magnificent piece of art.",
+        "meaning": "Tác phẩm",
+        "exMeaning": "Bức tượng điêu khắc này là một tác phẩm nghệ thuật tuyệt vời."
+    },
+    { 
+        "word": "Society/ Association/ Alliance/ Coalition", 
+        "ipa": "/səˈsaɪəti/ /əˌsəʊsiˈeɪʃn/ /əˈlaɪəns/ /ˌkəʊəˈlɪʃn/", 
+        "type": "Noun",
+        "example": "The local business association organized a charity event.",
+        "meaning": "Hiệp hội, liên minh",
+        "exMeaning": "Hiệp hội doanh nghiệp địa phương đã tổ chức một sự kiện từ thiện."
+    },
+{ 
+        "word": "Expert/ Specialist/ Professional", 
+        "ipa": "/ˈekspɜːrt/ /ˈspeʃəlɪst/ /prəˈfeʃənl/", 
+        "type": "Noun",
+        "example": "You should seek advice from a financial expert.",
+        "meaning": "Chuyên gia",
+        "exMeaning": "Bạn nên tìm lời khuyên từ một chuyên gia tài chính."
+    },
+    { 
+        "word": "Professional", 
+        "ipa": "/prəˈfeʃənl/", 
+        "type": "Adjective",
+        "example": "The team provided a very professional service.",
+        "meaning": "Chuyên nghiệp",
+        "exMeaning": "Nhóm đã cung cấp một dịch vụ rất chuyên nghiệp."
+    },
+    { 
+        "word": "Aim at sth", 
+        "ipa": "/eɪm æt/", 
+        "type": "Phrasal Verb",
+        "example": "The program aims at helping young entrepreneurs.",
+        "meaning": "Nhắm đến cái gì đó",
+        "exMeaning": "Chương trình nhắm đến việc giúp đỡ các doanh nhân trẻ."
+    },
+    { 
+        "word": "A variety of/ An assortment of/ An array of/ A wide range of/ A broad range of", 
+        "ipa": "/ə vəˈraɪəti əv/", 
+        "type": "Phrase",
+        "example": "The shop offers a wide range of organic products.",
+        "meaning": "Nhiều, đa dạng",
+        "exMeaning": "Cửa hàng cung cấp nhiều loại sản phẩm hữu cơ."
+    },
+    { 
+        "word": "Genre", 
+        "ipa": "/ˈʒɑːnrə/", 
+        "type": "Noun",
+        "example": "What is your favorite genre of music?",
+        "meaning": "Thể loại",
+        "exMeaning": "Thể loại âm nhạc yêu thích của bạn là gì?"
+    },
+    { 
+        "word": "Adventure", 
+        "ipa": "/ədˈventʃər/", 
+        "type": "Noun",
+        "example": "They set out on a sailing adventure across the Atlantic.",
+        "meaning": "Cuộc phiêu lưu",
+        "exMeaning": "Họ đã bắt đầu một cuộc phiêu lưu chèo thuyền băng qua Đại Tây Dương."
+    },
+    { 
+        "word": "Adventurous", 
+        "ipa": "/ədˈventʃərəs/", 
+        "type": "Adjective",
+        "example": "She is an adventurous traveler who loves exploring caves.",
+        "meaning": "Thích phiêu lưu",
+        "exMeaning": "Cô ấy là một người du lịch thích phiêu lưu, người yêu thích khám phá hang động."
+    },
+    { 
+        "word": "Startle/ Surprise", 
+        "ipa": "/ˈstɑːrtl/ /səˈpraɪz/", 
+        "type": "Verb",
+        "example": "The sudden thunder startled everyone in the room.",
+        "meaning": "Làm ngạc nhiên, làm giật mình",
+        "exMeaning": "Tiếng sấm đột ngột làm mọi người trong phòng giật mình."
+    },
+    { 
+        "word": "Startling/ Surprising", 
+        "ipa": "/ˈstɑːrtlɪŋ/ /səˈpraɪzɪŋ/", 
+        "type": "Adjective",
+        "example": "The researchers made a startling discovery yesterday.",
+        "meaning": "Đáng kinh ngạc, gây bất ngờ",
+        "exMeaning": "Các nhà nghiên cứu đã thực hiện một khám phá đáng kinh ngạc vào ngày hôm qua."
+    },
+    { 
+        "word": "Investigate", 
+        "ipa": "/ɪnˈvestɪɡeɪt/", 
+        "type": "Verb",
+        "example": "Detectives are investigating the cause of the fire.",
+        "meaning": "Điều tra",
+        "exMeaning": "Các thám tử đang điều tra nguyên nhân của vụ hỏa hoạn."
+    },
+    { 
+        "word": "Occurrences/ Events", 
+        "ipa": "/əˈkɜːrənsiz/ /ɪˈvents/", 
+        "type": "Noun",
+        "example": "Such rare occurrences are hard to predict.",
+        "meaning": "Sự kiện, việc xảy ra",
+        "exMeaning": "Những việc xảy ra hiếm hoi như vậy rất khó dự đoán."
+    },
+    { 
+        "word": "Coastal", 
+        "ipa": "/ˈkəʊstl/", 
+        "type": "Adjective",
+        "example": "Heavy rain is expected in coastal areas this weekend.",
+        "meaning": "Thuộc bờ biển",
+        "exMeaning": "Dự kiến sẽ có mưa lớn ở các khu vực ven biển vào cuối tuần này."
+    },
+    { 
+        "word": "Personality/ Character", 
+        "ipa": "/ˌpɜːrsəˈnæləti/ /ˈkærəktər/", 
+        "type": "Noun",
+        "example": "He has a very strong and independent character.",
+        "meaning": "Tính cách",
+        "exMeaning": "Anh ấy có một tính cách rất mạnh mẽ và độc lập."
+    },
+    { 
+        "word": "Figure out", 
+        "ipa": "/ˈfɪɡjər aʊt/", 
+        "type": "Phrasal Verb",
+        "example": "We need to figure out a way to reduce costs.",
+        "meaning": "Tìm hiểu, tìm ra",
+        "exMeaning": "Chúng ta cần tìm ra cách để giảm thiểu chi phí."
+    },
+    { 
+        "word": "Touching", 
+        "ipa": "/ˈtʌtʃɪŋ/", 
+        "type": "Adjective",
+        "example": "The movie has a very touching ending.",
+        "meaning": "Cảm động",
+        "exMeaning": "Bộ phim có một cái kết rất cảm động."
+    },
+    { 
+        "word": "Feature/ Include/ Boast", 
+        "ipa": "/ˈfiːtʃər/ /ɪnˈkluːd/ /bəʊst/", 
+        "type": "Verb",
+        "example": "The new smartphone features a high-quality camera.",
+        "meaning": "Bao gồm, có (đặc điểm), sở hữu",
+        "exMeaning": "Chiếc điện thoại thông minh mới có tính năng camera chất lượng cao."
+    },
+    { 
+        "word": "Illustration", 
+        "ipa": "/ˌɪləˈstreɪʃn/", 
+        "type": "Noun",
+        "example": "The book contains many colorful illustrations.",
+        "meaning": "Hình ảnh minh họa",
+        "exMeaning": "Cuốn sách chứa nhiều hình ảnh minh họa đầy màu sắc."
+    },
+    { 
+        "word": "Profession/ Career/ Job", 
+        "ipa": "/prəˈfeʃn/ /kəˈrɪər/ /dʒɒb/", 
+        "type": "Noun",
+        "example": "Teaching is a very demanding profession.",
+        "meaning": "Nghề nghiệp, công việc",
+        "exMeaning": "Dạy học là một nghề nghiệp đòi hỏi rất khắt khe."
+    },
+    { 
+        "word": "Touch on/ Refer to/ Mention", 
+        "ipa": "/tʌtʃ ɒn/ /rɪˈfɜːr tuː/ /ˈmenʃn/", 
+        "type": "Verb/Phrasal Verb",
+        "example": "The report touches on several important issues.",
+        "meaning": "Đề cập đến",
+        "exMeaning": "Bản báo cáo đề cập đến một vài vấn đề quan trọng."
+    },
+    { 
+        "word": "Humorous/ Comical", 
+        "ipa": "/ˈhjuːmərəs/ /ˈkɒmɪkl/", 
+        "type": "Adjective",
+        "example": "The play was filled with humorous situations.",
+        "meaning": "Hài hước",
+        "exMeaning": "Vở kịch đầy rẫy những tình huống hài hước."
+    },
+    { 
+        "word": "Frustrating/ Disappointing", 
+        "ipa": "/ˈfrʌstreɪtɪŋ/ /ˌdɪsəˈpɔɪntɪŋ/", 
+        "type": "Adjective",
+        "example": "It's frustrating when things don't go as planned.",
+        "meaning": "Thất vọng, gây bực bội",
+        "exMeaning": "Thật bực bội khi mọi thứ không diễn ra như kế hoạch."
+    },
+    { 
+        "word": "Heartbreaking/ Sad", 
+        "ipa": "/ˈhɑːrtbreɪkɪŋ/ /sæd/", 
+        "type": "Adjective",
+        "example": "The news of the earthquake was truly heartbreaking.",
+        "meaning": "Buồn, đau lòng",
+        "exMeaning": "Tin tức về trận động đất thực sự rất đau lòng."
+    },
+    { 
+        "word": "Enthusiastic about/ Passionate about", 
+        "ipa": "/ɪnˌθjuːziˈæstɪk/ /ˈpæʃənət/", 
+        "type": "Adjective",
+        "example": "She is very passionate about animal rights.",
+        "meaning": "Nhiệt tình, đam mê",
+        "exMeaning": "Cô ấy rất đam mê về quyền động vật."
+    },
+    { 
+        "word": "Based on", 
+        "ipa": "/beɪst ɒn/", 
+        "type": "Adjective/Phrase",
+        "example": "The film is based on a true story.",
+        "meaning": "Dựa trên",
+        "exMeaning": "Bộ phim dựa trên một câu chuyện có thật."
+    },
+    { 
+        "word": "Present", 
+        "ipa": "/prɪˈzent/", 
+        "type": "Verb",
+        "example": "Each group will present their ideas to the class.",
+        "meaning": "Trình bày, thuyết trình",
+        "exMeaning": "Mỗi nhóm sẽ trình bày ý tưởng của họ trước lớp."
+    },
+    { 
+        "word": "Present", 
+        "ipa": "/prɪˈzent/", 
+        "type": "Verb",
+        "example": "Please present your passport at the check-in desk.",
+        "meaning": "Xuất trình",
+        "exMeaning": "Vui lòng xuất trình hộ chiếu của bạn tại bàn làm việc."
+    },
+    { 
+        "word": "Present/ Lead to/ Result in/ Pose", 
+        "ipa": "/prɪˈzent/ /liːd tuː/ /rɪˈzʌlt ɪn/ /pəʊz/", 
+        "type": "Verb",
+        "example": "The current situation presents many challenges.",
+        "meaning": "Gây ra, dẫn đến",
+        "exMeaning": "Tình hình hiện tại gây ra nhiều thách thức."
+    },
+    { 
+        "word": "Adaptation", 
+        "ipa": "/ˌædæpˈteɪʃn/", 
+        "type": "Noun",
+        "example": "Plants have many adaptations to survive in the desert.",
+        "meaning": "Sự thích nghi, sự thay thế",
+        "exMeaning": "Thực vật có nhiều sự thích nghi để tồn tại trong sa mạc."
+    },
+    { 
+        "word": "Adaptation", 
+        "ipa": "/ˌædæpˈteɪʃn/", 
+        "type": "Noun",
+        "example": "The film is an adaptation of a famous novel.",
+        "meaning": "Sự chuyển thể",
+        "exMeaning": "Bộ phim là một bản chuyển thể của một cuốn tiểu thuyết nổi tiếng."
+    },
+    {
+        "word": "Fictional",
+        "ipa": "/ˈfɪk.ʃən.əl/",
+        "type": "Adjective",
+        "example": "Sherlock Holmes is a fictional character.",
+        "meaning": "Hư cấu",
+        "exMeaning": "Sherlock Holmes là một nhân vật hư cấu."
+    },
+    {
+        "word": "Fiction/ Novel",
+        "ipa": "/ˈfɪk.ʃən/ /ˈnɒv.əl/",
+        "type": "Noun",
+        "example": "She enjoys reading historical fiction and novels.",
+        "meaning": "Tiểu thuyết",
+        "exMeaning": "Cô ấy thích đọc truyện hư cấu lịch sử và tiểu thuyết."
+    },
+    {
+        "word": "Character",
+        "ipa": "/ˈkær.ək.tər/",
+        "type": "Noun",
+        "example": "Who is your favorite character in the movie?",
+        "meaning": "Nhân vật",
+        "exMeaning": "Ai là nhân vật yêu thích của bạn trong bộ phim?"
+    },
+    {
+        "word": "Character/ Personality",
+        "ipa": "/ˈkær.ək.tər/ /ˌpɜː.sənˈæl.ə.ti/",
+        "type": "Noun",
+        "example": "He has a very strong and independent personality.",
+        "meaning": "Tính cách",
+        "exMeaning": "Anh ấy có một tính cách rất mạnh mẽ và độc lập."
+    },
+    {
+        "word": "Author/ Novelist/ Writer",
+        "ipa": "/ˈɔː.θər/ /ˈnɒv.əl.ɪst/ /ˈraɪ.tər/",
+        "type": "Noun",
+        "example": "The author is signing books at the local library.",
+        "meaning": "Tác giả",
+        "exMeaning": "Tác giả đang ký tặng sách tại thư viện địa phương."
+    },
+    {
+        "word": "Collaborate with/ Cooperate with/ Partner with",
+        "ipa": "/kəˈlæb.ə.reɪt/ /koʊˈɒp.ə.reɪt/ /ˈpɑːrt.nər/",
+        "type": "Verb",
+        "example": "The two companies decided to collaborate with each other.",
+        "meaning": "Hợp tác",
+        "exMeaning": "Hai công ty đã quyết định hợp tác với nhau."
+    },
+    {
+        "word": "Previous/ Former",
+        "ipa": "/ˈpriː.vi.əs/ /ˈfɔː.mər/",
+        "type": "Adjective",
+        "example": "The former president attended the ceremony.",
+        "meaning": "Trước đây",
+        "exMeaning": "Cựu tổng thống đã tham dự buổi lễ."
+    },
+    {
+        "word": "Contribute to",
+        "ipa": "/kənˈtrɪb.juːt tuː/",
+        "type": "Verb",
+        "example": "Many people contributed to the success of the project.",
+        "meaning": "Đóng góp",
+        "exMeaning": "Nhiều người đã đóng góp vào sự thành công của dự án."
+    },
+    {
+        "word": "Adapt/ Adjust/ Modify/ Revise/ Change",
+        "ipa": "/əˈdæpt/ /əˈdʒʌst/ /ˈmɒd.ɪ.faɪ/ /rɪˈvaɪz/ /tʃeɪndʒ/",
+        "type": "Verb",
+        "example": "We need to adjust the plan to fit the new budget.",
+        "meaning": "Thay đổi",
+        "exMeaning": "Chúng ta cần điều chỉnh kế hoạch để phù hợp với ngân sách mới."
+    },
+    {
+        "word": "Adapt",
+        "ipa": "/əˈdæpt/",
+        "type": "Verb",
+        "example": "The book was adapted into a very successful film.",
+        "meaning": "Chuyển thể",
+        "exMeaning": "Cuốn sách đã được chuyển thể thành một bộ phim rất thành công."
+    },
+    {
+        "word": "Lawyer / Attorney",
+        "ipa": "/ˈlɔɪ.ər/ /əˈtɜː.ni/",
+        "type": "Noun",
+        "example": "You should consult a lawyer before signing the contract.",
+        "meaning": "Luật sư",
+        "exMeaning": "Bạn nên tham khảo ý kiến luật sư trước khi ký hợp đồng."
+    },
+    {
+        "word": "Proposal / Suggestion/ Recommendation",
+        "ipa": "/prəˈpoʊ.zəl/ /səˈdʒes.tʃən/ /ˌrek.ə.menˈdeɪ.ʃən/",
+        "type": "Noun",
+        "example": "The board is considering your proposal.",
+        "meaning": "Đề xuất",
+        "exMeaning": "Ban giám đốc đang xem xét đề xuất của bạn."
+    }
+],
+        passages: [
+    {
+        type: "text",
+        lines: [
+            { 
+                en: "Wendell Green has been represented by Locke and Hanley Literary Agents since his debut.", 
+                vi: "Wendell Green đã được đại diện bởi các Đại lý Văn học Locke và Hanley kể từ khi ra mắt.",
+                grammar: "<b>Thì Hiện tại hoàn thành bị động:</b> <i>has been + V3/ed</i>. <br><b>Cấu trúc:</b> Represented by (Được đại diện bởi). <br><b>Dấu hiệu:</b> 'since' + mốc thời gian." 
+            },
+            { 
+                en: "His first full-length work, Race Against Time, was included in the SLP 10, the Society of Library Professionals’ yearly list of the best novels aimed at teenagers.", 
+                vi: "Tác phẩm dài đầu tay của ông, Race Against Time, đã được đưa vào SLP 10, danh sách tiểu thuyết hay nhất hàng năm dành cho thanh thiếu niên của Hiệp hội Chuyên gia Thư viện.",
+                grammar: "<b>Thì Quá khứ đơn bị động:</b> <i>was included in</i>. <br><b>Mệnh đề quan hệ rút gọn:</b> <i>aimed at</i> (rút gọn từ <i>which was aimed at</i>) dùng để bổ nghĩa cho 'novels'." 
+            },
+            { 
+                en: "He now writes in a variety of genres. Before becoming a full-time author, Mr. Green taught history to high school students.", 
+                vi: "Hiện ông viết nhiều thể loại khác nhau. Trước khi trở thành nhà văn toàn thời gian, ông Green từng dạy lịch sử cho học sinh trung học.",
+                grammar: "<b>Cụm từ:</b> <i>a variety of + danh từ số nhiều</i> (nhiều loại...). <br><b>V-ing sau giới từ:</b> <i>Before becoming</i>. <br><b>Thì Quá khứ đơn:</b> <i>taught</i> (cột 2 của 'teach')." 
+            },
+            { 
+                en: "<strong>Recent Works by Wendell Green</strong>", 
+                vi: "<strong>Các tác phẩm gần đây của Wendell Green</strong>",
+                grammar: "<b>Danh từ:</b> <i>Works</i> ở đây có nghĩa là 'tác phẩm' (đếm được), khác với 'work' nghĩa là công việc (không đếm được)." 
+            },
+            { 
+                en: "• In Wylie Cove: Adventurous journalist Tony Bradley learns a startling secret while investigating strange occurrences in his small coastal town.", 
+                vi: "• In Wylie Cove: Nhà báo phiêu lưu Tony Bradley tìm ra một bí mật gây sốc khi điều tra những sự kiện kỳ lạ tại thị trấn ven biển.",
+                grammar: "<b>Rút gọn mệnh đề trạng ngữ:</b> <i>while investigating</i> (khi đang điều tra). <br><b>Tính từ:</b> <i>startling</i> (gây kinh ngạc) và <i>coastal</i> (thuộc ven biển)." 
+            },
+            { 
+                en: "• Swing Away: The players on the Spriggs Academy baseball team have very different personalities. Can they figure out how to work together?", 
+                vi: "• Swing Away: Các cầu thủ đội bóng chày học viện Spriggs có tính cách khác biệt. Liệu họ có thể hợp tác với nhau?",
+                grammar: "<b>Cụm động từ:</b> <i>figure out</i> (tìm hiểu ra/hiểu ra). <br><b>Cấu trúc:</b> <i>how + to-V</i> (cách để làm gì đó)." 
+            },
+            { 
+                en: "• Sarah Saves the World: Middle-school student Sarah Fitch tries to keep her new superpowers a secret.", 
+                vi: "• Sarah Saves the World: Nữ sinh cấp hai Sarah Fitch cố gắng giữ kín siêu năng lực.",
+                grammar: "<b>Động từ:</b> <i>try + to-V</i> (cố gắng làm gì). <br><b>Cấu trúc:</b> <i>keep + O + Noun/Adj</i> (giữ cho cái gì đó như thế nào)." 
+            },
+            { 
+                en: "• Nails on a Chalkboard: Teaching may be difficult, but it is never boring! A collection of essays about the profession.", 
+                vi: "• Nails on a Chalkboard: Dạy học có thể khó khăn nhưng không bao giờ nhàm chán! Một tập hợp các bài luận về nghề giáo.",
+                grammar: "<b>Gerund làm chủ ngữ:</b> <i>Teaching</i>. <br><b>Động từ khuyết thiếu:</b> <i>may + V-bare</i> (có lẽ/có thể). <br><b>Phân từ làm tính từ:</b> <i>boring</i> (mô tả tính chất sự vật)." 
+            }
+        ]
+    },
+    {
+        type: "email",
+        lines: [
+            { 
+                en: "I got a call this week from a producer at Hickson Media about developing a film based on your latest book.", 
+                vi: "Tuần này tôi nhận được cuộc gọi từ một nhà sản xuất tại Hickson Media về việc phát triển một bộ phim dựa trên cuốn sách mới nhất của ông.",
+                grammar: "<b>Giới từ:</b> <i>about + V-ing</i>. <br><b>Phân từ:</b> <i>based on</i> (dựa trên) rút gọn từ mệnh đề quan hệ <i>which is based on</i>." 
+            },
+            { 
+                en: "Her name is Maura Dayton, and she seemed very enthusiastic about the project.", 
+                vi: "Tên cô ấy là Maura Dayton, và cô ấy có vẻ rất nhiệt tình với dự án.",
+                grammar: "<b>Linking Verb:</b> <i>seemed + Adj</i> (có vẻ như thế nào). <br><b>Cấu trúc:</b> <i>Enthusiastic about something</i> (nhiệt huyết về cái gì)." 
+            },
+            { 
+                en: "She said that Tony Bradley is a great character and they could probably attract a top actor for the <b>part</b>.", 
+                vi: "Cô ấy nói rằng Tony Bradley là một nhân vật tuyệt vời và họ có thể thu hút một diễn viên hàng đầu cho vai diễn này.",
+                grammar: "<b>Mệnh đề danh ngữ:</b> Bắt đầu bằng <i>that</i> sau động từ 'said'. <br><b>Trạng từ:</b> <i>probably</i> (có lẽ) đứng giữa trợ động từ và động từ chính." 
+            },
+            { 
+                en: "Ms. Dayton would like to meet with both of us to present her idea for the adaptation.", 
+                vi: "Cô Dayton muốn gặp cả hai chúng ta để trình bày ý tưởng chuyển thể.",
+                grammar: "<b>Cấu trúc:</b> <i>would like + to-V</i> (muốn làm gì - lịch sự). <br><b>Chỉ mục đích:</b> <i>to present</i> (để trình bày)." 
+            },
+            { 
+                en: "Could you come in to our office for that sometime this month? Let me know.", 
+                vi: "Ông có thể đến văn phòng của chúng tôi vào thời điểm nào đó trong tháng này không? Cho tôi biết nhé.",
+                grammar: "<b>Câu hỏi lịch sự:</b> <i>Could you...?</i> <br><b>Cấu trúc mệnh lệnh:</b> <i>Let + O + V-bare</i> (Cho phép/Hãy để ai đó làm gì)." 
+            }
+        ]
+    }
+],
+        questions: [
+    {
+      "q": "What is the SLP 10 a list of?",
+      "qTrans": "SLP 10 là danh sách về cái gì?",
+      "options": [
+        "Fictional characters",
+        "First-time authors",
+        "Books for youth",
+        "Public libraries"
+      ],
+      "optTrans": [
+        "Nhân vật hư cấu",
+        "Tác giả mới",
+        "Sách cho giới trẻ",
+        "Thư viện công cộng"
+      ],
+      "ans": "C",
+      "exp": "Đoạn 1 nêu SLP 10 là danh sách tiểu thuyết dành cho 'teenagers'.",
+      "logic": "Câu hỏi kiểm tra khả năng tìm từ đồng nghĩa (Paraphrasing). 'Teenagers' trong bài được chuyển đổi thành 'Youth' trong đáp án.",
+      "trap": "Bẫy định nghĩa: Đề bài đưa ra cụm 'SLP 10' và 'Society of Library Professionals' khiến người học dễ bị rối bởi các tên riêng và phân tâm vào tên tổ chức thay vì mục tiêu của danh sách. Ngoài ra, từ 'debut' (ra mắt) dễ làm người học nhầm sang đáp án B (tác giả mới)."
+    },
+    {
+      "q": "What is indicated about Mr. Green?",
+      "qTrans": "Điều gì được chỉ ra về ông Green?",
+      "options": [
+        "He lives near the ocean.",
+        "He collaborates with a family member.",
+        "He has written about his previous career.",
+        "He sometimes contributes to Fraser’s Quarterly."
+      ],
+      "optTrans": [
+        "Sống gần biển",
+        "Cộng tác với người thân",
+        "Viết về nghề cũ",
+        "Viết cho báo"
+      ],
+      "ans": "C",
+      "exp": "Cuốn 'Nails on a Chalkboard' là các bài luận về nghề dạy học - nghề cũ của ông.",
+      "logic": "Đây là dạng câu hỏi suy luận (Inference). Bạn phải kết hợp thông tin ông ấy từng là giáo viên lịch sử (taught history) và cuốn sách mới nói về nghề dạy học (teaching profession).",
+      "trap": "Đáp án A là bẫy phổ biến: Lấy bối cảnh trong truyện (thị trấn ven biển Wylie Cove) để đánh lừa về đời thực của tác giả. Đáp án D dùng tên báo 'Fraser’s Quarterly' xuất hiện trong bài nhưng thực tế báo đó chỉ nhận xét về sách của ông chứ ông không viết cho báo đó."
+    },
+    {
+      "q": "In the e-mail, the word 'part' in paragraph 1, line 4, is closest in meaning to",
+      "qTrans": "Trong email, từ 'part' ở đoạn 1, dòng 4 có nghĩa gần nhất với",
+      "options": [
+        "component",
+        "section",
+        "portion",
+        "role"
+      ],
+      "optTrans": [
+        "thành phần",
+        "phần",
+        "khúc",
+        "vai diễn"
+      ],
+      "ans": "D",
+      "exp": "'Part' đặt trong ngữ cảnh phim ảnh (film, actor) có nghĩa là vai diễn.",
+      "logic": "Câu hỏi từ vựng trong ngữ cảnh. Phải dựa vào các từ 'anchor' xung quanh (producer, film, actor) để xác định nghĩa thay vì dùng nghĩa phổ biến nhất của từ.",
+      "trap": "Các từ A, B, C đều là nghĩa phổ biến của 'part' (một phần/bộ phận), nếu dịch máy móc hoặc chỉ dựa vào kiến thức nền mà không nhìn ngữ cảnh trong e-mail sẽ chọn sai ngay lập tức."
+    },
+    {
+      "q": "Which book may be adapted into a film?",
+      "qTrans": "Cuốn sách nào có thể được chuyển thể thành phim?",
+      "options": [
+        "In Wylie Cove",
+        "Swing Away",
+        "Sarah Saves the World",
+        "Nails on a Chalkboard"
+      ],
+      "optTrans": [
+        "In Wylie Cove",
+        "Swing Away",
+        "Sarah Saves the World",
+        "Nails on a Chalkboard"
+      ],
+      "ans": "A",
+      "exp": "Email nhắc đến nhân vật Tony Bradley, mà Tony Bradley là nhân vật chính trong 'In Wylie Cove' ở đoạn văn bản trên.",
+      "logic": "Câu hỏi nối thông tin (Linkage). Đây là đặc sản của Double Passage: Bạn tìm tên nhân vật ở văn bản 2 (E-mail), sau đó dò ngược lại văn bản 1 (Web page) để tìm tên cuốn sách tương ứng.",
+      "trap": "Thường học sinh sẽ tìm chữ 'film' hoặc 'movie' trong bài 1 nhưng không thấy và dễ bỏ cuộc. Bẫy ở đây nằm ở khả năng kiên nhẫn liên kết giữa nhân vật và tác phẩm giữa hai nguồn tin."
+    },
+    {
+      "q": "What does Ms. Hanley ask Mr. Green to do in March?",
+      "qTrans": "Cô Hanley yêu cầu ông Green làm gì vào tháng Ba?",
+      "options": [
+        "Meet with a lawyer",
+        "Listen to a proposal",
+        "Make an announcement",
+        "Edit some writing"
+      ],
+      "optTrans": [
+        "Gặp luật sư",
+        "Nghe đề xuất",
+        "Thông báo",
+        "Chỉnh sửa bài"
+      ],
+      "ans": "B",
+      "exp": "Mời đến để 'present her idea' (trình bày ý tưởng/đề xuất) về việc chuyển thể phim.",
+      "logic": "Chuyển đổi từ vựng (Paraphrasing): Việc người khác 'Present her idea' đồng nghĩa với việc ông Green sẽ đóng vai trò 'Listen to a proposal'.",
+      "trap": "Bẫy thời gian và hành động: Bài có nhắc đến 'this week', 'this month' và ngày 'March 2'. Học sinh dễ bị rối giữa các mốc thời gian nếu không xác định đúng hành động cốt lõi là cuộc gặp mặt sắp tới."
+    }
+  ]
+    },
+    {
+        id: 2, range: "181-185",
+        flashcards: [
+            { "word": "Ongoing/ continuous/constant", "ipa": "/ˈɒnˌɡoʊ.ɪŋ/ /kənˈtɪn.ju.əs/ /ˈkɒn.stənt/", "type": "Adjective", "example": "There is an ongoing investigation.", "meaning": "Liên tục", "exMeaning": "Hiện đang có một cuộc điều tra đang diễn ra liên tục." },
+            { "word": "Effort/ attempt/endeavor", "ipa": "/ˈef.ət/ /əˈtempt/ /enˈdev.ər/", "type": "Noun", "example": "It took a lot of effort to finish.", "meaning": "Nỗ lực", "exMeaning": "Phải tốn rất nhiều nỗ lực để hoàn thành." },
+            { "word": "Diversity/ variety/assortment/range", "ipa": "/daɪˈvɜː.sə.ti/ /vəˈraɪ.ə.ti/ /əˈsɔːt.mənt/ /reɪndʒ/", "type": "Noun", "example": "There is a wide variety of flowers.", "meaning": "Đa dạng", "exMeaning": "Có rất nhiều loại hoa đa dạng." },
+            { "word": "Order", "ipa": "/ˈɔː.dər/", "type": "Noun", "example": "Can I take your order now?", "meaning": "Đơn hàng", "exMeaning": "Tôi có thể nhận đơn hàng của bạn bây giờ không?" },
+            { "word": "Order", "ipa": "/ˈɔː.dər/", "type": "Noun", "example": "The soldiers followed the order.", "meaning": "Sự ra lệnh/mệnh lệnh", "exMeaning": "Các binh sĩ đã tuân theo mệnh lệnh." },
+            { "word": "Order", "ipa": "/ˈɔː.dər/", "type": "Noun", "example": "Keep your files in alphabetical order.", "meaning": "Thứ tự", "exMeaning": "Hãy sắp xếp các hồ sơ theo thứ tự bảng chữ cái." },
+            { "word": "Cover", "ipa": "/ˈkʌv.ər/", "type": "Verb", "example": "Snow covered the ground.", "meaning": "Bao phủ", "exMeaning": "Tuyết bao phủ mặt đất." },
+            { "word": "Cover", "ipa": "/ˈkʌv.ər/", "type": "Verb", "example": "The price covers all expenses.", "meaning": "Bao gồm", "exMeaning": "Giá này bao gồm tất cả các chi phí." },
+            { "word": "Cover", "ipa": "/ˈkʌv.ər/", "type": "Verb", "example": "The insurance covers medical fees.", "meaning": "Chi trả", "exMeaning": "Bảo hiểm chi trả các chi phí y tế." },
+            { "word": "Cover", "ipa": "/ˈkʌv.ər/", "type": "Verb", "example": "The reporter covered the event.", "meaning": "Đưa tin", "exMeaning": "Phóng viên đã đưa tin về sự kiện này." },
+            { "word": "Stir-fry", "ipa": "/ˈstɜː.fraɪ/", "type": "Noun/Verb", "example": "I made a chicken stir-fry for dinner.", "meaning": "Xào", "exMeaning": "Tôi đã làm món gà xào cho bữa tối." },
+            { "word": "Instructor", "ipa": "/ɪnˈstrʌk.tər/", "type": "Noun", "example": "He is a driving instructor.", "meaning": "Giáo viên/người hướng dẫn", "exMeaning": "Anh ấy là một người hướng dẫn lái xe." },
+            { "word": "Dedicated", "ipa": "/ˈded.ɪ.keɪ.tɪd/", "type": "Adjective", "example": "She is a dedicated teacher.", "meaning": "Tận tụy/cam kết", "exMeaning": "Cô ấy là một giáo viên tận tụy." },
+            { "word": "Dedicated", "ipa": "/ˈded.ɪ.keɪ.tɪd/", "type": "Adjective", "example": "This is a dedicated server.", "meaning": "Chuyên dụng", "exMeaning": "Đây là một máy chủ chuyên dụng." },
+            { "word": "Advance/ prior/former/previous", "ipa": "/ədˈvɑːns/ /ˈpraɪ.ər/ /ˈfɔː.mər/ /ˈpriː.vi.əs/", "type": "Adjective", "example": "Thank you for your advance notice.", "meaning": "Trước", "exMeaning": "Cảm ơn bạn đã thông báo trước." },
+            { "word": "Advance/ progress", "ipa": "/ədˈvɑːns/ /ˈproʊ.ɡres/", "type": "Verb/Noun", "example": "We are making good progress.", "meaning": "Tiến bộ", "exMeaning": "Chúng tôi đang đạt được sự tiến bộ tốt." },
+            { "word": "Proof/ evidence", "ipa": "/pruːf/ /ˈev.ɪ.dəns/", "type": "Noun", "example": "There is no proof that he did it.", "meaning": "Bằng chứng", "exMeaning": "Không có bằng chứng nào cho thấy anh ta đã làm việc đó." },
+            { "word": "Attach/ enclose", "ipa": "/əˈtætʃ/ /ɪnˈkloʊz/", "type": "Verb", "example": "Please attach your photo to the form.", "meaning": "Đính kèm", "exMeaning": "Vui lòng đính kèm ảnh của bạn vào mẫu đơn." },
+            { "word": "Flyer/ pamphlet", "ipa": "/ˈflaɪ.ər/ /ˈpæm.flət/", "type": "Noun", "example": "They are handing out flyers.", "meaning": "Tờ rơi", "exMeaning": "Họ đang phát tờ rơi." },
+            { "word": "Vary/ differ", "ipa": "/ˈveə.ri/ /ˈdɪf.ər/", "type": "Verb", "example": "Prices vary depending on the size.", "meaning": "Khác nhau", "exMeaning": "Giá cả khác nhau tùy thuộc vào kích thước." },
+            { "word": "Direct/ guide/instruct", "ipa": "/daɪˈrekt/ /ɡaɪd/ /ɪnˈstrʌkt/", "type": "Verb", "example": "Could you direct me to the station?", "meaning": "Hướng dẫn", "exMeaning": "Bạn có thể chỉ đường cho tôi đến nhà ga không?" },
+            { "word": "Direct", "ipa": "/daɪˈrekt/", "type": "Verb", "example": "He was chosen to direct the project.", "meaning": "Lãnh đạo", "exMeaning": "Anh ấy đã được chọn để lãnh đạo dự án." },
+            { "word": "Director", "ipa": "/daɪˈrek.tər/", "type": "Noun", "example": "She is the director of the company.", "meaning": "Giám đốc", "exMeaning": "Cô ấy là giám đốc của công ty." },
+            { "word": "Direct/ send", "ipa": "/daɪˈrekt/ /send/", "type": "Verb", "example": "Please direct all inquiries to the office.", "meaning": "Gửi", "exMeaning": "Vui lòng gửi tất cả các thắc mắc đến văn phòng." },
+            { "word": "Specialist/ expert/professional", "ipa": "/ˈspeʃ.əl.ɪst/ /ˈek.spɜːt/ /prəˈfeʃ.ən.əl/", "type": "Noun", "example": "He is a computer specialist.", "meaning": "Chuyên gia", "exMeaning": "Anh ấy là một chuyên gia máy tính." },
+            { "word": "Process/ handle/address/deal with", "ipa": "/ˈproʊ.ses/ /ˈhæn.dəl/ /əˈdres/ /diːl wɪð/", "type": "Verb", "example": "How do you handle stress?", "meaning": "Xử lý", "exMeaning": "Bạn xử lý căng thẳng như thế nào?" },
+            { "word": "Publicize/ advertise/promote", "ipa": "/ˈpʌb.lɪ.saɪz/ /ˈæd.və.taɪz/ /prəˈmoʊt/", "type": "Verb", "example": "We need to promote the new product.", "meaning": "Quảng cáo/quảng bá", "exMeaning": "Chúng ta cần quảng bá sản phẩm mới." },
+            { "word": "Culinary", "ipa": "/ˈkʌl.ɪ.nər.i/", "type": "Adjective", "example": "I want to improve my culinary skills.", "meaning": "Ẩm thực", "exMeaning": "Tôi muốn cải thiện kỹ năng ẩm thực của mình." },
+            { "word": "Cuisine", "ipa": "/kwɪˈziːn/", "type": "Noun", "example": "I love Italian cuisine.", "meaning": "Ẩm thực", "exMeaning": "Tôi yêu thích ẩm thực Ý." },
+            { "word": "Academy/ institute", "ipa": "/əˈkæd.ə.mi/ /ˈɪn.stɪ.tʃuːt/", "type": "Noun", "example": "She studies at the music academy.", "meaning": "Học viện", "exMeaning": "Cô ấy học tại học viện âm nhạc." },
+            { "word": "Waived", "ipa": "/weɪvd/", "type": "Verb", "example": "The registration fee was waived.", "meaning": "Miễn (phí)", "exMeaning": "Lệ phí đăng ký đã được miễn." },
+            { "word": "Register/sign up/ rolling", "ipa": "/ˈredʒ.ɪ.stər/ /saɪn ʌp/ /ˈroʊ.lɪŋ/", "type": "Verb", "example": "You can register for the course online.", "meaning": "Đăng ký", "exMeaning": "Bạn có thể đăng ký khóa học trực tuyến." },
+            { "word": "Certain", "ipa": "/ˈsɜː.tən/", "type": "Adjective", "example": "I am certain that he will come.", "meaning": "Chắc chắn", "exMeaning": "Tôi chắc chắn rằng anh ấy sẽ đến." },
+            { "word": "Certain", "ipa": "/ˈsɜː.tən/", "type": "Adjective", "example": "In certain cases, we can help.", "meaning": "Nhất định", "exMeaning": "Trong những trường hợp nhất định, chúng tôi có thể giúp đỡ." }        
+        ],
+        passages: [
+    {
+      "type": "email",
+      "lines": [
+        { 
+          "en": "As part of our ongoing efforts to celebrate cultural diversity, Otis Community Center will hold a series of one-time cooking classes on Asian dishes this spring.", 
+          "vi": "Nằm trong nỗ lực không ngừng nhằm tôn vinh sự đa dạng văn hóa, Trung tâm Cộng đồng Otis sẽ tổ chức một loạt các lớp học nấu ăn một buổi về các món ăn Châu Á vào mùa xuân này.",
+          "grammar": "<b>Cấu trúc:</b> <i>As part of...</i> (Như là một phần của...). <br><b>Cụm danh từ:</b> <i>Ongoing efforts</i> (Nỗ lực đang diễn ra). <br><b>Thì Tương lai đơn:</b> <i>will hold</i> (sẽ tổ chức)."
+        },
+        { 
+          "en": "The classes will be held on the first Wednesday evening of each month from March through June. In order, the dishes covered will be Vietnamese chicken curry, Korean kimchi stew, Thai spring rolls, and Cantonese stir-fry beef.", 
+          "vi": "Các lớp học sẽ được tổ chức vào tối thứ Tư đầu tiên hàng tháng từ tháng Ba đến tháng Sáu. Theo thứ tự, các món ăn được hướng dẫn sẽ là cà ri gà Việt Nam, canh kimchi Hàn Quốc, chả giò Thái Lan và bò xào Quảng Đông.",
+          "grammar": "<b>Thì Tương lai đơn bị động:</b> <i>will be held</i> (sẽ được tổ chức). <br><b>Mệnh đề quan hệ rút gọn:</b> <i>the dishes covered</i> (các món ăn được bao gồm/hướng dẫn) rút gọn từ <i>which are covered</i>."
+        },
+        { 
+          "en": "Guest instructors from Roark Culinary Academy will teach the classes in our dedicated cooking classroom. Advance registration and payment are required, and participants will be asked to show proof of registration to their instructor.", 
+          "vi": "Các giảng viên khách mời từ Học viện Ẩm thực Roark sẽ giảng dạy tại phòng học nấu ăn chuyên dụng của chúng tôi. Việc đăng ký và thanh toán trước là bắt buộc, và học viên sẽ được yêu cầu xuất trình bằng chứng đăng ký cho giảng viên của mình.",
+          "grammar": "<b>Tính từ ghép:</b> <i>Guest instructors</i> (Giảng viên khách mời). <br><b>Thì Hiện tại đơn bị động:</b> <i>are required</i> (được yêu cầu/bắt buộc). <br><b>Cấu trúc:</b> <i>be asked to do something</i> (được yêu cầu làm gì)."
+        },
+        { 
+          "en": "Registration can be completed at our front desk from February 15 for all classes. Those who are not members of Otis Community Center will be required to pay a $5 registration fee.", 
+          "vi": "Việc đăng ký có thể được thực hiện tại bàn tiếp tân từ ngày 15 tháng 2 cho tất cả các lớp. Những người không phải là thành viên của Trung tâm Cộng đồng Otis sẽ phải trả phí đăng ký là 5 USD.",
+          "grammar": "<b>Động từ khuyết thiếu bị động:</b> <i>can be completed</i> (có thể được hoàn thành). <br><b>Đại từ quan hệ:</b> <i>Those who...</i> (Những người mà...) - cấu trúc cực kỳ phổ biến trong TOEIC."
+        },
+        { 
+          "en": "Please see the attached flyer for details including materials fees, which vary by class. Questions about the classes may be directed to Heather Tate, our programming specialist.", 
+          "vi": "Vui lòng xem tờ rơi đính kèm để biết chi tiết bao gồm phí nguyên liệu, mức phí này thay đổi tùy theo từng lớp. Các câu hỏi về lớp học có thể gửi tới Heather Tate, chuyên viên lập chương trình của chúng tôi.",
+          "grammar": "<b>Quá khứ phân từ làm tính từ:</b> <i>the attached flyer</i> (tờ rơi được đính kèm). <br><b>Mệnh đề quan hệ không xác định:</b> <i>which vary by class</i> bổ nghĩa cho cụm từ phía trước."
+        },
+        { 
+          "en": "Akio Hayashi, Director", 
+          "vi": "Akio Hayashi, Giám đốc",
+          "grammar": "<b>Danh từ chỉ chức danh:</b> Đứng sau tên riêng để định nghĩa vị trí công việc."
+        }
+      ]
+    },
+    {
+      "type": "form",
+      "lines": [
+        { 
+          "en": "Note: Refunds of class fees are only issued for cancellations made at least one week before the class date. To cancel your registration, please visit the center or call our front desk at 555-0195.", 
+          "vi": "Lưu ý: Việc hoàn trả học phí chỉ được thực hiện đối với các trường hợp hủy bỏ được thực hiện ít nhất một tuần trước ngày học. Để hủy đăng ký, vui lòng đến trung tâm hoặc gọi cho bàn tiếp tân của chúng tôi theo số 555-0195.",
+          "grammar": "<b>Mệnh đề quan hệ rút gọn bị động:</b> <i>cancellations made</i> (việc hủy bỏ được thực hiện). <br><b>Cấu trúc chỉ mục đích:</b> <i>To cancel...</i> đứng đầu câu để nhấn mạnh mục đích."
+        }
+      ]
+    }
+  ],
+  questions: [
+    {
+      "q": "181. Why was the e-mail written?",
+      "qTrans": "Tại sao email này được viết?",
+      "options": [
+        "To recruit volunteer workers",
+        "To issue invitations to special dinners",
+        "To ask for feedback about a program",
+        "To publicize some learning opportunities"
+      ],
+      "optTrans": [
+        "Để tuyển nhân viên tình nguyện",
+        "Để gửi lời mời tham dự các bữa tối đặc biệt",
+        "Để hỏi ý kiến phản hồi về một chương trình",
+        "Để quảng bá một số cơ hội học tập"
+      ],
+      "ans": "D",
+      "exp": "Email thông báo về một loạt các lớp học nấu ăn sắp tới, tức là các cơ hội học tập (learning opportunities).",
+      "logic": "Câu hỏi mục đích chung. 'Cooking classes' đồng nghĩa với 'learning opportunities'.",
+      "trap": "Đáp án B gây nhầm lẫn vì nhắc đến 'dinners', nhưng đây là lớp học nấu ăn, không phải bữa tiệc."
+    },
+    {
+      "q": "182. Where will a community activity take place?",
+      "qTrans": "Hoạt động cộng đồng sẽ diễn ra ở đâu?",
+      "options": [
+        "On a city street",
+        "At Otis Community Center",
+        "At several local restaurants",
+        "At Roark Culinary Academy"
+      ],
+      "optTrans": [
+        "Trên một con phố trong thành phố",
+        "Tại Trung tâm Cộng đồng Otis",
+        "Tại một vài nhà hàng địa phương",
+        "Tại Học viện Ẩm thực Roark"
+      ],
+      "ans": "B",
+      "exp": "Email ghi rõ các lớp học sẽ được tổ chức tại 'our dedicated cooking classroom' của Otis Community Center.",
+      "logic": "Câu hỏi tìm thông tin trực tiếp về địa điểm.",
+      "trap": "Đáp án D là nơi cung cấp giảng viên, không phải nơi tổ chức."
+    },
+    {
+      "q": "183. What dish will be cooked in March?",
+      "qTrans": "Món ăn nào sẽ được nấu vào tháng Ba?",
+      "options": [
+        "Vietnamese chicken curry",
+        "Korean kimchi stew",
+        "Thai spring rolls",
+        "Cantonese stir-fry beef"
+      ],
+      "optTrans": [
+        "Cà ri gà Việt Nam",
+        "Canh kimchi Hàn Quốc",
+        "Chả giò Thái Lan",
+        "Bò xào Quảng Đông"
+      ],
+      "ans": "A",
+      "exp": "Các lớp học diễn ra từ tháng 3 đến tháng 6. Theo thứ tự (In order), món đầu tiên cho tháng 3 là Vietnamese chicken curry.",
+      "logic": "Câu hỏi kết nối thông tin (Linkage). Phải đối chiếu thứ tự danh sách với mốc thời gian bắt đầu.",
+      "trap": "Học sinh dễ chọn nhầm món khác nếu không chú ý cụm từ 'In order'."
+    },
+    {
+      "q": "184. Why was a fee waived for Ms. Shull?",
+      "qTrans": "Tại sao một khoản phí lại được miễn cho cô Shull?",
+      "options": [
+        "She will provide some materials herself.",
+        "She is a community center member.",
+        "She registered before a certain date.",
+        "She attended each session of a class."
+      ],
+      "optTrans": [
+        "Cô ấy sẽ tự cung cấp một số nguyên liệu.",
+        "Cô ấy là thành viên của trung tâm cộng đồng.",
+        "Cô ấy đã đăng ký trước một ngày nhất định.",
+        "Cô ấy đã tham gia đầy đủ các buổi của một lớp học."
+      ],
+      "ans": "B",
+      "exp": "Email nêu rõ những người KHÔNG phải thành viên phải đóng 5 USD phí đăng ký. Phiếu của cô Shull ghi 'Registration Fee: WAIVED' và có 'Membership Number', chứng tỏ cô là thành viên.",
+      "logic": "Câu hỏi suy luận. Kết hợp thông tin từ quy định trong email và dữ liệu trên form.",
+      "trap": "Đáp án C nhắc đến việc đăng ký sớm (có trong bài) nhưng không phải là lý do để miễn phí."
+    },
+    {
+      "q": "185. To whom should Ms. Shull show her confirmation form?",
+      "qTrans": "Cô Shull nên xuất trình phiếu xác nhận của mình cho ai?",
+      "options": [
+        "Ms. Tate",
+        "Mr. Hayashi",
+        "Mr. Somsri",
+        "Mr. Woodard"
+      ],
+      "optTrans": [
+        "Cô Tate",
+        "Ông Hayashi",
+        "Ông Somsri",
+        "Ông Woodard"
+      ],
+      "ans": "C",
+      "exp": "Email yêu cầu học viên trình bằng chứng đăng ký cho 'instructor' (giảng viên). Trên phiếu xác nhận, giảng viên lớp của cô là David Somsri.",
+      "logic": "Câu hỏi kết nối thông tin giữa yêu cầu của email và chức danh cụ thể trên form.",
+      "trap": "Đáp án A (Ms. Tate) là người giải đáp thắc mắc, đáp án D (Mr. Woodard) là người xử lý giấy tờ, không phải người kiểm tra phiếu tại lớp."
+    }
+  ]
+    }
+];
+
+
+function switchTab(tabName) {
+    // 1. Chuyển đổi trạng thái Active của các nút Tab
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    const clickedBtn = [...document.querySelectorAll('.tab-btn')].find(btn => 
+        btn.getAttribute('onclick').includes(tabName)
+    );
+    if (clickedBtn) clickedBtn.classList.add('active');
+
+    // 2. Hiện phần nội dung tương ứng
+    document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(`section-${tabName}`).classList.add('active');
+
+    // 3. Điều khiển ẩn/hiện các nút công cụ (Floating Buttons)
+    // Ẩn tất cả các nút trước
+    document.querySelectorAll('.btn-action').forEach(btn => btn.style.display = 'none');
+
+    // Hiện các nút dựa trên tabName
+    if (tabName === 'flashcard') {
+        document.querySelectorAll('.control-flashcard').forEach(btn => btn.style.display = 'grid');
+    } else if (tabName === 'passage') {
+        document.querySelectorAll('.control-passage').forEach(btn => btn.style.display = 'grid');
+    } else if (tabName === 'quiz') {
+        document.querySelectorAll('.control-quiz').forEach(btn => btn.style.display = 'grid');
+    }
+
+    // Cuộn nội dung lên đầu trang khi chuyển Tab
+    document.querySelector('.main-content').scrollTop = 0;
+}
+
+function initNav() {
+    const navList = document.getElementById('navList');
+    allSets.forEach((set, idx) => {
+        const div = document.createElement('div');
+        div.className = `nav-item ${idx === 0 ? 'active' : ''}`;
+        div.innerHTML = `<i class="material-icons">menu_book</i> <span>Bộ ${set.range}</span>`;
+        div.onclick = (e) => { 
+            loadSet(idx); 
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); 
+            e.currentTarget.classList.add('active'); 
+        };
+        navList.appendChild(div);
+    });
+}
+
+function loadSet(idx) {
+ const data = allSets[idx];
+    if(!data) return;
+
+    // --- LOGIC CẬP NHẬT TIẾN ĐỘ ---
+    const totalSets = allSets.length;
+    const progressPercent = Math.round(((idx + 1) / totalSets) * 100);
+    
+    // Cập nhật độ rộng thanh Bar
+    document.getElementById('progressBar').style.width = progressPercent + '%';
+    // Cập nhật con số hiển thị
+    document.getElementById('progressText').innerText = progressPercent + '%';
+    // Cập nhật nhãn (Ví dụ: Bộ 1/4)
+    document.getElementById('progressLabel').innerText = `TIẾN ĐỘ: BỘ ${idx + 1} / ${totalSets}`;
+    // ------------------------------
+
+    // QUAN TRỌNG: Reset trạng thái Ẩn/Hiện khi chuyển bộ mới
+    document.getElementById('readingPanel').classList.remove('show-translation');
+    document.getElementById('quizPanel').classList.remove('show-answers');
+    document.getElementById('transBtn').classList.remove('active');
+    document.getElementById('toggleBtn').classList.remove('active');
+
+    // Render Flashcard
+const flashArea = document.getElementById('flashcardArea');
+if (data.flashcards && data.flashcards.length > 0) {
+    flashArea.innerHTML = data.flashcards.map(card => {
+        // Tách từ và IPA, lọc bỏ các khoảng trắng thừa
+        const words = card.word.split('/').map(s => s.trim()).filter(s => s !== "");
+        const ipas = card.ipa.split('/').map(s => s.trim()).filter(s => s !== "");
+
+        let wordContent = "";
+        
+        // Tìm đoạn này trong hàm loadSet và thay thế:
+if (words.length > 1) {
+    wordContent = `<div class="word-list">` + 
+        words.map((w, i) => {
+            const currentIpa = ipas[i] || ipas[0] || ""; 
+            return `
+            <div class="word-item">
+                <div class="word-item-text">
+                    ${card.type ? `<span class="card-type">${card.type}</span>` : ''}
+                    <span class="word-main">${w}</span>
+                    ${currentIpa ? `<span class="word-ipa-small">${currentIpa}</span>` : ''}
+                </div>
+                <div class="speak-btn-circle speak-small" onclick="event.stopPropagation(); speak('${w.replace(/'/g, "\\'")}');">
+                    <i class="material-icons" style="font-size: 16px;">volume_up</i>
+                </div>
+            </div>`;
+        }).join('') + `</div>`;
+} else {
+    wordContent = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+            ${card.type ? `<span class="card-type">${card.type}</span>` : ''}
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+                <h2 class="card-word" style="margin:0; font-weight:800; color:var(--primary);">${card.word}</h2>
+                <div class="speak-btn-circle" onclick="event.stopPropagation(); speak('${card.word.replace(/'/g, "\\'")}');">
+                    <i class="material-icons" style="font-size: 20px;">volume_up</i>
+                </div>
+            </div>
+        </div>
+        <div class="card-ipa" style="margin-top:8px;">${card.ipa}</div>
+    `;
+}
+
+        // Thay đổi nhỏ trong cấu trúc HTML trả về của Flashcard
+return `
+    <div class="card-container" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="badge" style="position:absolute; top:20px; right:20px; background:var(--primary-light); color:var(--primary); padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:bold;">VOCAB</span>
+                ${wordContent}
+                <div style="margin-top: 20px; text-align:center;">
+                   <p style="color:#64748b; font-size:0.85rem; line-height:1.6; max-width:80%; margin:0 auto;">${card.example}</p>
+                </div>
+            </div>
+            <div class="card-back">
+                <i class="material-icons" style="font-size:48px; margin-bottom:10px; opacity:0.8;">💡</i>
+                <h4 style="font-size: 1.6rem; margin:0;">${card.meaning}</h4>
+                <div style="width:40px; height:3px; background:white; margin:15px auto; border-radius:10px; opacity:0.5;"></div>
+                <p style="font-size: 1rem; opacity: 0.9;">${card.exMeaning || ''}</p>
+            </div>
+        </div>
+    </div>`;
+    }).join('');
+}
+
+// Render Passages (Tìm đoạn này trong hàm loadSet)
+const pBody = document.getElementById('passagesBody');
+if (data.passages && data.passages.length > 0) {
+    pBody.innerHTML = data.passages.map(p => {
+        // Tìm đoạn render Passages trong hàm loadSet và sửa lại:
+let lines = p.lines.map((l, idx) => `
+    <div class="passage-line-group" style="margin-bottom:24px">
+        <div class="en-header" style="display: flex; align-items: flex-start; gap: 10px;">
+            <span style="color: var(--primary); font-weight: bold; font-size: 0.8rem; margin-top: 4px;">${idx + 1}.</span>
+            <span class="en-text" style="font-weight:500; line-height: 1.6; flex-grow: 1;">${l.en}</span>
+        </div>
+
+        <span class="vi-line">${l.vi}</span>
+        
+        ${l.grammar ? `<div class="grammar-analysis">${l.grammar}</div>` : ''}
+
+        <div class="input-wrapper">
+            <textarea class="recall-input" style="display:none" placeholder="Dịch lại câu này..." oninput="autoHeight(this)"></textarea>
+            <button class="btn-hint" style="display:none" onclick="showHint(this)">
+                <i class="material-icons">lightbulb</i>
+            </button>
+        </div>
+    </div>
+`).join('');
+        return `<div class="passage-block">${lines}</div>`;
+    }).join('');
+}
+
+// Render Quiz
+const qBody = document.getElementById('questionsBody');
+if (data.questions && data.questions.length > 0) {
+    qBody.innerHTML = data.questions.map((q, qIdx) => `
+        <div style="margin-bottom:30px">
+            <p style="font-weight:700; margin-bottom: 4px;">Q${qIdx+1}: ${q.q}</p>
+            
+            <div class="vi-line" style="color: var(--primary); font-weight: 600; background: #f5f3ff; border-left-color: var(--primary); margin-bottom: 15px; font-size: 0.95rem;">
+                <i class="material-icons" style="font-size: 16px; vertical-align: middle;">translate</i> 
+                ${q.qTrans || 'Đang cập nhật dịch câu hỏi...'}
+            </div>
+
+            ${q.options.map((opt, oIdx) => `
+                <label class="option-label ${String.fromCharCode(65+oIdx) === q.ans ? 'is-correct-ans' : ''}">
+                    <input type="radio" name="q${qIdx}" style="margin-right:10px"> 
+                    <div style="width: 100%;">
+                        <div style="font-weight: 500;">${String.fromCharCode(65+oIdx)}. ${opt}</div>
+                        <div class="vi-line" style="font-size: 0.85rem; color: #64748b; background: transparent; border: none; padding: 0; margin-top: 4px;">
+                            <i class="material-icons" style="font-size: 14px; vertical-align: middle;">translate</i> 
+                            ${q.optTrans ? q.optTrans[oIdx] : ''}
+                        </div>
+                    </div>
+                </label>`).join('')}
+            
+            <div class="explanation">
+                <b>✅ Giải thích:</b> ${q.exp}<br><br>
+                <b style="color:#059669">🔍 Logic:</b> ${q.logic}
+                
+                ${q.trap ? `
+                <div class="trap-box">
+                    <b>⚠️ Cẩn thận bẫy:</b> ${q.trap}
+                </div>` : ''}
+            </div>
+        </div>`).join('');
+}
+// Cuộn lên đầu trang khi đổi bộ
+    document.querySelector('.main-content').scrollTop = 0;
+
+}
+
+function toggleAllGrammar() {
+    const panel = document.getElementById('readingPanel');
+    const btn = document.getElementById('grammarAllBtn');
+    
+    // Bật/tắt class show-all-grammar tại panel chính
+    const isActive = panel.classList.toggle('show-all-grammar');
+    
+    // Cập nhật trạng thái nút
+    btn.classList.toggle('active', isActive);
+    
+    // Đổi icon để người dùng biết trạng thái
+    btn.innerHTML = isActive ? 
+        `<i class="material-icons">auto_stories</i>` : 
+        `<i class="material-icons">architecture</i>`;
+}
+
+// Cập nhật lại hàm switchTab để hiển thị nút này
+const originalSwitchTab = switchTab;
+switchTab = function(tabName) {
+    originalSwitchTab(tabName);
+    const grammarBtn = document.getElementById('grammarAllBtn');
+    if (grammarBtn) {
+        grammarBtn.style.display = (tabName === 'passage') ? 'grid' : 'none';
+    }
+}
+
+function toggleTranslation() { 
+    const panel = document.getElementById('readingPanel');
+    const btn = document.getElementById('transBtn');
+    const isActive = panel.classList.toggle('show-translation');
+    btn.classList.toggle('active', isActive);
+}
+
+function toggleAnswers() { 
+    const panel = document.getElementById('quizPanel');
+    const btn = document.getElementById('toggleBtn');
+    const isActive = panel.classList.toggle('show-answers');
+    btn.classList.toggle('active', isActive);
+}
+
+function speak(text) {
+    // Hủy các yêu cầu phát âm đang chạy để tránh chồng chéo
+    window.speechSynthesis.cancel();
+    
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US'; // Đặt ngôn ngữ là tiếng Anh Mỹ
+    msg.rate = 0.9;     // Tốc độ nói hơi chậm một chút để dễ nghe
+    window.speechSynthesis.speak(msg);
+}
+
+let isAllFlipped = false;
+
+function toggleFlipAll() {
+    const cards = document.querySelectorAll('.card-container');
+    const btn = document.getElementById('flipAllBtn');
+    
+    isAllFlipped = !isAllFlipped;
+    
+    cards.forEach(card => {
+        if (isAllFlipped) {
+            card.classList.add('flipped');
+        } else {
+            card.classList.remove('flipped');
+        }
+    });
+
+    // Cập nhật trạng thái nút
+    btn.classList.toggle('active', isAllFlipped);
+    btn.innerHTML = isAllFlipped ? 
+        `<i class="material-icons">unfold_less</i>` : 
+        `<i class="material-icons">import_export</i>`;
+}
+
+// Cập nhật lại hàm loadSet để reset trạng thái lật khi đổi bộ từ vựng
+const originalLoadSet = loadSet;
+loadSet = function(idx) {
+    isAllFlipped = false;
+    const btn = document.getElementById('flipAllBtn');
+    if(btn) {
+        btn.classList.remove('active');
+        btn.innerHTML = `<i class="material-icons">import_export</i>`;
+    }
+    originalLoadSet(idx);
+}
+
+function showHint(btn) {
+    const group = btn.closest('.passage-line-group');
+    const enText = group.querySelector('.en-text');
+    const input = group.querySelector('.recall-input');
+    const originalValue = enText.innerText.trim();
+
+    if (input.value === originalValue) {
+        input.value = "";
+        input.style.borderColor = "#e2e8f0";
+        input.style.background = "white";
+        btn.innerHTML = `<i class="material-icons">lightbulb</i>`;
+        btn.classList.remove('active-hint');
+    } else {
+        input.value = originalValue;
+        input.style.borderColor = "#4f46e5";
+        input.style.background = "#eef2ff";
+        btn.innerHTML = `<i class="material-icons">lightbulb_outline</i>`;
+        btn.classList.add('active-hint');
+        
+        // Quan trọng: Cập nhật lại chiều cao sau khi hiện đáp án
+        autoHeight(input);
+        
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 300);
+    }
+}
+
+// Cập nhật lại hàm này để ẩn/hiện nút Hint
+function toggleRecallMode() {
+    const panel = document.getElementById('readingPanel');
+    const btn = document.getElementById('recallBtn');
+    const inputs = document.querySelectorAll('.recall-input');
+    const hints = document.querySelectorAll('.btn-hint');
+    
+    const isRecallActive = panel.classList.toggle('recall-mode');
+    btn.classList.toggle('active', isRecallActive);
+
+    inputs.forEach(input => {
+        input.style.display = isRecallActive ? 'block' : 'none';
+        if (isRecallActive) input.value = ""; 
+    });
+
+    // Hiện/ẩn các nút bóng đèn
+    hints.forEach(hint => {
+        hint.style.display = isRecallActive ? 'grid' : 'none';
+    });
+
+    if (isRecallActive) {
+        panel.classList.remove('show-translation');
+        document.getElementById('transBtn').classList.remove('active');
+        document.querySelector('.main-content').scrollTop = 0;
+    }
+
+    if (!isRecallActive) {
+        hints.forEach(hint => {
+            hint.innerHTML = `<i class="material-icons" style="font-size: 20px;">lightbulb</i>`;
+            hint.classList.remove('active-hint');
+        });
+    }
+}
+
+function autoHeight(element) {
+    element.style.height = "5px"; // Reset chiều cao để tính toán lại
+    element.style.height = (element.scrollHeight) + "px";
+}
+
+function toggleGrammar(btn) {
+    const group = btn.closest('.passage-line-group');
+    const isActive = group.classList.toggle('show-grammar');
+    btn.classList.toggle('active-grammar', isActive);
+    
+    // Đổi icon khi đóng/mở
+    const icon = btn.querySelector('.material-icons');
+    icon.innerText = isActive ? 'auto_stories' : 'architecture';
+}
+
+initNav();
+loadSet(0);
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('recall-input')) {
+        const userInput = e.target.value.trim().toLowerCase();
+        // Lấy câu gốc tiếng Anh từ element ngay phía trên (class en-text)
+        const originalText = e.target.parentElement.querySelector('.en-text').innerText.trim().toLowerCase();
+        
+        // Loại bỏ dấu câu cơ bản để so sánh dễ hơn
+        const cleanOriginal = originalText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        const cleanUser = userInput.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+
+        if (cleanUser === cleanOriginal) {
+            e.target.style.borderColor = "#22c55e";
+            e.target.style.background = "#f0fdf4";
+        } else {
+            e.target.style.borderColor = "#e2e8f0";
+            e.target.style.background = "white";
+        }
+    }
+});
+// Gọi switchTab('flashcard') lúc khởi tạo để ẩn các nút không liên quan
+switchTab('flashcard');
+</script>
+</body>
+</html>
