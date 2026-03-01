@@ -188,10 +188,16 @@
         @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- FLOATING CONTROLS --- */
-        .controls { 
-            position: absolute; bottom: 30px; right: 30px; 
-            display: flex; flex-direction: column; gap: 12px; z-index: 2000; 
-        }
+/* Tìm đoạn này trong CSS của bạn và đổi absolute thành fixed */
+.controls { 
+    position: fixed; /* ĐỔI TỪ absolute SANG fixed Ở ĐÂY */
+    bottom: 30px; 
+    right: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    z-index: 2000; 
+}
         .btn-action { 
             width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; 
             cursor: pointer; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
@@ -215,6 +221,7 @@
             .controls { bottom: 20px; right: 20px; flex-direction: row; }
             .card-container { height: 230px; }
             .card-word { font-size: 1.8rem; }
+            
         }
 
         .panel { background: var(--white); border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; }

@@ -103,6 +103,8 @@ function render() {
                                 <button onclick="toggleSingleContent(this, 'q-en')">Anh</button>
                                 <button onclick="toggleSingleContent(this, 'q-ipa')">IPA</button>
                                 <button onclick="toggleSingleContent(this, 'q-vi')">Việt</button>
+                                <button onclick="toggleSingleContent(this, 'q-ans')" style="background-color: #fff3cd; color: #856404; border-color: #ffeeba;">💡 Đáp án & Giải thích</button>
+
                             </div>
                             <div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
                                 <div class="en-text q-en"><strong>${item.q}</strong></div>
@@ -117,8 +119,21 @@ function render() {
                                         <span class="vi-text q-vi">: ${opt.vi}</span>
                                     </div>
                                 `).join('') : ''}
-                            </div>
-                        </div>
+    </div>
+    
+    <div class="q-ans" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-left: 5px solid #ffc107; border-radius: 8px;">
+        <div style="font-size: 1.1rem; color: #d35400; margin-bottom: 8px;">
+            <strong>🎯 Đáp án đúng: ${item.correct || 'Đang cập nhật'}</strong>
+        </div>
+        <div style="margin-bottom: 5px; color: #2c3e50; line-height: 1.5;">
+            <strong>📝 Cách làm:</strong><br> ${item.explain || 'Đang cập nhật...'}
+        </div>
+        ${item.trap ? `
+        <div style="color: #c0392b; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
+            <strong>⚠️ Cạm bẫy (Distractor):</strong><br> ${item.trap}
+        </div>` : ''}
+    </div>
+    </div>
                     `).join('')}
                 </div>
             </div>
