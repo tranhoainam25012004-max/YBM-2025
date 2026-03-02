@@ -145,7 +145,7 @@
 
         /* --- UI LOGIC (DỊCH & ĐÁP ÁN) --- */
 .vi-line { 
-    display: none !important; 
+    display: none ; 
     color: #166534; 
     background: #f0fdf4; 
     padding: 12px; 
@@ -209,20 +209,33 @@
         .btn-submit.active { background: #059669; }
 
         /* --- MOBILE OPTIMIZATION --- */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { 
-                width: 100%; height: auto; flex-direction: row; 
-                align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
-            }
-            #navList { display: flex; padding: 10px; gap: 10px; overflow-x: auto; }
-            .nav-item { margin-bottom: 0; white-space: nowrap; }
-            .main-container { height: calc(100vh - 70px); }
-            .controls { bottom: 20px; right: 20px; flex-direction: row; }
-            .card-container { height: 230px; }
-            .card-word { font-size: 1.8rem; }
-            
-        }
+@media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { 
+        width: 100%; height: auto; flex-direction: row; 
+        align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    #navList { display: flex; padding: 10px; gap: 10px; overflow-x: auto; }
+    .nav-item { margin-bottom: 0; white-space: nowrap; }
+    .main-container { height: calc(100vh - 70px); }
+    .controls { bottom: 20px; right: 20px; flex-direction: row; }
+    
+    /* 1. Ép phần khung chứa nội dung sát ra 2 mép màn hình (giảm padding từ 24px xuống 10px) */
+    .main-content {
+        padding: 8px 4px; 
+        padding-bottom: 100px;
+    }
+
+    /* 2. Ép thẻ mở rộng 100% chiều ngang và giữ chiều cao gấp đôi */
+    .card-container { 
+        width: 100%; 
+        max-width: 100%; 
+        min-height: 460px; 
+        height: auto;
+    } 
+    
+    .card-word { font-size: 1.2rem; }
+}
 
         .panel { background: var(--white); border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; }
         .option-label { display: flex; align-items: center; padding: 15px; margin: 10px 0; border: 1px solid #f1f5f9; border-radius: 12px; cursor: pointer; background: #f8fafc; transition: 0.2s; }
@@ -239,11 +252,20 @@
 .card-container { 
     perspective: 1500px; 
     width: 95%; 
-    max-width: 400px; 
-    min-height: 260px; /* Đổi height thành min-height */
+    max-width: 500px; /* Tăng thêm 50px (từ 400px lên 450px) */
+    min-height: 520px; /* Dài ra gấp đôi (từ 260px lên 520px) */
     height: auto; 
     cursor: pointer;
     position: relative;
+}
+
+.card-inner { 
+    position: relative; 
+    width: 100%; 
+    min-height: 520px; /* Đồng bộ chiều dài gấp đôi với container (từ 260px lên 520px) */
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
+    transform-style: preserve-3d; 
 }
 
 .card-front, .card-back { 
@@ -261,19 +283,10 @@
     box-sizing: border-box;
 }
 
-/* Khi mặt trước dài ra, đảm bảo mặt sau cũng khớp chiều cao */
-.card-inner { 
-    position: relative; 
-    width: 100%; 
-    min-height: 260px; /* Thêm min-height */
-    height: 100%;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
-    transform-style: preserve-3d; 
-}
 
 /* Thêm vào để cuộn nội dung nếu quá dài (phòng hờ) */
 .word-list {
-    max-height: 200px; 
+    max-height: 420px; /* Tăng từ 200px lên 420px để lấp đầy thẻ mới */
     overflow-y: auto;
     padding-right: 5px;
 }
@@ -281,11 +294,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: calc(100% - 20px); /* Thu hẹp độ rộng đi 20px */
+    margin: 0 auto; /* Căn giữa khung từ vựng bên trong danh sách */
     padding: 6px 12px;
     background: rgba(79, 70, 229, 0.03);
     border-radius: 10px;
     transition: 0.2s;
+    box-sizing: border-box; /* Đảm bảo padding không làm phình kích thước */
 }
 
 .word-item:hover {

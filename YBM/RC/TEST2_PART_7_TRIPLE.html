@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Part 7-đoạn đơn</title>
+    <link rel="stylesheet" href="css/style_read.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box"><i class="material-icons" style="color:white; font-size:20px;">school</i></div>
+            <h3 style="margin:0; font-size: 1.1rem; display: block;">Toeic</h3>
+        </div>
+        <div id="navList"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('flashcard')">
+                <i class="material-icons">style</i> Từ vựng
+            </button>
+            <button class="tab-btn" onclick="switchTab('passage')">
+                <i class="material-icons">description</i> Bài đọc
+            </button>
+            <button class="tab-btn" onclick="switchTab('quiz')">
+                <i class="material-icons">task_alt</i> Câu hỏi
+            </button>
+        </div>
+        <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
+                <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.5s;"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="section-flashcard" class="content-section active">
+                <div class="panel"><div id="flashcardArea"></div></div>
+            </div>
+
+            <div id="section-passage" class="content-section">
+                <div class="panel" id="readingPanel">
+                    <div id="passagesBody"></div>
+                </div>
+            </div>
+
+            <div id="section-quiz" class="content-section">
+                <div class="panel" id="quizPanel">
+                    <div id="questionsBody"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+    <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+        <i class="material-icons">edit_note</i>
+    </button>
+    <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+        <i class="material-icons">architecture</i>
+    </button>
+    <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+        <i class="material-icons">translate</i>
+    </button>
+
+    <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+        <i class="material-icons">import_export</i>
+    </button>
+
+    <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+        <i class="material-icons">visibility</i>
+    </button>
+</div>
+    </div>
+<script>
+const allSets = [
+{
+  "id": 3,
+  "range": "186-190",
+  "flashcards": [
+    {"word": "Session", "ipa": "/ˈseʃ.ən/", "type": "Noun", "example": "The morning training session, will start at 9 AM.", "exIpa": "/ðə ˈmɔːrnɪŋ ˈtreɪnɪŋ ˈseʃən, wɪl stɑːrt æt naɪn eɪ em/", "meaning": "Buổi", "exMeaning": "Buổi đào tạo buổi sáng, sẽ bắt đầu lúc 9 giờ sáng."},
+    {"word": "Switch / transition / shift", "ipa": "/swɪtʃ/ / /trænˈzɪʃ.ən/ / /ʃɪft/", "type": "Noun/Verb", "example": "We will transition, to the new system next month.", "exIpa": "/wi wɪl trænˈzɪʃən, tə ðə nuː ˈsɪstəm nekst mʌnθ/", "meaning": "Chuyển", "exMeaning": "Chúng tôi sẽ chuyển, sang hệ thống mới vào tháng tới."},
+    {"word": "Multiple / ample / numerous / plentiful", "ipa": "/ˈmʌl.tɪ.pəl/", "type": "Adjective", "example": "There are multiple reasons, for this delay.", "exIpa": "/ðer ɑːr ˈmʌltɪpəl ˈriːzənz, fər ðɪs dɪˈleɪ/", "meaning": "Nhiều", "exMeaning": "Có nhiều lý do, cho sự chậm trễ này."},
+    {"word": "Require", "ipa": "/rɪˈkwaɪər/", "type": "Verb", "example": "The new project requires, a lot of resources.", "exIpa": "/ðə nuː ˈprɑːdʒekt rɪˈkwaɪərz, ə lɑːt əv ˈriːsɔːrsɪz/", "meaning": "Yêu cầu / Cần", "exMeaning": "Dự án mới yêu cầu, rất nhiều tài nguyên."},
+    {"word": "Required / compulsory / mandatory / obligatory", "ipa": "/rɪˈkwaɪərd/", "type": "Adjective", "example": "Attendance at the meeting, is mandatory for all staff.", "exIpa": "/əˈtendəns æt ðə ˈmiːtɪŋ, ɪz ˈmændətɔːri fər ɔːl stæf/", "meaning": "Bắt buộc", "exMeaning": "Việc tham dự cuộc họp, là bắt buộc đối với tất cả nhân viên."},
+    {"word": "Publicize / promote / advertise", "ipa": "/ˈpʌb.lɪ.saɪz/", "type": "Verb", "example": "They plan to publicize the event, on social media.", "exIpa": "/ðeɪ plæn tə ˈpʌblɪsaɪz ði ɪˈvent, ɑːn ˈsoʊʃəl ˈmiːdiə/", "meaning": "Quảng cáo", "exMeaning": "Họ dự định quảng cáo sự kiện, trên mạng xã hội."},
+    {"word": "Function / feature", "ipa": "/ˈfʌŋk.ʃən/ / /ˈfiː.tʃər/", "type": "Noun", "example": "This software has, a very useful search feature.", "exIpa": "/ðɪs ˈsɔːftwer hæz, ə ˈveri ˈjuːsfəl sɜːrtʃ ˈfiːtʃər/", "meaning": "Chức năng", "exMeaning": "Phần mềm này có, một chức năng tìm kiếm rất hữu ích."},
+    {"word": "External", "ipa": "/ɪkˈstɜː.nəl/", "type": "Adjective", "example": "We need to hire, an external consultant for this project.", "exIpa": "/wi niːd tə ˈhaɪər, ən ɪkˈstɜːrnəl kənˈsʌltənt fər ðɪs ˈprɑːdʒekt/", "meaning": "Bên ngoài", "exMeaning": "Chúng ta cần thuê, một cố vấn bên ngoài cho dự án này."},
+    {"word": "internal", "ipa": "/ɪnˈtɜː.nəl/", "type": "Adjective", "example": "This is an internal document, for employees only.", "exIpa": "/ðɪs ɪz ən ɪnˈtɜːrnəl ˈdɑːkjəmənt, fər ɪmˈplɔɪiːz ˈoʊnli/", "meaning": "bên trong", "exMeaning": "Đây là một tài liệu bên trong, chỉ dành cho nhân viên."},
+    {"word": "Upon", "ipa": "/əˈpɒn/", "type": "Preposition", "example": "Please contact us, upon receiving this email.", "exIpa": "/pliːz ˈkɑːntækt ʌs, əˈpɑːn rɪˈsiːvɪŋ ðɪs ˈiːmeɪl/", "meaning": "Khi", "exMeaning": "Vui lòng liên hệ với chúng tôi, khi nhận được email này."},
+    {"word": "Upon", "ipa": "/əˈpɒn/", "type": "Preposition", "example": "The decision rests, upon your shoulders.", "exIpa": "/ðə dɪˈsɪʒən rests, əˈpɑːn jʊr ˈʃoʊldərz/", "meaning": "Trên", "exMeaning": "Quyết định nằm, trên đôi vai của bạn."},
+    {"word": "Registration / register / sign up / enroll", "ipa": "/ˌredʒ.ɪˈstreɪ.ʃən/", "type": "Noun/Verb", "example": "Registration for the course, closes tomorrow afternoon.", "exIpa": "/ˌredʒɪˈstreɪʃən fər ðə kɔːrs, ˈkloʊzɪz təˈmɑːroʊ ˌæftərˈnuːn/", "meaning": "Đăng ký", "exMeaning": "Việc đăng ký khóa học, sẽ đóng vào chiều mai."},
+    {"word": "Acquire / attain / achieve / accomplish / secure / reach / obtain", "ipa": "/əˈkwaɪər/", "type": "Verb", "example": "She worked hard to achieve, her career goals.", "exIpa": "/ʃi wɜːrkt hɑːrd tu əˈtʃiːv, hɜːr kəˈrɪr ɡoʊlz/", "meaning": "Đạt được", "exMeaning": "Cô ấy đã làm việc chăm chỉ để đạt được, các mục tiêu nghề nghiệp của mình."},
+    {"word": "Acquire / buy / purchase", "ipa": "/əˈkwaɪər/", "type": "Verb", "example": "The company plans to purchase, new office equipment.", "exIpa": "/ðə ˈkʌmpəni plænz tə ˈpɜːrtʃəs, nuː ˈɔːfɪs ɪˈkwɪpmənt/", "meaning": "Mua", "exMeaning": "Công ty dự định mua, thiết bị văn phòng mới."},
+    {"word": "Capability / ability", "ipa": "/ˌkeɪ.pəˈbɪl.ə.ti/", "type": "Noun", "example": "She has the capability, to lead the team effectively.", "exIpa": "/ʃi hæz ðə ˌkeɪpəˈbɪləti, tə liːd ðə tiːm ɪˈfektɪvli/", "meaning": "Khả năng", "exMeaning": "Cô ấy có khả năng, lãnh đạo đội ngũ một cách hiệu quả."},
+    {"word": "Specifically / particularly", "ipa": "/spəˈsɪf.ɪ.kəl.i/", "type": "Adverb", "example": "I bought this gift specifically, for you.", "exIpa": "/aɪ bɔːt ðɪs ɡɪft spəˈsɪfɪkəli, fər juː/", "meaning": "Cụ thể", "exMeaning": "Tôi đã mua món quà này cụ thể, là dành cho bạn."},
+    {"word": "Subject", "ipa": "/ˈsʌb.dʒekt/", "type": "Noun", "example": "The subject of the email, is very clear.", "exIpa": "/ðə ˈsʌbdʒekt əv ði ˈiːmeɪl, ɪz ˈveri klɪr/", "meaning": "Chủ đề", "exMeaning": "Chủ đề của email, rất rõ ràng."},
+    {"word": "Regular / frequent", "ipa": "/ˈreɡ.jə.lər/", "type": "Adjective", "example": "He is a frequent visitor, to our museum.", "exIpa": "/hi ɪz ə ˈfriːkwənt ˈvɪzɪtər, tu aʊər mjuˈziːəm/", "meaning": "Thường xuyên", "exMeaning": "Anh ấy là một du khách thường xuyên, đến bảo tàng của chúng tôi."},
+    {"word": "Regular / normal / usual", "ipa": "/ˈreɡ.jə.lər/", "type": "Adjective", "example": "This is just a regular day, at the office.", "exIpa": "/ðɪs ɪz dʒʌst ə ˈreɡjələr deɪ, æt ði ˈɔːfɪs/", "meaning": "Thông thường", "exMeaning": "Đây chỉ là một ngày thông thường, ở văn phòng."},
+    {"word": "Span / extend", "ipa": "/spæn/", "type": "Verb", "example": "The bridge spans, the entire river.", "exIpa": "/ðə brɪdʒ spænz, ði ɪnˈtaɪər ˈrɪvər/", "meaning": "Kéo dài", "exMeaning": "Cây cầu kéo dài, qua toàn bộ con sông."},
+    {"word": "Conduct / carry out / implement / perform / execute / administer / fulfill", "ipa": "/kənˈdʌkt/", "type": "Verb", "example": "We will conduct a survey, to gather customer feedback.", "exIpa": "/wi wɪl kənˈdʌkt ə ˈsɜːrveɪ, tə ˈɡæðər ˈkʌstəmər ˈfiːdbæk/", "meaning": "Tiến hành", "exMeaning": "Chúng tôi sẽ tiến hành một cuộc khảo sát, để thu thập phản hồi của khách hàng."},
+    {"word": "Specify", "ipa": "/ˈspes.ɪ.faɪ/", "type": "Verb", "example": "Please specify your requirements, in the email.", "exIpa": "/pliːz ˈspesɪfaɪ jʊr rɪˈkwaɪərmənts, ɪn ði ˈiːmeɪl/", "meaning": "Ghi rõ / Định rõ", "exMeaning": "Vui lòng ghi rõ các yêu cầu của bạn, trong email."},
+    {"word": "Inform / notify", "ipa": "/ɪnˈfɔːm/", "type": "Verb", "example": "We will notify you, of any schedule changes.", "exIpa": "/wi wɪl ˈnoʊtɪfaɪ juː, əv ˈeni ˈskedʒuːl ˈtʃeɪndʒɪz/", "meaning": "Thông báo", "exMeaning": "Chúng tôi sẽ thông báo cho bạn, về bất kỳ thay đổi lịch trình nào."},
+    {"word": "Concern / worry", "ipa": "/kənˈsɜːn/", "type": "Noun", "example": "My main concern, is the project timeline.", "exIpa": "/maɪ meɪn kənˈsɜːrn, ɪz ðə ˈprɑːdʒekt ˈtaɪmlaɪn/", "meaning": "Lo lắng", "exMeaning": "Mối lo lắng chính của tôi, là tiến độ dự án."},
+    {"word": "Undergo / experience", "ipa": "/ˌʌn.dəˈɡəʊ/", "type": "Verb", "example": "The building will undergo, major renovations next year.", "exIpa": "/ðə ˈbɪldɪŋ wɪl ˌʌndərˈɡoʊ, ˈmeɪdʒər ˌrenəˈveɪʃənz nekst jɪr/", "meaning": "Trải qua / Trải nghiệm", "exMeaning": "Tòa nhà sẽ trải qua, những đợt cải tạo lớn vào năm tới."}
+  ],
+  "passages": [
+    {
+      "type": "email",
+      "lines": [
+        {
+          "en": "To: Ingram Group staff\nFrom: James Buckley\nSubject: Upcoming software training\nDate: May 14\nAttachment: Training Schedule",
+          "vi": "Đến: Nhân viên Ingram Group\nTừ: James Buckley\nChủ đề: Khóa đào tạo phần mềm sắp tới\nNgày: 14 tháng 5\nTệp đính kèm: Lịch trình đào tạo",
+          "grammar": "<b>Từ vựng:</b> <i>Upcoming</i> (sắp tới) - tính từ thường xuyên xuất hiện trong TOEIC để chỉ các sự kiện sắp diễn ra."
+        },
+        {
+          "en": "Hello everyone,\nIn the next few weeks, we will have training sessions for two software programs that are important to our business.",
+          "vi": "Chào mọi người,\nTrong vài tuần tới, chúng ta sẽ có các buổi đào tạo cho hai chương trình phần mềm quan trọng đối với công việc kinh doanh của chúng ta.",
+          "grammar": "<b>Mệnh đề quan hệ:</b> <i>that are important to our business</i> bổ nghĩa cho 'two software programs'. <b>Cấu trúc:</b> <i>be important to + N/V-ing</i> (quan trọng đối với cái gì)."
+        },
+        {
+          "en": "First, all employees must attend a 90-minute training on Skeddit, the scheduling software we will switch over to in June.",
+          "vi": "Đầu tiên, tất cả nhân viên phải tham dự buổi đào tạo dài 90 phút về Skeddit, phần mềm lên lịch mà chúng ta sẽ chuyển sang sử dụng vào tháng Sáu.",
+          "grammar": "<b>Tính từ ghép:</b> <i>a 90-minute training</i> (không có 's' ở minute vì nó đóng vai trò tính từ). <b>Cụm động từ:</b> <i>switch over to</i> (chuyển đổi sang)."
+        },
+        {
+          "en": "The training session will be held multiple times before the transition to the new system.",
+          "vi": "Buổi đào tạo sẽ được tổ chức nhiều lần trước khi chuyển đổi sang hệ thống mới.",
+          "grammar": "<b>Câu bị động:</b> <i>will be held</i> (sẽ được tổ chức). <b>Từ vựng:</b> <i>multiple times</i> (nhiều lần), <i>transition</i> (sự chuyển đổi - danh từ của switch/transition)."
+        },
+        {
+          "en": "Second, a two-hour online training session on Calacad will be required only for engineering department staff.",
+          "vi": "Thứ hai, một buổi đào tạo trực tuyến dài hai giờ về Calacad sẽ chỉ bắt buộc đối với nhân viên bộ phận kỹ thuật.",
+          "grammar": "<b>Câu bị động:</b> <i>will be required</i> (sẽ được yêu cầu/bắt buộc). <b>Từ khóa cần chú ý:</b> <i>only for engineering department staff</i> (chỉ dành cho bộ phận kỹ thuật - dữ kiện rất quan trọng để làm câu hỏi suy luận)."
+        },
+        {
+          "en": "The developer created the training to publicize new functions that have been added to the software, and it will benefit all members of the department to learn about them.",
+          "vi": "Nhà phát triển đã tạo ra khóa đào tạo này để quảng bá các chức năng mới đã được thêm vào phần mềm, và việc tìm hiểu về chúng sẽ mang lại lợi ích cho tất cả các thành viên trong bộ phận.",
+          "grammar": "<b>Động từ nguyên thể chỉ mục đích:</b> <i>to publicize</i> (để quảng bá). <b>Hiện tại hoàn thành dạng bị động:</b> <i>that have been added</i> (đã được thêm vào)."
+        },
+        {
+          "en": "The full schedule for the trainings is attached to this e-mail. Registration can be completed on the “Training” page of the employee Web site.",
+          "vi": "Lịch trình đầy đủ cho các buổi đào tạo được đính kèm trong email này. Việc đăng ký có thể được hoàn tất trên trang “Đào tạo” của trang web dành cho nhân viên.",
+          "grammar": "<b>Cấu trúc quen thuộc:</b> <i>is attached to</i> (được đính kèm vào). <b>Bị động với động từ khuyết thiếu:</b> <i>can be completed</i> (có thể được hoàn tất)."
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "lines": [
+        {
+          "en": "Training Schedule\nMay 26 | Calacad | 9:00 A.M.–11:00 A.M. | Online\nMay 30 | Skeddit | 9:00 A.M.–10:30 A.M. | Conference Room A\nJune 1 | Skeddit | 1:00 P.M.–2:30 P.M. | Conference Room A\nJune 5 | Calacad | 2:00 P.M.–4:00 P.M. | Online\nJune 7 | Skeddit | 10:00 A.M.–11:30 A.M. | Conference Room A\nJune 12 | Skeddit | 3:30 P.M.–5 P.M. | Conference Room A",
+          "vi": "Lịch trình đào tạo\nNgày 26 tháng 5 | Calacad | 9:00 SA–11:00 SA | Trực tuyến\nNgày 30 tháng 5 | Skeddit | 9:00 SA–10:30 SA | Phòng Hội nghị A\nNgày 1 tháng 6 | Skeddit | 1:00 CH–2:30 CH | Phòng Hội nghị A\nNgày 5 tháng 6 | Calacad | 2:00 CH–4:00 CH | Trực tuyến\nNgày 7 tháng 6 | Skeddit | 10:00 SA–11:30 SA | Phòng Hội nghị A\nNgày 12 tháng 6 | Skeddit | 3:30 CH–5:00 CH | Phòng Hội nghị A",
+          "grammar": "<b>Kỹ năng làm bài:</b> Không cần đọc kỹ từng dòng, chỉ cần nắm được bố cục bảng gồm: Ngày, Tên phần mềm, Thời gian, và Địa điểm để tra cứu (cross-reference) khi làm câu hỏi."
+        },
+        {
+          "en": "The Web link for the online training will be sent to participants upon registration.",
+          "vi": "Đường dẫn trang web cho buổi đào tạo trực tuyến sẽ được gửi cho những người tham gia ngay khi đăng ký.",
+          "grammar": "<b>Giới từ:</b> <i>upon + N/V-ing</i> (ngay khi làm gì đó)."
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "lines": [
+        {
+          "en": "To: James Buckley\nFrom: Lisa Chang\nSubject: Re: Upcoming software training\nDate: May 15",
+          "vi": "Đến: James Buckley\nTừ: Lisa Chang\nChủ đề: Trả lời: Khóa đào tạo phần mềm sắp tới\nNgày: 15 tháng 5",
+          "grammar": "Email phản hồi (Reply) từ Lisa gửi lại cho James để hỏi về lịch trình."
+        },
+        {
+          "en": "Hi James,\nI’ll need to take both of those trainings, but I have a meeting on the morning of May 26. It’s with important external partners and I can’t move it.",
+          "vi": "Chào James,\nTôi sẽ cần tham gia cả hai khóa đào tạo đó, nhưng tôi có một cuộc họp vào sáng ngày 26 tháng 5. Cuộc họp này với các đối tác bên ngoài quan trọng và tôi không thể dời nó được.",
+          "grammar": "<b>Từ vựng:</b> <i>external partners</i> (đối tác bên ngoài). <b>Ngữ cảnh:</b> Báo cáo về việc trùng lịch (scheduling conflict)."
+        },
+        {
+          "en": "Then I’ll be out of the country on vacation from May 29 through June 9. In this situation, what do you recommend I do about the Calacad training?\nThanks,\nLisa",
+          "vi": "Sau đó, tôi sẽ ra nước ngoài đi nghỉ phép từ ngày 29 tháng 5 đến hết ngày 9 tháng 6. Trong tình huống này, anh khuyên tôi nên làm gì về khóa đào tạo Calacad?\nCảm ơn,\nLisa",
+          "grammar": "<b>Cấu trúc đề xuất:</b> <i>recommend (that) S + V(nguyên thể)</i> (khuyên ai đó nên làm gì). <b>Giới từ thời gian:</b> <i>from ... through ...</i> (từ ngày nào đến hết ngày nào)."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "q": "186. What does the first e-mail mention about Calacad?",
+      "qTrans": "Email đầu tiên đề cập điều gì về Calacad?",
+      "options": [
+        "(A) It has acquired new capabilities.",
+        "(B) It was developed specifically for the company.",
+        "(C) It can be downloaded from the employee Web site.",
+        "(D) It is the subject of regular trainings."
+      ],
+      "optTrans": [
+        "(A) Nó đã có được những tính năng/khả năng mới.",
+        "(B) Nó được phát triển dành riêng cho công ty.",
+        "(C) Nó có thể được tải xuống từ trang web của nhân viên.",
+        "(D) Nó là chủ đề của các buổi đào tạo thường xuyên."
+      ],
+      "ans": "A",
+      "exp": "<b>Bước 1:</b> Xác định từ khóa 'first e-mail' và 'Calacad'. <br><b>Bước 2:</b> Tìm trong Email 1, đoạn 3 có viết: 'The developer created the training to publicize <b>new functions that have been added</b> to the software' (Nhà phát triển tạo khóa đào tạo để quảng bá các chức năng mới đã được thêm vào phần mềm). <br><b>Bước 3:</b> Đối chiếu (Paraphrasing): 'new functions have been added' = 'acquired new capabilities'.",
+      "logic": "Câu hỏi tìm chi tiết (Detail Question) kết hợp Paraphrasing từ vựng. Yêu cầu học viên có vốn từ đồng nghĩa.",
+      "trap": "<b>Bẫy (C):</b> Đọc lướt thấy 'employee Web site' ở cuối email dễ chọn C, nhưng trên web đó là để ĐĂNG KÝ (registration), không phải để TẢI phần mềm (download). <b>Bẫy (B):</b> Bài có nói phần mềm quan trọng với công ty, nhưng không nói do công ty tự phát triển riêng."
+    },
+    {
+      "q": "187. What is NOT true about the schedule for Skeddit training sessions?",
+      "qTrans": "Điều gì là KHÔNG đúng về lịch trình cho các buổi đào tạo Skeddit?",
+      "options": [
+        "(A) It includes both morning and afternoon sessions.",
+        "(B) It spans a period of more than one month.",
+        "(C) All of the sessions will be held in the same location.",
+        "(D) The person who will conduct the training is not specified."
+      ],
+      "optTrans": [
+        "(A) Nó bao gồm cả các buổi sáng và chiều.",
+        "(B) Nó kéo dài trong khoảng thời gian hơn một tháng.",
+        "(C) Tất cả các buổi sẽ được tổ chức ở cùng một địa điểm.",
+        "(D) Người sẽ tiến hành đào tạo không được chỉ định rõ."
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Xác định dạng câu hỏi NOT (Tìm thông tin Sai). Cần kiểm tra từng đáp án trên bảng lịch trình cột 'Skeddit'.<br><b>Bước 2:</b> Kiểm tra (A): Skeddit có giờ 9:00 A.M (Sáng) và 1:00 P.M (Chiều) -> Đúng. <br>Kiểm tra (C): Cột Location của Skeddit đều là 'Conference Room A' -> Đúng.<br>Kiểm tra (D): Trong lịch và email không nhắc đến tên giáo viên -> Đúng.<br>Kiểm tra (B): Các ngày của Skeddit là May 30, June 1, June 7, June 12. Quá trình này chỉ diễn ra trong vòng <b>14 ngày (chưa tới nửa tháng)</b>, không phải 'hơn 1 tháng' -> SAI.",
+      "logic": "Câu hỏi rà soát thông tin tiêu cực (Negative Fact). Cần đối chiếu dữ liệu bảng. Chú ý tính toán mốc thời gian cơ bản.",
+      "trap": "Thí sinh nhìn qua tổng lịch trình là từ tháng 5 sang tháng 6 dễ bị ảo giác là 'hơn 1 tháng'. Cần nhìn chính xác ngày bắt đầu (26/5) và ngày kết thúc (12/6), tổng cộng chưa tới 3 tuần."
+    },
+    {
+      "q": "188. Why did Ms. Chang write to Mr. Buckley?",
+      "qTrans": "Tại sao cô Chang lại viết thư cho ông Buckley?",
+      "options": [
+        "(A) To ask for confirmation of a registration",
+        "(B) To request advice about a scheduling difficulty",
+        "(C) To inform him of a change to her vacation plans",
+        "(D) To express concern about some technology"
+      ],
+      "optTrans": [
+        "(A) Để yêu cầu xác nhận việc đăng ký",
+        "(B) Để xin lời khuyên về một khó khăn trong xếp lịch",
+        "(C) Để thông báo cho ông ấy về sự thay đổi kế hoạch nghỉ phép của cô ấy",
+        "(D) Để bày tỏ sự lo ngại về một số công nghệ"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Đọc hiểu mục đích chính của Email 2 (từ Lisa Chang). <br><b>Bước 2:</b> Lisa trình bày việc cô bị vướng cuộc họp (có lịch họp) và đi nghỉ phép (không thể đổi lịch), dẫn đến việc không thể tham gia khóa đào tạo Calacad như dự kiến.<br><b>Bước 3:</b> Cuối thư cô hỏi: 'what do you <b>recommend</b> I do about the Calacad training?' (anh có <b>lời khuyên/đề xuất</b> gì...). Đây chính là việc xin lời khuyên (request advice) cho vấn đề khó khăn về lịch trình (scheduling difficulty).",
+      "logic": "Câu hỏi mục đích (Purpose Question). Thường nằm ở đầu hoặc cuối email. Cấu trúc 'what do you recommend' = 'request advice'.",
+      "trap": "<b>Bẫy (C):</b> Có xuất hiện từ 'vacation' trong bài, nhưng cô ấy thông báo lịch nghỉ phép cố định của mình chứ không phải 'thay đổi kế hoạch' (change to her plans). <b>Bẫy (D):</b> Có nói về phần mềm (công nghệ) nhưng cô ấy không phàn nàn hay lo ngại về công nghệ đó."
+    },
+    {
+      "q": "189. What is suggested about Ms. Chang?",
+      "qTrans": "Điều gì được gợi ý (suy luận) về cô Chang?",
+      "options": [
+        "(A) She travels frequently for work.",
+        "(B) She fulfilled a training requirement.",
+        "(C) She is a member of the engineering department.",
+        "(D) She is glad that a software program will be replaced."
+      ],
+      "optTrans": [
+        "(A) Cô ấy thường xuyên đi lại vì công việc.",
+        "(B) Cô ấy đã hoàn thành một yêu cầu đào tạo.",
+        "(C) Cô ấy là một thành viên của bộ phận kỹ thuật.",
+        "(D) Cô ấy vui mừng vì một chương trình phần mềm sẽ được thay thế."
+      ],
+      "ans": "C",
+      "exp": "<b>Bước 1:</b> Đây là câu hỏi suy luận liên kết (Double-passage inference). Phải kết hợp thông tin giữa 2 email. <br><b>Bước 2:</b> Ở Email 1 quy định: khóa đào tạo Calacad 'will be required <b>only for engineering department staff</b>' (chỉ bắt buộc với nhân viên phòng kỹ thuật). <br><b>Bước 3:</b> Ở Email 2, Lisa nói: 'I’ll need to take <b>both of those trainings</b>' (Tôi cần học cả 2 khóa, tức là có bao gồm khóa Calacad).<br><b>Kết luận logic:</b> Nếu Lisa phải học Calacad, cô ấy chắc chắn phải là nhân viên phòng kỹ thuật.",
+      "logic": "Dạng câu hỏi 'Móc xích'. Thông tin A ở bài 1 + Thông tin B ở bài 2 = Kết luận C. Đây là dạng câu hỏi kinh điển để phân loại điểm số cao trong bài thi TOEIC Part 7.",
+      "trap": "<b>Bẫy (A):</b> Thấy cô ấy nói 'out of the country' dễ suy diễn là đi công tác, nhưng bài ghi rõ là 'on vacation' (đi nghỉ mát). Không có cơ sở nói cô ấy 'travels frequently' (đi lại thường xuyên)."
+    },
+    {
+      "q": "190. On what date will Ms. Chang most likely undergo some training?",
+      "qTrans": "Vào ngày nào cô Chang có khả năng cao nhất sẽ tham gia đào tạo?",
+      "options": [
+        "(A) May 26",
+        "(B) June 1",
+        "(C) June 7",
+        "(D) June 12"
+      ],
+      "optTrans": [
+        "(A) Ngày 26 tháng 5",
+        "(B) Ngày 1 tháng 6",
+        "(C) Ngày 7 tháng 6",
+        "(D) Ngày 12 tháng 6"
+      ],
+      "ans": "D",
+      "exp": "<b>Bước 1:</b> Đây là câu hỏi khó nhất bài, đòi hỏi đối chiếu Lịch trình (Bảng) và Lịch cá nhân của Lisa (Email 2). <br><b>Bước 2:</b> Lisa phải học 2 phần mềm: Calacad và Skeddit.<br><b>Bước 3:</b> Phân tích lịch trống của Lisa: <br>- Ngày 26/5: Lisa kẹt họp ('meeting on the morning of May 26') -> <b>Bỏ qua (A)</b>. <br>- Từ 29/5 đến 9/6: Lisa đi nước ngoài nghỉ phép ('out of the country... from May 29 through June 9'). Do đó cô ấy vắng mặt vào các ngày 1/6 và 7/6 -> <b>Bỏ qua (B) và (C)</b>. <br><b>Bước 4:</b> Nhìn vào bảng lịch, buổi học Skeddit cuối cùng diễn ra vào <b>June 12</b> (Ngày 12 tháng 6). Lúc này Lisa đã đi nghỉ phép về. Do đó đây là ngày khả dĩ duy nhất để cô ấy tham gia khóa học bắt buộc Skeddit.",
+      "logic": "Kỹ năng lập bảng loại trừ (Process of elimination). Dùng khoảng thời gian bận của nhân vật để gạch bỏ các lịch trình nằm trong khoảng đó.",
+      "trap": "Học sinh không đọc kỹ ngày đi nghỉ phép ('May 29 through June 9') sẽ dễ chọn ngẫu nhiên các ngày khác của môn Skeddit như mùng 1 hoặc mùng 7."
+    }
+  ]
+},{
+  "id": 4,
+  "range": "191-195",
+  "flashcards": [
+    {"word": "Delighted / glad / happy / joyful / cheerful", "ipa": "/dɪˈlaɪ.tɪd/", "type": "Adjective", "example": "We are delighted, to welcome you to our home.", "exIpa": "/wi ɑːr dɪˈlaɪtɪd, tə ˈwelkəm juː tu aʊər hoʊm/", "meaning": "Vui", "exMeaning": "Chúng tôi rất vui, được chào đón bạn đến nhà."},
+    {"word": "Indeed / in fact", "ipa": "/ɪnˈdiːd/", "type": "Adverb", "example": "It is indeed, a very beautiful house.", "exIpa": "/ɪt ɪz ɪnˈdiːd, ə ˈveri ˈbjuːtɪfəl haʊs/", "meaning": "Thực ra", "exMeaning": "Đó thực ra, là một ngôi nhà rất đẹp."},
+    {"word": "Quite / fairly / pretty / rather / relatively / comparatively", "ipa": "/kwaɪt/", "type": "Adverb", "example": "The bus terminal is quite close, to the airport.", "exIpa": "/ðə bʌs ˈtɜːrmɪnəl ɪz kwaɪt kloʊs, tə ði ˈerpɔːrt/", "meaning": "Khá / Tương đối", "exMeaning": "Trạm xe buýt khá gần, với sân bay."},
+    {"word": "Residence / house", "ipa": "/ˈrez.ɪ.dəns/", "type": "Noun", "example": "This is a private residence, not a public building.", "exIpa": "/ðɪs ɪz ə ˈpraɪvət ˈrezɪdəns, nɑːt ə ˈpʌblɪk ˈbɪldɪŋ/", "meaning": "Nhà", "exMeaning": "Đây là một khu nhà tư nhân, không phải tòa nhà công cộng."},
+    {"word": "Simply", "ipa": "/ˈsɪm.pli/", "type": "Adverb", "example": "You simply follow the signs, to reach the exit.", "exIpa": "/juː ˈsɪmpli ˈfɑːloʊ ðə saɪnz, tə riːtʃ ði ˈeksɪt/", "meaning": "Đơn giản", "exMeaning": "Bạn đơn giản chỉ cần đi theo biển báo, để tới lối ra."},
+    {"word": "Simply + Vbare / just + Vbare", "ipa": "/ˈsɪm.pli/", "type": "Verb Phrase", "example": "To register, simply fill out this form.", "exIpa": "/tə ˈredʒɪstər, ˈsɪmpli fɪl aʊt ðɪs fɔːrm/", "meaning": "Chỉ cần", "exMeaning": "Để đăng ký, chỉ cần điền vào biểu mẫu này."},
+    {"word": "Instead of / rather than", "ipa": "/ɪnˈsted əv/", "type": "Preposition", "example": "We will take the bus, instead of a taxi.", "exIpa": "/wi wɪl teɪk ðə bʌs, ɪnˈsted əv ə ˈtæksi/", "meaning": "Thay vì", "exMeaning": "Chúng tôi sẽ đi xe buýt, thay vì taxi."},
+    {"word": "Be advised that / be notified that / be informed that", "ipa": "/bi ədˈvaɪzd ðæt/", "type": "Phrase", "example": "Please be advised that, the route has changed.", "exIpa": "/pliːz bi ədˈvaɪzd ðæt, ðə ruːt hæz tʃeɪndʒd/", "meaning": "Thông báo rằng", "exMeaning": "Vui lòng lưu ý thông báo rằng, tuyến đường đã thay đổi."},
+    {"word": "Place / put / station / position", "ipa": "/pleɪs/", "type": "Verb", "example": "Please place your bags, on the counter.", "exIpa": "/pliːz pleɪs jʊr bæɡz, ɑːn ðə ˈkaʊntər/", "meaning": "Đặt / Để", "exMeaning": "Vui lòng đặt túi của bạn, lên quầy."},
+    {"word": "Specific / particular", "ipa": "/spəˈsɪf.ɪk/", "type": "Adjective", "example": "You must buy a ticket, for that specific seat.", "exIpa": "/juː mʌst baɪ ə ˈtɪkɪt, fər ðæt spəˈsɪfɪk siːt/", "meaning": "Cụ thể", "exMeaning": "Bạn phải mua vé, cho chỗ ngồi cụ thể đó."},
+    {"word": "Underneath / beneath", "ipa": "/ˌʌn.dəˈniːθ/", "type": "Preposition", "example": "Luggage is stored, underneath the bus.", "exIpa": "/ˈlʌɡɪdʒ ɪz stɔːrd, ˌʌndərˈniːθ ðə bʌs/", "meaning": "Phía dưới", "exMeaning": "Hành lý được cất giữ, ở phía dưới xe buýt."},
+    {"word": "Exhibition / exhibit", "ipa": "/ˌek.sɪˈbɪʃ.ən/", "type": "Noun", "example": "The art exhibition, will open next week.", "exIpa": "/ði ɑːrt ˌeksɪˈbɪʃən, wɪl ˈoʊpən nekst wiːk/", "meaning": "Buổi triển lãm", "exMeaning": "Buổi triển lãm nghệ thuật, sẽ khai mạc vào tuần tới."},
+    {"word": "Property / real estate", "ipa": "/ˈprɒp.ə.ti/", "type": "Noun", "example": "She wants to take pictures, of the property.", "exIpa": "/ʃi wɑːnts tə teɪk ˈpɪktʃərz, əv ðə ˈprɑːpərti/", "meaning": "Bất động sản", "exMeaning": "Cô ấy muốn chụp ảnh, bất động sản này."},
+    {"word": "Conduct / carry out / implement / perform / fulfill / administer / execute", "ipa": "/kənˈdʌkt/", "type": "Verb", "example": "They will conduct an interview, in the afternoon.", "exIpa": "/ðeɪ wɪl kənˈdʌkt ən ˈɪntərvjuː, ɪn ði ˌæftərˈnuːn/", "meaning": "Tiến hành / Thực hiện", "exMeaning": "Họ sẽ tiến hành một cuộc phỏng vấn, vào buổi chiều."},
+    {"word": "Publication / issue", "ipa": "/ˌpʌb.lɪˈkeɪ.ʃən/", "type": "Noun", "example": "This article is for, a medical publication.", "exIpa": "/ðɪs ˈɑːrtɪkəl ɪz fɔːr, ə ˈmedɪkəl ˌpʌblɪˈkeɪʃən/", "meaning": "Ấn phẩm", "exMeaning": "Bài viết này dành cho, một ấn phẩm y khoa."},
+    {"word": "Advise", "ipa": "/ədˈvaɪz/", "type": "Verb", "example": "We advise our clients, on financial matters.", "exIpa": "/wi ədˈvaɪz aʊər ˈklaɪənts, ɑːn faɪˈnænʃəl ˈmætərz/", "meaning": "Tư vấn", "exMeaning": "Chúng tôi tư vấn cho khách hàng, về các vấn đề tài chính."},
+    {"word": "Advise", "ipa": "/ədˈvaɪz/", "type": "Verb", "example": "I strongly advise you, to read the instructions.", "exIpa": "/aɪ ˈstrɔːŋli ədˈvaɪz juː, tə riːd ði ɪnˈstrʌkʃənz/", "meaning": "Khuyên", "exMeaning": "Tôi thực sự khuyên bạn, nên đọc kỹ hướng dẫn."},
+    {"word": "Renovation", "ipa": "/ˌren.əˈveɪ.ʃən/", "type": "Noun", "example": "The office is currently under, major renovation.", "exIpa": "/ði ˈɔːfɪs ɪz ˈkɜːrəntli ˈʌndər, ˈmeɪdʒər ˌrenəˈveɪʃən/", "meaning": "Sự nâng cấp", "exMeaning": "Văn phòng hiện đang trong quá trình, nâng cấp lớn."},
+    {"word": "Renovate / upgrade / remodel / improve", "ipa": "/ˈren.ə.veɪt/", "type": "Verb", "example": "They plan to renovate the house, next year.", "exIpa": "/ðeɪ plæn tə ˈrenəveɪt ðə haʊs, nekst jɪr/", "meaning": "Nâng cấp / Cải tạo", "exMeaning": "Họ dự định cải tạo ngôi nhà, vào năm tới."},
+    {"word": "Aware of / conscious of", "ipa": "/əˈweər əv/", "type": "Adjective", "example": "He is highly aware of, the safety rules.", "exIpa": "/hi ɪz ˈhaɪli əˈwer əv, ðə ˈseɪfti ruːlz/", "meaning": "Nhận thức", "exMeaning": "Anh ấy nhận thức rất rõ về, các quy tắc an toàn."},
+    {"word": "Aware of / conscious of", "ipa": "/əˈweər əv/", "type": "Adjective", "example": "Are you aware of, the upcoming changes?", "exIpa": "/ɑːr juː əˈwer əv, ði ˌʌpˈkʌmɪŋ tʃeɪndʒɪz/", "meaning": "Biết", "exMeaning": "Bạn có biết về, những thay đổi sắp tới không?"},
+    {"word": "Aware of / conscious of", "ipa": "/əˈweər əv/", "type": "Adjective", "example": "We should be more conscious of, our health.", "exIpa": "/wi ʃʊd bi mɔːr ˈkɑːnʃəs əv, aʊər helθ/", "meaning": "Quan tâm", "exMeaning": "Chúng ta nên quan tâm hơn đến, sức khỏe của mình."},
+    {"word": "Composition", "ipa": "/ˌkɒm.pəˈzɪʃ.ən/", "type": "Noun", "example": "The composition of the team, has changed recently.", "exIpa": "/ðə ˌkɑːmpəˈzɪʃən əv ðə tiːm, hæz tʃeɪndʒd ˈriːsəntli/", "meaning": "Cấu tạo / Thành phần", "exMeaning": "Thành phần của đội, đã thay đổi gần đây."},
+    {"word": "Inspect / examine / scrutinize", "ipa": "/ɪnˈspekt/", "type": "Verb", "example": "The officer will inspect the vehicle, carefully.", "exIpa": "/ði ˈɔːfɪsər wɪl ɪnˈspekt ðə ˈviːɪkəl, ˈkerfəli/", "meaning": "Kiểm tra / Thanh tra", "exMeaning": "Viên sĩ quan sẽ kiểm tra phương tiện, một cách cẩn thận."},
+    {"word": "Neighborhood / area / region", "ipa": "/ˈneɪ.bə.hʊd/", "type": "Noun", "example": "This is a very quiet, and safe neighborhood.", "exIpa": "/ðɪs ɪz ə ˈveri ˈkwaɪət, ənd seɪf ˈneɪbərhʊd/", "meaning": "Khu vực", "exMeaning": "Đây là một khu vực rất yên tĩnh, và an toàn."},
+    {"word": "Located / situated", "ipa": "/loʊˈkeɪ.tɪd/", "type": "Adjective", "example": "The building is located, near the city center.", "exIpa": "/ðə ˈbɪldɪŋ ɪz loʊˈkeɪtɪd, nɪr ðə ˈsɪti ˈsentər/", "meaning": "Được tọa lạc", "exMeaning": "Tòa nhà được tọa lạc, gần trung tâm thành phố."},
+    {"word": "Route", "ipa": "/ruːt/", "type": "Noun", "example": "Which bus route, goes to the hospital?", "exIpa": "/hwɪtʃ bʌs ruːt, ɡoʊz tə ðə ˈhɑːspɪtəl/", "meaning": "Tuyến đường", "exMeaning": "Tuyến xe buýt nào, đi đến bệnh viện?"},
+    {"word": "Temporary / tentative / interim", "ipa": "/ˈtem.pər.ər.i/", "type": "Adjective", "example": "This is just, a temporary schedule.", "exIpa": "/ðɪs ɪz dʒʌst, ə ˈtempəreri ˈskedʒuːl/", "meaning": "Tạm thời", "exMeaning": "Đây chỉ là, một lịch trình tạm thời."},
+    {"word": "Permanent", "ipa": "/ˈpɜː.mə.nənt/", "type": "Adjective", "example": "They are looking for, a permanent solution.", "exIpa": "/ðeɪ ɑːr ˈlʊkɪŋ fɔːr, ə ˈpɜːrmənənt səˈluːʃən/", "meaning": "Cố định / Lâu dài", "exMeaning": "Họ đang tìm kiếm, một giải pháp lâu dài."},
+    {"word": "Assign / designate", "ipa": "/əˈsaɪn/", "type": "Verb", "example": "They will assign specific seats, to all passengers.", "exIpa": "/ðeɪ wɪl əˈsaɪn spəˈsɪfɪk siːts, tu ɔːl ˈpæsɪndʒərz/", "meaning": "Phân công / Chỉ định", "exMeaning": "Họ sẽ chỉ định chỗ ngồi cụ thể, cho tất cả hành khách."},
+    {"word": "Compartment", "ipa": "/kəmˈpɑːt.mənt/", "type": "Noun", "example": "Please put your bags, in the overhead compartment.", "exIpa": "/pliːz pʊt jʊr bæɡz, ɪn ði ˈoʊvərhed kəmˈpɑːrtmənt/", "meaning": "Hộc để đồ", "exMeaning": "Vui lòng để túi của bạn, vào hộc để đồ phía trên."}
+  ],
+  "passages": [
+    {
+      "type": "email",
+      "lines": [
+        {
+          "en": "To: shinju.kaneko@zipmail.com\nFrom: s.armstrong@oknet.com\nDate: October 14\nSubject: RE: Visit",
+          "vi": "Đến: shinju.kaneko@zipmail.com\nTừ: s.armstrong@oknet.com\nNgày: 14 tháng 10\nChủ đề: Phản hồi: Chuyến viếng thăm",
+          "grammar": "Email trả lời (RE) về một chuyến viếng thăm đã được trao đổi trước đó."
+        },
+        {
+          "en": "Dear Ms. Kaneko,\nMy family would be delighted to welcome you into 195 Strickland Boulevard.",
+          "vi": "Kính gửi cô Kaneko,\nGia đình tôi sẽ rất vui được chào đón cô đến địa chỉ 195 Đại lộ Strickland.",
+          "grammar": "<b>Cấu trúc:</b> <i>be delighted to do something</i> (rất vui mừng được làm gì)."
+        },
+        {
+          "en": "We are indeed quite proud to live in one of the few residences designed by Basma Itani.",
+          "vi": "Chúng tôi thực sự khá tự hào khi được sống trong một trong số ít những ngôi nhà do Basma Itani thiết kế.",
+          "grammar": "<b>Từ vựng:</b> <i>indeed</i> (thực sự/quả thực) dùng để nhấn mạnh sự đồng tình với một thông tin đã biết. <b>Mệnh đề quan hệ rút gọn:</b> <i>residences (which were) designed by</i> (những ngôi nhà được thiết kế bởi)."
+        },
+        {
+          "en": "It would be a pleasure to share our home’s unique beauty with others through the photographs in your book.",
+          "vi": "Sẽ là một niềm vinh hạnh khi được chia sẻ vẻ đẹp độc đáo của ngôi nhà chúng tôi với người khác thông qua những bức ảnh trong cuốn sách của cô.",
+          "grammar": "<b>Đại từ sở hữu:</b> <i>our home's unique beauty</i>. Dữ kiện cực kỳ quan trọng ('photographs' = chụp ảnh, 'our home' = property) để trả lời câu hỏi 191."
+        },
+        {
+          "en": "It is easy to reach 195 Strickland Boulevard by public transportation from Harrington Airport.",
+          "vi": "Rất dễ dàng để đi đến 195 Đại lộ Strickland bằng phương tiện giao thông công cộng từ Sân bay Harrington.",
+          "grammar": "<b>Cấu trúc chủ ngữ giả:</b> <i>It is + adj + to V</i> (Thật là ... để làm gì)."
+        },
+        {
+          "en": "You simply take either Bus 412 or Bus 462 and get off at the final stop.",
+          "vi": "Cô đơn giản chỉ cần bắt Xe buýt 412 hoặc Xe buýt 462 và xuống ở điểm dừng cuối cùng.",
+          "grammar": "<b>Liên từ tương quan:</b> <i>either ... or ...</i> (hoặc cái này ... hoặc cái kia). Dữ kiện then chốt để đối chiếu với Bảng lịch trình nhằm tìm ra khu vực ngôi nhà tọa lạc (Câu 193)."
+        },
+        {
+          "en": "The house is about one block back in the direction the bus came from.",
+          "vi": "Ngôi nhà nằm lùi lại khoảng một dãy nhà theo hướng xe buýt vừa đi tới.",
+          "grammar": "<b>Giới từ chỉ hướng:</b> <i>in the direction</i>."
+        },
+        {
+          "en": "In fact, you are quite likely to see it from the window shortly before arriving. If you have any problems finding it, you can call me at 555-0185.\nI look forward to meeting you next week.\nBest,\nShane Armstrong",
+          "vi": "Thực tế, cô rất có khả năng sẽ nhìn thấy nó từ cửa sổ ngay trước khi đến nơi. Nếu cô gặp bất kỳ vấn đề gì trong việc tìm đường, cô có thể gọi cho tôi theo số 555-0185.\nTôi rất mong được gặp cô vào tuần tới.\nTrân trọng,\nShane Armstrong",
+          "grammar": "<b>Cấu trúc:</b> <i>be likely to do something</i> (rất có khả năng làm gì). <i>look forward to + V-ing/Noun</i> (mong đợi điều gì)."
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "lines": [
+        {
+          "en": "Harrington Airport Bus Schedule\nSeven days per week, year-round",
+          "vi": "Lịch trình xe buýt Sân bay Harrington\nBảy ngày mỗi tuần, quanh năm",
+          "grammar": "<b>Từ vựng:</b> <i>year-round</i> (quanh năm suốt tháng)."
+        },
+        {
+          "en": "#410 | Airport -> Downtown\n#412 | Airport -> Downtown -> Belmont\n#437 | Airport -> Riverfront -> Abbott Heights\n#450 | Airport -> Edgewood\n#462 | Airport -> Market District -> Belmont\n#470 | Airport -> Abbott Heights",
+          "vi": "#410 | Sân bay -> Trung tâm thành phố\n#412 | Sân bay -> Trung tâm thành phố -> Belmont\n#437 | Sân bay -> Bờ sông -> Abbott Heights\n#450 | Sân bay -> Edgewood\n#462 | Sân bay -> Khu chợ -> Belmont\n#470 | Sân bay -> Abbott Heights",
+          "grammar": "Bảng hiển thị các tuyến xe buýt. Điểm mũi tên cuối cùng chính là 'the final stop' (điểm dừng cuối cùng)."
+        }
+      ]
+    },
+    {
+      "type": "notice",
+      "lines": [
+        {
+          "en": "HARRINGTON AIRPORT BUSES\nToday (October 19), the airport bus to Edgewood will stop on Bishop Street instead of Yeager Avenue.",
+          "vi": "XE BUÝT SÂN BAY HARRINGTON\nHôm nay (Ngày 19 tháng 10), xe buýt sân bay đi Edgewood sẽ dừng trên Phố Bishop thay vì Đại lộ Yeager.",
+          "grammar": "<b>Giới từ:</b> <i>instead of + Noun/V-ing</i> (thay vì)."
+        },
+        {
+          "en": "This change is necessary because of road closures for the Fall Festival. For details, visit the tourism desk.",
+          "vi": "Sự thay đổi này là cần thiết do việc cấm đường để phục vụ Lễ hội Mùa thu. Để biết thêm chi tiết, hãy ghé thăm quầy thông tin du lịch.",
+          "grammar": "<b>Từ vựng:</b> <i>road closure</i> (sự đóng đường, cấm đường)."
+        },
+        {
+          "en": "All bus passengers should be advised that, as always, your baggage cannot be placed on a seat unless you have bought the ticket for that specific seat.",
+          "vi": "Tất cả hành khách đi xe buýt nên lưu ý rằng, như thường lệ, hành lý của quý vị không được để trên ghế trừ khi quý vị đã mua vé cho vị trí ghế cụ thể đó.",
+          "grammar": "<b>Câu bị động:</b> <i>cannot be placed</i> (không thể được đặt). <b>Liên từ:</b> <i>unless</i> (trừ khi = if not). Câu này khẳng định việc xe buýt có ghế ngồi được chỉ định bằng vé (assigned seating)."
+        },
+        {
+          "en": "Otherwise, the baggage must be stored underneath the bus. The bus driver will help you load and unload it safely.",
+          "vi": "Nếu không, hành lý phải được cất giữ ở khoang phía dưới xe buýt. Tài xế xe buýt sẽ giúp quý vị chất lên và bốc xuống một cách an toàn.",
+          "grammar": "<b>Liên từ:</b> <i>Otherwise</i> (nếu không thì). <b>Động từ trái nghĩa:</b> <i>load</i> (chất lên) và <i>unload</i> (bốc xuống)."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "q": "191. Why most likely is Ms. Kaneko traveling to Mr. Armstrong’s area?",
+      "qTrans": "Lý do có khả năng cao nhất khiến cô Kaneko đi đến khu vực của ông Armstrong là gì?",
+      "options": [
+        "(A) To attend a design exhibition",
+        "(B) To take pictures of a property",
+        "(C) To conduct an interview for a publication",
+        "(D) To advise him on a renovation project"
+      ],
+      "optTrans": [
+        "(A) Để tham dự một buổi triển lãm thiết kế",
+        "(B) Để chụp ảnh một bất động sản (ngôi nhà)",
+        "(C) Để tiến hành phỏng vấn cho một ấn phẩm",
+        "(D) Để tư vấn cho anh ấy về dự án cải tạo"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Tìm mục đích chuyến đi của cô Kaneko trong đoạn 1 (Email). <br><b>Bước 2:</b> Ông Armstrong viết: 'It would be a pleasure to share <b>our home’s</b> unique beauty... through the <b>photographs</b> in your book' (Thật vinh hạnh khi chia sẻ vẻ đẹp ngôi nhà thông qua những bức ảnh của cô). <br><b>Bước 3:</b> Đối chiếu từ vựng (Paraphrasing): 'photographs' = 'take pictures', và 'home' = 'property' (bất động sản).",
+      "logic": "Câu hỏi tìm chi tiết mục đích (Purpose). Đòi hỏi khả năng hiểu từ đồng nghĩa (paraphrasing).",
+      "trap": "<b>Bẫy (A):</b> Có nhắc đến từ 'designed' (được thiết kế) nhưng không hề có triển lãm. <b>Bẫy (C):</b> Cô này làm sách (book) - có thể coi là publication, nhưng cô đến chụp ảnh, không phải phỏng vấn. <b>Bẫy (D):</b> Không có dự án cải tạo (renovation) nào được nhắc đến."
+    },
+    {
+      "q": "192. In his e-mail, what information does Mr. Armstrong indicate that Ms. Kaneko is already aware of?",
+      "qTrans": "Trong email của mình, ông Armstrong chỉ ra thông tin nào mà cô Kaneko đã biết từ trước?",
+      "options": [
+        "(A) The composition of his family",
+        "(B) The architect of his house",
+        "(C) The location of his workplace",
+        "(D) The results of a building inspection"
+      ],
+      "optTrans": [
+        "(A) Thành phần gia đình anh ấy",
+        "(B) Kiến trúc sư của ngôi nhà anh ấy",
+        "(C) Địa điểm nơi làm việc của anh ấy",
+        "(D) Kết quả của một cuộc thanh tra tòa nhà"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Từ khóa 'already aware of' (đã biết). <br><b>Bước 2:</b> Trong thư ông Armstrong dùng từ 'indeed' (thực sự / quả thực là): 'We are <b>indeed</b> quite proud to live in one of the few residences designed by <b>Basma Itani</b>'. <br><b>Bước 3:</b> Từ 'indeed' dùng để đáp lại sự khen ngợi hoặc một điều đã được thừa nhận trước đó. Cô Kaneko chọn ngôi nhà này để đưa vào sách chính vì nó được thiết kế bởi Basma Itani (Kiến trúc sư). Do đó, cô ấy chắc chắn đã biết thông tin này.",
+      "logic": "Câu hỏi suy luận (Inference). Người ra đề dùng trạng từ 'indeed' để ám chỉ sự đồng thuận về một thông tin đã được hai bên trao đổi ngầm trước đó.",
+      "trap": "<b>Bẫy (A):</b> Ông ấy xưng 'My family', nhưng cô ấy không biết thành phần gia đình có những ai. Các đáp án C và D hoàn toàn không có trong bài."
+    },
+    {
+      "q": "193. In what neighborhood is 195 Strickland Boulevard located?",
+      "qTrans": "Khu phố nào là nơi tọa lạc của 195 Đại lộ Strickland?",
+      "options": [
+        "(A) Downtown",
+        "(B) Belmont",
+        "(C) Abbott Heights",
+        "(D) Edgewood"
+      ],
+      "optTrans": [
+        "(A) Trung tâm thành phố",
+        "(B) Belmont",
+        "(C) Abbott Heights",
+        "(D) Edgewood"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Đây là câu hỏi liên kết chéo (Cross-reference) giữa Email và Bảng. <br><b>Bước 2:</b> Email hướng dẫn: 'take either Bus 412 or Bus 462 and get off at the <b>final stop</b>' (bắt xe 412 hoặc 462 và xuống ở điểm cuối). <br><b>Bước 3:</b> Đối chiếu Bảng lịch trình xe buýt, cả hai xe 412 và 462 đều có điểm mũi tên cuối cùng (final stop) dẫn tới khu vực <b>Belmont</b>. Do đó, ngôi nhà nằm ở Belmont.",
+      "logic": "Bài toán tìm điểm giao (Intersection). Thông tin kiện 1 (Email) + Thông tin kiện 2 (Bảng) => Kết luận.",
+      "trap": "Nếu không đọc kỹ cụm 'final stop', học viên có thể nhầm sang Downtown (điểm dừng giữa của xe 412) hoặc Market District."
+    },
+    {
+      "q": "194. Which bus’s route has temporarily changed?",
+      "qTrans": "Tuyến đường của xe buýt nào đã tạm thời bị thay đổi?",
+      "options": [
+        "(A) 410",
+        "(B) 437",
+        "(C) 450",
+        "(D) 470"
+      ],
+      "optTrans": [
+        "(A) 410",
+        "(B) 437",
+        "(C) 450",
+        "(D) 470"
+      ],
+      "ans": "C",
+      "exp": "<b>Bước 1:</b> Câu hỏi liên kết chéo giữa Thông báo (Notice) và Bảng. Tìm từ khóa 'changed' (thay đổi). <br><b>Bước 2:</b> Đoạn Notice ghi: 'the airport bus to <b>Edgewood</b> will stop on Bishop Street instead of Yeager Avenue' (Xe buýt đi Edgewood sẽ thay đổi điểm dừng). <br><b>Bước 3:</b> Đối chiếu vào Bảng xe buýt, xe buýt có Route đi tới Edgewood chính là xe số <b>450</b>.",
+      "logic": "Tiếp tục là dạng câu hỏi đối chiếu thông tin kép rất cơ bản của bài thi TOEIC.",
+      "trap": "Nếu chỉ đọc lướt bảng mà không đọc Thông báo, sẽ không thể tìm thấy thông tin tuyến nào bị thay đổi."
+    },
+    {
+      "q": "195. What does the notice indicate about Harrington Airport buses?",
+      "qTrans": "Thông báo cho biết điều gì về xe buýt Sân bay Harrington?",
+      "options": [
+        "(A) They have assigned seating.",
+        "(B) Tickets can be bought from their drivers.",
+        "(C) They have overhead baggage compartments.",
+        "(D) Their passengers may have to stand during the ride."
+      ],
+      "optTrans": [
+        "(A) Chúng có chỉ định chỗ ngồi.",
+        "(B) Vé có thể được mua từ tài xế.",
+        "(C) Chúng có hộc để hành lý trên đầu.",
+        "(D) Hành khách có thể phải đứng trong suốt chuyến đi."
+      ],
+      "ans": "A",
+      "exp": "<b>Bước 1:</b> Tìm thông tin mô tả quy định trên xe buýt trong Thông báo (Notice). <br><b>Bước 2:</b> Thông báo viết: 'your baggage cannot be placed on a seat unless you have bought the <b>ticket for that specific seat</b>' (Hành lý không được để trên ghế trừ khi bạn đã mua vé cho vị trí ghế cụ thể đó). <br><b>Bước 3:</b> Việc mua vé cho 'specific seat' (ghế cụ thể) chứng tỏ hãng xe buýt này áp dụng việc bán vé theo đúng số ghế được chỉ định (assigned seating).",
+      "logic": "Câu hỏi đọc hiểu chi tiết. Cần nhận ra việc 'mua vé cho một ghế cụ thể' đồng nghĩa với hệ thống 'assigned seating'.",
+      "trap": "<b>Bẫy (C):</b> Bài ghi hành lý phải để 'underneath the bus' (dưới gầm xe), không phải 'overhead' (hộc trên đầu). <b>Bẫy (B):</b> Bài có nhắc đến 'bus driver' sẽ giúp cất hành lý, nhưng không hề nói tài xế bán vé. <b>Bẫy (D):</b> Không có thông tin nói hành khách phải đứng."
+    }
+  ]
+},{
+  "id": 5,
+  "range": "196-200",
+  "flashcards": [
+    {"word": "Council / Board / panel", "ipa": "/ˈkaʊn.səl/", "type": "Noun", "example": "The city council, will hold a meeting today.", "exIpa": "/ðə ˈsɪti ˈkaʊnsəl, wɪl hoʊld ə ˈmiːtɪŋ təˈdeɪ/", "meaning": "Hội đồng", "exMeaning": "Hội đồng thành phố, sẽ tổ chức một cuộc họp hôm nay."},
+    {"word": "Bid", "ipa": "/bɪd/", "type": "Noun", "example": "They submitted a competitive bid, for the project.", "exIpa": "/ðeɪ səbˈmɪtɪd ə kəmˈpetɪtɪv bɪd, fər ðə ˈprɑːdʒekt/", "meaning": "Gói thầu / Giá thầu", "exMeaning": "Họ đã nộp một giá thầu cạnh tranh, cho dự án."},
+    {"word": "Bid", "ipa": "/bɪd/", "type": "Verb", "example": "Several companies will bid, for the contract.", "exIpa": "/ˈsevrəl ˈkʌmpəniz wɪl bɪd, fər ðə ˈkɑːntrækt/", "meaning": "Đấu thầu", "exMeaning": "Một vài công ty sẽ đấu thầu, cho hợp đồng này."},
+    {"word": "Advocate / support", "ipa": "/ˈæd.və.keɪt/", "type": "Verb", "example": "We strongly advocate, for environmental protection.", "exIpa": "/wi ˈstrɔːŋli ˈædvəkeɪt, fər ɪnˌvaɪrənˈmentəl prəˈtekʃən/", "meaning": "Ủng hộ", "exMeaning": "Chúng tôi mạnh mẽ ủng hộ, việc bảo vệ môi trường."},
+    {"word": "Possession", "ipa": "/pəˈzeʃ.ən/", "type": "Noun", "example": "The land is currently, in the city's possession.", "exIpa": "/ðə lænd ɪz ˈkɜːrəntli, ɪn ðə ˈsɪtiz pəˈzeʃən/", "meaning": "Sự sở hữu", "exMeaning": "Mảnh đất hiện đang, thuộc sự sở hữu của thành phố."},
+    {"word": "Possess / own", "ipa": "/pəˈzes/", "type": "Verb", "example": "Does he possess, the necessary skills?", "exIpa": "/dʌz hi pəˈzes, ðə ˈnesəseri skɪlz/", "meaning": "Sở hữu", "exMeaning": "Anh ấy có sở hữu, những kỹ năng cần thiết không?"},
+    {"word": "Intend to do sth / Plan to do", "ipa": "/ɪnˈtend/", "type": "Verb", "example": "They intend to build, a new shopping mall.", "exIpa": "/ðeɪ ɪnˈtend tə bɪld, ə nuː ˈʃɑːpɪŋ mɔːl/", "meaning": "Dự định", "exMeaning": "Họ dự định xây dựng, một trung tâm mua sắm mới."},
+    {"word": "Courtyard", "ipa": "/ˈkɔːt.jɑːd/", "type": "Noun", "example": "We had lunch, in the sunny courtyard.", "exIpa": "/wi hæd lʌntʃ, ɪn ðə ˈsʌni ˈkɔːrtjɑːrd/", "meaning": "Khoảng sân", "exMeaning": "Chúng tôi đã ăn trưa, ở khoảng sân ngập nắng."},
+    {"word": "Designate / assign", "ipa": "/ˈdez.ɪɡ.neɪt/", "type": "Verb", "example": "They will designate this area, for public parking.", "exIpa": "/ðeɪ wɪl ˈdezɪɡneɪt ðɪs ˈeriə, fər ˈpʌblɪk ˈpɑːrkɪŋ/", "meaning": "Chỉ định", "exMeaning": "Họ sẽ chỉ định khu vực này, để đỗ xe công cộng."},
+    {"word": "Viable / practical", "ipa": "/ˈvaɪ.ə.bəl/", "type": "Adjective", "example": "This is a commercially viable, solution.", "exIpa": "/ðɪs ɪz ə kəˈmɜːrʃəli ˈvaɪəbəl, səˈluːʃən/", "meaning": "Khả thi", "exMeaning": "Đây là một giải pháp, khả thi về mặt thương mại."},
+    {"word": "Solution", "ipa": "/səˈluː.ʃən/", "type": "Noun", "example": "We need to find a solution, quickly.", "exIpa": "/wi niːd tə faɪnd ə səˈluːʃən, ˈkwɪkli/", "meaning": "Giải pháp", "exMeaning": "Chúng ta cần tìm ra một giải pháp, một cách nhanh chóng."},
+    {"word": "Critical / important / significant / essential / necessary / crucial / vital", "ipa": "/ˈkrɪt.ɪ.kəl/", "type": "Adjective", "example": "Clean water is critical, for human survival.", "exIpa": "/kliːn ˈwɔːtər ɪz ˈkrɪtɪkəl, fər ˈhjuːmən sərˈvaɪvəl/", "meaning": "Phê bình / Quan trọng", "exMeaning": "Nước sạch rất quan trọng, đối với sự sinh tồn của con người."},
+    {"word": "Critical", "ipa": "/ˈkrɪt.ɪ.kəl/", "type": "Adjective", "example": "He made a critical comment, about her work.", "exIpa": "/hi meɪd ə ˈkrɪtɪkəl ˈkɑːment, əˈbaʊt hɜːr wɜːrk/", "meaning": "Phê bình", "exMeaning": "Anh ấy đã đưa ra một lời phê bình, về công việc của cô ấy."},
+    {"word": "In critical need of sth", "ipa": "/ɪn ˈkrɪtɪkəl niːd əv/", "type": "Phrase", "example": "The hospital is in critical need of, medical supplies.", "exIpa": "/ðə ˈhɑːspɪtəl ɪz ɪn ˈkrɪtɪkəl niːd əv, ˈmedɪkəl səˈplaɪz/", "meaning": "Rất cần cái gì", "exMeaning": "Bệnh viện đang rất cần, vật tư y tế."},
+    {"word": "Revitalization", "ipa": "/riːˌvaɪ.təl.aɪˈzeɪ.ʃən/", "type": "Noun", "example": "The neighborhood needs, a complete revitalization.", "exIpa": "/ðə ˈneɪbərhʊd niːdz, ə kəmˈpliːt riːˌvaɪtələˈzeɪʃən/", "meaning": "Sự phục hồi", "exMeaning": "Khu vực này cần, một sự phục hồi toàn diện."},
+    {"word": "Revitalize / restore", "ipa": "/riːˈvaɪ.təl.aɪz/", "type": "Verb", "example": "They hope to revitalize, the local economy.", "exIpa": "/ðeɪ hoʊp tə riːˈvaɪtəlaɪz, ðə ˈloʊkəl ɪˈkɑːnəmi/", "meaning": "Phục hồi / Trùng tu", "exMeaning": "Họ hy vọng sẽ phục hồi, nền kinh tế địa phương."},
+    {"word": "Representative / agent", "ipa": "/ˌrep.rɪˈzen.tə.tɪv/", "type": "Noun", "example": "A customer service representative, will assist you.", "exIpa": "/ə ˈkʌstəmər ˈsɜːrvɪs ˌreprɪˈzentətɪv, wɪl əˈsɪst juː/", "meaning": "Người đại diện", "exMeaning": "Một người đại diện dịch vụ khách hàng, sẽ hỗ trợ bạn."},
+    {"word": "Thrive / prosper / develop / grow / evolve", "ipa": "/θraɪv/", "type": "Verb", "example": "His business continues to thrive, despite the crisis.", "exIpa": "/hɪz ˈbɪznəs kənˈtɪnjuːz tə θraɪv, dɪˈspaɪt ðə ˈkraɪsɪs/", "meaning": "Phát triển", "exMeaning": "Doanh nghiệp của anh ấy tiếp tục phát triển, bất chấp khủng hoảng."},
+    {"word": "Expertise", "ipa": "/ˌek.spɜːˈtiːz/", "type": "Noun", "example": "We hired him for his expertise, in marketing.", "exIpa": "/wi ˈhaɪərd hɪm fər hɪz ˌekspɜːrˈtiːz, ɪn ˈmɑːrkɪtɪŋ/", "meaning": "Chuyên môn", "exMeaning": "Chúng tôi thuê anh ấy vì chuyên môn của anh ấy, trong lĩnh vực tiếp thị."},
+    {"word": "Disruption", "ipa": "/dɪsˈrʌp.ʃən/", "type": "Noun", "example": "The strike caused a major disruption, to train services.", "exIpa": "/ðə straɪk kɔːzd ə ˈmeɪdʒər dɪsˈrʌpʃən, tə treɪn ˈsɜːrvɪsɪz/", "meaning": "Sự gián đoạn", "exMeaning": "Cuộc đình công đã gây ra sự gián đoạn lớn, đối với dịch vụ xe lửa."},
+    {"word": "Disrupt / interrupt / disturb", "ipa": "/dɪsˈrʌpt/", "type": "Verb", "example": "Heavy snow will disrupt, traffic tomorrow.", "exIpa": "/ˈhevi snoʊ wɪl dɪsˈrʌpt, ˈtræfɪk təˈmɑːroʊ/", "meaning": "Làm gián đoạn", "exMeaning": "Tuyết rơi dày sẽ làm gián đoạn, giao thông vào ngày mai."},
+    {"word": "Downtown", "ipa": "/ˌdaʊnˈtaʊn/", "type": "Noun/Adverb", "example": "They are building a new hotel, downtown.", "exIpa": "/ðeɪ ɑːr ˈbɪldɪŋ ə nuː hoʊˈtel, ˌdaʊnˈtaʊn/", "meaning": "Khu trung tâm", "exMeaning": "Họ đang xây một khách sạn mới, ở khu trung tâm."},
+    {"word": "Downtown", "ipa": "/ˌdaʊnˈtaʊn/", "type": "Adverb", "example": "I work downtown, near the bank.", "exIpa": "/aɪ wɜːrk ˌdaʊnˈtaʊn, nɪr ðə bæŋk/", "meaning": "trung tâm", "exMeaning": "Tôi làm việc ở trung tâm, gần ngân hàng."},
+    {"word": "Baked good", "ipa": "/beɪkt ɡʊd/", "type": "Noun", "example": "The shop sells delicious, baked goods.", "exIpa": "/ðə ʃɑːp selz dɪˈlɪʃəs, beɪkt ɡʊdz/", "meaning": "Bánh nướng", "exMeaning": "Cửa hàng bán những món, bánh nướng thơm ngon."},
+    {"word": "Anticipated / expected", "ipa": "/ænˈtɪs.ɪ.peɪ.tɪd/", "type": "Adjective", "example": "The anticipated cost, is much higher than before.", "exIpa": "/ði ænˈtɪsɪpeɪtɪd kɔːst, ɪz mʌtʃ ˈhaɪər ðæn bɪˈfɔːr/", "meaning": "Dự kiến / Mong đợi", "exMeaning": "Chi phí dự kiến, cao hơn nhiều so với trước đây."},
+    {"word": "Ideal", "ipa": "/aɪˈdɪəl/", "type": "Adjective", "example": "This weather is ideal, for a picnic.", "exIpa": "/ðɪs ˈweðər ɪz aɪˈdiːəl, fər ə ˈpɪknɪk/", "meaning": "Lý tưởng", "exMeaning": "Thời tiết này thật lý tưởng, cho một buổi dã ngoại."},
+    {"word": "Foot traffic", "ipa": "/fʊt ˈtræf.ɪk/", "type": "Noun", "example": "The store benefits from heavy, foot traffic.", "exIpa": "/ðə stɔːr ˈbenɪfɪts frəm ˈhevi, fʊt ˈtræfɪk/", "meaning": "Lưu lượng khách hàng đi bộ", "exMeaning": "Cửa hàng được hưởng lợi từ lượng lớn, khách hàng đi bộ qua lại."},
+    {"word": "Draw / attract / appeal to / engage", "ipa": "/drɔː/", "type": "Verb", "example": "The museum hopes to draw, more tourists this year.", "exIpa": "/ðə mjuˈziːəm hoʊps tə drɔː, mɔːr ˈtʊrɪsts ðɪs jɪr/", "meaning": "Thu hút", "exMeaning": "Bảo tàng hy vọng sẽ thu hút, nhiều khách du lịch hơn trong năm nay."},
+    {"word": "Draw / attract / appeal to / engage", "ipa": "/drɔː/", "type": "Verb", "example": "He likes to draw, landscapes in his free time.", "exIpa": "/hi laɪks tə drɔː, ˈlændskeɪps ɪn hɪz friː taɪm/", "meaning": "Vẽ", "exMeaning": "Anh ấy thích vẽ, phong cảnh vào thời gian rảnh."},
+    {"word": "Notify / inform", "ipa": "/ˈnəʊ.tɪ.faɪ/", "type": "Verb", "example": "We will notify you, when the package arrives.", "exIpa": "/wi wɪl ˈnoʊtɪfaɪ juː, hwen ðə ˈpækɪdʒ əˈraɪvz/", "meaning": "Thông báo", "exMeaning": "Chúng tôi sẽ thông báo cho bạn, khi gói hàng đến."},
+    {"word": "Elicit / obtain", "ipa": "/iˈlɪs.ɪt/ / /əbˈteɪn/", "type": "Verb", "example": "They managed to obtain, the secret documents.", "exIpa": "/ðeɪ ˈmænɪdʒd tu əbˈteɪn, ðə ˈsiːkrət ˈdɑːkjəmənts/", "meaning": "Đạt được / Lấy được", "exMeaning": "Họ đã xoay sở để lấy được, các tài liệu mật."},
+    {"word": "Aid / donation", "ipa": "/eɪd/ / /dəʊˈneɪ.ʃən/", "type": "Noun", "example": "The charity relies on, public donations.", "exIpa": "/ðə ˈtʃærəti rɪˈlaɪz ɑːn, ˈpʌblɪk doʊˈneɪʃənz/", "meaning": "Sự quyên góp", "exMeaning": "Tổ chức từ thiện phụ thuộc vào, sự quyên góp của công chúng."},
+    {"word": "Upgrade / improvement / renovation / remodeling", "ipa": "/ʌpˈɡreɪd/", "type": "Noun", "example": "The hotel is closed for, a major upgrade.", "exIpa": "/ðə hoʊˈtel ɪz kloʊzd fɔːr, ə ˈmeɪdʒər ˈʌpɡreɪd/", "meaning": "Nâng cấp / Tu sửa", "exMeaning": "Khách sạn đóng cửa để, nâng cấp quy mô lớn."},
+    {"word": "Intention", "ipa": "/ɪnˈten.ʃən/", "type": "Noun", "example": "I have no intention, of leaving this job.", "exIpa": "/aɪ hæv noʊ ɪnˈtenʃən, əv ˈliːvɪŋ ðɪs dʒɑːb/", "meaning": "Dự định", "exMeaning": "Tôi không có dự định, rời bỏ công việc này."},
+    {"word": "Experience", "ipa": "/ɪkˈspɪə.ri.əns/", "type": "Noun", "example": "She has ten years of experience, in sales.", "exIpa": "/ʃi hæz ten jɪrz əv ɪkˈspɪriəns, ɪn seɪlz/", "meaning": "Kinh nghiệm / Trải nghiệm", "exMeaning": "Cô ấy có mười năm kinh nghiệm, trong lĩnh vực bán hàng."},
+    {"word": "Expenditure / expense", "ipa": "/ɪkˈspen.dɪ.tʃər/", "type": "Noun", "example": "We must reduce our expenditure, on travel.", "exIpa": "/wi mʌst rɪˈduːs aʊər ɪkˈspendɪtʃər, ɑːn ˈtrævəl/", "meaning": "Chi phí", "exMeaning": "Chúng ta phải giảm bớt chi phí, cho việc đi lại."},
+    {"word": "Preserve / protect / conserve", "ipa": "/prɪˈzɜːv/", "type": "Verb", "example": "We must work together to preserve, our natural resources.", "exIpa": "/wi mʌst wɜːrk təˈɡeðər tə prɪˈzɜːrv, aʊər ˈnætʃərəl ˈriːsɔːrsɪz/", "meaning": "Bảo tồn / Bảo vệ", "exMeaning": "Chúng ta phải làm việc cùng nhau để bảo tồn, tài nguyên thiên nhiên của chúng ta."},
+    {"word": "Construct / build", "ipa": "/kənˈstrʌkt/", "type": "Verb", "example": "They will construct a new bridge, over the river.", "exIpa": "/ðeɪ wɪl kənˈstrʌkt ə nuː brɪdʒ, ˈoʊvər ðə ˈrɪvər/", "meaning": "Xây dựng", "exMeaning": "Họ sẽ xây dựng một cây cầu mới, qua con sông."},
+    {"word": "Await / wait for", "ipa": "/əˈweɪt/", "type": "Verb", "example": "We are currently awaiting, further instructions.", "exIpa": "/wi ɑːr ˈkɜːrəntli əˈweɪtɪŋ, ˈfɜːrðər ɪnˈstrʌkʃənz/", "meaning": "Chờ", "exMeaning": "Chúng tôi hiện đang chờ, những hướng dẫn tiếp theo."},
+    {"word": "Permit", "ipa": "/pəˈmɪt/", "type": "Verb", "example": "Smoking is not permitted, inside the building.", "exIpa": "/ˈsmoʊkɪŋ ɪz nɑːt pərˈmɪtɪd, ɪnˈsaɪd ðə ˈbɪldɪŋ/", "meaning": "Cho phép", "exMeaning": "Việc hút thuốc không được cho phép, bên trong tòa nhà."},
+    {"word": "Permit", "ipa": "/ˈpɜː.mɪt/", "type": "Noun", "example": "You need a parking permit, to park here.", "exIpa": "/juː niːd ə ˈpɑːrkɪŋ ˈpɜːrmɪt, tə pɑːrk hɪr/", "meaning": "Giấy phép", "exMeaning": "Bạn cần một giấy phép đỗ xe, để đỗ xe ở đây."},
+    {"word": "Official", "ipa": "/əˈfɪʃ.əl/", "type": "Noun", "example": "A government official, will inspect the factory.", "exIpa": "/ə ˈɡʌvərnmənt əˈfɪʃəl, wɪl ɪnˈspekt ðə ˈfæktəri/", "meaning": "Viên chức", "exMeaning": "Một viên chức chính phủ, sẽ kiểm tra nhà máy."},
+    {"word": "Official", "ipa": "/əˈfɪʃ.əl/", "type": "Adjective", "example": "This is an official document, from the embassy.", "exIpa": "/ðɪs ɪz ən əˈfɪʃəl ˈdɑːkjəmənt, frəm ði ˈembəsi/", "meaning": "Chính thức", "exMeaning": "Đây là một tài liệu chính thức, từ đại sứ quán."},
+    {"word": "Measure", "ipa": "/ˈmeʒ.ər/", "type": "Verb", "example": "Please measure the room, carefully.", "exIpa": "/pliːz ˈmeʒər ðə ruːm, ˈkerfəli/", "meaning": "Đo lường", "exMeaning": "Vui lòng đo lường căn phòng, một cách cẩn thận."},
+    {"word": "Measure / method / approach", "ipa": "/ˈmeʒ.ər/", "type": "Noun", "example": "We need to take drastic measures, to solve this.", "exIpa": "/wi niːd tə teɪk ˈdræstɪk ˈmeʒərz, tə sɑːlv ðɪs/", "meaning": "Biện pháp", "exMeaning": "Chúng ta cần thực hiện những biện pháp quyết liệt, để giải quyết việc này."},
+    {"word": "Utility", "ipa": "/juːˈtɪl.ə.ti/", "type": "Noun", "example": "The utility bill, was very high this month.", "exIpa": "/ðə juːˈtɪləti bɪl, wəz ˈveri haɪ ðɪs mʌnθ/", "meaning": "Tiện ích", "exMeaning": "Hóa đơn tiện ích (điện/nước), rất cao vào tháng này."},
+    {"word": "Site / venue / location / spot", "ipa": "/saɪt/", "type": "Noun", "example": "This is the proposed site, for the new hospital.", "exIpa": "/ðɪs ɪz ðə prəˈpoʊzd saɪt, fər ðə nuː ˈhɑːspɪtəl/", "meaning": "Địa điểm", "exMeaning": "Đây là địa điểm được đề xuất, cho bệnh viện mới."},
+    {"word": "Due date", "ipa": "/ˈdʒuː deɪt/", "type": "Noun", "example": "The due date for the report, is next Friday.", "exIpa": "/ðə duː deɪt fər ðə rɪˈpɔːrt, ɪz nekst ˈfraɪdeɪ/", "meaning": "Ngày hết hạn", "exMeaning": "Ngày hạn chót cho báo cáo, là thứ Sáu tới."}
+  ],
+  "passages": [
+    {
+      "type": "article",
+      "lines": [
+        {
+          "en": "Clemente Street Lot\nHAYWARD (March 2)—The Hayward City Council is exploring various options for the future of a 5-acre city-owned lot located on Clemente Street.",
+          "vi": "Khu Đất Đường Clemente\nHAYWARD (Ngày 2 tháng 3)—Hội đồng Thành phố Hayward đang khám phá các lựa chọn khác nhau cho tương lai của một khu đất rộng 5 mẫu Anh thuộc sở hữu của thành phố nằm trên Phố Clemente.",
+          "grammar": "<b>Mệnh đề quan hệ rút gọn:</b> <i>city-owned lot (which is) located on...</i> (khu đất thuộc sở hữu thành phố nằm ở...). <b>Từ khóa cần chú ý:</b> <i>exploring various options for the future</i> (khám phá các lựa chọn cho tương lai) - dữ kiện trả lời Câu 196."
+        },
+        {
+          "en": "Bids and proposals are being accepted at this time, with the Greenway Collaborative, a local environmental group, advocating for leaving the lot empty and in the city’s possession.",
+          "vi": "Các gói thầu và đề xuất đang được tiếp nhận vào thời điểm này, trong đó Greenway Collaborative, một nhóm môi trường địa phương, đang ủng hộ việc để trống khu đất và thuộc quyền sở hữu của thành phố.",
+          "grammar": "<b>Câu bị động thì hiện tại tiếp diễn:</b> <i>are being accepted</i> (đang được tiếp nhận). <b>Cấu trúc:</b> <i>advocate for V-ing</i> (ủng hộ việc làm gì)."
+        },
+        {
+          "en": "Hillview Property Development is interested in purchasing the lot. It intends to build Marshall Plaza, a small building with space for retail business, and establish a courtyard and a small green area with trees, benches, and flower gardens that would be designated for public use.",
+          "vi": "Công ty Phát triển Bất động sản Hillview đang quan tâm đến việc mua lại khu đất này. Họ dự định xây dựng Marshall Plaza, một tòa nhà nhỏ có không gian cho hoạt động kinh doanh bán lẻ, và thiết lập một khoảng sân cùng một khu vực xanh nhỏ với cây cối, ghế đá và vườn hoa sẽ được chỉ định cho mục đích sử dụng công cộng.",
+          "grammar": "<b>Từ vựng:</b> <i>intends to build</i> (dự định xây - tức là lúc tháng 3 này tòa nhà chưa được xây). <b>Mệnh đề quan hệ:</b> <i>that would be designated for...</i> (cái mà sẽ được dành riêng cho...)."
+        },
+        {
+          "en": "“Our planned combination of retail units and green space is a viable solution for this neighborhood, which is in critical need of revitalization,” said Luoyang Meng, a Hillview Property Development representative.",
+          "vi": "“Sự kết hợp theo kế hoạch của chúng tôi giữa các đơn vị bán lẻ và không gian xanh là một giải pháp khả thi cho khu vực này, nơi đang rất cần được phục hồi,” Luoyang Meng, một đại diện của Công ty Phát triển Bất động sản Hillview, cho biết.",
+          "grammar": "<b>Cụm danh từ:</b> <i>planned combination</i> (sự kết hợp được lên kế hoạch). <b>Từ vựng:</b> <i>in critical need of</i> (rất cần cái gì đó)."
+        },
+        {
+          "en": "“Our company has the resources to create an attractive and thriving retail center as well as the expertise to minimize disruptions to wildlife habitats. We hope to have the opportunity to showcase our skills.”",
+          "vi": "“Công ty chúng tôi có đủ nguồn lực để tạo ra một trung tâm bán lẻ hấp dẫn và sầm uất, cũng như chuyên môn để giảm thiểu sự gián đoạn đối với môi trường sống của động vật hoang dã. Chúng tôi hy vọng có cơ hội để thể hiện kỹ năng của mình.”",
+          "grammar": "<b>Cấu trúc:</b> <i>as well as</i> (cũng như). <b>Từ đồng nghĩa quan trọng:</b> <i>wildlife habitats</i> (môi trường sống hoang dã) = <i>spaces where animals live</i> (nơi động vật sinh sống) - dùng để giải quyết Câu 197."
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "lines": [
+        {
+          "en": "From: Clifford Mullen <clifford@busybbakery.com>\nTo: Racquel Shaw <r_shaw@hillviewprop.com>\nDate: November 18\nSubject: Rental inquiry",
+          "vi": "Từ: Clifford Mullen <clifford@busybbakery.com>\nĐến: Racquel Shaw <r_shaw@hillviewprop.com>\nNgày: 18 tháng 11\nChủ đề: Yêu cầu thuê mặt bằng",
+          "grammar": "<b>Lưu ý mốc thời gian:</b> Bài báo viết vào tháng 3, email này viết vào tháng 11. Sự dịch chuyển thời gian là mấu chốt để suy luận ở Câu 198."
+        },
+        {
+          "en": "Dear Ms. Shaw,\nI own the Busy Bee Bakery downtown, and I am interested in renting a second location to sell my baked goods.",
+          "vi": "Kính gửi Cô Shaw,\nTôi là chủ Tiệm bánh Busy Bee ở khu trung tâm, và tôi đang quan tâm đến việc thuê một địa điểm thứ hai để bán các loại bánh nướng của mình.",
+          "grammar": "<b>Cấu trúc:</b> <i>be interested in + V-ing</i> (quan tâm đến việc gì)."
+        },
+        {
+          "en": "Marshall Plaza would be ideal for my business because of the anticipated foot traffic. I am also drawn to the convenience of the easy access to public transportation and the unloading area in the back.",
+          "vi": "Marshall Plaza sẽ là nơi lý tưởng cho công việc kinh doanh của tôi vì lưu lượng khách đi bộ được kỳ vọng cao. Tôi cũng bị thu hút bởi sự tiện lợi của việc dễ dàng tiếp cận các phương tiện giao thông công cộng và khu vực bốc dỡ hàng hóa ở phía sau.",
+          "grammar": "<b>Giới từ:</b> <i>because of + Noun phrase</i> (bởi vì). <b>Câu bị động:</b> <i>be drawn to</i> (bị thu hút bởi)."
+        },
+        {
+          "en": "I need at least three hundred square meters of space, but I do not want cooking facilities, as our staff will bake at our main site and just deliver the goods to the secondary site.",
+          "vi": "Tôi cần không gian rộng ít nhất 300 mét vuông, nhưng tôi không muốn có thiết bị nấu nướng (nhà bếp), vì nhân viên của chúng tôi sẽ nướng bánh tại cơ sở chính và chỉ giao hàng hóa đến cơ sở phụ.",
+          "grammar": "<b>Điều kiện để chọn đáp án (Câu 200):</b> <i>at least 300 square meters</i> (>= 300m2) VÀ <i>do not want cooking facilities</i> (không cần bếp)."
+        },
+        {
+          "en": "I'm also wondering if you could tell me the average rates for water, electricity, and gas. I know that these are not included in the monthly rental fee.\nThanks for the information,\nClifford Mullen",
+          "vi": "Tôi cũng tự hỏi liệu cô có thể cho tôi biết mức giá trung bình cho tiền nước, điện và gas không. Tôi biết rằng những khoản này không được bao gồm trong phí thuê hàng tháng.\nCảm ơn vì thông tin,\nClifford Mullen",
+          "grammar": "<b>Từ vựng gom nhóm:</b> <i>water, electricity, and gas</i> (nước, điện, gas) được gọi chung là <i>utilities</i> (tiện ích). Đây là dữ kiện cho Câu 199."
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "lines": [
+        {
+          "en": "Marshall Plaza Retail Units\nUnit 102 | 320 m² | Available\nUnit 103 | 270 m² | Available\nUnit 104 | 350 m² | Benny's Sweet Shop\nUnit 101 | 225 m² | Available\nCourtyard\nUnit 105 | 315 m² | Available | Includes kitchen",
+          "vi": "Các đơn vị bán lẻ Marshall Plaza\nCăn 102 | 320 m² | Có sẵn\nCăn 103 | 270 m² | Có sẵn\nCăn 104 | 350 m² | Tiệm đồ ngọt của Benny\nCăn 101 | 225 m² | Có sẵn\nKhoảng sân (nằm ở giữa)\nCăn 105 | 315 m² | Có sẵn | Bao gồm nhà bếp",
+          "grammar": "Đây là sơ đồ mặt bằng (floor plan). Kỹ năng làm bài là đối chiếu các yêu cầu từ email của khách (diện tích > 300m2, không có bếp) vào các căn 'Available' (Có sẵn) trong sơ đồ này."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "q": "196. What is the purpose of the article?",
+      "qTrans": "Mục đích của bài báo là gì?",
+      "options": [
+        "(A) To give an update about public land",
+        "(B) To notify local residents of a closure",
+        "(C) To promote the sale of an unused lot",
+        "(D) To elicit aid for a park upgrade"
+      ],
+      "optTrans": [
+        "(A) Để cung cấp thông tin cập nhật về đất công",
+        "(B) Để thông báo cho cư dân địa phương về việc đóng cửa",
+        "(C) Để thúc đẩy việc bán một khu đất trống",
+        "(D) Để kêu gọi hỗ trợ cho việc nâng cấp công viên"
+      ],
+      "ans": "A",
+      "exp": "<b>Bước 1:</b> Đọc đoạn đầu của bài báo để tìm ý chính. <br><b>Bước 2:</b> Bài báo viết: 'The Hayward City Council is <b>exploring various options for the future</b> of a 5-acre <b>city-owned lot</b>' (Hội đồng đang khám phá các lựa chọn cho tương lai của khu đất thuộc sở hữu thành phố). Tiếp theo bài báo cập nhật việc đang nhận các gói thầu và đề xuất. <br><b>Bước 3:</b> 'city-owned lot' (đất của thành phố) chính là 'public land' (đất công). Việc khám phá các lựa chọn chính là cung cấp thông tin cập nhật (give an update).",
+      "logic": "Câu hỏi ý chính (Main idea). Đáp án thường nằm ở câu đầu tiên của bài báo, kết hợp với khả năng Paraphrasing.",
+      "trap": "<b>Bẫy (C):</b> Bài có nhắc đến việc công ty Hillview muốn 'mua' khu đất (purchasing), nhưng mục đích của bài báo không phải là để quảng cáo bán đất (promote the sale), mà là thông báo về các đề xuất đang được xem xét."
+    },
+    {
+      "q": "197. What beneficial aspect of Hillview Property Development does Mr. Meng mention?",
+      "qTrans": "Khía cạnh có lợi nào của Công ty Hillview Property Development được ông Meng đề cập đến?",
+      "options": [
+        "(A) Its intention to create more jobs in the city of Hayward",
+        "(B) Its experience with keeping building expenditures under control",
+        "(C) Its use of environmentally friendly construction materials",
+        "(D) Its ability to preserve spaces where animals live"
+      ],
+      "optTrans": [
+        "(A) Ý định tạo thêm nhiều việc làm ở thành phố Hayward",
+        "(B) Kinh nghiệm kiểm soát chi phí xây dựng",
+        "(C) Việc sử dụng vật liệu xây dựng thân thiện với môi trường",
+        "(D) Khả năng bảo tồn các không gian nơi động vật sinh sống"
+      ],
+      "ans": "D",
+      "exp": "<b>Bước 1:</b> Tìm tên 'Mr. Meng' và xem ông ấy nói gì trong bài báo. <br><b>Bước 2:</b> Ông Meng nói: 'Our company has the resources to create an attractive... retail center as well as the <b>expertise to minimize disruptions to wildlife habitats</b>' (Công ty có chuyên môn để giảm thiểu sự gián đoạn đối với môi trường sống của động vật hoang dã). <br><b>Bước 3:</b> Đối chiếu (Paraphrasing): 'wildlife habitats' = 'spaces where animals live'; 'minimize disruptions' (giảm thiểu gián đoạn) = 'preserve' (bảo tồn).",
+      "logic": "Câu hỏi tìm chi tiết (Detail) bằng phương pháp quét từ khóa (scanning) và dịch nghĩa đồng nghĩa (paraphrasing).",
+      "trap": "Các đáp án A, B, C đọc lên nghe rất 'có lợi' và hợp lý với một công ty xây dựng, nhưng hoàn toàn KHÔNG CÓ thông tin trong bài."
+    },
+    {
+      "q": "198. What is suggested about Hillview Property Development in Mr. Mullen's e-mail?",
+      "qTrans": "Điều gì được gợi ý/suy luận về Công ty Hillview Property Development trong email của ông Mullen?",
+      "options": [
+        "(A) It constructed the building where his bakery is.",
+        "(B) It is awaiting the final building permits.",
+        "(C) Its proposal was accepted by city officials.",
+        "(D) Its staff usually uses public transportation."
+      ],
+      "optTrans": [
+        "(A) Công ty đã xây dựng tòa nhà nơi có tiệm bánh của ông ấy.",
+        "(B) Công ty đang chờ giấy phép xây dựng cuối cùng.",
+        "(C) Đề xuất của công ty đã được các quan chức thành phố chấp nhận.",
+        "(D) Nhân viên của công ty thường sử dụng phương tiện giao thông công cộng."
+      ],
+      "ans": "C",
+      "exp": "<b>Bước 1:</b> Đây là câu hỏi suy luận móc xích thời gian cực hay của TOEIC. Phải nối dữ kiện bài báo (Tháng 3) và email (Tháng 11). <br><b>Bước 2:</b> Ở bài báo (Tháng 3), Hillview mới chỉ đưa ra đề xuất ('intends to build' - dự định xây) cho khu đất đang chờ đấu thầu. <br><b>Bước 3:</b> Ở email (Tháng 11), ông Mullen viết thư cho cô Shaw (nhân viên của Hillview) để <b>thuê mặt bằng tại Marshall Plaza</b> (tên tòa nhà mà Hillview dự định xây hồi tháng 3). <br><b>Kết luận:</b> Việc Marshall Plaza đã được tiến hành cho thuê chứng tỏ đề xuất của Hillview hồi tháng 3 đã chiến thắng và được thành phố chấp nhận (accepted by city officials).",
+      "logic": "Suy luận dựa trên sự thay đổi trạng thái theo trục thời gian (Time-shift inference). Tháng 3 mới đề xuất -> Tháng 11 đã cho thuê = Đề xuất thành công.",
+      "trap": "<b>Bẫy (D):</b> Ông Mullen có nhắc tới 'public transportation', nhưng đó là nói về sự thuận tiện cho khách hàng, không phải nhân viên công ty."
+    },
+    {
+      "q": "199. What information about Marshall Plaza does Mr. Mullen request?",
+      "qTrans": "Ông Mullen yêu cầu thông tin gì về Marshall Plaza?",
+      "options": [
+        "(A) The security measures for the building",
+        "(B) The cost of utilities at a site",
+        "(C) The due date for monthly fees",
+        "(D) The size of an unloading area"
+      ],
+      "optTrans": [
+        "(A) Các biện pháp an ninh cho tòa nhà",
+        "(B) Chi phí tiện ích (điện/nước) tại một địa điểm",
+        "(C) Ngày đến hạn đóng phí hàng tháng",
+        "(D) Kích thước của khu vực dỡ hàng"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Tìm nội dung câu hỏi trong email của ông Mullen. <br><b>Bước 2:</b> Cuối email, ông viết: 'I'm also wondering if you could tell me the <b>average rates for water, electricity, and gas</b>' (Liệu cô có thể cho tôi biết mức giá trung bình của nước, điện và gas). <br><b>Bước 3:</b> Gom nhóm từ vựng: Nước, điện, gas được gọi chung là 'utilities' (tiện ích), và 'rates' (mức giá) tương đương với 'cost' (chi phí).",
+      "logic": "Kỹ năng phân loại từ vựng (Categorization). Học viên phải biết water, electricity, gas là các dạng của 'utility'.",
+      "trap": "<b>Bẫy (D):</b> Ông có nhắc đến 'unloading area' (khu vực dỡ hàng) ở trên, nhưng ông khen nó tiện lợi chứ không hề hỏi kích thước của nó."
+    },
+    {
+      "q": "200. Which unit would Mr. Mullen most likely be interested in?",
+      "qTrans": "Ông Mullen có khả năng quan tâm nhất đến căn hộ/đơn vị nào?",
+      "options": [
+        "(A) Unit 101",
+        "(B) Unit 102",
+        "(C) Unit 103",
+        "(D) Unit 105"
+      ],
+      "optTrans": [
+        "(A) Căn 101",
+        "(B) Căn 102",
+        "(C) Căn 103",
+        "(D) Căn 105"
+      ],
+      "ans": "B",
+      "exp": "<b>Bước 1:</b> Đây là câu hỏi liên kết chéo (Cross-reference) giữa Email và Sơ đồ. Cần tìm các ĐIỀU KIỆN ông Mullen đưa ra ở email. <br><b>Bước 2:</b> Điều kiện 1: 'at least 300 square meters' (tối thiểu 300m2). Điều kiện 2: 'do not want cooking facilities' (không muốn có bếp). <br><b>Bước 3:</b> Đối chiếu sơ đồ: <br>- Căn 101 (225m²) & Căn 103 (270m²): Quá nhỏ -> <b>Loại A, C</b>. <br>- Căn 104 (350m²): Đã có người thuê (Benny's Sweet Shop) -> <b>Loại</b>.<br>- Căn 105 (315m²): Đạt diện tích nhưng có 'Includes kitchen' (Bao gồm bếp) -> Không thỏa mãn điều kiện 2 -> <b>Loại D</b>.<br>- Căn 102 (320m²): Đạt diện tích >300, Available (có sẵn) và không ghi có bếp. -> <b>Đáp án chuẩn xác là B</b>.",
+      "logic": "Kỹ năng lập lưới lọc điều kiện (Process of elimination by constraints). Rất phổ biến trong câu hỏi cuối cùng của phần thi Triple Passages.",
+      "trap": "Học sinh vội vàng thấy Căn 105 rộng 315m2 (thỏa mãn >300) là chọn ngay mà không đọc kỹ ghi chú 'Includes kitchen' sẽ bị sai bẫy hoàn toàn."
+    }
+  ]
+}
+]
+</script>
+<script src="js/script_read.js"></script>
+</body>
+</html>

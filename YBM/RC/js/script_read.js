@@ -238,7 +238,7 @@ function speak(text) {
         utterance.lang = 'en-US'; 
         
         // Bạn có thể tùy chỉnh tốc độ đọc ở đây (1 là bình thường, 0.8 là chậm hơn một chút để dễ nghe)
-        utterance.rate = 0.9; 
+        utterance.rate = 1; 
         
         // Phát âm thanh
         window.speechSynthesis.speak(utterance);
