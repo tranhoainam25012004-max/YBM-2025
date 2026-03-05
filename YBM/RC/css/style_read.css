@@ -453,3 +453,21 @@
 .show-all-grammar .grammar-analysis {
     display: block !important;
 }
+/* Màu sắc cho nút IPA */
+.btn-ipa { background: #0ea5e9; } /* Màu xanh dương nhạt khi tắt */
+.btn-ipa.active { background: #0284c7; } /* Màu xanh dương đậm khi bật */
+
+/* Cấu trúc dòng chữ IPA */
+.ipa-text {
+    color: #64748b; 
+    font-size: 0.85rem; 
+    margin-left: 0; /* Đã căn lề trái bằng 0 cho đồng bộ với câu dịch */
+    margin-bottom: 5px; 
+    font-family: 'Inter', sans-serif;
+    animation: slideIn 0.3s ease;
+}
+
+/* Class điều khiển ẩn IPA */
+.hide-ipa .ipa-text {
+    display: none !important;
+}

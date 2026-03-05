@@ -28,7 +28,11 @@
             <button class="tab-btn" onclick="switchTab('quiz')">
                 <i class="material-icons">task_alt</i> Câu hỏi
             </button>
+            <button class="tab-btn" onclick="switchTab('practice')">
+                <i class="material-icons">edit_document</i> Luyện tập
+            </button>
         </div>
+
         <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
                 <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
@@ -55,28 +59,37 @@
                     <div id="questionsBody"></div>
                 </div>
             </div>
+
+            <div id="section-practice" class="content-section">
+                <div class="panel" id="practicePanel">
+                    <div id="practicesBody"></div>
+                </div>
+            </div>
         </div>
 
         <div class="controls">
-    <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
-        <i class="material-icons">edit_note</i>
-    </button>
-    <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
-        <i class="material-icons">architecture</i>
-    </button>
-    <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
-        <i class="material-icons">translate</i>
-    </button>
+            <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+                <i class="material-icons">edit_note</i>
+            </button>
+            <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+                <i class="material-icons">architecture</i>
+            </button>
+            <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+                <i class="material-icons">translate</i>
+            </button>
+            <button class="btn-action btn-ipa control-passage active" id="ipaBtn" onclick="toggleIPA()" title="Ẩn/Hiện phiên âm IPA">
+                <i class="material-icons">sort_by_alpha</i>
+            </button>
+            <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+                <i class="material-icons">import_export</i>
+            </button>
 
-    <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
-        <i class="material-icons">import_export</i>
-    </button>
-
-    <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
-        <i class="material-icons">visibility</i>
-    </button>
-</div>
+            <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+                <i class="material-icons">visibility</i>
+            </button>
+        </div>
     </div>
+
 <script>
 const allSets = [
 {
@@ -182,6 +195,62 @@ const allSets = [
           "en": "Then I’ll be out of the country on vacation from May 29 through June 9. In this situation, what do you recommend I do about the Calacad training?\nThanks,\nLisa",
           "vi": "Sau đó, tôi sẽ ra nước ngoài đi nghỉ phép từ ngày 29 tháng 5 đến hết ngày 9 tháng 6. Trong tình huống này, anh khuyên tôi nên làm gì về khóa đào tạo Calacad?\nCảm ơn,\nLisa",
           "grammar": "<b>Cấu trúc đề xuất:</b> <i>recommend (that) S + V(nguyên thể)</i> (khuyên ai đó nên làm gì). <b>Giới từ thời gian:</b> <i>from ... through ...</i> (từ ngày nào đến hết ngày nào)."
+        }
+      ]
+    }
+  ],
+"practices": [
+    {
+      "type": "conversation",
+      "context": "Emma (Quản lý dự án) và Lucas (Kỹ sư phần mềm) đang thảo luận về việc ra mắt một nền tảng học từ vựng trực tuyến mới dành cho nhân viên trong công ty.",
+      "lines": [
+        {
+          "en": "Emma: Hi Lucas, we need to inform the team about the new web-based learning platform. Have we decided when we will switch to the new system?",
+          "ipa": "/haɪ ˈlukəs, wi nid tʊ ɪnˈfɔrm ðə tim əˈbaʊt ðə nu wɛb-beɪst ˈlɜrnɪŋ ˈplætˌfɔrm. hæv wi dɪˈsaɪdɪd hwɛn wi wɪl swɪtʃ tʊ ðə nu ˈsɪstəm?/",
+          "vi": "Chào Lucas, chúng ta cần thông báo cho nhóm về nền tảng học tập trực tuyến mới. Chúng ta đã quyết định khi nào sẽ chuyển sang hệ thống mới chưa?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>need to + V</i> (cần làm gì). Thì hiện tại hoàn thành (<i>have we decided</i>) dùng để hỏi về một quyết định đã được đưa ra tính đến thời điểm hiện tại."
+        },
+        {
+          "en": "Lucas: Yes, the system will undergo a final test this Friday. Upon successful completion, we will conduct the official launch next Monday. The training program will span across three weeks.",
+          "ipa": "/jɛs, ðə ˈsɪstəm wɪl ˌʌndərˈgoʊ ə ˈfaɪnəl tɛst ðɪs ˈfraɪdeɪ. əˈpɑn səkˈsɛsfəl kəmˈpliʃən, wi wɪl kənˈdʌkt ði əˈfɪʃəl lɔntʃ nɛkst ˈmʌndeɪ. ðə ˈtreɪnɪŋ ˈproʊˌgræm wɪl spæn əˈkrɔs θri wiks./",
+          "vi": "Vâng, hệ thống sẽ trải qua một bài kiểm tra cuối cùng vào thứ Sáu này. Khi hoàn thành thành công, chúng ta sẽ tiến hành ra mắt chính thức vào thứ Hai tuần sau. Chương trình đào tạo sẽ kéo dài trong ba tuần.",
+          "grammar": "<b>Ngữ pháp:</b> Giới từ <i>Upon + Noun phrase</i> (Khi/Ngay sau khi điều gì xảy ra). Động từ <i>span</i> đi với giới từ <i>across</i> mang ý nghĩa kéo dài xuyên suốt một khoảng thời gian."
+        },
+        {
+          "en": "Emma: Excellent. Have we resolved the main concern regarding the login process? I know multiple users had trouble with it.",
+          "ipa": "/ˈɛksələnt. hæv wi rɪˈzɑlvd ðə meɪn kənˈsɜrn rɪˈgɑrdɪŋ ðə ˈlɔgɪn ˈprɑsɛs? aɪ noʊ ˈmʌltəpəl ˈjuzərz hæd ˈtrʌbəl wɪð ɪt./",
+          "vi": "Tuyệt vời. Chúng ta đã giải quyết được mối lo lắng chính liên quan đến quá trình đăng nhập chưa? Tôi biết nhiều người dùng đã gặp rắc rối với nó.",
+          "grammar": "<b>Ngữ pháp:</b> Giới từ <i>regarding + Noun</i> mang nghĩa \"liên quan đến / về việc gì\", rất hay dùng trong môi trường công sở thay cho <i>about</i>."
+        },
+        {
+          "en": "Lucas: We fixed it. Now, it does not require users to create a new password. They just need to click upon the link sent to their email to register. This is a mandatory step for everyone.",
+          "ipa": "/wi fɪkst ɪt. naʊ, ɪt dʌz nɑt rɪˈkwaɪər ˈjuzərz tʊ kriˈeɪt ə nu ˈpæˌswɜrd. ðeɪ dʒʌst nid tʊ klɪk əˈpɑn ðə lɪŋk sɛnt tʊ ðɛr ˈimeɪl tʊ ˈrɛdʒɪstər. ðɪs ɪz ə ˈmændəˌtɔri stɛp fɔr ˈɛvəriˌwʌn./",
+          "vi": "Chúng ta đã sửa xong. Bây giờ, nó không yêu cầu người dùng phải tạo mật khẩu mới. Họ chỉ cần nhấp trên đường link được gửi đến email của họ để đăng ký. Đây là một bước bắt buộc đối với tất cả mọi người.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>require + Object + to V</i> (yêu cầu ai làm gì). <i>Click upon</i> tương tự như <i>click on</i> (nhấp vào/trên). Cụm <i>sent to their email</i> là mệnh đề quan hệ rút gọn thể bị động (which is sent)."
+        },
+        {
+          "en": "Emma: That's much better than the regular process. What about the new vocabulary flashcard feature?",
+          "ipa": "/ðæts mʌtʃ ˈbɛtər ðæn ðə ˈrɛgjələr ˈprɑsɛs. hwʌt əˈbaʊt ðə nu voʊˈkæbjəˌlɛri ˈflæʃˌkɑrd ˈfitʃər?/",
+          "vi": "Thế thì tốt hơn nhiều so với quy trình thông thường rồi. Còn chức năng thẻ ghi nhớ từ vựng mới thì sao?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc so sánh hơn với <i>much</i> để nhấn mạnh mức độ (<i>much better than</i> - tốt hơn nhiều so với)."
+        },
+        {
+          "en": "Lucas: It has the capability to track user progress, specifically in technical subjects. We also decided to purchase a premium dictionary API from an external vendor to support it.",
+          "ipa": "/ɪt hæz ðə ˌkeɪpəˈbɪləti tʊ træk ˈjuzər ˈprɑgrɛs, spəˈsɪfɪkli ɪn ˈtɛknɪkəl ˈsʌbdʒɪkts. wi ˈɔlsoʊ dɪˈsaɪdɪd tʊ ˈpɜrtʃəs ə ˈprimiəm ˈdɪkʃəˌnɛri eɪ-pi-aɪ frəm ən ɪkˈstɜrnəl ˈvɛndər tʊ səˈpɔrt ɪt./",
+          "vi": "Nó có khả năng theo dõi tiến độ của người dùng, cụ thể là trong các chủ đề kỹ thuật. Chúng tôi cũng quyết định mua một API từ điển cao cấp từ một nhà cung cấp bên ngoài để hỗ trợ nó.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>capability to + V-nguyên thể</i> (khả năng làm gì). Trạng từ <i>specifically</i> đứng đầu cụm từ để làm rõ ý (cụ thể là/đặc biệt là)."
+        },
+        {
+          "en": "Emma: That will definitely help our staff achieve a higher level of English proficiency. Since this is an internal tool, how should we publicize it to the staff?",
+          "ipa": "/ðæt wɪl ˈdɛfənətli hɛlp ˈaʊər stæf əˈtʃiv ə ˈhaɪər ˈlɛvəl əv ˈɪŋglɪʃ prəˈfɪʃənsi. sɪns ðɪs ɪz ən ɪnˈtɜrnəl tul, haʊ ʃʊd wi ˈpʌblɪˌsaɪz ɪt tʊ ðə stæf?/",
+          "vi": "Điều đó chắc chắn sẽ giúp nhân viên của chúng ta đạt được trình độ tiếng Anh cao hơn. Vì đây là một công cụ bên trong (nội bộ), chúng ta nên quảng cáo (phổ biến) nó đến nhân viên như thế nào?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>help + Object + V-nguyên thể</i> (giúp ai đó làm gì). Liên từ <i>Since</i> ở đầu câu mang ý nghĩa là \"Bởi vì\", tương tự như Because."
+        },
+        {
+          "en": "Lucas: I will send an email to specify all the details. We will also host a brief introductory session tomorrow. We want to encourage frequent usage among the team.",
+          "ipa": "/aɪ wɪl sɛnd ən ˈimeɪl tʊ ˈspɛsəˌfaɪ ɔl ðə dɪˈteɪlz. wi wɪl ˈɔlsoʊ hoʊst ə brif ˌɪntrəˈdʌktəri ˈsɛʃən təˈmɑroʊ. wi wɑnt tʊ ɪnˈkɜrɪdʒ ˈfrikwənt ˈjusɪdʒ əˈmʌŋ ðə tim./",
+          "vi": "Tôi sẽ gửi một email để ghi rõ tất cả các chi tiết. Chúng ta cũng sẽ tổ chức một buổi giới thiệu ngắn vào ngày mai. Chúng ta muốn khuyến khích việc sử dụng thường xuyên trong nhóm.",
+          "grammar": "<b>Ngữ pháp:</b> Giới từ <i>to + V</i> (để làm gì) chỉ mục đích. Động từ <i>encourage + Noun/V-ing</i> mang ý nghĩa khuyến khích một hành động nào đó diễn ra."
         }
       ]
     }
@@ -411,6 +480,74 @@ const allSets = [
       ]
     }
   ],
+"practices": [
+    {
+      "type": "conversation",
+      "context": "Sarah (Quản lý sự kiện) và David (Quản lý bất động sản) đang gặp nhau tại một căn biệt thự cổ ở Chicago để bàn về công tác chuẩn bị cho một buổi triển lãm nghệ thuật sắp tới.",
+      "lines": [
+        {
+          "en": "Sarah: Hi David, I am so delighted that we can host our art exhibition at this historic residence. It is located in such a beautiful neighborhood.",
+          "ipa": "/haɪ ˈdeɪvɪd, aɪ æm soʊ dɪˈlaɪtɪd ðæt wi kæn hoʊst ˈaʊər ɑrt ˌɛksəˈbɪʃən æt ðɪs hɪˈstɔrɪk ˈrɛzɪdəns. ɪt ɪz ˈloʊkeɪtɪd ɪn sʌtʃ ə ˈbjutəfəl ˈneɪbərˌhʊd./",
+          "vi": "Chào David, tôi rất vui vì chúng ta có thể tổ chức buổi triển lãm nghệ thuật tại ngôi nhà mang tính lịch sử này. Nó được tọa lạc ở một khu vực thật đẹp.",
+          "grammar": "<b>Ngữ pháp:</b> Dùng cấu trúc <i>to be delighted that + clause</i> (vui mừng vì điều gì). Động từ locate thường được dùng ở dạng bị động <i>is located in</i> (được tọa lạc tại/nằm ở)."
+        },
+        {
+          "en": "David: We are glad to have you! Indeed, it is a relatively famous property in this area. We just finished a major renovation last month.",
+          "ipa": "/wi ɑr glæd tʊ hæv ju! ɪnˈdid, ɪt ɪz ə ˈrɛlətɪvli ˈfeɪməs ˈprɑpərti ɪn ðɪs ˈɛriə. wi dʒʌst ˈfɪnɪʃt ə ˈmeɪdʒər ˌrɛnəˈveɪʃən læst mʌnθ./",
+          "vi": "Chúng tôi cũng rất vui khi đón tiếp bạn! Thực ra, đây là một bất động sản tương đối nổi tiếng trong vùng này. Chúng tôi vừa hoàn thành một đợt nâng cấp lớn vào tháng trước.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>to be glad to + V</i> (vui mừng khi làm gì). Trạng từ <i>relatively</i> (tương đối) đứng trước tính từ famous để bổ nghĩa mức độ cho danh từ property."
+        },
+        {
+          "en": "Sarah: I noticed! Did you decide to renovate the main hall instead of the east wing?",
+          "ipa": "/aɪ ˈnoʊtɪst! dɪd ju dɪˈsaɪd tʊ ˈrɛnəˌveɪt ðə meɪn hɔl ɪnˈstɛd əv ði ist wɪŋ?/",
+          "vi": "Tôi có nhận ra! Các anh đã quyết định cải tạo sảnh chính thay vì khu cánh đông à?",
+          "grammar": "<b>Ngữ pháp:</b> Giới từ <i>instead of + Noun/V-ing</i> (thay vì làm gì/cái gì)."
+        },
+        {
+          "en": "David: Exactly, we wanted to improve the grand entrance first. Please be advised that we will conduct a final safety check tomorrow morning. We need to inspect the composition of the new ceiling.",
+          "ipa": "/ɪgˈzæktli, wi ˈwɑntɪd tʊ ɪmˈpruv ðə grænd ˈɛntrəns fɜrst. pliz bi ædˈvaɪzd ðæt wi wɪl kənˈdʌkt ə ˈfaɪnəl ˈseɪfti tʃɛk təˈmɑroʊ ˈmɔrnɪŋ. wi nid tʊ ɪnˈspɛkt ðə ˌkɑmpəˈzɪʃən əv ðə nu ˈsilɪŋ./",
+          "vi": "Chính xác, chúng tôi muốn cải thiện lối vào chính trước. Xin thông báo rằng chúng tôi sẽ tiến hành đợt kiểm tra an toàn cuối cùng vào sáng mai. Chúng tôi cần kiểm tra cấu tạo của trần nhà mới.",
+          "grammar": "<b>Ngữ pháp:</b> <i>Please be advised that + clause</i> là một cấu trúc cực kỳ phổ biến và trang trọng trong email và giao tiếp công việc để thông báo thông tin quan trọng. Cụm <i>conduct a check</i> mang nghĩa tiến hành một cuộc kiểm tra."
+        },
+        {
+          "en": "Sarah: Understood. We are completely aware of the safety rules. For the artwork, can we place the marble sculptures underneath the grand staircase?",
+          "ipa": "/ˌʌndərˈstʊd. wi ɑr kəmˈplitli əˈwɛr əv ðə ˈseɪfti rulz. fɔr ði ˈɑrtˌwɜrk, kæn wi pleɪs ðə ˈmɑrbəl ˈskʌlptʃərz ˌʌndərˈniθ ðə grænd ˈstɛrˌkeɪs?/",
+          "vi": "Đã hiểu. Chúng tôi hoàn toàn nhận thức được các quy tắc an toàn. Về phần tác phẩm nghệ thuật, chúng tôi có thể đặt các bức tượng điêu khắc bằng đá cẩm thạch ở phía dưới cầu thang lớn được không?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>to be aware of + Noun</i> (nhận thức được/biết về cái gì)."
+        },
+        {
+          "en": "David: Yes, but I advise you to be careful with the weight limit. You can simply put the lighter pieces there. Also, could you simply email me your team's schedule later?",
+          "ipa": "/jɛs, bʌt aɪ ædˈvaɪz ju tʊ bi ˈkɛrfəl wɪð ðə weɪt ˈlɪmɪt. ju kæn ˈsɪmpli pʊt ðə ˈlaɪtər ˈpisəz ðɛr. ˈɔlsoʊ, kʊd ju ˈsɪmpli ˈimeɪl mi jʊər timz ˈskɛdʒul ˈleɪtər?/",
+          "vi": "Được, nhưng tôi khuyên bạn nên cẩn thận với giới hạn trọng lượng. Bạn chỉ cần để những tác phẩm nhẹ hơn ở đó thôi. Ngoài ra, bạn cứ đơn giản gửi email cho tôi lịch trình của đội bạn sau nhé?",
+          "grammar": "<b>Ngữ pháp:</b> Động từ <i>advise</i> mang nghĩa khuyên bảo: <i>advise sb to V</i>. Cấu trúc <i>simply + V-bare</i> (chỉ cần làm gì/đơn giản là làm gì) xuất hiện 2 lần với động từ put và email."
+        },
+        {
+          "en": "Sarah: Will do. Can you advise me on a specific route for our delivery trucks?",
+          "ipa": "/wɪl du. kæn ju ædˈvaɪz mi ɑn ə spəˈsɪfɪk rut fɔr ˈaʊər dɪˈlɪvəri trʌks?/",
+          "vi": "Tôi sẽ làm vậy. Bạn có thể tư vấn cho tôi một tuyến đường cụ thể cho các xe tải giao hàng không?",
+          "grammar": "<b>Ngữ pháp:</b> Lúc này <i>advise</i> mang nghĩa tư vấn: <i>advise sb on sth</i> (tư vấn cho ai về vấn đề gì). <i>Specific</i> đóng vai trò tính từ bổ nghĩa cho danh từ route."
+        },
+        {
+          "en": "David: I'll send you a map. We will assign a security guard to the back gate. Also, make sure the event publication mentions the temporary parking zone, as the permanent lot is under repair.",
+          "ipa": "/aɪl sɛnd ju ə mæp. wi wɪl əˈsaɪn ə sɪˈkjʊrəti gɑrd tʊ ðə bæk geɪt. ˈɔlsoʊ, meɪk ʃʊr ði ɪˈvɛnt ˌpʌblɪˈkeɪʃən ˈmɛnʃənz ðə ˈtɛmpəˌrɛri ˈpɑrkɪŋ zoʊn, æz ðə ˈpɜrmənənt lɑt ɪz ˈʌndər rɪˈpɛr./",
+          "vi": "Tôi sẽ gửi bản đồ. Chúng tôi sẽ phân công một bảo vệ ở cổng sau. Ngoài ra, hãy đảm bảo rằng ấn phẩm của sự kiện có đề cập đến khu vực đỗ xe tạm thời, vì bãi đỗ xe cố định đang được sửa chữa.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>assign sb to sth</i> (phân công ai vào việc gì/vị trí nào). Cặp tính từ trái nghĩa <i>temporary</i> (tạm thời) và <i>permanent</i> (cố định) được đặt trong cùng một câu để tạo sự đối lập rõ ràng."
+        },
+        {
+          "en": "Sarah: Got it. One last thing, will our artists have a safe place to store their bags?",
+          "ipa": "/gɑt ɪt. wʌn læst θɪŋ, wɪl ˈaʊər ˈɑrtɪsts hæv ə seɪf pleɪs tʊ stɔr ðɛr bægz?/",
+          "vi": "Đã hiểu. Một điều cuối cùng, các nghệ sĩ của chúng tôi sẽ có một nơi an toàn để cất túi xách chứ?",
+          "grammar": "<b>Ngữ pháp:</b> Thì tương lai đơn dạng câu hỏi <i>Will + S + V-bare</i>."
+        },
+        {
+          "en": "David: Absolutely. We will designate a staff room where each person gets their own lockable compartment.",
+          "ipa": "/ˌæbsəˈlutli. wi wɪl ˈdɛzɪgˌneɪt ə stæf rum hwɛr itʃ ˈpɜrsən gɛts ðɛr oʊn ˈlɑkəbəl kəmˈpɑrtmənt./",
+          "vi": "Chắc chắn rồi. Chúng tôi sẽ chỉ định một phòng nhân viên, nơi mỗi người sẽ có một hộc để đồ có khóa riêng.",
+          "grammar": "<b>Ngữ pháp:</b> Sử dụng mệnh đề quan hệ bắt đầu bằng <i>where</i> để thay thế cho danh từ chỉ nơi chốn a staff room."
+        }
+      ]
+    }
+  ],
   "questions": [
     {
       "q": "191. Why most likely is Ms. Kaneko traveling to Mr. Armstrong’s area?",
@@ -634,6 +771,98 @@ const allSets = [
           "en": "Marshall Plaza Retail Units\nUnit 102 | 320 m² | Available\nUnit 103 | 270 m² | Available\nUnit 104 | 350 m² | Benny's Sweet Shop\nUnit 101 | 225 m² | Available\nCourtyard\nUnit 105 | 315 m² | Available | Includes kitchen",
           "vi": "Các đơn vị bán lẻ Marshall Plaza\nCăn 102 | 320 m² | Có sẵn\nCăn 103 | 270 m² | Có sẵn\nCăn 104 | 350 m² | Tiệm đồ ngọt của Benny\nCăn 101 | 225 m² | Có sẵn\nKhoảng sân (nằm ở giữa)\nCăn 105 | 315 m² | Có sẵn | Bao gồm nhà bếp",
           "grammar": "Đây là sơ đồ mặt bằng (floor plan). Kỹ năng làm bài là đối chiếu các yêu cầu từ email của khách (diện tích > 300m2, không có bếp) vào các căn 'Available' (Có sẵn) trong sơ đồ này."
+        }
+      ]
+    }
+  ],
+  "practices": [
+    {
+      "type": "conversation",
+      "context": "Hai nhà phát triển dự án bất động sản người Mỹ, Alex và Morgan, đang ngồi uống cà phê và thảo luận về một dự án cải tạo khu thương mại ở trung tâm thành phố Seattle.",
+      "lines": [
+        {
+          "en": "<b>Morgan:</b> Hey Alex, did you hear back from the city council about our new project downtown?",
+          "ipa": "/heɪ ˈæləks, dɪd ju hɪr bæk frəm ðə ˈsɪti ˈkaʊnsəl əˈbaʊt ˈaʊər nu ˈprɑdʒɛkt ˈdaʊnˈtaʊn?/",
+          "vi": "Này Alex, cậu đã nhận được phản hồi từ hội đồng thành phố về dự án mới của chúng ta ở khu trung tâm chưa?",
+          "grammar": "<b>Ngữ pháp:</b> Thì Quá khứ đơn dạng câu hỏi (Did + S + V-nguyên thể). Dùng cụm động từ (phrasal verb) <i>hear back from</i> (nhận được phản hồi từ ai)."
+        },
+        {
+          "en": "<b>Alex:</b> I did! They decided to advocate for our intention to revitalize the old market district. That area is in critical need of an upgrade.",
+          "ipa": "/aɪ dɪd! ðeɪ dɪˈsaɪdəd tʊ ˈædvəkeɪt fɔr ˈaʊər ɪnˈtɛnʃən tʊ riˈvaɪtəˌlaɪz ði oʊld ˈmɑrkət ˈdɪstrɪkt. ðæt ˈɛriə ɪz ɪn ˈkrɪtɪkəl nid əv ən ˈʌpˌgreɪd./",
+          "vi": "Mình nhận được rồi! Họ đã quyết định ủng hộ dự định của chúng ta về việc phục hồi khu chợ cũ. Khu vực đó đang rất cần được nâng cấp.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>decide to do sth</i> (quyết định làm gì) và <i>intention to do sth</i> (ý định làm gì). Cấu trúc <i>to be in critical need of + Noun</i> (đang cực kỳ/rất cần cái gì)."
+        },
+        {
+          "en": "<b>Morgan:</b> That’s a critical first step! The property is currently a city possession, right?",
+          "ipa": "/ðæts ə ˈkrɪtɪkəl fɜrst stɛp! ðə ˈprɑpərti ɪz ˈkɜrəntli ə ˈsɪti pəˈzɛʃən, raɪt?/",
+          "vi": "Đó là một bước đầu tiên mang tính cốt lõi đấy! Bất động sản đó hiện đang là tài sản sở hữu của thành phố phải không?",
+          "grammar": "<b>Ngữ pháp:</b> Sử dụng câu khẳng định kết thúc bằng <i>right?</i> để tạo thành câu hỏi đuôi (tag question) dạng thân mật, nhằm xác nhận thông tin."
+        },
+        {
+          "en": "<b>Alex:</b> Exactly, but once the paperwork clears, our firm will officially possess the deed. We intend to do a complete renovation. Our representative presented the concept yesterday. I even had to draw a quick sketch of the central courtyard on a napkin to show them the vision!",
+          "ipa": "/ɪgˈzæktli, bʌt wʌns ðə ˈpeɪpərˌwɜrk klɪrz, ˈaʊər fɜrm wɪl əˈfɪʃəli pəˈzɛs ðə did. wi ɪnˈtɛnd tʊ dʊ ə kəmˈplit ˌrɛnəˈveɪʃən. ˈaʊər ˌrɛprɪˈzɛntətɪv priˈzɛntəd ðə ˈkɑnsɛpt ˈjɛstərˌdeɪ. aɪ ˈivɪn hæd tʊ drɔ ə kwɪk skɛtʃ əv ðə ˈsɛntrəl ˈkɔrtˌjɑrd ɑn ə ˈnæpkɪn tʊ ʃoʊ ðɛm ðə ˈvɪʒən!/",
+          "vi": "Chính xác, nhưng một khi giấy tờ hoàn tất, công ty chúng ta sẽ chính thức sở hữu chứng thư. Chúng ta dự định thực hiện một đợt tu sửa toàn diện. Người đại diện của chúng ta đã trình bày ý tưởng vào hôm qua. Mình thậm chí còn phải vẽ một bản phác thảo nhanh về khoảng sân trung tâm lên khăn giấy để cho họ thấy tầm nhìn của dự án!",
+          "grammar": "<b>Ngữ pháp:</b> Mệnh đề chỉ thời gian với <i>Once</i> (Một khi) đi kèm hiện tại đơn (once the paperwork clears), vế chính dùng Tương lai đơn (will possess). Cấu trúc <i>have to + V-nguyên thể</i> ở thì quá khứ là <i>had to + V-nguyên thể</i> (đã phải làm gì)."
+        },
+        {
+          "en": "<b>Morgan:</b> Nice! What's the anticipated expenditure?",
+          "ipa": "/naɪs! hwʌts ði ænˈtɪsəˌpeɪtəd ɪkˈspɛndɪtʃər?/",
+          "vi": "Tuyệt! Chi phí dự kiến là bao nhiêu?",
+          "grammar": "<b>Ngữ pháp:</b> Câu hỏi với từ để hỏi (Wh-question) đi kèm với động từ to be: <i>What + is + Noun?</i> Tính từ <i>anticipated</i> đứng trước danh từ expenditure để bổ nghĩa."
+        },
+        {
+          "en": "<b>Alex:</b> We need to find a viable solution to keep every expense down. We haven't put in our official bid yet. We need to bid aggressively but smartly.",
+          "ipa": "/wi nid tʊ faɪnd ə ˈvaɪəbəl səˈluʃən tʊ kip ˈɛvəri ɪkˈspɛns daʊn. wi ˈhævənt pʊt ɪn ˈaʊər əˈfɪʃəl bɪd jɛt. wi nid tʊ bɪd əˈgrɛsɪvli bʌt ˈsmɑrtli./",
+          "vi": "Chúng ta cần tìm một giải pháp khả thi để ép mọi chi phí xuống mức thấp. Chúng ta vẫn chưa nộp gói thầu chính thức. Chúng ta cần đấu thầu một cách mạnh mẽ nhưng khôn ngoan.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>need to + V</i> (cần làm gì) kết hợp với động từ chỉ mục đích to keep.... Câu số 2 dùng thì Hiện tại hoàn thành dạng phủ định với yet (haven't + PII + yet) diễn tả việc chưa làm tính đến hiện tại. Trạng từ <i>aggressively</i> và <i>smartly</i> bổ nghĩa cho động từ bid."
+        },
+        {
+          "en": "<b>Morgan:</b> Once we secure it, the city will designate an inspector. We’ll need an engineering team with the right expertise to construct the new structures.",
+          "ipa": "/wʌns wi sɪˈkjʊr ɪt, ðə ˈsɪti wɪl ˈdɛzɪgˌneɪt ən ɪnˈspɛktər. wil nid ən ˌɛndʒəˈnɪrɪŋ tim wɪð ðə raɪt ˌɛkspərˈtiz tʊ kənˈstrʌkt ðə nu ˈstrʌktʃərz./",
+          "vi": "Một khi chúng ta giành được nó, thành phố sẽ chỉ định một thanh tra viên. Chúng ta sẽ cần một đội ngũ kỹ sư có chuyên môn phù hợp để xây dựng các cấu trúc mới.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc câu điều kiện loại 1 ngụ ý qua từ <i>Once</i> (Once + S + V(hiện tại), S + will + V). Cụm giới từ <i>with the right expertise</i> đóng vai trò như một tính từ bổ nghĩa cho engineering team."
+        },
+        {
+          "en": "<b>Alex:</b> Right, and we have to be careful. We can't cause too much disruption to the local water and power utilities. We definitely don't want to disrupt the neighboring businesses.",
+          "ipa": "/raɪt, ænd wi hæv tʊ bi ˈkɛrfəl. wi kænt kɔz tu mʌtʃ dɪsˈrʌpʃən tʊ ðə ˈloʊkəl ˈwɔtər ænd ˈpaʊər juˈtɪlətiz. wi ˈdɛfənətli doʊnt wɑnt tʊ dɪsˈrʌpt ðə ˈneɪbərɪŋ ˈbɪznəsəz./",
+          "vi": "Đúng vậy, và chúng ta phải cẩn thận. Chúng ta không thể gây ra quá nhiều sự gián đoạn cho các tiện ích điện nước của địa phương. Chúng ta tuyệt đối không muốn làm gián đoạn các doanh nghiệp lân cận.",
+          "grammar": "<b>Ngữ pháp:</b> <i>Too much + Noun</i> (không đếm được) chỉ sự vượt mức quá nhiều. Động từ khiếm khuyết <i>can't</i> (không thể) đi với động từ nguyên thể cause. Trạng từ <i>definitely</i> nhấn mạnh động từ want."
+        },
+        {
+          "en": "<b>Morgan:</b> Agreed. The site is absolutely ideal for a flagship cafe. With all the foot traffic in that area, we can easily draw in hundreds of people a day looking for their morning coffee and a fresh baked good. I can already see the business starting to thrive.",
+          "ipa": "/əˈgrid. ðə saɪt ɪz ˌæbsəˈlutli aɪˈdil fɔr ə ˈflægˌʃɪp kæˈfeɪ. wɪð ɔl ðə fʊt ˈtræfɪk ɪn ðæt ˈɛriə, wi kæn ˈizəli drɔ ɪn ˈhʌndrədz əv ˈpipəl ə deɪ ˈlʊkɪŋ fɔr ðɛr ˈmɔrnɪŋ ˈkɑfi ænd ə frɛʃ beɪkt gʊd. aɪ kæn ɔlˈrɛdi si ðə ˈbɪznəs ˈstɑrtɪŋ tʊ θraɪv./",
+          "vi": "Đồng ý. Địa điểm đó hoàn toàn lý tưởng cho một quán cà phê chi nhánh chính. Với tất cả lưu lượng khách đi bộ ở khu vực đó, chúng ta có thể dễ dàng thu hút hàng trăm người mỗi ngày đang tìm kiếm cà phê sáng và một chiếc bánh nướng tươi. Mình đã có thể hình dung ra cảnh việc kinh doanh bắt đầu phát triển rực rỡ rồi.",
+          "grammar": "<b>Ngữ pháp:</b> Mệnh đề rút gọn (Participle clause) với <i>looking for...</i> bổ nghĩa cho people. Cấu trúc <i>see + O + V-ing</i> (thấy ai/cái gì đang bắt đầu làm gì)."
+        },
+        {
+          "en": "<b>Alex:</b> Same here. But we still have to await the final official paperwork. The city officials won't permit any demolition until we get the actual building permit.",
+          "ipa": "/seɪm hɪr. bʌt wi stɪl hæv tʊ əˈweɪt ðə ˈfaɪnəl əˈfɪʃəl ˈpeɪpərˌwɜrk. ðə ˈsɪti əˈfɪʃəlz woʊnt pərˈmɪt ˈɛni ˌdɛməˈlɪʃən ənˈtɪl wi gɛt ði ˈækʧuəl ˈbɪldɪŋ pərˈmɪt./",
+          "vi": "Mình cũng vậy. Nhưng chúng ta vẫn phải chờ các giấy tờ chính thức cuối cùng. Các viên chức thành phố sẽ không cho phép bất kỳ việc phá dỡ nào cho đến khi chúng ta có được giấy phép xây dựng thực tế.",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>won't + V + until + S + V</i> (sẽ không làm gì cho đến khi điều gì xảy ra)."
+        },
+        {
+          "en": "<b>Morgan:</b> True. Also, we need to measure the exact property lines today. I heard some local historians are highly critical of modernizing the area. They want to preserve the historic facade. What measure are we taking to address their concerns?",
+          "ipa": "/tru. ˈɔlsoʊ, wi nid tʊ ˈmɛʒər ði ɪgˈzækt ˈprɑpərti laɪnz təˈdeɪ. aɪ hɜrd sʌm ˈloʊkəl hɪˈstɔriənz ɑr ˈhaɪli ˈkrɪtɪkəl əv ˈmɑdərˌnaɪzɪŋ ði ˈɛriə. ðeɪ wɑnt tʊ prəˈzɜrv ðə hɪˈstɔrɪk fəˈsɑd. hwʌt ˈmɛʒər ɑr wi ˈteɪkɪŋ tʊ əˈdrɛs ðɛr kənˈsɜrnz?/",
+          "vi": "Đúng thế. Ngoài ra, chúng ta cần đo lường ranh giới bất động sản chính xác trong hôm nay. Mình nghe nói một số nhà sử học địa phương đang phê bình gay gắt việc hiện đại hóa khu vực này. Họ muốn bảo tồn mặt tiền lịch sử. Chúng ta đang thực hiện biện pháp gì để giải quyết những lo ngại của họ?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>to be critical of + V-ing/Noun</i> (chỉ trích/phê bình việc gì). Cụm từ <i>take measures</i> (thực hiện biện pháp) được chia ở thì Hiện tại tiếp diễn mang ý nghĩa tương lai gần/kế hoạch (are we taking)."
+        },
+        {
+          "en": "<b>Alex:</b> We plan to elicit their feedback at a public forum next week. We might even apply for a state donation or financial aid specifically meant for historical revitalization. In my experience, getting the community involved early is the best approach.",
+          "ipa": "/wi plæn tʊ ɪˈlɪsɪt ðɛr ˈfidˌbæk æt ə ˈpʌblɪk ˈfɔrəm nɛkst wik. wi maɪt ˈivɪn əˈplaɪ fɔr ə steɪt doʊˈneɪʃən ɔr fəˈnænʃəl eɪd spəˈsɪfɪkli mɛnt fɔr hɪˈstɔrɪkəl riˌvaɪtələˈzeɪʃən. ɪn maɪ ɪkˈspɪriəns, ˈgɛtɪŋ ðə kəˈmjunəti ɪnˈvɑlvd ˈɜrli ɪz ðə bɛst əˈproʊʧ./",
+          "vi": "Chúng ta lên kế hoạch lấy ý kiến phản hồi của họ tại một diễn đàn công cộng vào tuần tới. Chúng ta thậm chí có thể nộp đơn xin tiền quyên góp của bang hoặc viện trợ tài chính đặc biệt dành cho việc phục hồi di tích lịch sử. Theo kinh nghiệm của mình, việc để cộng đồng tham gia vào từ sớm là cách tiếp cận tốt nhất.",
+          "grammar": "<b>Ngữ pháp:</b> Mệnh đề rút gọn bị động <i>meant for</i> (được dành cho). Sử dụng Danh động từ (Gerund) <i>getting the community involved</i> đóng vai trò làm chủ ngữ cho câu. Cấu trúc <i>get + O + PII</i> (nhờ/khiến ai đó bị tác động/tham gia vào việc gì)."
+        },
+        {
+          "en": "<b>Morgan:</b> Perfect plan. When will the city notify us of the final decision?",
+          "ipa": "/ˈpɜrfɪkt plæn. hwɛn wɪl ðə ˈsɪti ˈnoʊtəˌfaɪ ʌs əv ðə ˈfaɪnəl dɪˈsɪʒən?/",
+          "vi": "Kế hoạch hoàn hảo. Khi nào thành phố sẽ thông báo cho chúng ta về quyết định cuối cùng?",
+          "grammar": "<b>Ngữ pháp:</b> Cấu trúc <i>notify sb of sth</i> (thông báo cho ai về việc gì) dùng trong thì Tương lai đơn."
+        },
+        {
+          "en": "<b>Alex:</b> The due date for their response is next Friday. Fingers crossed!",
+          "ipa": "/ðə du deɪt fɔr ðɛr rɪˈspɑns ɪz nɛkst ˈfraɪdeɪ. ˈfɪŋgərz krɔst!/",
+          "vi": "Ngày đến hạn cho phản hồi của họ là thứ Sáu tuần sau. Cùng cầu mong điều tốt đẹp nhé!",
+          "grammar": "<b>Ngữ pháp:</b> <i>Fingers crossed</i> là một thành ngữ (idiom) cực kỳ phổ biến của người bản xứ, ngụ ý hành động đan chéo ngón tay để cầu chúc may mắn."
         }
       ]
     }
