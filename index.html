@@ -12,11 +12,13 @@
             --vocab: #059669;
             --structure: #7c3aed;
             --comm: #f59e0b;
+            --knowledge: #10b981; /* Màu mới cho phần kiến thức */
             --bg: #f8fafc;
             --text: #1e293b;
             --white: #ffffff;
         }
 
+        /* ... Giữ nguyên các phần CSS cũ của bạn ... */
         body {
             font-family: 'Inter', 'Segoe UI', sans-serif;
             background-color: var(--bg);
@@ -29,7 +31,6 @@
             min-height: 100vh;
         }
 
-        /* --- PHẦN CSS CHO MÀN HÌNH ĐĂNG NHẬP --- */
         #login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -51,66 +52,30 @@
             max-width: 350px;
         }
 
-        .login-box h2 {
-            margin-top: 0;
-            color: var(--primary);
-        }
-
+        .login-box h2 { margin-top: 0; color: var(--primary); }
         .login-box input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
+            width: 100%; padding: 12px; margin: 15px 0;
+            border: 1px solid #cbd5e1; border-radius: 8px;
+            box-sizing: border-box; font-size: 16px;
         }
-
         .login-box button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
+            width: 100%; padding: 12px; background-color: var(--primary);
+            color: white; border: none; border-radius: 8px;
+            font-size: 16px; cursor: pointer; font-weight: bold;
         }
 
-        .login-box button:hover {
-            background-color: #1d4ed8;
-        }
-
-        #error-msg {
-            color: var(--ybm);
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        /* Ẩn nội dung chính lúc đầu */
         #main-content {
             display: none;
             width: 100%;
-            display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* --- CSS CŨ CỦA BẠN --- */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
+        .header { text-align: center; margin-bottom: 40px; }
         .header h1 {
-            font-size: 2.2rem;
-            margin: 0;
+            font-size: 2.2rem; margin: 0;
             background: linear-gradient(to right, var(--primary), #7c3aed);
-            -webkit-background-clip: text;
-            background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -153,14 +118,9 @@
         }
 
         .icon-box {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            flex-shrink: 0;
+            width: 60px; height: 60px; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; flex-shrink: 0;
         }
 
         .bg-ybm { background: #fff1f2; color: var(--ybm); }
@@ -168,22 +128,12 @@
         .bg-mix { background: #fffbeb; color: #ca8a04; }
         .bg-stru { background: #f5f3ff; color: var(--structure); }
         .bg-comm { background: #fff7ed; color: var(--comm); }
+        .bg-knowledge { background: #ecfdf5; color: var(--knowledge); } /* Style icon mới */
 
-        .info h2 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
+        .info h2 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+        .info p { margin: 5px 0 0; font-size: 0.85rem; color: #64748b; }
 
-        .info p {
-            margin: 5px 0 0;
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        @media (max-width: 600px) {
-            .container { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -194,7 +144,7 @@
             <p style="color: #64748b; font-size: 14px;">Nhập mật khẩu để truy cập tài liệu</p>
             <input type="password" id="password-input" placeholder="Nhập mật khẩu..." onkeypress="handleEnter(event)">
             <button onclick="checkPassword()">Đăng nhập</button>
-            <p id="error-msg">Sai mật khẩu, vui lòng thử lại!</p>
+            <p id="error-msg" style="color: var(--ybm); display:none;">Sai mật khẩu!</p>
         </div>
     </div>
 
@@ -205,8 +155,16 @@
         </div>
 
         <div class="container">
+            <div class="section-title">Tài liệu bổ trợ</div>
+            <a href="knowladge.html" class="card">
+                <div class="icon-box bg-knowledge">🧪</div>
+                <div class="info">
+                    <h2>Knowledge Encyclopedia</h2>
+                    <p>Bộ sưu tập bách khoa toàn thư (Science...)</p>
+                </div>
+            </a>
+
             <div class="section-title">Luyện giải đề</div>
-            
             <a href="ybm_tests.html" class="card">
                 <div class="icon-box bg-ybm">📚</div>
                 <div class="info">
@@ -216,7 +174,6 @@
             </a>
 
             <div class="section-title">Từ vựng & Cụm từ</div>
-
             <a href="word_formation.html" class="card">
                 <div class="icon-box bg-word">🏗️</div>
                 <div class="info">
@@ -234,7 +191,6 @@
             </a>
 
             <div class="section-title">Cấu trúc & Giao tiếp</div>
-
             <a href="english_structures.html" class="card">
                 <div class="icon-box bg-stru">🛠️</div>
                 <div class="info">
@@ -254,24 +210,17 @@
     </div>
 
     <script>
-        // MẬT KHẨU CỦA BẠN ĐẶT Ở ĐÂY
         const CORRECT_PASSWORD = "25012004.";
 
-        // Kiểm tra xem đã đăng nhập trước đó chưa (trong phiên này)
         window.onload = function() {
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 showMainContent();
-            } else {
-                // Đảm bảo ẩn nội dung và hiện form đăng nhập nếu chưa login
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('main-content').style.display = 'none';
             }
         };
 
         function checkPassword() {
             const input = document.getElementById("password-input").value;
             if (input === CORRECT_PASSWORD) {
-                // Lưu trạng thái đăng nhập
                 sessionStorage.setItem("isLoggedIn", "true");
                 showMainContent();
             } else {
@@ -285,11 +234,8 @@
             document.getElementById("main-content").style.display = "flex";
         }
 
-        // Cho phép nhấn Enter để đăng nhập
         function handleEnter(event) {
-            if (event.key === "Enter") {
-                checkPassword();
-            }
+            if (event.key === "Enter") { checkPassword(); }
         }
     </script>
 
