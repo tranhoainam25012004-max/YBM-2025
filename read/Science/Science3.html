@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Đọc Sách & Học Từ Vựng</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="toolbar">
+        <div class="page-info">
+            Trang 
+            <input type="number" id="page-input" value="1" min="1"> 
+            / <span id="page-count">---</span>
+        </div>
+    </div>
+
+    <div class="reader-container" id="wrapper">
+        <div id="page-container">
+            <div class="page-wrapper" id="page-left-wrapper">
+                <canvas id="pdf-render-left" class="pdf-canvas"></canvas>
+                <div id="text-layer-left" class="text-layer"></div>
+            </div>
+            
+            <div class="book-spine"></div>
+
+            <div class="page-wrapper" id="page-right-wrapper">
+                <canvas id="pdf-render-right" class="pdf-canvas"></canvas>
+                <div id="text-layer-right" class="text-layer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="selection-tooltip">Dịch 🔍</div>
+
+    <div class="fab-btn" id="fab-btn" title="Mở từ điển">🔍</div>
+    <div class="floating-nav">
+    <button id="prev-page-btn" class="nav-btn" title="Trang trước">◀</button>
+    <button id="next-page-btn" class="nav-btn" title="Trang sau">▶</button>
+    </div>
+    <div class="dictionary-pane" id="dictionary-pane">
+        <div class="dict-header">
+            <input type="text" id="dict-input" placeholder="Gõ câu hoặc từ tiếng Anh..." autocomplete="off">
+            <button id="dict-search">Dịch</button>
+        </div>
+        <div id="dict-result" class="dict-result">
+            <em>Kết quả dịch sẽ hiển thị ở đây.</em>
+        </div>
+    </div>
+
+    <script>
+        const url = 'Science_life.pdf';
+    </script>
+<script src="script.js"></script>
+</body>
+</html>
