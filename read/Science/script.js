@@ -177,7 +177,7 @@
             }
 
             const page = await pdfDoc.getPage(num);
-            const renderScale = window.devicePixelRatio > 1 ? window.devicePixelRatio * 2.5 : 4; 
+            const renderScale = window.devicePixelRatio > 1 ? window.devicePixelRatio * 1.5 : 2.5; 
             const viewport = page.getViewport({ scale: renderScale });
 
             if(isLeft) currentViewportLeft = viewport; else currentViewportRight = viewport;
@@ -198,7 +198,8 @@
                 viewport: viewport,
                 textDivs: []
             });
-        };
+
+        }; // Cuối hàm renderSinglePage
 
         const renderPage = async (num) => {
             pageIsRendering = true;
@@ -380,13 +381,17 @@ wrapper.addEventListener('wheel', (e) => {
             if (e.key === 'ArrowLeft') showPrevPage();
         });
 
-        // Đảm bảo biến 'url' trỏ tới file PDF của bạn đã được khai báo ở trên cùng file HTML nhé
-        pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+        // --- 1. TẢI FILE PDF (TỐI ƯU HÓA BỘ NHỚ CHỐNG VĂNG APP) ---
+        const loadingTask = pdfjsLib.getDocument({
+            url: url,
+            disableAutoFetch: true,   // Tắt tự động tải trước toàn bộ file
+            disableStream: false,     // Cho phép tải từng phần nhỏ (chunk)
+        });
+
+        loadingTask.promise.then(pdfDoc_ => {
             pdfDoc = pdfDoc_;
-            // Cập nhật tổng số trang (hiển thị trang cuối)
             const countEl = document.querySelector('#page-count');
             if(countEl) countEl.textContent = pdfDoc.numPages;
-            
             renderPage(pageNum);
         }).catch(err => { 
             console.error(err);
