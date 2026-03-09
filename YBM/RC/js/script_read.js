@@ -43,20 +43,26 @@ function loadSet(idx) {
     document.getElementById('progressText').innerText = progressPercent + '%';
     document.getElementById('progressLabel').innerText = `TIẾN ĐỘ: BỘ ${idx + 1} / ${totalSets}`;
 
-    // Reset trạng thái các nút và Panel
-    document.getElementById('readingPanel').classList.remove('show-translation', 'show-all-grammar', 'recall-mode', 'hide-ipa');
-    document.getElementById('practicePanel').classList.remove('show-translation', 'show-all-grammar', 'recall-mode', 'hide-ipa');
+// Reset Panel
+    document.getElementById('readingPanel').classList.remove('show-translation', 'show-all-grammar', 'recall-mode', 'hide-ipa'); // Passage luôn hiện IPA
+    
+    const practicePanel = document.getElementById('practicePanel');
+    if (practicePanel) {
+        practicePanel.classList.remove('show-translation', 'show-all-grammar', 'recall-mode');
+        practicePanel.classList.add('hide-ipa'); // Practice mặc định ẨN IPA
+    }
     document.getElementById('quizPanel').classList.remove('show-answers');
     
+    // Reset các nút
     document.getElementById('transBtn').classList.remove('active');
     document.getElementById('toggleBtn').classList.remove('active');
     document.getElementById('grammarAllBtn').classList.remove('active');
     document.getElementById('grammarAllBtn').innerHTML = `<i class="material-icons">architecture</i>`;
     document.getElementById('recallBtn').classList.remove('active');
     
-    // Reset nút IPA về mặc định (bật)
+    // Reset nút IPA về mặc định (TẮT)
     const ipaBtn = document.getElementById('ipaBtn');
-    if(ipaBtn) ipaBtn.classList.add('active');
+    if(ipaBtn) ipaBtn.classList.remove('active');
 
     // Render Flashcard
     const flashArea = document.getElementById('flashcardArea');
@@ -231,8 +237,13 @@ function switchTab(tabName) {
 
     if (tabName === 'flashcard') {
         document.querySelectorAll('.control-flashcard').forEach(btn => btn.style.display = 'grid');
-    } else if (tabName === 'passage' || tabName === 'practice') { 
+    } else if (tabName === 'passage') { 
+        // Tab Bài đọc: Chỉ hiện các nút chung của passage, KHÔNG hiện nút IPA
         document.querySelectorAll('.control-passage').forEach(btn => btn.style.display = 'grid');
+    } else if (tabName === 'practice') { 
+        // Tab Luyện tập: Hiện cả nút chung và nút IPA
+        document.querySelectorAll('.control-passage').forEach(btn => btn.style.display = 'grid');
+        document.querySelectorAll('.control-practice').forEach(btn => btn.style.display = 'grid');
     } else if (tabName === 'quiz') {
         document.querySelectorAll('.control-quiz').forEach(btn => btn.style.display = 'grid');
     }
@@ -396,17 +407,19 @@ document.addEventListener('input', function(e) {
 
 // Hàm mới: Ẩn/Hiện IPA
 function toggleIPA() {
-    const panels = [document.getElementById('readingPanel'), document.getElementById('practicePanel')];
+    // Chỉ lấy practicePanel ra để xử lý
+    const panel = document.getElementById('practicePanel');
     const btn = document.getElementById('ipaBtn');
     
     // Đảo ngược trạng thái của nút
     const isActive = !btn.classList.contains('active');
     btn.classList.toggle('active', isActive);
 
-    // Nếu nút không 'active', thêm class 'hide-ipa' để ẩn dòng chữ đi
-    panels.forEach(panel => {
-        if(panel) panel.classList.toggle('hide-ipa', !isActive);
-    });
+    // Nếu nút đang active (Bật) thì xóa class hide-ipa đi để hiện chữ. 
+    // Nếu nút không active (Tắt) thì thêm class hide-ipa vào để giấu chữ.
+    if(panel) {
+        panel.classList.toggle('hide-ipa', !isActive);
+    }
 }
 
 window.onload = () => {

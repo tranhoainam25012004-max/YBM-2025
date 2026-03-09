@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Part 7</title>
+    <title>TOEIC Part 7-đoạn đơn</title>
     <link rel="stylesheet" href="css/style_read.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -28,7 +28,11 @@
             <button class="tab-btn" onclick="switchTab('quiz')">
                 <i class="material-icons">task_alt</i> Câu hỏi
             </button>
+            <button class="tab-btn" onclick="switchTab('practice')">
+                <i class="material-icons">edit_document</i> Luyện tập
+            </button>
         </div>
+
         <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
                 <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
@@ -55,29 +59,36 @@
                     <div id="questionsBody"></div>
                 </div>
             </div>
+
+            <div id="section-practice" class="content-section">
+                <div class="panel" id="practicePanel">
+                    <div id="practicesBody"></div>
+                </div>
+            </div>
         </div>
 
         <div class="controls">
-    <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
-        <i class="material-icons">edit_note</i>
-    </button>
-    <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
-        <i class="material-icons">architecture</i>
-    </button>
-    <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
-        <i class="material-icons">translate</i>
-    </button>
+            <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+                <i class="material-icons">edit_note</i>
+            </button>
+            <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+                <i class="material-icons">architecture</i>
+            </button>
+            <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+                <i class="material-icons">translate</i>
+            </button>
+            <button class="btn-action btn-ipa control-practice" id="ipaBtn" onclick="toggleIPA()" title="Ẩn/Hiện phiên âm IPA">
+                <i class="material-icons">sort_by_alpha</i>
+            </button>
+            <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+                <i class="material-icons">import_export</i>
+            </button>
 
-    <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
-        <i class="material-icons">import_export</i>
-    </button>
-
-    <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
-        <i class="material-icons">visibility</i>
-    </button>
-</div>
+            <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+                <i class="material-icons">visibility</i>
+            </button>
+        </div>
     </div>
-
 <script>
 // Giữ nguyên mảng dữ liệu allSets và logic JavaScript của bạn
 const allSets = [
@@ -208,6 +219,20 @@ const allSets = [
         ]
     }
 ],
+  practices: [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
         questions: [
     {
       "q": "176: What is the SLP 10 a list of?",
@@ -392,6 +417,20 @@ const allSets = [
           "en": "Note: Refunds of class fees are only issued for cancellations made at least one week before the class date. To cancel your registration, please visit the center or call our front desk at 555-0195.", 
           "vi": "Lưu ý: Việc hoàn trả học phí chỉ được thực hiện đối với các trường hợp hủy bỏ được thực hiện ít nhất một tuần trước ngày học. Để hủy đăng ký, vui lòng đến trung tâm hoặc gọi cho bàn tiếp tân của chúng tôi theo số 555-0195.",
           "grammar": "<b>Mệnh đề quan hệ rút gọn bị động:</b> <i>cancellations made</i> (việc hủy bỏ được thực hiện). <br><b>Cấu trúc chỉ mục đích:</b> <i>To cancel...</i> đứng đầu câu để nhấn mạnh mục đích."
+        }
+      ]
+    }
+  ],
+    practices: [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }

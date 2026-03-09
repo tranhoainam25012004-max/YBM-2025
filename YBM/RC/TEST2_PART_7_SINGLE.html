@@ -28,7 +28,11 @@
             <button class="tab-btn" onclick="switchTab('quiz')">
                 <i class="material-icons">task_alt</i> Câu hỏi
             </button>
+            <button class="tab-btn" onclick="switchTab('practice')">
+                <i class="material-icons">edit_document</i> Luyện tập
+            </button>
         </div>
+
         <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
                 <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
@@ -55,27 +59,35 @@
                     <div id="questionsBody"></div>
                 </div>
             </div>
+
+            <div id="section-practice" class="content-section">
+                <div class="panel" id="practicePanel">
+                    <div id="practicesBody"></div>
+                </div>
+            </div>
         </div>
 
         <div class="controls">
-    <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
-        <i class="material-icons">edit_note</i>
-    </button>
-    <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
-        <i class="material-icons">architecture</i>
-    </button>
-    <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
-        <i class="material-icons">translate</i>
-    </button>
+            <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+                <i class="material-icons">edit_note</i>
+            </button>
+            <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+                <i class="material-icons">architecture</i>
+            </button>
+            <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+                <i class="material-icons">translate</i>
+            </button>
+            <button class="btn-action btn-ipa control-practice" id="ipaBtn" onclick="toggleIPA()" title="Ẩn/Hiện phiên âm IPA">
+                <i class="material-icons">sort_by_alpha</i>
+            </button>
+            <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+                <i class="material-icons">import_export</i>
+            </button>
 
-    <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
-        <i class="material-icons">import_export</i>
-    </button>
-
-    <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
-        <i class="material-icons">visibility</i>
-    </button>
-</div>
+            <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+                <i class="material-icons">visibility</i>
+            </button>
+        </div>
     </div>
 <script>
 const allSets = [
@@ -153,6 +165,20 @@ const allSets = [
           "en": "My business has grown from four employees to more than 50, and Deftlee has been there every step of the way. I'm always impressed by their ability to adapt to our changing needs. -Kasumi Tanaka, TBR Solutions",
           "vi": "Doanh nghiệp của tôi đã phát triển từ bốn nhân viên lên hơn 50, và Deftlee đã đồng hành trong mọi bước đường. Tôi luôn bị ấn tượng bởi khả năng thích ứng của họ đối với các nhu cầu đang thay đổi của chúng tôi. -Kasumi Tanaka, TBR Solutions",
           "grammar": "<b>Thành ngữ:</b> <i>every step of the way</i> (mọi bước đường, mọi chặng đường). <br><b>Cấu trúc bị động:</b> <i>be impressed by</i> (bị ấn tượng bởi). <br><b>Động từ nguyên thể bổ nghĩa:</b> <i>ability to adapt</i> (khả năng thích ứng)."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
@@ -252,6 +278,20 @@ const allSets = [
           "en": "Still, we apologize for the inconvenience this will cause for the fishing enthusiasts among our customers.\n-Conover's Management",
           "vi": "Mặc dù vậy, chúng tôi xin lỗi vì sự bất tiện mà điều này sẽ gây ra cho những người đam mê câu cá trong số các khách hàng của chúng tôi.\n-Ban Quản lý Conover's",
           "grammar": "<b>Cấu trúc:</b> <i>apologize for something</i> (xin lỗi vì điều gì). <br><b>Từ vựng:</b> <i>inconvenience</i> (sự bất tiện)."
+        }
+      ]
+    }
+  ],
+  "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
@@ -362,6 +402,20 @@ const allSets = [
       ]
     }
   ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
   "questions": [
     {
       "q": "151. What is suggested about Mr. Reilly?",
@@ -452,6 +506,20 @@ const allSets = [
           "en": "Tyrone Belton, 7:18 P.M.\nThat should work! Thanks for your help.",
           "vi": "Tyrone Belton, 7:18 P.M.\nCách đó có vẻ ổn đấy! Cảm ơn sự giúp đỡ của bạn.",
           "grammar": "<b>Cụm từ giao tiếp:</b> <i>That should work!</i> (Điều đó/Cách đó sẽ hiệu quả thôi!) - dùng để thể hiện sự đồng tình với một giải pháp."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
@@ -562,6 +630,20 @@ const allSets = [
           "en": "Those interested should visit www.carderbayauto.com/jobs/326 to fill out an electronic application.",
           "vi": "Những ai quan tâm nên truy cập www.carderbayauto.com/jobs/326 để điền vào đơn đăng ký điện tử.",
           "grammar": "<b>Mệnh đề quan hệ rút gọn:</b> <i>Those (who are) interested...</i> (Những người quan tâm...)."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
@@ -718,6 +800,34 @@ const allSets = [
       ]
     }
   ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
   "questions": [
     {
       "q": "158. Who most likely is Ms. Ferrell?",
@@ -846,6 +956,20 @@ const allSets = [
           "en": "Finally, while I'll be unavailable during the first week of my leave, please feel free to contact me if necessary during the second. — [4] —.",
           "vi": "Cuối cùng, trong khi tôi sẽ không có mặt trong tuần nghỉ phép đầu tiên, xin cứ tự nhiên liên hệ với tôi nếu cần thiết trong tuần thứ hai. — [4] —.",
           "grammar": "<b>Cấu trúc:</b> <i>feel free to do something</i> (cứ tự nhiên / đừng ngại làm gì)."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
@@ -993,6 +1117,20 @@ const allSets = [
       ]
     }
   ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
   "questions": [
     {
       "q": "164. Why was the notice written?",
@@ -1077,7 +1215,7 @@ const allSets = [
   ]
 },{
   "id": 8,
-  "range": "164-167",
+  "range": "168-171",
   "flashcards": [
     {"word": "Recital", "ipa": "/rɪˈsaɪtl/", "type": "Noun", "example": "I will attend, a piano recital tonight.", "exIpa": "/aɪ wɪl əˈtend, ə piˈænoʊ rɪˈsaɪtl təˈnaɪt/", "meaning": "Buổi biểu diễn / Buổi độc tấu", "exMeaning": "Tôi sẽ tham dự, một buổi biểu diễn piano vào tối nay."},
     {"word": "Superb / Excellent / Outstanding / Exceptional / Extraordinary / Unbeatable / Superior", "ipa": "/suːˈpɜːrb/ /ˈeksələnt/ /aʊtˈstændɪŋ/ /ɪkˈsepʃənl/ /ɪkˈstrɔːrdəneri/ /ʌnˈbiːtəbl/ /suːˈpɪriər/", "type": "Adjective", "example": "The food here, is truly superb.", "exIpa": "/ðə fuːd hɪr, ɪz ˈtruːli suːˈpɜːrb/", "meaning": "Xuất sắc / Tuyệt vời", "exMeaning": "Thức ăn ở đây, thực sự xuất sắc."},
@@ -1156,9 +1294,23 @@ const allSets = [
       ]
     }
   ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
+        }
+      ]
+    }
+  ],
   "questions": [
     {
-      "q": "164. Why was the notice written?",
+      "q": "168. Why was the notice written?",
       "qTrans": "Tại sao thông báo này được viết?",
       "options": [
         "(A) To advertise an annual concert",
@@ -1178,7 +1330,7 @@ const allSets = [
       "trap": "Đáp án C bẫy từ \"competition\" vì đoạn 2 có nhắc đến một cuộc thi trên TV (Top Vocalist), nhưng đó là thông tin phụ về một cá nhân, không phải mục đích chính của văn bản."
     },
     {
-      "q": "165. What is indicated about the musicians?",
+      "q": "169. What is indicated about the musicians?",
       "qTrans": "Điều gì được chỉ ra về các nhạc sĩ (người biểu diễn)?",
       "options": [
         "(A) They all play the same instrument.",
@@ -1198,7 +1350,7 @@ const allSets = [
       "trap": "Đáp án A sai vì đoạn 1 kể ra rất nhiều nhạc cụ (vocal, piano, cello, saxophone, violin). Đáp án D bẫy từ \"university\" nhưng bài không đề cập đến việc họ sắp tốt nghiệp."
     },
     {
-      "q": "166. Why most likely does the notice mention a television program?",
+      "q": "170. Why most likely does the notice mention a television program?",
       "qTrans": "Nhiều khả năng tại sao thông báo lại đề cập đến một chương trình truyền hình?",
       "options": [
         "(A) To explain the inspiration for an activity",
@@ -1218,7 +1370,7 @@ const allSets = [
       "trap": "Đáp án B dễ lừa do có chữ \"television/filmed\", nhưng buổi diễn ở trường (recital) KHÔNG được ghi hình lên TV, người ta chỉ khoe rằng nghệ sĩ đó từng thi trên TV thôi."
     },
     {
-      "q": "167. What is NOT suggested about the event?",
+      "q": "171. What is NOT suggested about the event?",
       "qTrans": "Điều gì KHÔNG được nhắc đến về sự kiện này?",
       "options": [
         "(A) It will be split into two parts.",
@@ -1320,6 +1472,20 @@ const allSets = [
           "en": "Simply let me know when you are available.\n\nSincerely,\nRosemary Wolfe",
           "vi": "Chỉ cần cho tôi biết khi nào cô rảnh.\n\nTrân trọng,\nRosemary Wolfe",
           "grammar": "<b>Cấu trúc mệnh lệnh lịch sự:</b> <i>Simply + V(bare)</i> (Chỉ cần làm...). <br><b>Mệnh đề danh ngữ:</b> <i>when you are available</i> làm tân ngữ cho động từ <i>know</i>."
+        }
+      ]
+    }
+  ],
+    "practices": [
+    {
+      "type": "conversation",
+      "context": "Đang cập nhật...",
+      "lines": [
+        {
+          "en": "Đang cập nhật...",
+          "ipa": "Đang cập nhật...",
+          "vi": "Đang cập nhật...",
+          "grammar": "Đang cập nhật..."
         }
       ]
     }
