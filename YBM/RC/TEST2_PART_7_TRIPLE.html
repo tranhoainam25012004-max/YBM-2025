@@ -20,7 +20,7 @@
     <div class="main-container">
         <div class="tab-navigation">
             <button class="tab-btn active" onclick="switchTab('flashcard')">
-                <i class="material-icons">style</i> Từ vựng
+                <i class="material-icons">style</i> Từ vựng 
             </button>
             <button class="tab-btn" onclick="switchTab('passage')">
                 <i class="material-icons">description</i> Bài đọc
@@ -28,24 +28,29 @@
             <button class="tab-btn" onclick="switchTab('quiz')">
                 <i class="material-icons">task_alt</i> Câu hỏi
             </button>
-            <button class="tab-btn" onclick="switchTab('practice')">
-                <i class="material-icons">edit_document</i> Luyện tập
-            </button>
-        </div>
-
-        <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
-                <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
-                <span id="progressText">0%</span>
-            </div>
-            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
-                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.5s;"></div>
-            </div>
         </div>
 
         <div class="main-content">
             <div id="section-flashcard" class="content-section active">
-                <div class="panel"><div id="flashcardArea"></div></div>
+                
+                <div class="vocab-toggle-wrapper" id="vocabSubTabs">
+                    <button class="vocab-toggle-btn active" onclick="switchSubTab('flashcard-view')">
+                        <i class="material-icons" style="font-size: 20px;">style</i> Thẻ
+                    </button>
+                    <button class="vocab-toggle-btn" onclick="switchSubTab('practice-view')">
+                        <i class="material-icons" style="font-size: 20px;">edit_note</i> Luyện tập
+                    </button>
+                </div>
+
+                <div class="panel sub-view" id="flashcard-view" style="display: block;">
+                    <div id="flashcardArea"></div>
+                </div>
+
+                <div class="panel sub-view" id="practice-view" style="display: none;">
+                    <div id="practicePanel">
+                        <div id="practicesBody"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="section-passage" class="content-section">
@@ -60,14 +65,10 @@
                 </div>
             </div>
 
-            <div id="section-practice" class="content-section">
-                <div class="panel" id="practicePanel">
-                    <div id="practicesBody"></div>
-                </div>
-            </div>
-        </div>
-
         <div class="controls">
+          <button class="btn-action btn-swap control-flashcard" id="swapModeBtn" onclick="toggleFlashcardMode()" title="Đổi chiều Anh-Việt / Việt-Anh">
+        <i class="material-icons">swap_horiz</i>
+    </button>
             <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
                 <i class="material-icons">edit_note</i>
             </button>
@@ -83,13 +84,13 @@
             <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
                 <i class="material-icons">import_export</i>
             </button>
-
             <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
                 <i class="material-icons">visibility</i>
             </button>
+            
         </div>
     </div>
-
+</body>
 <script>
 const allSets = [
 {

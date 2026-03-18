@@ -20,7 +20,7 @@
     <div class="main-container">
         <div class="tab-navigation">
             <button class="tab-btn active" onclick="switchTab('flashcard')">
-                <i class="material-icons">style</i> Từ vựng
+                <i class="material-icons">style</i> Từ vựng 
             </button>
             <button class="tab-btn" onclick="switchTab('passage')">
                 <i class="material-icons">description</i> Bài đọc
@@ -28,24 +28,29 @@
             <button class="tab-btn" onclick="switchTab('quiz')">
                 <i class="material-icons">task_alt</i> Câu hỏi
             </button>
-            <button class="tab-btn" onclick="switchTab('practice')">
-                <i class="material-icons">edit_document</i> Luyện tập
-            </button>
-        </div>
-
-        <div class="progress-container" style="padding: 0 24px; margin-top: 10px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; color: #64748b;">
-                <span id="progressLabel">TIẾN ĐỘ BÀI HỌC</span>
-                <span id="progressText">0%</span>
-            </div>
-            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
-                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); transition: 0.5s;"></div>
-            </div>
         </div>
 
         <div class="main-content">
             <div id="section-flashcard" class="content-section active">
-                <div class="panel"><div id="flashcardArea"></div></div>
+                
+                <div class="vocab-toggle-wrapper" id="vocabSubTabs">
+                    <button class="vocab-toggle-btn active" onclick="switchSubTab('flashcard-view')">
+                        <i class="material-icons" style="font-size: 20px;">style</i> Thẻ
+                    </button>
+                    <button class="vocab-toggle-btn" onclick="switchSubTab('practice-view')">
+                        <i class="material-icons" style="font-size: 20px;">edit_note</i> Luyện tập
+                    </button>
+                </div>
+
+                <div class="panel sub-view" id="flashcard-view" style="display: block;">
+                    <div id="flashcardArea"></div>
+                </div>
+
+                <div class="panel sub-view" id="practice-view" style="display: none;">
+                    <div id="practicePanel">
+                        <div id="practicesBody"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="section-passage" class="content-section">
@@ -60,14 +65,10 @@
                 </div>
             </div>
 
-            <div id="section-practice" class="content-section">
-                <div class="panel" id="practicePanel">
-                    <div id="practicesBody"></div>
-                </div>
-            </div>
-        </div>
-
         <div class="controls">
+          <button class="btn-action btn-swap control-flashcard" id="swapModeBtn" onclick="toggleFlashcardMode()" title="Đổi chiều Anh-Việt / Việt-Anh">
+        <i class="material-icons">swap_horiz</i>
+    </button>
             <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
                 <i class="material-icons">edit_note</i>
             </button>
@@ -83,12 +84,13 @@
             <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
                 <i class="material-icons">import_export</i>
             </button>
-
             <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
                 <i class="material-icons">visibility</i>
             </button>
+            
         </div>
     </div>
+</body>
 <script>
 // Giữ nguyên mảng dữ liệu allSets và logic JavaScript của bạn
 const allSets = [
@@ -96,52 +98,7 @@ const allSets = [
         id: 1,
         range: "176-180",
         title: "Wendell Green Biography & E-mail",
-        flashcards:[
-    {"word": "Represent", "ipa": "/ˌreprɪˈzent/", "type": "Verb", "example": "The lawyer was chosen to represent the company in court.", "exIpa": "/ðə ˈlɔɪər wəz ˈtʃoʊzən tə ˌreprɪˈzent ðə ˈkʌmpəni ɪn kɔːrt/", "meaning": "Đại diện", "exMeaning": "Luật sư đã được chọn để đại diện cho công ty tại tòa."},
-    {"word": "Work/ Piece", "ipa": "/wɜːrk/ /piːs/", "type": "Noun", "example": "This sculpture is a magnificent piece of art.", "exIpa": "/ðɪs ˈskʌlptʃər ɪz ə mæɡˈnɪfɪsnt piːs əv ɑːrt/", "meaning": "Tác phẩm", "exMeaning": "Bức tượng điêu khắc này là một tác phẩm nghệ thuật tuyệt vời."},
-    {"word": "Society/ Association/ Alliance/ Coalition", "ipa": "/səˈsaɪəti/ /əˌsəʊsiˈeɪʃn/ /əˈlaɪəns/ /ˌkəʊəˈlɪʃn/", "type": "Noun", "example": "The local business association organized a charity event.", "exIpa": "/ðə ˈloʊkl ˈbɪznəs əˌsoʊsiˈeɪʃn ˈɔːrɡənaɪzd ə ˈtʃærəti ɪˈvent/", "meaning": "Hiệp hội, liên minh", "exMeaning": "Hiệp hội doanh nghiệp địa phương đã tổ chức một sự kiện từ thiện."},
-    {"word": "Expert/ Specialist/ Professional", "ipa": "/ˈekspɜːrt/ /ˈspeʃəlɪst/ /prəˈfeʃənl/", "type": "Noun", "example": "You should seek advice from a financial expert.", "exIpa": "/ju ʃʊd siːk ədˈvaɪs frəm ə faɪˈnænʃl ˈekspɜːrt/", "meaning": "Chuyên gia", "exMeaning": "Bạn nên tìm lời khuyên từ một chuyên gia tài chính."},
-    {"word": "Professional", "ipa": "/prəˈfeʃənl/", "type": "Adjective", "example": "The team provided a very professional service.", "exIpa": "/ðə tiːm prəˈvaɪdɪd ə ˈveri prəˈfeʃənl ˈsɜːrvɪs/", "meaning": "Chuyên nghiệp", "exMeaning": "Nhóm đã cung cấp một dịch vụ rất chuyên nghiệp."},
-    {"word": "Aim at sth", "ipa": "/eɪm æt/", "type": "Phrasal Verb", "example": "The program aims at helping young entrepreneurs.", "exIpa": "/ðə ˈproʊɡræm eɪmz æt ˈhelpɪŋ jʌŋ ˌɑːntrəprəˈnɜːrz/", "meaning": "Nhắm đến cái gì đó", "exMeaning": "Chương trình nhắm đến việc giúp đỡ các doanh nhân trẻ."},
-    {"word": "A variety of/ An assortment of/ An array of/ A wide range of/ A broad range of", "ipa": "/ə vəˈraɪəti əv/", "type": "Phrase", "example": "The shop offers a wide range of organic products.", "exIpa": "/ðə ʃɑːp ˈɔːfərz ə waɪd reɪndʒ əv ɔːrˈɡænɪk ˈprɑːdʌkts/", "meaning": "Nhiều, đa dạng", "exMeaning": "Cửa hàng cung cấp nhiều loại sản phẩm hữu cơ."},
-    {"word": "Genre", "ipa": "/ˈʒɑːnrə/", "type": "Noun", "example": "What is your favorite genre of music?", "exIpa": "/wʌt ɪz jɔːr ˈfeɪvərɪt ˈʒɑːnrə əv ˈmjuːzɪk/", "meaning": "Thể loại", "exMeaning": "Thể loại âm nhạc yêu thích của bạn là gì?"},
-    {"word": "Adventure", "ipa": "/ədˈventʃər/", "type": "Noun", "example": "They set out on a sailing adventure across the Atlantic.", "exIpa": "/ðeɪ set aʊt ɑːn ə ˈseɪlɪŋ ədˈventʃər əˈkrɔːs ði ətˈlæntɪk/", "meaning": "Cuộc phiêu lưu", "exMeaning": "Họ đã bắt đầu một cuộc phiêu lưu chèo thuyền băng qua Đại Tây Dương."},
-    {"word": "Adventurous", "ipa": "/ədˈventʃərəs/", "type": "Adjective", "example": "She is an adventurous traveler who loves exploring caves.", "exIpa": "/ʃi ɪz ən ədˈventʃərəs ˈtrævlər huː lʌvz ɪkˈsplɔːrɪŋ keɪvz/", "meaning": "Thích phiêu lưu", "exMeaning": "Cô ấy là một người du lịch thích phiêu lưu, người yêu thích khám phá hang động."},
-    {"word": "Startle/ Surprise", "ipa": "/ˈstɑːrtl/ /səˈpraɪz/", "type": "Verb", "example": "The sudden thunder startled everyone in the room.", "exIpa": "/ðə ˈsʌdn ˈθʌndər ˈstɑːrtld ˈevriwʌn ɪn ðə ruːm/", "meaning": "Làm ngạc nhiên, làm giật mình", "exMeaning": "Tiếng sấm đột ngột làm mọi người trong phòng giật mình."},
-    {"word": "Startling/ Surprising", "ipa": "/ˈstɑːrtlɪŋ/ /səˈpraɪzɪŋ/", "type": "Adjective", "example": "The researchers made a startling discovery yesterday.", "exIpa": "/ðə rɪˈsɜːrtʃərz meɪd ə ˈstɑːrtlɪŋ dɪˈskʌvəri ˈjestərdeɪ/", "meaning": "Đáng kinh ngạc, gây bất ngờ", "exMeaning": "Các nhà nghiên cứu đã thực hiện một khám phá đáng kinh ngạc vào ngày hôm qua."},
-    {"word": "Investigate", "ipa": "/ɪnˈvestɪɡeɪt/", "type": "Verb", "example": "Detectives are investigating the cause of the fire.", "exIpa": "/dɪˈtektɪvz ɑːr ɪnˈvestɪɡeɪtɪŋ ðə kɔːz əv ðə ˈfaɪər/", "meaning": "Điều tra", "exMeaning": "Các thám tử đang điều tra nguyên nhân của vụ hỏa hoạn."},
-    {"word": "Occurrences/ Events", "ipa": "/əˈkɜːrənsiz/ /ɪˈvents/", "type": "Noun", "example": "Such rare occurrences are hard to predict.", "exIpa": "/sʌtʃ rer əˈkɜːrənsɪz ɑːr hɑːrd tə prɪˈdɪkt/", "meaning": "Sự kiện, việc xảy ra", "exMeaning": "Những việc xảy ra hiếm hoi như vậy rất khó dự đoán."},
-    {"word": "Coastal", "ipa": "/ˈkəʊstl/", "type": "Adjective", "example": "Heavy rain is expected in coastal areas this weekend.", "exIpa": "/ˈhevi reɪn ɪz ɪkˈspektɪd ɪn ˈkoʊstl ˈeriəz ðɪs ˈwiːkend/", "meaning": "Thuộc bờ biển", "exMeaning": "Dự kiến sẽ có mưa lớn ở các khu vực ven biển vào cuối tuần này."},
-    {"word": "Personality/ Character", "ipa": "/ˌpɜːrsəˈnæləti/ /ˈkærəktər/", "type": "Noun", "example": "He has a very strong and independent character.", "exIpa": "/hi hæz ə ˈveri strɔːŋ ənd ˌɪndɪˈpendənt ˈkærəktər/", "meaning": "Tính cách", "exMeaning": "Anh ấy có một tính cách rất mạnh mẽ và độc lập."},
-    {"word": "Figure out", "ipa": "/ˈfɪɡjər aʊt/", "type": "Phrasal Verb", "example": "We need to figure out a way to reduce costs.", "exIpa": "/wi niːd tə ˈfɪɡjər aʊt ə weɪ tə rɪˈduːs kɔːsts/", "meaning": "Tìm hiểu, tìm ra", "exMeaning": "Chúng ta cần tìm ra cách để giảm thiểu chi phí."},
-    {"word": "Touching", "ipa": "/ˈtʌtʃɪŋ/", "type": "Adjective", "example": "The movie has a very touching ending.", "exIpa": "/ðə ˈmuːvi hæz ə ˈveri ˈtʌtʃɪŋ ˈendɪŋ/", "meaning": "Cảm động", "exMeaning": "Bộ phim có một cái kết rất cảm động."},
-    {"word": "Feature/ Include/ Boast", "ipa": "/ˈfiːtʃər/ /ɪnˈkluːd/ /bəʊst/", "type": "Verb", "example": "The new smartphone features a high-quality camera.", "exIpa": "/ðə nuː ˈsmɑːrtfoʊn ˈfiːtʃərz ə haɪ ˈkwɑːləti ˈkæmrə/", "meaning": "Bao gồm, có (đặc điểm), sở hữu", "exMeaning": "Chiếc điện thoại thông minh mới có tính năng camera chất lượng cao."},
-    {"word": "Illustration", "ipa": "/ˌɪləˈstreɪʃn/", "type": "Noun", "example": "The book contains many colorful illustrations.", "exIpa": "/ðə bʊk kənˈteɪnz ˈmeni ˈkʌlərfəl ˌɪləˈstreɪʃnz/", "meaning": "Hình ảnh minh họa", "exMeaning": "Cuốn sách chứa nhiều hình ảnh minh họa đầy màu sắc."},
-    {"word": "Profession/ Career/ Job", "ipa": "/prəˈfeʃn/ /kəˈrɪər/ /dʒɒb/", "type": "Noun", "example": "Teaching is a very demanding profession.", "exIpa": "/ˈtiːtʃɪŋ ɪz ə ˈveri dɪˈmændɪŋ prəˈfeʃn/", "meaning": "Nghề nghiệp, công việc", "exMeaning": "Dạy học là một nghề nghiệp đòi hỏi rất khắt khe."},
-    {"word": "Touch on/ Refer to/ Mention", "ipa": "/tʌtʃ ɒn/ /rɪˈfɜːr tuː/ /ˈmenʃn/", "type": "Verb/Phrasal Verb", "example": "The report touches on several important issues.", "exIpa": "/ðə rɪˈpɔːrt ˈtʌtʃɪz ɑːn ˈsevrəl ɪmˈpɔːrtnt ˈɪʃuːz/", "meaning": "Đề cập đến", "exMeaning": "Bản báo cáo đề cập đến một vài vấn đề quan trọng."},
-    {"word": "Humorous/ Comical", "ipa": "/ˈhjuːmərəs/ /ˈkɒmɪkl/", "type": "Adjective", "example": "The play was filled with humorous situations.", "exIpa": "/ðə pleɪ wəz fɪld wɪθ ˈhjuːmərəs ˌsɪtʃuˈeɪʃnz/", "meaning": "Hài hước", "exMeaning": "Vở kịch đầy rẫy những tình huống hài hước."},
-    {"word": "Frustrating/ Disappointing", "ipa": "/ˈfrʌstreɪtɪŋ/ /ˌdɪsəˈpɔɪntɪŋ/", "type": "Adjective", "example": "It's frustrating when things don't go as planned.", "exIpa": "/ɪts ˈfrʌstreɪtɪŋ wen θɪŋz doʊnt ɡoʊ əz plænd/", "meaning": "Thất vọng, gây bực bội", "exMeaning": "Thật bực bội khi mọi thứ không diễn ra như kế hoạch."},
-    {"word": "Heartbreaking/ Sad", "ipa": "/ˈhɑːrtbreɪkɪŋ/ /sæd/", "type": "Adjective", "example": "The news of the earthquake was truly heartbreaking.", "exIpa": "/ðə nuːz əv ði ˈɜːrθkweɪk wəz ˈtruːli ˈhɑːrtbreɪkɪŋ/", "meaning": "Buồn, đau lòng", "exMeaning": "Tin tức về trận động đất thực sự rất đau lòng."},
-    {"word": "Enthusiastic about/ Passionate about", "ipa": "/ɪnˌθjuːziˈæstɪk/ /ˈpæʃənət/", "type": "Adjective", "example": "She is very passionate about animal rights.", "exIpa": "/ʃi ɪz ˈveri ˈpæʃənət əˈbaʊt ˈænɪml raɪts/", "meaning": "Nhiệt tình, đam mê", "exMeaning": "Cô ấy rất đam mê về quyền động vật."},
-    {"word": "Based on", "ipa": "/beɪst ɒn/", "type": "Adjective/Phrase", "example": "The film is based on a true story.", "exIpa": "/ðə fɪlm ɪz beɪst ɑːn ə truː ˈstɔːri/", "meaning": "Dựa trên", "exMeaning": "Bộ phim dựa trên một câu chuyện có thật."},
-    {"word": "Present", "ipa": "/prɪˈzent/", "type": "Verb", "example": "Each group will present their ideas to the class.", "exIpa": "/iːtʃ ɡruːp wɪl prɪˈzent ðer aɪˈdiːəz tə ðə klæs/", "meaning": "Trình bày, thuyết trình", "exMeaning": "Mỗi nhóm sẽ trình bày ý tưởng của họ trước lớp."},
-    {"word": "Present", "ipa": "/prɪˈzent/", "type": "Verb", "example": "Please present your passport at the check-in desk.", "exIpa": "/pliːz prɪˈzent jɔːr ˈpæspɔːrt æt ðə ˈtʃek ɪn desk/", "meaning": "Xuất trình", "exMeaning": "Vui lòng xuất trình hộ chiếu của bạn tại bàn làm việc."},
-    {"word": "Present/ Lead to/ Result in/ Pose", "ipa": "/prɪˈzent/ /liːd tuː/ /rɪˈzʌlt ɪn/ /pəʊz/", "type": "Verb", "example": "The current situation presents many challenges.", "exIpa": "/ðə ˈkɜːrənt ˌsɪtʃuˈeɪʃn prɪˈzents ˈmeni ˈtʃælɪndʒɪz/", "meaning": "Gây ra, dẫn đến", "exMeaning": "Tình hình hiện tại gây ra nhiều thách thức."},
-    {"word": "Adaptation", "ipa": "/ˌædæpˈteɪʃn/", "type": "Noun", "example": "Plants have many adaptations to survive in the desert.", "exIpa": "/plænts hæv ˈmeni ˌædæpˈteɪʃnz tə sərˈvaɪv ɪn ðə ˈdezərt/", "meaning": "Sự thích nghi, sự thay thế", "exMeaning": "Thực vật có nhiều sự thích nghi để tồn tại trong sa mạc."},
-    {"word": "Adaptation", "ipa": "/ˌædæpˈteɪʃn/", "type": "Noun", "example": "The film is an adaptation of a famous novel.", "exIpa": "/ðə fɪlm ɪz ən ˌædæpˈteɪʃn əv ə ˈfeɪməs ˈnɑːvl/", "meaning": "Sự chuyển thể", "exMeaning": "Bộ phim là một bản chuyển thể của một cuốn tiểu thuyết nổi tiếng."},
-    {"word": "Fictional", "ipa": "/ˈfɪk.ʃən.əl/", "type": "Adjective", "example": "Sherlock Holmes is a fictional character.", "exIpa": "/ˈʃɜːrlɑːk hoʊmz ɪz ə ˈfɪkʃənl ˈkærəktər/", "meaning": "Hư cấu", "exMeaning": "Sherlock Holmes là một nhân vật hư cấu."},
-    {"word": "Fiction/ Novel", "ipa": "/ˈfɪk.ʃən/ /ˈnɒv.əl/", "type": "Noun", "example": "She enjoys reading historical fiction and novels.", "exIpa": "/ʃi ɪnˈdʒɔɪz ˈriːdɪŋ hɪˈstɔːrɪkl ˈfɪkʃn ənd ˈnɑːvlz/", "meaning": "Tiểu thuyết", "exMeaning": "Cô ấy thích đọc truyện hư cấu lịch sử và tiểu thuyết."},
-    {"word": "Character", "ipa": "/ˈkær.ək.tər/", "type": "Noun", "example": "Who is your favorite character in the movie?", "exIpa": "/huː ɪz jɔːr ˈfeɪvərɪt ˈkærəktər ɪn ðə ˈmuːvi/", "meaning": "Nhân vật", "exMeaning": "Ai là nhân vật yêu thích của bạn trong bộ phim?"},
-    {"word": "Character/ Personality", "ipa": "/ˈkær.ək.tər/ /ˌpɜː.sənˈæl.ə.ti/", "type": "Noun", "example": "He has a very strong and independent personality.", "exIpa": "/hi hæz ə ˈveri strɔːŋ ənd ˌɪndɪˈpendənt ˌpɜːrsəˈnæləti/", "meaning": "Tính cách", "exMeaning": "Anh ấy có một tính cách rất mạnh mẽ và độc lập."},
-    {"word": "Author/ Novelist/ Writer", "ipa": "/ˈɔː.θər/ /ˈnɒv.əl.ɪst/ /ˈraɪ.tər/", "type": "Noun", "example": "The author is signing books at the local library.", "exIpa": "/ði ˈɔːθər ɪz ˈsaɪnɪŋ bʊks æt ðə ˈloʊkl ˈlaɪbreri/", "meaning": "Tác giả", "exMeaning": "Tác giả đang ký tặng sách tại thư viện địa phương."},
-    {"word": "Collaborate with/ Cooperate with/ Partner with", "ipa": "/kəˈlæb.ə.reɪt/ /koʊˈɒp.ə.reɪt/ /ˈpɑːrt.nər/", "type": "Verb", "example": "The two companies decided to collaborate with each other.", "exIpa": "/ðə tuː ˈkʌmpəniz dɪˈsaɪdɪd tə kəˈlæbəreɪt wɪθ iːtʃ ˈʌðər/", "meaning": "Hợp tác", "exMeaning": "Hai công ty đã quyết định hợp tác với nhau."},
-    {"word": "Previous/ Former", "ipa": "/ˈpriː.vi.əs/ /ˈfɔː.mər/", "type": "Adjective", "example": "The former president attended the ceremony.", "exIpa": "/ðə ˈfɔːrmər ˈprezɪdənt əˈtendɪd ðə ˈserəmoʊni/", "meaning": "Trước đây", "exMeaning": "Cựu tổng thống đã tham dự buổi lễ."},
-    {"word": "Contribute to", "ipa": "/kənˈtrɪb.juːt tuː/", "type": "Verb", "example": "Many people contributed to the success of the project.", "exIpa": "/ˈmeni ˈpiːpl kənˈtrɪbjutɪd tə ðə səkˈses əv ðə ˈprɑːdʒekt/", "meaning": "Đóng góp", "exMeaning": "Nhiều người đã đóng góp vào sự thành công của dự án."},
-    {"word": "Adapt/ Adjust/ Modify/ Revise/ Change", "ipa": "/əˈdæpt/ /əˈdʒʌst/ /ˈmɒd.ɪ.faɪ/ /rɪˈvaɪz/ /tʃeɪndʒ/", "type": "Verb", "example": "We need to adjust the plan to fit the new budget.", "exIpa": "/wi niːd tə əˈdʒʌst ðə plæn tə fɪt ðə nuː ˈbʌdʒɪt/", "meaning": "Thay đổi", "exMeaning": "Chúng ta cần điều chỉnh kế hoạch để phù hợp với ngân sách mới."},
-    {"word": "Adapt", "ipa": "/əˈdæpt/", "type": "Verb", "example": "The book was adapted into a very successful film.", "exIpa": "/ðə bʊk wəz əˈdæptɪd ˈɪntu ə ˈveri səkˈsesfl fɪlm/", "meaning": "Chuyển thể", "exMeaning": "Cuốn sách đã được chuyển thể thành một bộ phim rất thành công."},
-    {"word": "Lawyer / Attorney", "ipa": "/ˈlɔɪ.ər/ /əˈtɜː.ni/", "type": "Noun", "example": "You should consult a lawyer before signing the contract.", "exIpa": "/ju ʃʊd kənˈsʌlt ə ˈlɔɪər bɪˈfɔːr ˈsaɪnɪŋ ðə ˈkɑːntrækt/", "meaning": "Luật sư", "exMeaning": "Bạn nên tham khảo ý kiến luật sư trước khi ký hợp đồng."},
-    {"word": "Proposal / Suggestion/ Recommendation", "ipa": "/prəˈpoʊ.zəl/ /səˈdʒes.tʃən/ /ˌrek.ə.menˈdeɪ.ʃən/", "type": "Noun", "example": "The board is considering your proposal.", "exIpa": "/ðə bɔːrd ɪz kənˈsɪdərɪŋ jɔːr prəˈpoʊzl/", "meaning": "Đề xuất", "exMeaning": "Ban giám đốc đang xem xét đề xuất của bạn."}
-],
+        
         passages: [
     {
         type: "text",
@@ -219,20 +176,7 @@ const allSets = [
         ]
     }
 ],
-  practices: [
-    {
-      "type": "conversation",
-      "context": "Đang cập nhật...",
-      "lines": [
-        {
-          "en": "Đang cập nhật...",
-          "ipa": "Đang cập nhật...",
-          "vi": "Đang cập nhật...",
-          "grammar": "Đang cập nhật..."
-        }
-      ]
-    }
-  ],
+
         questions: [
     {
       "q": "176: What is the SLP 10 a list of?",
