@@ -1,0 +1,208 @@
+
+        :root {
+            --paper-bg: #fdfaf3;
+            --text-color: #2c3e50;
+            --vi-color: #d35400;
+            --hover-bg: #e8f4f8;
+            --primary-blue: #3498db;
+            --highlight-bg: #fff9c4; 
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #e0e0e0;
+            color: var(--text-color);
+            line-height: 2.2;
+            margin: 0;
+            padding: 20px 20px 150px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .book-page {
+            width: 100%;
+            max-width: 800px;
+            background: var(--paper-bg);
+            padding: 40px 60px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            font-size: 1.15rem;
+            text-align: justify;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 75vh; 
+        }
+
+        .instruction {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        #story-content {
+            flex-grow: 1; 
+        }
+
+        .interactive-group {
+            cursor: pointer;
+            border-bottom: 1px dashed #bdc3c7;
+            transition: all 0.2s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .interactive-group.active-highlight {
+            background-color: var(--highlight-bg);
+            border-bottom: 2px solid var(--vi-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .en-text { color: #000; font-weight: 500; }
+
+        .vi-text {
+            display: none;
+            color: var(--vi-color);
+            font-style: italic;
+            margin-left: 6px;
+            background-color: #fdf2e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1rem;
+        }
+
+        .vi-text.show { display: inline; }
+
+/* --- CSS PAGINATION --- */
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;   /* Đổi từ margin-top thành margin-bottom */
+            padding-bottom: 20px;  /* Đổi từ padding-top thành padding-bottom */
+            border-bottom: 1px solid #ddd; /* Đổi viền lên dưới */
+        }
+
+        .page-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .page-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .page-info {
+            font-family: 'Segoe UI', sans-serif;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* --- CSS DICTIONARY PANEL --- */
+        .dict-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            z-index: 2000;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            padding: 15px 0;
+            border-top: 4px solid var(--primary-blue);
+        }
+
+        .dict-panel.active { bottom: 0; }
+
+        .panel-container { max-width: 800px; margin: 0 auto; padding: 0 20px; position: relative; }
+        .panel-header { display: flex; align-items: center; margin-bottom: 8px; gap: 12px; }
+        .dict-word { font-weight: bold; font-size: 1.4rem; color: var(--primary-blue); text-transform: capitalize; font-family: 'Segoe UI', sans-serif; }
+        .dict-ipa { color: #7f8c8d; font-size: 1rem; font-family: 'Segoe UI', sans-serif; }
+        .dict-audio-btn { cursor: pointer; background: #e8f4f8; border: 1px solid var(--primary-blue); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--primary-blue); }
+        .close-panel { position: absolute; right: 20px; top: -5px; background: none; border: none; font-size: 1.8rem; color: #bdc3c7; cursor: pointer; padding: 5px; }
+        .dict-meaning { font-size: 1rem; color: #34495e; line-height: 1.5; max-height: 80px; overflow-y: auto; font-family: 'Segoe UI', sans-serif; }
+
+        /* --- CSS CUSTOM AUDIO PLAYER --- */
+        .audio-player-container {
+            background: var(--paper-bg);
+            border: 1px solid #ddd;
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 6px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .play-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            background: #2980b9;
+        }
+
+        .progress-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        #progress-bar {
+            flex-grow: 1;
+            cursor: pointer;
+            accent-color: var(--primary-blue); /* Màu thanh cuộn */
+        }
+
+        .speed-control {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #bdc3c7;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            background: white;
+            color: var(--text-color);
+            cursor: pointer;
+            outline: none;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px 10px 160px 10px; }
+            .book-page { padding: 20px; }
+            .page-btn { padding: 8px 12px; font-size: 0.9rem; }
+        }

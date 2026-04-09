@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <style>
+        :root {
+            --paper-bg: #fdfaf3;
+            --text-color: #2c3e50;
+            --vi-color: #d35400;
+            --hover-bg: #e8f4f8;
+            --primary-blue: #3498db;
+            --highlight-bg: #fff9c4; 
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #e0e0e0;
+            color: var(--text-color);
+            line-height: 2.2;
+            margin: 0;
+            padding: 20px 20px 150px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .book-page {
+            width: 100%;
+            max-width: 800px;
+            background: var(--paper-bg);
+            padding: 40px 60px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            font-size: 1.15rem;
+            text-align: justify;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 75vh; 
+        }
+
+        .instruction {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        #story-content {
+            flex-grow: 1; 
+        }
+
+        .interactive-group {
+            cursor: pointer;
+            border-bottom: 1px dashed #bdc3c7;
+            transition: all 0.2s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .interactive-group.active-highlight {
+            background-color: var(--highlight-bg);
+            border-bottom: 2px solid var(--vi-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .en-text { color: #000; font-weight: 500; }
+
+        .vi-text {
+            display: none;
+            color: var(--vi-color);
+            font-style: italic;
+            margin-left: 6px;
+            background-color: #fdf2e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1rem;
+        }
+
+        .vi-text.show { display: inline; }
+
+        /* --- CSS PAGINATION --- */
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .page-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .page-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .page-info {
+            font-family: 'Segoe UI', sans-serif;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* --- CSS DICTIONARY PANEL --- */
+        .dict-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            z-index: 2000;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            padding: 15px 0;
+            border-top: 4px solid var(--primary-blue);
+        }
+
+        .dict-panel.active { bottom: 0; }
+
+        .panel-container { max-width: 800px; margin: 0 auto; padding: 0 20px; position: relative; }
+        .panel-header { display: flex; align-items: center; margin-bottom: 8px; gap: 12px; }
+        .dict-word { font-weight: bold; font-size: 1.4rem; color: var(--primary-blue); text-transform: capitalize; font-family: 'Segoe UI', sans-serif; }
+        .dict-ipa { color: #7f8c8d; font-size: 1rem; font-family: 'Segoe UI', sans-serif; }
+        .dict-audio-btn { cursor: pointer; background: #e8f4f8; border: 1px solid var(--primary-blue); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--primary-blue); }
+        .close-panel { position: absolute; right: 20px; top: -5px; background: none; border: none; font-size: 1.8rem; color: #bdc3c7; cursor: pointer; padding: 5px; }
+        .dict-meaning { font-size: 1rem; color: #34495e; line-height: 1.5; max-height: 80px; overflow-y: auto; font-family: 'Segoe UI', sans-serif; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px 10px 160px 10px; }
+            .book-page { padding: 20px; }
+            .page-btn { padding: 8px 12px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="book-page">
+        <div class="instruction">
+            📖 <b>Click cụm từ</b> để hiện nghĩa song ngữ. <b>Bôi đen</b> để tra từ điển.
+        </div>
+        
+        <div id="story-content"></div>
+
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 0. KHAI BÁO BIẾN TOÀN CỤC ĐỂ TRÁNH LỖI REFERENCE ERROR ---
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+
+        const rawText = `
+Mr and Mrs Dursley, of number four, Privet Drive (Ông bà Dursley, nhà số 4, đường Privet Drive), were proud to say (rất tự hào mà nói rằng) that they were perfectly normal, thank you very much (họ hoàn toàn bình thường, cảm ơn rất nhiều). They were the last people you'd expect (Họ là những người cuối cùng mà bạn nghĩ) to be involved in anything strange or mysterious (sẽ dính líu đến bất cứ chuyện gì kỳ lạ hay bí ẩn), because they just didn't hold with such nonsense (bởi vì họ không đời nào chấp nhận những chuyện vớ vẫn như vậy).
+        
+Mr Dursley was the director of a firm called Grunnings (Ông Dursley là giám đốc của một công ty tên là Grunnings), which made drills (chuyên sản xuất máy khoan). He was a big, beefy man (Ông là một người đàn ông to béo, lực lưỡng) with hardly any neck (với cái cổ gần như không có), although he did have a very large moustache (mặc dù ông có một bộ ria mép rất to). 
+        
+Mrs Dursley was thin and blonde (Bà Dursley thì gầy và có mái tóc vàng) and had nearly twice the usual amount of neck (và có cái cổ dài gần gấp đôi bình thường), which came in very useful (điều này lại trở nên rất hữu ích) as she spent so much of her time craning over garden fences (vì bà dành rất nhiều thời gian để vươn cổ qua hàng rào sân vườn), spying on the neighbours (để rình mò hàng xóm). 
+        
+The Dursleys had a small son called Dudley (Vợ chồng Dursley có một cậu con trai nhỏ tên là Dudley) and in their opinion there was no finer boy anywhere (và theo ý họ thì không đâu có một cậu bé nào tuyệt vời hơn). The Dursleys had everything they wanted (Gia đình Dursley có mọi thứ mà họ muốn), but they also had a secret (nhưng họ cũng có một bí mật), and their greatest fear was that somebody would discover it (và nỗi sợ hãi lớn nhất của họ là có ai đó sẽ phát hiện ra điều đó).
+        `;
+
+        // --- 1. TÁCH DỮ LIỆU VÀ CHUYỂN TRANG ---
+        const allParagraphs = rawText.trim().split(/\n\s*\n/);
+        const PARAGRAPHS_PER_PAGE = 2; 
+        let currentPage = 1;
+        const totalPages = Math.ceil(allParagraphs.length / PARAGRAPHS_PER_PAGE);
+
+        function renderPage(page) {
+            const startIndex = (page - 1) * PARAGRAPHS_PER_PAGE;
+            const endIndex = startIndex + PARAGRAPHS_PER_PAGE;
+            const paragraphsToRender = allParagraphs.slice(startIndex, endIndex);
+
+            const regex = /([^\(\)]+)\s*\(([^\(\)]+)\)/g;
+            let html = '';
+            paragraphsToRender.forEach(p => {
+                let parsed = p.replace(regex, (match, en, vi) => {
+                    return `<span class="interactive-group"><span class="en-text">${en.trim()}</span><span class="vi-text">(${vi.trim()})</span></span>`;
+                });
+                html += `<p>${parsed}</p>`;
+            });
+
+            document.getElementById('story-content').innerHTML = html;
+            document.getElementById('page-info').innerText = `Trang ${page} / ${totalPages}`;
+            
+            document.getElementById('prev-page').disabled = (page === 1);
+            document.getElementById('next-page').disabled = (page === totalPages);
+
+            // Xóa rác khi chuyển trang
+            document.getElementById('dict-panel').classList.remove('active');
+            window.getSelection().removeAllRanges();
+            currentWord = ""; // Bây giờ đã an toàn vì currentWord khai báo ở trên cùng
+        }
+
+        renderPage(currentPage);
+
+        // Nút lật trang
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) { currentPage--; renderPage(currentPage); window.scrollTo(0,0); }
+        });
+        document.getElementById('next-page').addEventListener('click', () => {
+            if (currentPage < totalPages) { currentPage++; renderPage(currentPage); window.scrollTo(0,0); }
+        });
+
+        // --- 2. XỬ LÝ SỰ KIỆN CLICK VÀ TRA TỪ ---
+
+        // Xử lý Click Song Ngữ
+        document.getElementById('story-content').addEventListener('click', (e) => {
+            const selection = window.getSelection();
+            if (selection && selection.toString().trim().length > 0) return;
+
+            const group = e.target.closest('.interactive-group');
+            if (group) {
+                group.classList.toggle('active-highlight');
+                const vi = group.querySelector('.vi-text');
+                if(vi) vi.classList.toggle('show');
+            }
+        });
+
+        // Xử lý Tra Từ Điển
+        const panel = document.getElementById('dict-panel');
+        const wordEl = document.getElementById('dict-word');
+        const ipaEl = document.getElementById('dict-ipa');
+        const meanEl = document.getElementById('dict-meaning');
+        const audioBtn = document.getElementById('dict-audio-btn');
+
+        function triggerLookup() {
+            clearTimeout(lookupTimer);
+            lookupTimer = setTimeout(handleLookup, 300);
+        }
+
+        document.addEventListener('selectionchange', triggerLookup);
+        document.addEventListener('mouseup', triggerLookup);
+        document.addEventListener('touchend', triggerLookup);
+
+        async function handleLookup() {
+            const selectionText = window.getSelection().toString().trim();
+            
+            if (!selectionText) return;
+
+            if (!selectionText.includes(' ') && /^[a-zA-Z]+$/.test(selectionText)) {
+                if (selectionText.toLowerCase() === currentWord.toLowerCase()) return;
+                currentWord = selectionText;
+                
+                panel.classList.add('active');
+                wordEl.innerText = selectionText;
+                ipaEl.innerText = "tra cứu...";
+                meanEl.innerText = "Đang tải dữ liệu...";
+
+                try {
+                    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${selectionText}`);
+                    if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    
+                    const entry = data[0];
+                    let ipa = entry.phonetic || "";
+                    let audio = "";
+                    if (entry.phonetics) {
+                        const aObj = entry.phonetics.find(p => p.audio);
+                        if (aObj) audio = aObj.audio;
+                        if (!ipa) {
+                            const iObj = entry.phonetics.find(p => p.text);
+                            if (iObj) ipa = iObj.text;
+                        }
+                    }
+
+                    ipaEl.innerText = ipa;
+                    meanEl.innerText = entry.meanings[0].definitions[0].definition;
+                    audioUrl = audio;
+                } catch (error) {
+                    ipaEl.innerText = "";
+                    meanEl.innerText = "Không tìm thấy nghĩa của từ này.";
+                    audioUrl = "";
+                }
+            }
+        }
+
+        // Phát âm thanh
+        audioBtn.addEventListener('click', () => {
+            if (audioUrl) {
+                new Audio(audioUrl).play();
+            } else {
+                const ut = new SpeechSynthesisUtterance(currentWord);
+                ut.lang = 'en-US';
+                window.speechSynthesis.speak(ut);
+            }
+        });
+
+        // Đóng panel
+        document.getElementById('close-panel').addEventListener('click', () => {
+            panel.classList.remove('active');
+            window.getSelection().removeAllRanges(); 
+            currentWord = "";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 1: The Boy Who Lived!</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="Chapter 1.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 0. KHAI BÁO BIẾN TOÀN CỤC ĐỂ TRÁNH LỖI REFERENCE ERROR ---
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Mr and Mrs Dursley, of number four, Privet Drive (Ông bà Dursley, nhà số 4, đường Privet
+Drive), were proud to say (rất tự hào mà nói rằng) that they were perfectly normal, thank
+you very much (họ hoàn toàn bình thường, cảm ơn rất nhiều). They were the last people
+you’d expect (Họ là những người cuối cùng mà bạn nghĩ) to be involved in anything
+strange or mysterious (sẽ dính líu đến bất cứ chuyện gì kỳ lạ hay bí ẩn), because they just
+didn’t hold with such nonsense (bởi vì họ không đời nào chấp nhận những chuyện vớ vẩn
+như vậy).
+
+Mr Dursley was the director of a firm called Grunnings (Ông Dursley là giám đốc của một
+công ty tên là Grunnings), which made drills (chuyên sản xuất máy khoan). He was a big,
+beefy man (Ông là một người đàn ông to béo, lực lưỡng) with hardly any neck (với cái cổ
+gần như không có), although he did have a very large moustache (mặc dù ông có một bộ
+ria mép rất to). Mrs Dursley was thin and blonde (Bà Dursley thì gầy và có mái tóc vàng)
+and had nearly twice the usual amount of neck (và có cái cổ dài gần gấp đôi bình thường),
+which came in very useful (điều này lại trở nên rất hữu ích) as she spent so much of her
+time craning over garden fences (vì bà dành rất nhiều thời gian để vươn cổ qua hàng rào
+sân vườn), spying on the neighbours (để rình mò hàng xóm). The Dursleys had a small son
+called Dudley (Vợ chồng Dursley có một cậu con trai nhỏ tên là Dudley) and in their
+opinion there was no finer boy anywhere (và theo ý họ thì không đâu có một cậu bé nào
+tuyệt vời hơn).
+
+The Dursleys had everything they wanted (Gia đình Dursley có mọi thứ mà họ muốn), but
+they also had a secret (nhưng họ cũng có một bí mật), and their greatest fear was that
+somebody would discover it (và nỗi sợ hãi lớn nhất của họ là có ai đó sẽ phát hiện ra điều
+đó). They didn’t think they could bear it (Họ nghĩ rằng mình sẽ không thể chịu đựng nổi)
+if anyone found out about the Potters (nếu bất cứ ai biết về gia đình Potter). Mrs Potter
+was Mrs Dursley’s sister (Bà Potter là em gái của bà Dursley), but they hadn’t met for
+several years (nhưng họ đã không gặp nhau trong nhiều năm); in fact, Mrs Dursley
+pretended she didn’t have a sister (thực tế là bà Dursley còn giả vờ như mình không hề có
+cô em gái nào), because her sister and her good-for-nothing husband (bởi vì em gái bà và
+gã chồng vô tích sự của cô ta) were as unDursleyish as it was possible to be (hoàn toàn
+khác biệt với gia đình Dursley hết mức có thể). The Dursleys shuddered to think (Nhà
+Dursley rùng mình khi nghĩ đến việc) what the neighbours would say (hàng xóm sẽ nói gì)
+if the Potters arrived in the street (nếu gia đình Potter xuất hiện trên con phố này). The
+Dursleys knew that the Potters had a small son, too (Nhà Dursley biết rằng nhà Potter cũng
+có một đứa con trai nhỏ), but they had never even seen him (nhưng họ thậm chí còn chưabao giờ nhìn thấy nó). This boy was another good reason for keeping the Potters away
+(Đứa bé này là một lý do xác đáng khác để giữ gia đình Potter tránh xa); they didn’t want
+Dudley mixing with a child like that (họ không muốn Dudley giao du với một đứa trẻ như
+thế).
+
+When Mr and Mrs Dursley woke up (Khi ông bà Dursley thức dậy) on the dull, grey
+Tuesday our story starts (vào một ngày thứ Ba xám xịt và tẻ nhạt, lúc câu chuyện của chúng
+ta bắt đầu), there was nothing about the cloudy sky outside (bầu trời đầy mây bên ngoài
+không hề có dấu hiệu gì) to suggest that strange and mysterious things (cho thấy rằng
+những điều kỳ lạ và bí ẩn) would soon be happening all over the country (sắp diễn ra trên
+khắp cả nước). Mr Dursley hummed (Ông Dursley ậm ừ hát) as he picked out his most
+boring tie for work (khi chọn chiếc cà vạt nhàm chán nhất của mình để đi làm) and Mrs
+Dursley gossiped away happily (còn bà Dursley thì vui vẻ tán gẫu) as she wrestled a
+screaming Dudley into his high chair (trong lúc vật lộn để đặt cậu bé Dudley đang la hét
+vào chiếc ghế ăn cao của nó).
+
+None of them noticed a large tawny owl (Không ai trong số họ chú ý đến một con cú nâu
+lớn) flutter past the window (bay lướt qua cửa sổ). At half past eight (Vào lúc tám giờ
+rưỡi), Mr Dursley picked up his briefcase (ông Dursley xách cặp táp lên), pecked Mrs
+Dursley on the cheek (hôn phớt lên má bà Dursley) and tried to kiss Dudley goodbye (và
+định hôn tạm biệt Dudley) but missed (nhưng trượt), because Dudley was now having a
+tantrum (bởi vì Dudley lúc này đang ăn vạ) and throwing his cereal at the walls (và ném
+ngũ cốc lên tường). ‘Little tyke,’ chortled Mr Dursley (‘Thằng quỷ sứ,’ ông Dursley cười
+khúc khích) as he left the house (khi ông rời khỏi nhà). He got into his car (Ông lên xe) and
+backed out of number four’s drive (và lùi ra khỏi đường lái xe của nhà số 4).
+It was on the corner of the street (Chính ở góc phố) that he noticed the first sign of
+something peculiar (mà ông nhận thấy dấu hiệu đầu tiên của điều gì đó khác thường) – a
+cat reading a map (– một con mèo đang đọc bản đồ). For a second (Trong một giây), Mr
+Dursley didn’t realise what he had seen (ông Dursley không nhận ra mình vừa thấy gì) –
+then he jerked his head around to look again (– rồi ông ngoắt đầu lại để nhìn lần nữa).
+There was a tabby cat standing on the corner of Privet Drive (Có một con mèo mướp đang
+đứng ở góc đường Privet Drive), but there wasn’t a map in sight (nhưng chẳng thấy cái
+bản đồ nào cả). What could he have been thinking of? (Ông đã nghĩ cái quái gì vậy nhỉ?)
+It must have been a trick of the light (Chắc hẳn là do ảo ảnh ánh sáng). Mr Dursley blinked
+and stared at the cat (Ông Dursley chớp mắt và chằm chằm nhìn con mèo). It stared back
+(Nó nhìn chằm chằm lại). As Mr Dursley drove around the corner and up the road (Khi ông
+Dursley lái xe quanh góc cua và đi lên đường), he watched the cat in his mirror (ông nhìn
+con mèo trong gương chiếu hậu). It was now reading the sign that said Privet Drive (Nó bây giờ đang đọc tấm biển báo chữ Privet Drive) – no, looking at the sign (– không, đang
+nhìn tấm biển); cats couldn’t read maps or signs (mèo thì làm sao biết đọc bản đồ hay biển
+báo). Mr Dursley gave himself a little shake (Ông Dursley khẽ lắc đầu) and put the cat out
+of his mind (và gạt con mèo ra khỏi tâm trí). As he drove towards town (Khi lái xe hướng
+về phía thị trấn) he thought of nothing except a large order of drills (ông không nghĩ đến
+điều gì ngoài một đơn đặt hàng máy khoan lớn) he was hoping to get that day (mà ông hy
+vọng sẽ nhận được vào ngày hôm đó).
+
+But on the edge of town (Nhưng ở rìa thị trấn), drills were driven out of his mind by
+something else (máy khoan đã bị đánh bật khỏi tâm trí ông bởi một thứ khác). As he sat in
+the usual morning traffic jam (Khi ngồi chờ trong vụ kẹt xe buổi sáng như thường lệ), he
+couldn’t help noticing (ông không thể không chú ý) that there seemed to be a lot of strangely
+dressed people about (rằng dường như có rất nhiều người ăn mặc kỳ lạ ở xung quanh).
+People in cloaks (Những người mặc áo choàng). Mr Dursley couldn’t bear people who
+dressed in funny clothes (Ông Dursley không thể chịu đựng nổi những người ăn mặc lố
+lăng) – the get-ups you saw on young people! (– những kiểu đồ bạn thường thấy ở bọn
+trẻ!). He supposed this was some stupid new fashion (Ông cho rằng đây là một trào lưu
+thời trang mới ngớ ngẩn nào đó). He drummed his fingers on the steering wheel (Ông gõ
+gõ những ngón tay lên vô lăng) and his eyes fell on a huddle of these weirdos (và ánh mắt
+ông rơi vào một đám những kẻ lập dị này) standing quite close by (đang đứng khá gần đó).
+They were whispering excitedly together (Họ đang thì thầm với nhau đầy vẻ phấn khích).
+Mr Dursley was enraged to see (Ông Dursley vô cùng tức giận khi thấy) that a couple of
+them weren’t young at all (vài người trong số họ chẳng trẻ trung gì cho cam); why, that
+man had to be older than he was (trời ạ, gã kia chắc chắn phải già hơn ông), and wearing
+an emerald-green cloak! (và đang mặc một chiếc áo choàng màu xanh ngọc lục bảo!). The
+nerve of him! (Thật là trơ tráo!). But then it struck Mr Dursley (Nhưng rồi ông Dursley
+chợt nghĩ) that this was probably some silly stunt (rằng đây có lẽ là một trò quảng cáo ngớ
+ngẩn nào đó) – these people were obviously collecting for something (– những người này
+rõ ràng đang quyên góp cho thứ gì đó) ... yes, that would be it (... đúng rồi, hẳn là vậy).
+The traffic moved on (Dòng xe cộ di chuyển tiếp), and a few minutes later (và vài phút
+sau), Mr Dursley arrived in the Grunnings car park (ông Dursley đã đến bãi đậu xe của
+công ty Grunnings), his mind back on drills (tâm trí ông quay trở lại với những cái máy
+khoan).
+
+Mr Dursley always sat with his back to the window (Ông Dursley luôn ngồi quay lưng ra
+cửa sổ) in his office on the ninth floor (trong văn phòng của ông ở tầng chín). If he hadn’t
+(Nếu không làm vậy), he might have found it harder to concentrate on drills that morning
+(ông có thể đã thấy khó tập trung hơn vào máy khoan trong buổi sáng hôm đó). He didn’tsee the owls swooping past in broad daylight (Ông không thấy những con cú sà ngang qua
+giữa thanh thiên bạch nhật), though people down in the street did (mặc dù những người
+dưới phố thì có); they pointed and gazed open-mouthed (họ chỉ trỏ và há hốc mồm kinh
+ngạc) as owl after owl sped overhead (khi hết con cú này đến con cú khác bay vút qua đầu).
+Most of them had never seen an owl even at night-time (Hầu hết bọn họ thậm chí còn chưa
+từng thấy cú vào ban đêm). Mr Dursley, however, had a perfectly normal, owl-free morning
+(Tuy nhiên, ông Dursley, đã có một buổi sáng hoàn toàn bình thường, không có bóng dáng
+con cú nào). He yelled at five different people (Ông đã quát mắng năm người khác nhau).
+He made several important telephone calls (Ông đã gọi vài cuộc điện thoại quan trọng)
+and shouted a bit more (và la hét thêm một chút nữa). He was in a very good mood until
+lunch-time (Ông ở trong một tâm trạng rất tốt cho đến giờ ăn trưa), when he thought he’d
+stretch his legs (khi ông nghĩ mình nên đi lại duỗi gân duỗi cốt một chút) and walk across
+the road to buy himself a bun (và đi bộ sang bên kia đường để tự mua cho mình một cái
+bánh ngọt) from the baker’s opposite (từ tiệm bánh đối diện).
+
+He’d forgotten all about the people in cloaks (Ông đã quên bẵng đi những người mặc áo
+choàng) until he passed a group of them next to the baker’s (cho đến khi ông đi ngang qua
+một nhóm người như vậy ngay cạnh tiệm bánh). He eyed them angrily as he passed (Ông
+nhìn họ chằm chằm một cách giận dữ khi đi ngang qua). He didn’t know why (Ông không
+biết tại sao), but they made him uneasy (nhưng họ làm ông cảm thấy bất an). This lot were
+whispering excitedly, too (Đám người này cũng đang thì thầm với nhau đầy vẻ phấn khích),
+and he couldn’t see a single collecting tin (và ông chẳng thấy bất kỳ cái hộp quyên góp nào
+cả). It was on his way back past them (Chính trên đường đi ngang qua họ để quay lại),
+clutching a large doughnut in a bag (tay nắm chặt một cái bánh rán vòng lớn trong túi),
+that he caught a few words of what they were saying (mà ông tình cờ nghe được vài từ họ
+đang nói).
+
+‘The Potters, that’s right, that’s what I heard –’ (‘Gia đình Potter, đúng rồi, đó là những gì
+tôi nghe được –’)
+
+‘– yes, their son, Harry –’ (‘– đúng, con trai của họ, Harry –’)
+
+Mr Dursley stopped dead (Ông Dursley sững người lại). Fear flooded him (Nỗi sợ hãi tràn
+ngập trong ông). He looked back at the whisperers (Ông ngoái lại nhìn những kẻ đang thì
+thầm) as if he wanted to say something to them (như thể ông muốn nói điều gì đó với họ),
+but thought better of it (nhưng rồi lại đổi ý).
+
+He dashed back across the road (Ông lao nhanh qua đường), hurried up to his office (vội
+vã lên văn phòng của mình), snapped at his secretary not to disturb him (cáu kỉnh gắt thư
+ký không được làm phiền), seized his telephone (vồ lấy cái điện thoại) and had almostfinished dialling his home number (và gần như đã quay xong số gọi về nhà) when he
+changed his mind (thì ông thay đổi ý định). He put the receiver back down (Ông đặt ống
+nghe xuống) and stroked his moustache, thinking ... (và vuốt ve bộ ria mép, suy nghĩ ...)
+no, he was being stupid (không, ông đang ngớ ngẩn rồi). Potter wasn’t such an unusual
+name (Potter không phải là một cái tên quá hiếm gặp). He was sure there were lots of
+people called Potter (Ông chắc chắn rằng có rất nhiều người tên Potter) who had a son
+called Harry (cũng có một đứa con trai tên Harry). Come to think of it (Nghĩ lại thì), he
+wasn’t even sure his nephew was called Harry (ông thậm chí còn không chắc thằng cháu
+mình tên là Harry). He’d never even seen the boy (Ông còn chưa từng gặp mặt thằng bé).
+It might have been Harvey (Có khi nó tên là Harvey). Or Harold (Hay Harold). There was
+no point in worrying Mrs Dursley (Chẳng có lý do gì để làm bà Dursley phải lo lắng), she
+always got so upset at any mention of her sister (bà ấy luôn trở nên rất bực tức mỗi khi có
+ai nhắc đến em gái mình). He didn’t blame her (Ông không trách bà) – if he’d had a sister
+like that ... (– nếu ông mà có một cô em gái như thế ...) but all the same, those people in
+cloaks ... (nhưng dù sao đi nữa, những người mặc áo choàng đó ...)
+
+He found it a lot harder to concentrate on drills that afternoon (Ông thấy khó tập trung vào
+những cái máy khoan hơn hẳn trong buổi chiều hôm đó), and when he left the building at
+five o’clock (và khi ông rời khỏi tòa nhà vào lúc năm giờ), he was still so worried (ông vẫn
+còn quá lo lắng) that he walked straight into someone just outside the door (đến mức đi
+đâm sầm vào một người ngay bên ngoài cửa).
+
+‘Sorry,’ he grunted (‘Xin lỗi,’ ông càu nhàu), as the tiny old man stumbled and almost fell
+(khi ông lão nhỏ bé loạng choạng và suýt ngã). It was a few seconds before Mr Dursley
+realised (Phải mất vài giây sau ông Dursley mới nhận ra) that the man was wearing a violet
+cloak (rằng người đàn ông đó đang mặc một chiếc áo choàng màu tím nhạt). He didn’t
+seem at all upset (Ông ta dường như chẳng hề bực tức chút nào) at being almost knocked
+to the ground (khi suýt bị xô ngã xuống đất). On the contrary, his face split into a wide
+smile (Trái lại, khuôn mặt ông ta rạng rỡ với một nụ cười rộng) and he said in a squeaky
+voice that made passers-by stare: (và ông ta nói bằng một giọng the thé khiến những người
+qua đường phải chằm chằm nhìn:) ‘Don’t be sorry, my dear sir (‘Đừng xin lỗi, thưa ngài
+đáng mến), for nothing could upset me today! (vì hôm nay không có gì có thể làm tôi buồn
+bực được!) Rejoice, for You-Know-Who has gone at last! (Hãy vui mừng lên, vì Kẻ-Mà-
+Ai-Cũng-Biết-Là-Ai cuối cùng đã biến mất!) Even Muggles like yourself should be
+celebrating (Ngay cả những Muggle như ngài cũng nên ăn mừng), this happy happy day!’
+(trong cái ngày cực kỳ hạnh phúc này!’)
+
+And the old man hugged Mr Dursley around the middle (Và ông lão ôm chầm ngang lưng
+ông Dursley) and walked off (rồi bước đi).Mr Dursley stood rooted to the spot (Ông Dursley đứng chôn chân tại chỗ). He had been
+hugged by a complete stranger (Ông vừa bị ôm bởi một kẻ hoàn toàn xa lạ). He also thought
+he had been called a Muggle (Ông cũng nghĩ rằng mình vừa bị gọi là một Muggle),
+whatever that was (dù cái đó là cái quái gì đi nữa). He was rattled (Ông cảm thấy hoang
+mang hoảng sợ). He hurried to his car and set off home (Ông vội vã ra xe và lái về nhà),
+hoping he was imagining things (hy vọng rằng mình chỉ đang tưởng tượng ra mọi chuyện),
+which he had never hoped before (điều mà trước đây ông chưa bao giờ hy vọng), because
+he didn’t approve of imagination (bởi vì ông vốn không hề tán thành sự tưởng tượng).
+As he pulled into the driveway of number four (Khi ông tấp xe vào đường lái của nhà số
+bốn), the first thing he saw (điều đầu tiên ông nhìn thấy) – and it didn’t improve his mood
+(– và nó chẳng làm tâm trạng ông khá lên chút nào) – was the tabby cat he’d spotted that
+morning (– chính là con mèo mướp ông đã thấy sáng nay). It was now sitting on his garden
+wall (Nó bây giờ đang ngồi trên bức tường quanh vườn nhà ông). He was sure it was the
+same one (Ông chắc chắn đó là cùng một con mèo); it had the same markings around its
+eyes (nó có những vệt hoa văn y hệt quanh mắt).
+
+‘Shoo!’ said Mr Dursley loudly (‘Xùy!’ ông Dursley quát lớn).
+
+The cat didn’t move (Con mèo không hề nhúc nhích). It just gave him a stern look (Nó chỉ
+lườm ông bằng một ánh mắt nghiêm khắc). Was this normal cat behaviour (Đây có phải là
+hành vi bình thường của loài mèo không), Mr Dursley wondered (ông Dursley tự hỏi).
+Trying to pull himself together (Cố gắng lấy lại bình tĩnh), he let himself into the house
+(ông mở cửa bước vào nhà). He was still determined not to mention anything to his wife
+(Ông vẫn quyết tâm không hé răng nửa lời về bất cứ chuyện gì với vợ mình).
+
+Mrs Dursley had had a nice, normal day (Bà Dursley đã có một ngày tốt lành, bình thường).
+She told him over dinner (Bà kể cho ông nghe trong bữa tối) all about Mrs Next Door’s
+problems with her daughter (tất tần tật về những rắc rối của bà hàng xóm với cô con gái)
+and how Dudley had learnt a new word (‘Shan’t!’) (và việc Dudley đã học được một từ mới
+như thế nào (‘Không đâu!’)). Mr Dursley tried to act normally (Ông Dursley cố gắng tỏ ra
+bình thường). When Dudley had been put to bed (Khi Dudley đã được cho đi ngủ), he went
+into the living-room (ông bước vào phòng khách) in time to catch the last report on the
+evening news: (vừa kịp lúc để xem bản tin cuối cùng trên chương trình thời sự buổi tối:)
+'And finally, bird-watchers everywhere have reported (Và cuối cùng, những người quan
+sát chim ở khắp nơi đã báo cáo) that the nation’s owls have been behaving very unusually
+today (rằng loài cú trên cả nước đã có những hành vi rất bất thường trong ngày hôm nay).
+Although owls normally hunt at night (Mặc dù cú thường đi săn vào ban đêm) and are
+hardly ever seen in daylight (và hầu như chẳng bao giờ được nhìn thấy vào ban ngày),there have been hundreds of sightings (đã có hàng trăm báo cáo nhìn thấy) of these birds
+flying in every direction since sunrise (những con chim này bay về đủ mọi hướng kể từ lúc
+mặt trời mọc). Experts are unable to explain (Các chuyên gia hiện không thể giải thích
+được) why the owls have suddenly changed their sleeping pattern.’ (tại sao bầy cú lại đột
+ngột thay đổi thói quen ngủ của chúng như vậy.’) The newsreader allowed himself a grin
+(Người phát thanh viên hơi nhoẻn miệng cười). ‘Most mysterious (‘Thật là vô cùng bí ẩn).
+And now, over to Jim McGuffin with the weather (Và bây giờ, xin nhường lời cho Jim
+McGuffin với phần dự báo thời tiết). Going to be any more showers of owls tonight, Jim?’
+(Tối nay liệu có thêm trận mưa cú nào nữa không, Jim?’)
+
+‘Well, Ted,’ said the weatherman (‘Chà, Ted à,’ người dự báo thời tiết nói), ‘I don’t know
+about that (‘Tôi không chắc về điều đó), but it’s not only the owls that have been acting
+oddly today (nhưng hôm nay không chỉ có lũ cú là hành xử kỳ lạ). Viewers as far apart as
+Kent, Yorkshire and Dundee (Khán giả ở khắp những nơi xa nhau như Kent, Yorkshire và
+Dundee) have been phoning in to tell me (đã gọi điện đến báo cho tôi) that instead of the
+rain I promised yesterday (rằng thay vì cơn mưa mà tôi đã dự báo hôm qua), they’ve had
+a downpour of shooting stars! (họ lại gặp một trận mưa sao băng!) Perhaps people have
+been celebrating Bonfire Night early (Có lẽ người ta đã ăn mừng Đêm Lửa Trại sớm) – it’s
+not until next week, folks! (– đến tuần sau mới tới lễ cơ, thưa quý vị!) But I can promise a
+wet night tonight.’ (Nhưng tôi có thể hứa đêm nay sẽ là một đêm ẩm ướt.’)
+
+Mr Dursley sat frozen in his armchair (Ông Dursley ngồi chết điếng trên ghế bành).
+Shooting stars all over Britain? (Mưa sao băng trên khắp nước Anh?) Owls flying by
+daylight? (Cú bay lượn giữa ban ngày?) Mysterious people in cloaks all over the place?
+(Những kẻ bí ẩn mặc áo choàng ở khắp mọi nơi?) And a whisper, a whisper about the
+Potters ... (Và một lời thì thầm, một lời thì thầm về gia đình Potter ...)
+Mrs Dursley came into the living-room (Bà Dursley bước vào phòng khách) carrying two
+cups of tea (mang theo hai tách trà). It was no good (Không ổn rồi). He’d have to say
+something to her (Ông sẽ phải nói điều gì đó với bà). He cleared his throat nervously (Ông
+hắng giọng một cách đầy lo lắng). ‘Er – Petunia, dear (‘Ờ – Petunia, mình à) – you haven’t
+heard from your sister lately, have you?’ (– dạo này mình không nghe tin tức gì từ em gái
+mình, phải không?’)
+
+As he had expected (Đúng như ông dự đoán), Mrs Dursley looked shocked and angry (bà
+Dursley trông sửng sốt và tức giận). After all, they normally pretended she didn’t have a
+sister (Suy cho cùng thì họ vẫn thường giả vờ như bà không hề có một người em gái).
+‘No,’ she said sharply (‘Không,’ bà nói gắt). ‘Why?’ (‘Sao thế?’)‘Funny stuff on the news,’ Mr Dursley mumbled (‘Có mấy chuyện kỳ lạ trên bản tin,’ ông
+Dursley lầm bầm). ‘Owls ... shooting stars ... (‘Cú ... mưa sao băng ...) and there were a lot
+of funny-looking people in town today ...’ (và hôm nay có rất nhiều kẻ trông kỳ quái ở
+trong thị trấn ...’)
+
+‘So?’ snapped Mrs Dursley (‘Thì sao?’ bà Dursley cáu bẳn).
+
+‘Well, I just thought ... maybe ... it was something to do with ... you know ... her lot.’ (‘À
+thì, tôi chỉ nghĩ ... có thể ... chuyện này có liên quan gì đó đến ... mình biết đấy ... hội những
+người giống cô ta.’)
+
+Mrs Dursley sipped her tea through pursed lips (Bà Dursley nhấp ngụm trà qua đôi môi
+mím chặt). Mr Dursley wondered whether he dared tell her he’d heard the name ‘Potter’
+(Ông Dursley tự hỏi liệu mình có dám nói với bà rằng ông đã nghe thấy cái tên ‘Potter’).
+He decided he didn’t dare (Ông quyết định là không dám). Instead he said, as casually as
+he could (Thay vào đó, ông cố nói một cách thật thản nhiên), ‘Their son – he’d be about
+Dudley’s age now, wouldn’t he?’ (‘Con trai của họ – bây giờ chắc trạc tuổi Dudley rồi,
+đúng không?’)
+
+‘I suppose so,’ said Mrs Dursley stiffly (‘Tôi đoán vậy,’ bà Dursley đáp một cách cứng
+nhắc).
+
+‘What’s his name again? Howard, isn’t it?’ (‘Thằng bé tên gì nhỉ? Howard, đúng không?’)
+‘Harry. Nasty, common name, if you ask me.’ (‘Harry. Một cái tên gớm ghiếc, tầm thường,
+nếu ông hỏi tôi.’)
+
+‘Oh, yes,’ said Mr Dursley, his heart sinking horribly (‘Ồ, phải rồi,’ ông Dursley nói, tim
+ông chùng xuống một cách thảm hại). ‘Yes, I quite agree.’ (‘Phải, tôi hoàn toàn đồng ý.’)
+He didn’t say another word on the subject (Ông không nói thêm lời nào về chủ đề này nữa)
+as they went upstairs to bed (khi họ lên lầu đi ngủ). While Mrs Dursley was in the bathroom
+(Trong khi bà Dursley đang ở trong phòng tắm), Mr Dursley crept to the bedroom window
+(ông Dursley rón rén bước tới cửa sổ phòng ngủ) and peered down into the front garden
+(và nhìn chúi xuống khu vườn trước nhà). The cat was still there (Con mèo vẫn ở đó). It
+was staring down Privet Drive (Nó đang chằm chằm nhìn dọc theo đường Privet Drive) as
+though it was waiting for something (như thể đang chờ đợi một điều gì đó).
+Was he imagining things? (Có phải ông đang tưởng tượng ra mọi chuyện không?) Could
+all this have anything to do with the Potters? (Có thể nào tất cả những chuyện này lại có
+liên quan gì đó tới gia đình Potter?) If it did ... if it got out that they were related to a pairof – (Nếu đúng vậy ... nếu mọi người phát hiện ra rằng họ có họ hàng với một cặp vợ chồng
+–) well, he didn’t think he could bear it (chà, ông nghĩ mình sẽ không thể chịu đựng nổi).
+The Dursleys got into bed (Ông bà Dursley lên giường). Mrs Dursley fell asleep quickly
+(Bà Dursley nhanh chóng chìm vào giấc ngủ) but Mr Dursley lay awake (nhưng ông
+Dursley vẫn nằm thao thức), turning it all over in his mind (trằn trọc suy nghĩ về tất cả mọi
+chuyện). His last, comforting thought before he fell asleep (Ý nghĩ cuối cùng, đầy tự an ủi
+của ông trước khi chìm vào giấc ngủ) was that even if the Potters were involved (là ngay
+cả khi gia đình Potter có liên quan), there was no reason for them to come near him and
+Mrs Dursley (thì cũng chẳng có lý do gì để họ đến gần ông và bà Dursley). The Potters
+knew very well (Nhà Potter biết rất rõ) what he and Petunia thought about them and their
+kind ... (ông và Petunia nghĩ gì về họ và những kẻ giống họ ...) He couldn’t see how he and
+Petunia could get mixed up (Ông không thấy làm thế nào mà ông và Petunia lại có thể bị
+vướng vào) in anything that might be going on (bất cứ chuyện gì có thể đang xảy ra). He
+yawned and turned over (Ông ngáp dài và xoay người). It couldn’t affect them ... (Nó không
+thể ảnh hưởng đến họ được ...)
+
+How very wrong he was. (Ông đã nhầm to thế nào.) Mr Dursley might have been drifting
+into an uneasy sleep (Ông Dursley có thể đang chìm vào một giấc ngủ trằn trọc), but the
+cat on the wall outside was showing no sign of sleepiness (nhưng con mèo trên bức tường
+bên ngoài thì không hề có vẻ gì là buồn ngủ). It was sitting as still as a statue (Nó ngồi bất
+động như một bức tượng), its eyes fixed unblinkingly on the far corner of Privet Drive (đôi
+mắt nó nhìn chằm chằm không chớp vào góc khuất của đường Privet Drive). It didn’t so
+much as quiver (Nó thậm chí không hề rùng mình) when a car door slammed in the next
+street (khi một cánh cửa xe hơi sập mạnh ở con phố bên cạnh), nor when two owls swooped
+overhead (hay khi hai con cú sà ngang qua đầu). In fact, it was nearly midnight before the
+cat moved at all. (Thực tế, gần tới nửa đêm con mèo mới bắt đầu nhúc nhích.)
+A man appeared on the corner the cat had been watching (Một người đàn ông xuất hiện ở
+góc phố mà con mèo vẫn đang quan sát), appeared so suddenly and silently (xuất hiện đột
+ngột và lặng lẽ đến mức) you’d have thought he’d just popped out of the ground (bạn sẽ
+tưởng rằng ông ta vừa chui từ dưới đất lên). The cat’s tail twitched and its eyes narrowed.
+(Đuôi con mèo giật giật và đôi mắt nó nheo lại.)
+
+Nothing like this man had ever been seen in Privet Drive. (Một người đàn ông như thế này
+chưa từng được nhìn thấy ở đường Privet Drive.) He was tall, thin and very old (Ông ta
+cao, gầy và rất già), judging by the silver of his hair and beard (đánh giá qua mái tóc và
+bộ râu màu bạc), which were both long enough to tuck into his belt (cả hai đều đủ dài để
+nhét vào thắt lưng). He was wearing long robes (Ông mặc một chiếc áo chùng dài), a purplecloak which swept the ground (một chiếc áo choàng màu tím quét đất) and high-heeled,
+buckled boots (và đi đôi bốt cao gót có khóa cài). His blue eyes were light, bright and
+sparkling behind half-moon spectacles (Đôi mắt xanh lam của ông trong trẻo, sáng ngời
+và lấp lánh đằng sau cặp kính hình bán nguyệt) and his nose was very long and crooked
+(và chiếc mũi của ông rất dài và khoằm), as though it had been broken at least twice (như
+thể nó đã bị gãy ít nhất hai lần). This man’s name was Albus Dumbledore. (Tên của người
+đàn ông này là Albus Dumbledore.)
+
+Albus Dumbledore didn’t seem to realise (Albus Dumbledore dường như không nhận ra)
+that he had just arrived in a street (rằng ông vừa đến một con phố) where everything from
+his name to his boots was unwelcome (nơi mọi thứ từ cái tên cho đến đôi bốt của ông đều
+không được chào đón). He was busy rummaging in his cloak (Ông đang bận rộn lục lọi
+trong áo choàng), looking for something (để tìm kiếm thứ gì đó). But he did seem to realise
+he was being watched (Nhưng ông có vẻ nhận ra mình đang bị theo dõi), because he looked
+up suddenly at the cat (vì ông bất chợt ngước lên nhìn con mèo), which was still staring at
+him from the other end of the street (con vật vẫn đang trừng trừng nhìn ông từ đầu kia của
+con phố). For some reason, the sight of the cat seemed to amuse him. (Vì lý do nào đó,
+cảnh tượng con mèo dường như làm ông thích thú.) He chuckled and muttered, ‘I should
+have known.’ (Ông cười khúc khích và lầm bầm, ‘Đáng lẽ mình phải biết chứ.’)
+He had found what he was looking for in his inside pocket. (Ông đã tìm thấy thứ mình
+muốn trong túi áo trong.) It seemed to be a silver cigarette lighter. (Nó trông giống như một
+chiếc bật lửa bằng bạc.) He flicked it open, held it up in the air and clicked it. (Ông bật
+nắp, giơ nó lên cao và bấm.) The nearest street lamp went out with a little pop. (Ngọn đèn
+đường gần nhất vụt tắt với một tiếng 'bụp' nhỏ.) He clicked it again – the next lamp
+flickered into darkness. (Ông lại bấm – ngọn đèn tiếp theo chớp tắt chìm vào bóng tối.)
+Twelve times he clicked the Put-Outer (Ông đã bấm mười hai lần cái Tắt-Sáng), until the
+only lights left in the whole street (cho đến khi những đốm sáng duy nhất còn lại trên toàn
+bộ con phố) were two tiny pinpricks in the distance (là hai điểm sáng li ti ở đằng xa), which
+were the eyes of the cat watching him (chính là đôi mắt của con mèo đang theo dõi ông).
+If anyone looked out of their window now (Nếu lúc này có ai đó nhìn ra ngoài cửa sổ),
+even beady-eyed Mrs Dursley (ngay cả bà Dursley với đôi mắt sắc sảo), they wouldn’t be
+able to see anything that was happening down on the pavement (họ cũng sẽ không thể thấy
+chuyện gì đang xảy ra dưới vỉa hè). Dumbledore slipped the Put-Outer back inside his
+cloak (Dumbledore đút cái Tắt-Sáng trở lại vào trong áo choàng) and set off down the
+street towards number four (và rảo bước dọc theo con phố về phía nhà số bốn), where he
+sat down on the wall next to the cat (nơi ông ngồi xuống bức tường cạnh con mèo). Hedidn’t look at it, but after a moment he spoke to it. (Ông không nhìn nó, nhưng một lúc sau,
+ông cất lời với nó.)
+
+‘Fancy seeing you here, Professor McGonagall.’ (‘Thật thú vị khi gặp Giáo sư ở đây, Giáo
+sư McGonagall.’)
+
+He turned to smile at the tabby, but it had gone. (Ông quay sang mỉm cười với con mèo
+mướp, nhưng nó đã biến mất.) Instead he was smiling at a rather severe-looking woman
+(Thay vào đó, ông đang mỉm cười với một người phụ nữ trông khá nghiêm khắc) who was
+wearing square glasses (người đang đeo một cặp kính vuông) exactly the shape of the
+markings the cat had had around its eyes (có hình dáng y hệt những vệt hoa văn quanh mắt
+con mèo khi nãy). She, too, was wearing a cloak, an emerald one. (Bà ấy cũng đang mặc
+một chiếc áo choàng, màu ngọc lục bảo.) Her black hair was drawn into a tight bun. (Mái
+tóc đen của bà được búi chặt.) She looked distinctly ruffled. (Bà trông có vẻ đang bực dọc
+ra mặt.)
+
+‘How did you know it was me?’ she asked. (‘Sao thầy biết đó là tôi?’ bà hỏi.)
+‘My dear Professor, I’ve never seen a cat sit so stiffly.’ (‘Giáo sư thân mến à, tôi chưa từng
+thấy con mèo nào ngồi cứng đơ như vậy.’)
+
+‘You’d be stiff if you’d been sitting on a brick wall all day,’ said Professor McGonagall.
+(‘Thầy cũng sẽ cứng đơ ra nếu phải ngồi cả ngày trên một bức tường gạch,’ Giáo sư
+McGonagall nói.)
+
+‘All day? When you could have been celebrating? (‘Cả ngày ư? Trong khi Giáo sư có thể
+đang ăn mừng?’) I must have passed a dozen feasts and parties on my way here.’ (Tôi chắc
+hẳn đã đi ngang qua cả tá buổi tiệc tùng trên đường đến đây.’)
+Professor McGonagall sniffed angrily. (Giáo sư McGonagall khịt mũi tức giận.)
+‘Oh yes, everyone’s celebrating, all right,’ she said impatiently. (‘Ồ vâng, mọi người đều
+đang ăn mừng, phải rồi,’ bà nói một cách mất kiên nhẫn.) ‘You’d think they’d be a bit more
+careful, but no (‘Người ta tưởng họ sẽ cẩn thận hơn một chút, nhưng không) – even the
+Muggles have noticed something’s going on. (– ngay cả bọn Muggle cũng nhận ra có
+chuyện gì đó đang diễn ra.) It was on their news.’ (Nó đã lên bản tin của họ rồi.’) She
+jerked her head back at the Dursleys’ dark living-room window. (Bà hất đầu về phía cửa
+sổ phòng khách tối om của nhà Dursley.) ‘I heard it. Flocks of owls ... shooting stars ...
+(‘Tôi nghe thấy cả. Hàng đàn cú ... mưa sao băng ...) Well, they’re not completely stupid.
+(Chà, họ đâu có ngu ngốc hoàn toàn.) They were bound to notice something. (Họ nhất
+định sẽ nhận ra điều gì đó.) Shooting stars down in Kent (Mưa sao băng tuốt dưới Kent) –I’ll bet that was Dedalus Diggle. (– tôi cá đó là trò của Dedalus Diggle.) He never had
+much sense.’ (Ông ta chưa bao giờ có ý tứ gì cả.’)
+
+‘You can’t blame them,’ said Dumbledore gently. (‘Giáo sư không thể trách họ được,’
+Dumbledore nhẹ nhàng nói.) ‘We’ve had precious little to celebrate for eleven years.’ (‘Đã
+mười một năm rồi chúng ta mới có được dịp hiếm hoi để ăn mừng.’)
+
+‘I know that,’ said Professor McGonagall irritably. (‘Tôi biết điều đó,’ Giáo sư McGonagall
+gắt gỏng.) ‘But that’s no reason to lose our heads. (‘Nhưng đó không phải là lý do để mất
+trí như vậy.) People are being downright careless (Mọi người đang bất cẩn một cách rành
+rành ra đó), out on the streets in broad daylight (ra ngoài đường giữa thanh thiên bạch
+nhật), not even dressed in Muggle clothes (thậm chí không thèm mặc quần áo của dân
+Muggle), swapping rumours.’ (trao đổi những tin đồn.’)
+
+She threw a sharp, sideways glance at Dumbledore here (Nói đến đây, bà liếc ngang nhìn
+Dumbledore một cái thật sắc), as though hoping he was going to tell her something (như
+thể hy vọng ông sẽ nói cho bà nghe điều gì đó), but he didn’t, so she went on: (nhưng ông
+không nói gì, nên bà nói tiếp:) ‘A fine thing it would be if (‘Sẽ thật hay ho nếu như), on
+the very day You-Know-Who seems to have disappeared at last (ngay vào cái ngày mà Kẻ-
+Mà-Ai-Cũng-Biết-Là-Ai cuối cùng dường như đã biến mất), the Muggles found out about
+us all. (bọn Muggle lại phát hiện ra tất cả chúng ta.) I suppose he really has gone,
+Dumbledore?’ (Tôi đoán hắn ta thực sự đã biến mất rồi chứ, Dumbledore?’)
+‘It certainly seems so,’ said Dumbledore. (‘Chắc chắn là có vẻ như vậy,’ Dumbledore nói.)
+‘We have much to be thankful for. (‘Chúng ta có nhiều điều để cảm tạ.) Would you care
+for a sherbet lemon?’ (Giáo sư có muốn dùng một viên kẹo chanh không?’)
+‘A what?’ (‘Một cái gì cơ?’)
+
+‘A sherbet lemon. They’re a kind of Muggle sweet I’m rather fond of.’ (‘Một viên kẹo
+chanh. Đó là một loại kẹo của Muggle mà tôi khá thích.’)
+
+‘No, thank you,’ said Professor McGonagall coldly (‘Không, cảm ơn,’ Giáo sư McGonagall
+lạnh lùng nói), as though she didn’t think this was the moment for sherbet lemons (như thể
+bà không nghĩ đây là lúc dành cho kẹo chanh). ‘As I say, even if You-Know-Who has gone
+–’ (‘Như tôi đã nói, ngay cả khi Kẻ-Mà-Ai-Cũng-Biết-Là-Ai đã biến mất –’)
+
+‘My dear Professor, surely a sensible person like yourself can call him by his name? (‘Giáo
+sư thân mến, chắc chắn một người nhạy bén như Giáo sư có thể gọi hắn bằng tên thật
+chứ?) All this “You-Know-Who” nonsense (Tất cả những thứ ngớ ngẩn kiểu “Kẻ-Mà-AiCũng-Biết-Là-Ai” này) – for eleven years I have been trying to persuade people to call himby his proper name: Voldemort.’ (– mười một năm nay tôi đã cố gắng thuyết phục mọi
+người gọi hắn bằng cái tên chính thức: Voldemort.’) Professor McGonagall flinched (Giáo
+sư McGonagall giật mình nao núng), but Dumbledore, who was unsticking two sherbet
+lemons, seemed not to notice (nhưng Dumbledore, người đang gỡ hai viên kẹo chanh dính
+vào nhau, dường như không nhận ra). ‘It all gets so confusing if we keep saying “YouKnow-Who”. (‘Mọi thứ sẽ trở nên thật rắc rối nếu chúng ta cứ nói “Kẻ-Mà-Ai-Cũng-BiếtLà-Ai”.) I have never seen any reason to be frightened of saying Voldemort’s name.’ (Tôi
+chưa bao giờ thấy có lý do gì phải sợ hãi khi nói tên của Voldemort.’)
+‘I know you haven’t,’ said Professor McGonagall (‘Tôi biết thầy không sợ,’ Giáo sư
+McGonagall nói), sounding half exasperated, half-admiring (giọng nửa bực bội, nửa khâm
+phục). ‘But you’re different. (‘Nhưng thầy thì khác.) Everyone knows you’re the only one
+You-Know – oh, all right, Voldemort – was frightened of.’ (Ai cũng biết thầy là người duy
+nhất mà Kẻ-Mà – ồ, được rồi, Voldemort – phải sợ hãi.’)
+
+‘You flatter me,’ said Dumbledore calmly (‘Giáo sư quá khen,’ Dumbledore điềm tĩnh nói).
+‘Voldemort had powers I will never have.’ (‘Voldemort có những sức mạnh mà tôi sẽ không
+bao giờ có được.’)
+
+‘Only because you’re too – well – noble to use them.’ (‘Chỉ vì thầy quá – ừm – cao thượng
+nên không thèm sử dụng chúng thôi.’)
+
+‘It’s lucky it’s dark. (‘Thật may là trời đang tối.) I haven’t blushed so much since Madam
+Pomfrey told me she liked my new earmuffs.’ (Tôi chưa từng đỏ mặt nhiều như vậy kể từ
+khi Bà Pomfrey nói rằng bà ấy thích cái bịt tai mới của tôi.’)
+
+Professor McGonagall shot a sharp look at Dumbledore and said (Giáo sư McGonagall
+phóng một cái nhìn sắc lẹm về phía Dumbledore và nói), ‘The owls are nothing to the
+rumours that are flying around. (‘Lũ cú chẳng là gì so với những tin đồn đang bay tứ tung
+ngoài kia.) You know what everyone’s saying? (Thầy có biết mọi người đang nói gì
+không?) About why he’s disappeared? About what finally stopped him?’ (Về lý do tại sao
+hắn biến mất? Về điều gì cuối cùng đã ngăn chặn được hắn?’)
+
+It seemed that Professor McGonagall had reached the point she was most anxious to discuss
+(Có vẻ như Giáo sư McGonagall đã đi đến cái vấn đề mà bà nóng lòng muốn thảo luận
+nhất), the real reason she had been waiting on a cold hard wall all day (lý do thực sự khiến
+bà đã phải chờ đợi trên một bức tường lạnh lẽo cứng ngắc cả ngày trời), for neither as a
+cat nor as a woman had she fixed Dumbledore with such a piercing stare as she did now
+(bởi vì dù là trong hình dáng một con mèo hay một người phụ nữ, chưa bao giờ bà nhìn
+chằm chằm Dumbledore bằng một ánh mắt sắc sảo xuyên thấu như lúc này). It was plainthat whatever ‘everyone’ was saying (Thật rõ ràng là cho dù ‘mọi người’ có nói gì đi nữa),
+she was not going to believe it until Dumbledore told her it was true (bà cũng sẽ không tin
+cho đến khi chính Dumbledore xác nhận điều đó là sự thật).
+
+Dumbledore, however, was choosing another sherbet lemon and did not answer
+(Dumbledore, tuy nhiên, đang bận lựa một viên kẹo chanh khác và không trả lời).
+‘What they’re saying,’ she pressed on (‘Những gì họ đang đồn đại,’ bà dồn ép), ‘is that last
+night Voldemort turned up in Godric’s Hollow. (‘là đêm qua Voldemort đã xuất hiện ở
+Thung lũng Godric.) He went to find the Potters. (Hắn đến để tìm gia đình Potter.) The
+rumour is that Lily and James Potter are – are – that they’re – dead.’ (Tin đồn là Lily và
+James Potter đã – đã – họ đã – chết rồi.’)
+
+Dumbledore bowed his head (Dumbledore cúi đầu). Professor McGonagall gasped (Giáo
+sư McGonagall hổn hển).
+
+‘Lily and James ... I can’t believe it ... I didn’t want to believe it ... Oh, Albus ...’ (‘Lily và
+James ... Tôi không thể tin được ... Tôi đã không muốn tin điều đó ... Ôi, Albus ...’)
+Dumbledore reached out and patted her on the shoulder (Dumbledore vươn tay ra và vỗ
+nhẹ lên vai bà). ‘I know ... I know ...’ he said heavily (‘Tôi biết ... Tôi biết ...’ ông nói một
+cách nặng nề).
+
+Professor McGonagall’s voice trembled as she went on (Giọng Giáo sư McGonagall run
+rẩy khi bà nói tiếp). ‘That’s not all. (‘Chưa hết đâu.) They’re saying he tried to kill the
+Potters’ son, Harry. (Họ đồn rằng hắn đã cố giết con trai của nhà Potter, bé Harry.) But –
+he couldn’t. (Nhưng – hắn không thể.) He couldn’t kill that little boy. (Hắn không thể giết
+được cậu bé đó.) No one knows why, or how (Không ai biết tại sao, hay bằng cách nào),
+but they’re saying that when he couldn’t kill Harry Potter (nhưng họ nói rằng khi hắn không
+thể giết Harry Potter), Voldemort’s power somehow broke (quyền năng của Voldemort
+bằng cách nào đó đã bị phá vỡ) – and that’s why he’s gone.’ (– và đó là lý do hắn tan
+biến.’)
+
+Dumbledore nodded glumly (Dumbledore buồn bã gật đầu).
+
+‘It’s – it’s true?’ faltered Professor McGonagall (‘Đó – đó là sự thật sao?’ Giáo sư
+McGonagall ấp úng). ‘After all he’s done ... all the people he’s killed ... he couldn’t kill a
+little boy? (‘Sau tất cả những gì hắn đã làm ... tất cả những người hắn đã giết ... hắn lại
+không thể giết một cậu bé sao?) It’s just astounding ... of all the things to stop him ... (Thật
+quá kinh ngạc ... trong số tất cả những thứ có thể ngăn chặn hắn ...) but how in the name
+of heaven did Harry survive?’ (nhưng làm thế quái nào mà Harry có thể sống sót được?’)‘We can only guess,’ said Dumbledore (‘Chúng ta chỉ có thể suy đoán,’ Dumbledore nói).
+‘We may never know.’ (‘Chúng ta có thể sẽ không bao giờ biết được.’)
+
+Professor McGonagall pulled out a lace handkerchief (Giáo sư McGonagall rút ra một
+chiếc khăn tay viền ren) and dabbed at her eyes beneath her spectacles (và chấm nước mắt
+bên dưới gọng kính). Dumbledore gave a great sniff (Dumbledore sụt sịt mũi thật to) as he
+took a golden watch from his pocket and examined it (khi ông lấy ra một chiếc đồng hồ
+vàng từ trong túi và xem xét nó). It was a very odd watch (Đó là một chiếc đồng hồ rất kỳ
+lạ). It had twelve hands but no numbers (Nó có đến mười hai cây kim nhưng lại không có
+chữ số nào); instead, little planets were moving around the edge (thay vào đó, có những
+hành tinh nhỏ xíu chuyển động quanh rìa). It must have made sense to Dumbledore, though
+(Dẫu vậy, nó hẳn là có ý nghĩa đối với Dumbledore), because he put it back in his pocket
+and said (vì ông cất nó lại vào túi và nói), ‘Hagrid’s late. (‘Hagrid đến trễ.) I suppose it
+was he who told you I’d be here, by the way?’ (Nhân tiện, tôi đoán chính bác ấy đã nói với
+Giáo sư là tôi sẽ ở đây đúng không?’)
+
+‘Yes,’ said Professor McGonagall (‘Đúng vậy,’ Giáo sư McGonagall nói). ‘And I don’t
+suppose you’re going to tell me why you’re here, of all places?’ (‘Và tôi cho là thầy sẽ
+không định nói cho tôi biết tại sao thầy lại ở đây, giữa vô vàn những nơi khác chứ?’)
+‘I’ve come to bring Harry to his aunt and uncle. (‘Tôi đến để đưa Harry cho dì và dượng
+của thằng bé.) They’re the only family he has left now.’ (Họ là những người thân duy nhất
+mà thằng bé còn lại lúc này.’)
+
+‘You don’t mean – you can’t mean the people who live here?’ cried Professor McGonagall
+(‘Ý thầy không phải là – thầy không thể nào có ý nói đến những người sống ở đây chứ?’
+Giáo sư McGonagall kêu lên), jumping to her feet and pointing at number four (bật dậy và
+chỉ thẳng vào căn nhà số bốn). ‘Dumbledore – you can’t. (‘Dumbledore à – thầy không thể
+làm vậy.) I’ve been watching them all day. (Tôi đã quan sát họ cả ngày nay rồi.) You
+couldn’t find two people who are less like us. (Thầy không thể tìm được hai người nào mà
+lại ít giống chúng ta hơn họ đâu.) And they’ve got this son – I saw him kicking his mother
+all the way up the street, screaming for sweets. (Và họ còn có đứa con trai này nữa chứ –
+tôi thấy nó đá vào người mẹ nó suốt dọc đường, gào thét đòi kẹo.) Harry Potter come and
+live here!’ (Harry Potter đến và sống ở đây sao!’)
+
+‘It’s the best place for him,’ said Dumbledore firmly (‘Đó là nơi tốt nhất cho thằng bé,’
+Dumbledore nói một cách kiên quyết). ‘His aunt and uncle will be able to explain
+everything to him when he’s older. (‘Dì và dượng của nó sẽ có thể giải thích mọi thứ cho
+nó khi nó lớn hơn.) I’ve written them a letter.’ (Tôi đã viết cho họ một lá thư.’)‘A letter?’ repeated Professor McGonagall faintly, sitting back down on the wall (‘Một lá
+thư?’ Giáo sư McGonagall lặp lại một cách yếu ớt, ngồi thụp xuống bức tường). ‘Really,
+Dumbledore, you think you can explain all this in a letter? (‘Thật sao, Dumbledore, thầy
+nghĩ mình có thể giải thích tất cả chuyện này bằng một lá thư ư?) These people will never
+understand him! (Những người này sẽ không bao giờ hiểu được thằng bé!) He’ll be famous
+– a legend – I wouldn’t be surprised if today was known as Harry Potter Day in future (Nó
+sẽ trở nên nổi tiếng – một huyền thoại – tôi sẽ không ngạc nhiên nếu ngày hôm nay được
+gọi là Ngày Harry Potter trong tương lai) – there will be books written about Harry – every
+child in our world will know his name!’ (– sẽ có những cuốn sách viết về Harry – mọi đứa
+trẻ trong thế giới của chúng ta sẽ biết tên nó!’)
+
+‘Exactly,’ said Dumbledore (‘Chính xác,’ Dumbledore nói), looking very seriously over the
+top of his half-moon glasses (nhìn một cách vô cùng nghiêm trọng qua gọng trên của chiếc
+kính hình bán nguyệt). ‘It would be enough to turn any boy’s head. (‘Điều đó đủ để làm hư
+hỏng đầu óc bất cứ cậu bé nào.) Famous before he can walk and talk! (Nổi tiếng trước cả
+khi biết đi và biết nói!) Famous for something he won’t even remember! (Nổi tiếng vì một
+chuyện mà nó thậm chí sẽ không thể nhớ nổi!) Can’t you see how much better off he’ll be
+(Giáo sư không thấy là nó sẽ tốt hơn biết bao nhiêu sao), growing up away from all that
+(khi được lớn lên tránh xa khỏi tất cả những thứ đó) until he’s ready to take it?’ (cho đến
+khi nó sẵn sàng đón nhận điều đó?’)
+
+Professor McGonagall opened her mouth (Giáo sư McGonagall hé miệng), changed her
+mind (rồi lại đổi ý), swallowed and then said (nuốt khan một cái rồi nói), ‘Yes – yes, you’re
+right, of course. (‘Vâng – vâng, tất nhiên là thầy đúng.) But how is the boy getting here,
+Dumbledore?’(Nhưng làm thế nào cậu bé đến được đây, Dumbledore?’) She eyed his cloak
+suddenly (Bà bỗng nhiên nhìn chằm chằm vào chiếc áo choàng của ông) as though she
+thought he might be hiding Harry underneath it (như thể bà nghĩ ông đang giấu Harry bên
+dưới đó).
+
+‘Hagrid’s bringing him.’ (‘Hagrid sẽ đưa thằng bé đến.’)
+‘You think it – wise – (‘Thầy nghĩ điều đó có – khôn ngoan – không) to trust Hagrid with
+something as important as this?’ (khi giao phó cho Hagrid một việc quan trọng như thế
+này?’)
+
+‘I would trust Hagrid with my life,’ said Dumbledore. (‘Tôi sẵn sàng giao phó cả mạng
+sống của mình cho Hagrid,’ Dumbledore nói).
+‘I’m not saying his heart isn’t in the right place,’ said Professor McGonagall grudgingly
+(‘Tôi không có ý nói thầy ấy không tốt tâm tốt tính,’ Giáo sư McGonagall miễn cưỡng nói),‘but you can’t pretend he’s not careless. (‘nhưng thầy không thể giả vờ như thầy ấy không
+hề bất cẩn được.) He does tend to – what was that?’ (Thầy ấy thường có xu hướng – tiếng
+gì vậy?’)
+
+A low rumbling sound had broken the silence around them. (Một tiếng gầm gừ trầm đục
+đã phá vỡ sự im lặng quanh họ.) It grew steadily louder (Tiếng động ngày một lớn dần) as
+they looked up and down the street for some sign of a headlight (khi họ nhìn dọc theo con
+phố để tìm một tia sáng đèn xe); it swelled to a roar as they both looked up at the sky (nó
+vang dội thành một tiếng gầm gào khi cả hai cùng ngước nhìn lên trời) – and a huge
+motorbike fell out of the air (– và một chiếc mô tô khổng lồ lao xuống từ không trung) and
+landed on the road in front of them (rồi hạ cánh xuống mặt đường ngay trước mặt họ).
+If the motorbike was huge (Nếu chiếc xe mô tô là khổng lồ), it was nothing to the man
+sitting astride it (thì nó chẳng bõ bèn gì so với người đàn ông đang ngồi dạng chân trên
+đó). He was almost twice as tall as a normal man (Ông ta cao gần gấp đôi một người đàn
+ông bình thường) and at least five times as wide (và bề ngang thì ít nhất gấp năm lần). He
+looked simply too big to be allowed (Ông ta trông đơn giản là quá to lớn đến mức khó tin),
+and so wild (và cực kỳ hoang dã) – long tangles of bushy black hair and beard hid most of
+his face (– những mớ tóc và râu đen rậm rạp rối bù che khuất phần lớn khuôn mặt ông),
+he had hands the size of dustbin lids (ông có đôi bàn tay to bằng nắp thùng rác) and his
+feet in their leather boots were like baby dolphins (và đôi chân đi trong đôi bốt da thì trông
+y như những con cá heo con). In his vast, muscular arms he was holding a bundle of
+blankets (Trong vòng tay to lớn, vạm vỡ của mình, ông đang ôm một bọc chăn).
+‘Hagrid,’ said Dumbledore, sounding relieved (‘Hagrid,’ Dumbledore nói, giọng nghe có
+vẻ nhẹ nhõm). ‘At last. (‘Cuối cùng thì.) And where did you get that motorbike?’ (Và bác
+lấy đâu ra chiếc xe mô tô đó vậy?’)
+
+‘Borrowed it, Professor Dumbledore, sir,’ said the giant (‘Mượn đấy ạ, thưa Giáo sư
+Dumbledore,’ người khổng lồ nói), climbing carefully off the motorbike as he spoke (vừa
+nói vừa cẩn thận bước xuống khỏi chiếc xe). ‘Young Sirius Black lent it me. (‘Cậu thanh
+niên Sirius Black đã cho tôi mượn nó.) I’ve got him, sir.’ (Tôi đã mang thằng bé đến đây
+rồi thưa thầy.’)
+
+‘No problems, were there?’ (‘Không có rắc rối gì chứ?’)
+‘No, sir (‘Không ạ, thưa thầy) – house was almost destroyed (– ngôi nhà đã gần như bị
+phá hủy hoàn toàn) but I got him out all right (nhưng tôi đã đưa được thằng bé ra ngoài
+an toàn) before the Muggles started swarmin’ around (trước khi bọn Muggle bắt đầu xúmlại). He fell asleep as we was flyin’ over Bristol.’ (Nó đã ngủ thiếp đi khi chúng tôi bay
+ngang qua Bristol.’)
+
+Dumbledore and Professor McGonagall bent forward over the bundle of blankets
+(Dumbledore và Giáo sư McGonagall cúi người về phía bọc chăn). Inside, just visible (Bên
+trong, vừa đủ để nhìn thấy), was a baby boy, fast asleep (là một bé trai, đang ngủ say sưa).
+Under a tuft of jet-black hair over his forehead (Dưới mớ tóc đen nhánh xõa trên trán thằng
+bé) they could see a curiously shaped cut, like a bolt of lightning (họ có thể nhìn thấy một
+vết cắt có hình thù kỳ lạ, trông giống như một tia chớp).
+‘Is that where –?’ whispered Professor McGonagall (‘Đó có phải là nơi mà –?’ Giáo sư
+McGonagall thì thầm).
+
+‘Yes,’ said Dumbledore (‘Đúng vậy,’ Dumbledore nói). ‘He’ll have that scar for ever.’ (‘Nó
+sẽ mang vết sẹo đó mãi mãi.’)
+
+‘Couldn’t you do something about it, Dumbledore?’ (‘Thầy không thể làm gì với nó sao,
+Dumbledore?’)
+
+‘Even if I could, I wouldn’t. (‘Kể cả khi có thể, tôi cũng sẽ không làm thế.) Scars can come
+in useful. (Những vết sẹo có thể trở nên hữu ích đấy.) I have one myself above my left knee
+(Bản thân tôi cũng có một cái ở ngay trên đầu gối trái) which is a perfect map of the
+London Underground. (đó là một bản đồ hoàn hảo của hệ thống Tàu điện ngầm London.)
+Well – give him here, Hagrid (Thôi nào – đưa nó đây, Hagrid) – we’d better get this over
+with.’ (– tốt hơn là chúng ta nên làm xong việc này đi.’)
+
+Dumbledore took Harry in his arms (Dumbledore đón lấy Harry trong vòng tay mình) and
+turned towards the Dursleys’ house (và quay về phía ngôi nhà của gia đình Dursley).
+‘Could I – could I say goodbye to him, sir?’ asked Hagrid. (‘Tôi có thể – tôi có thể chào
+tạm biệt thằng bé không, thưa thầy?’ Hagrid hỏi.) He bent his great, shaggy head over
+Harry (Bác cúi cái đầu to lớn, bù xù của mình xuống Harry) and gave him what must have
+been a very scratchy, whiskery kiss (và trao cho thằng bé một nụ hôn hẳn là rất nháp và
+đầy râu ria). Then, suddenly, Hagrid let out a howl like a wounded dog. (Rồi đột nhiên,
+Hagrid cất tiếng tru lên như một con chó bị thương.)
+
+‘Shhh!’ hissed Professor McGonagall. (‘Suỵt!’ Giáo sư McGonagall rít lên.) ‘You’ll wake
+the Muggles!’ (‘Thầy sẽ đánh thức bọn Muggle dậy mất!’)
+
+‘S-s-sorry,’ sobbed Hagrid (‘X-x-xin lỗi,’ Hagrid nức nở), taking out a large spotted
+handkerchief and burying his face in it (lấy ra một chiếc khăn tay to chấm bi và vùi mặt
+vào đó). ‘But I c-c-can’t stand it (‘Nhưng tôi k-k-không thể chịu đựng nổi) – Lily an’ Jamesdead (– Lily và James đã chết) – an’ poor little Harry off ter live with Muggles –’ (– và bé
+Harry tội nghiệp phải đi sống với bọn Muggle –’)
+
+‘Yes, yes, it’s all very sad (‘Đúng, đúng, mọi chuyện đều rất đáng buồn), but get a grip on
+yourself, Hagrid (nhưng hãy kiềm chế lại đi, Hagrid), or we’ll be found,’ (nếu không chúng
+ta sẽ bị phát hiện mất,’) Professor McGonagall whispered (Giáo sư McGonagall thì thầm),
+patting Hagrid gingerly on the arm (vỗ nhẹ một cách e dè lên cánh tay Hagrid) as
+Dumbledore stepped over the low garden wall and walked to the front door (trong lúc
+Dumbledore bước qua bờ tường vườn thấp và đi về phía cửa trước). He laid Harry gently
+on the doorstep (Ông nhẹ nhàng đặt Harry xuống bậc thềm cửa), took a letter out of his
+cloak (lấy một bức thư ra từ áo choàng), tucked it inside Harry’s blankets (nhét nó vào
+trong tấm chăn của Harry) and then came back to the other two (rồi quay trở lại chỗ hai
+người kia). For a full minute the three of them stood and looked at the little bundle (Trọn
+một phút đồng hồ, cả ba người đứng đó và nhìn bọc chăn nhỏ); Hagrid’s shoulders shook
+(đôi vai Hagrid run lên), Professor McGonagall blinked furiously (Giáo sư McGonagall
+chớp mắt liên hồi) and the twinkling light that usually shone from Dumbledore’s eyes
+seemed to have gone out (và ánh sáng lấp lánh thường tỏa ra từ đôi mắt của Dumbledore
+dường như đã vụt tắt).
+
+‘Well,’ said Dumbledore finally (‘Thôi,’ Dumbledore cuối cùng lên tiếng), ‘that’s that.
+(‘Mọi việc xong rồi.) We’ve no business staying here. (Chúng ta không còn việc gì để ở lại
+đây nữa.) We may as well go and join the celebrations.’ (Chúng ta cũng nên đi hòa chung
+vào các buổi ăn mừng thôi.’)
+
+‘Yeah,’ said Hagrid in a very muffled voice (‘Vâng,’ Hagrid nói bằng một giọng nghèn
+nghẹn). ‘I’d best get this bike away. (‘Tốt nhất là tôi nên đưa chiếc xe này đi khỏi đây.)
+G’night, Professor McGonagall – Professor Dumbledore, sir.’ (Chúc ngủ ngon, Giáo sư
+McGonagall – Giáo sư Dumbledore, thưa thầy.’)
+
+Wiping his streaming eyes on his jacket sleeve (Quyệt đôi mắt đang giàn giụa nước lên
+ống tay áo khoác), Hagrid swung himself on to the motorbike and kicked the engine into
+life (Hagrid đu mình lên chiếc xe mô tô và đạp nổ máy); with a roar it rose into the air and
+off into the night (với một tiếng gầm, nó lao vút lên không trung và biến mất vào màn đêm).
+‘I shall see you soon, I expect, Professor McGonagall,’ said Dumbledore, nodding to her.
+(‘Tôi mong là sẽ sớm gặp lại Giáo sư, Giáo sư McGonagall,’ Dumbledore nói, gật đầu
+chào bà.) Professor McGonagall blew her nose in reply. (Giáo sư McGonagall xì mũi đáp
+lại.)Dumbledore turned and walked back down the street. (Dumbledore quay lưng và đi bộ dọc
+theo con phố.) On the corner he stopped and took out the silver Put-Outer. (Đến góc đường
+ông dừng lại và lấy ra chiếc Tắt-Sáng bằng bạc.) He clicked it once (Ông bấm nó một cái)
+and twelve balls of light sped back to their street lamps (và mười hai quả cầu ánh sáng lao
+nhanh trở về các ngọn đèn đường của chúng) so that Privet Drive glowed suddenly orange
+(khiến cho đường Privet Drive đột nhiên rực lên ánh sáng màu cam) and he could make
+out a tabby cat slinking around the corner at the other end of the street (và ông có thể nhìn
+thấy bóng dáng một con mèo mướp đang lẻn qua góc cua ở đầu kia của con phố). He could
+just see the bundle of blankets on the step of number four. (Ông vừa vặn có thể nhìn thấy
+bọc chăn trên bậc thềm của căn nhà số bốn.)
+
+‘Good luck, Harry,’ he murmured. (‘Chúc may mắn, Harry,’ ông thì thầm.) He turned on
+his heel and with a swish of his cloak he was gone. (Ông quay gót và với một tiếng lướt
+nhẹ của chiếc áo choàng, ông đã biến mất.)
+
+A breeze ruffled the neat hedges of Privet Drive (Một cơn gió nhẹ làm xào xạc những hàng
+rào được cắt tỉa gọn gàng của đường Privet Drive), which lay silent and tidy under the
+inky sky (nơi đang nằm yên tĩnh và ngăn nắp dưới bầu trời đen như mực), the very last
+place you would expect astonishing things to happen (cái nơi cuối cùng trên đời mà bạn
+nghĩ rằng những điều kinh ngạc sẽ xảy ra). Harry Potter rolled over inside his blankets
+without waking up. (Harry Potter cuộn tròn trong chăn mà không hề thức giấc.) One small
+hand closed on the letter beside him and he slept on (Một bàn tay nhỏ xíu nắm lấy bức thư
+bên cạnh và cậu bé tiếp tục ngủ), not knowing he was special (không hề biết rằng mình là
+một người đặc biệt), not knowing he was famous (không hề biết rằng mình nổi tiếng), not
+knowing he would be woken in a few hours’ time by Mrs Dursley’s scream (không hề biết
+rằng mình sẽ bị đánh thức trong vài giờ nữa bởi tiếng hét của bà Dursley) as she opened
+the front door to put out the milk bottles (khi bà mở cửa trước để đặt những chai sữa ra
+ngoài), nor that he would spend the next few weeks being prodded and pinched by his
+cousin Dudley ... (và cũng không biết rằng mình sẽ trải qua vài tuần tiếp theo bị thằng anh
+họ Dudley chọc ghẹo và cấu véo ...) He couldn’t know that at this very moment (Cậu bé
+không thể biết rằng ngay tại khoảnh khắc này), people meeting in secret all over the country
+(những người đang tụ họp bí mật trên khắp cả nước) were holding up their glasses and
+saying in hushed voices: (đang nâng ly của họ lên và nói bằng những giọng thì thầm:) ‘To
+Harry Potter – the boy who lived!’ (‘Chúc mừng Harry Potter – cậu bé đã sống sót!’)
+        `;
+
+
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

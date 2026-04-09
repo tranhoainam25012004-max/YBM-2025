@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Part 7-đoạn đơn</title>
+    <link rel="stylesheet" href="css/style_read.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box"><i class="material-icons" style="color:white; font-size:20px;">school</i></div>
+            <h3 style="margin:0; font-size: 1.1rem; display: block;">Toeic</h3>
+        </div>
+        <div id="navList"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('flashcard')">
+                <i class="material-icons">style</i> Từ vựng 
+            </button>
+            <button class="tab-btn" onclick="switchTab('passage')">
+                <i class="material-icons">description</i> Bài đọc
+            </button>
+            <button class="tab-btn" onclick="switchTab('quiz')">
+                <i class="material-icons">task_alt</i> Câu hỏi
+            </button>
+        </div>
+
+        <div class="main-content">
+            <div id="section-flashcard" class="content-section active">
+                
+                <div class="vocab-toggle-wrapper" id="vocabSubTabs">
+                    <button class="vocab-toggle-btn active" onclick="switchSubTab('flashcard-view')">
+                        <i class="material-icons" style="font-size: 20px;">style</i> Thẻ
+                    </button>
+                    <button class="vocab-toggle-btn" onclick="switchSubTab('practice-view')">
+                        <i class="material-icons" style="font-size: 20px;">edit_note</i> Luyện tập
+                    </button>
+                </div>
+
+                <div class="panel sub-view" id="flashcard-view" style="display: block;">
+                    <div id="flashcardArea"></div>
+                </div>
+
+                <div class="panel sub-view" id="practice-view" style="display: none;">
+                    <div id="practicePanel">
+                        <div id="practicesBody"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-passage" class="content-section">
+                <div class="panel" id="readingPanel">
+                    <div id="passagesBody"></div>
+                </div>
+            </div>
+
+            <div id="section-quiz" class="content-section">
+                <div class="panel" id="quizPanel">
+                    <div id="questionsBody"></div>
+                </div>
+            </div>
+
+        <div class="controls">
+          <button class="btn-action btn-swap control-flashcard" id="swapModeBtn" onclick="toggleFlashcardMode()" title="Đổi chiều Anh-Việt / Việt-Anh">
+        <i class="material-icons">swap_horiz</i>
+    </button>
+            <button class="btn-action btn-recall control-passage" id="recallBtn" onclick="toggleRecallMode()" title="Luyện dịch Anh-Việt">
+                <i class="material-icons">edit_note</i>
+            </button>
+            <button class="btn-action btn-grammar-all control-passage" id="grammarAllBtn" onclick="toggleAllGrammar()" title="Hiện phân tích ngữ pháp">
+                <i class="material-icons">architecture</i>
+            </button>
+            <button class="btn-action btn-translate control-passage" id="transBtn" onclick="toggleTranslation()">
+                <i class="material-icons">translate</i>
+            </button>
+            <button class="btn-action btn-ipa control-practice" id="ipaBtn" onclick="toggleIPA()" title="Ẩn/Hiện phiên âm IPA">
+                <i class="material-icons">sort_by_alpha</i>
+            </button>
+            <button class="btn-action btn-flip-all control-flashcard" id="flipAllBtn" onclick="toggleFlipAll()" title="Lật tất cả thẻ">
+                <i class="material-icons">import_export</i>
+            </button>
+            <button class="btn-action btn-submit control-quiz" id="toggleBtn" onclick="toggleAnswers()">
+                <i class="material-icons">visibility</i>
+            </button>
+            
+        </div>
+    </div>
+</body>
+<script>
+    const allSets = [
+    {
+        id: 1, range: "147-148",
+    },
+        {
+        id: 2, range: "149-150",
+    },
+        {
+        id: 3, range: "151-152",
+    },
+        {
+        id: 4, range: "153-154",
+    },
+        {
+        id: 5, range: "155-157",
+    },
+        {
+        id: 6, range: "158-160",
+    },
+        {
+        id: 7, range: "161-163",
+    },
+            {
+        id: 8, range: "164-167",
+    },
+            {
+        id: 9, range: "168-171",
+    },
+            {
+        id: 10, range: "172-175",
+    },
+];
+</script>
+<script src="js/script_read.js"></script>
+</body>
+</html>

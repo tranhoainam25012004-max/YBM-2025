@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mục lục - Harry Potter Quyển 1</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; }
+
+        .book-info { font-style: italic; color: #7f8c8d; }
+
+        .chapter-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .chapter-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid transparent;
+        }
+
+        .chapter-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .chap-number {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+            width: 40px;
+        }
+
+        .chap-titles {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .en-title { display: block; font-weight: 600; font-size: 1.1rem; }
+        .vi-title { display: block; font-size: 0.9rem; color: #95a5a6; }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #eee;
+            color: #7f8c8d;
+        }
+
+        /* Responsive cho PC */
+        @media (min-width: 768px) {
+            .chapter-list { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Harry Potter & The Sorcerer's Stone</h1>
+            <p class="book-info">Quyển 1: Harry Potter và Hòn đá Phù thủy</p>
+        </header>
+
+        <div class="chapter-list" id="chapter-index">
+            </div>
+    </div>
+
+    <script>
+        // Dữ liệu 17 chương
+        const chapters = [
+            { id: 1, en: "The Boy Who Lived", vi: "Đứa bé sống sót" },
+            { id: 2, en: "The Vanishing Glass", vi: "Tấm kính biến mất" },
+            { id: 3, en: "The Letters from No One", vi: "Những bức thư không người gửi" },
+            { id: 4, en: "The Keeper of the Keys", vi: "Người giữ khóa" },
+            { id: 5, en: "Diagon Alley", vi: "Hẻm Xéo" },
+            { id: 6, en: "The Journey from Platform Nine and Three-quarters", vi: "Chuyến tàu từ sân ga 9 3/4" },
+            { id: 7, en: "The Sorting Hat", vi: "Chiếc nón phân loại" },
+            { id: 8, en: "The Potions Master", vi: "Bậc thầy độc dược" },
+            { id: 9, en: "The Midnight Duel", vi: "Cuộc đấu tay đôi lúc nửa đêm" },
+            { id: 10, en: "Hallowe'en", vi: "Lễ hội Halloween" },
+            { id: 11, en: "Quidditch", vi: "Trận Quidditch" },
+            { id: 12, en: "The Mirror of Erised", vi: "Chiếc gương ảo ảnh" },
+            { id: 13, en: "Nicolas Flamel", vi: "Nicolas Flamel" },
+            { id: 14, en: "Norbert the Norwegian Ridgeback", vi: "Norbert - Rồng lưng xoáy Na Uy" },
+            { id: 15, en: "The Forbidden Forest", vi: "Khu rừng cấm" },
+            { id: 16, en: "Through the Trapdoor", vi: "Vượt qua cửa sập" },
+            { id: 17, en: "The Man with Two Faces", vi: "Người hai mặt" }
+        ];
+
+        const container = document.getElementById('chapter-index');
+
+        chapters.forEach(chap => {
+            const card = document.createElement('a');
+            card.className = 'chapter-card';
+            
+            // TRỎ ĐÚNG ĐƯỜNG DẪN THƯ MỤC TRONG ẢNH CỦA BẠN: Quyen1/Chuong1.html
+            card.href = `Quyen1/Chuong${chap.id}.html`; 
+            
+            card.innerHTML = `
+                <div class="chap-number">${chap.id}</div>
+                <div class="chap-titles">
+                    <span class="en-title">${chap.en}</span>
+                    <span class="vi-title">${chap.vi}</span>
+                </div>
+                <div class="status-badge">Đọc ngay</div>
+            `;
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
