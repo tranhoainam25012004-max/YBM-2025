@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mục lục - Harry Potter Quyển 2</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; }
+
+        .book-info { font-style: italic; color: #7f8c8d; }
+
+        .chapter-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .chapter-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid transparent;
+        }
+
+        .chapter-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .chap-number {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+            width: 40px;
+        }
+
+        .chap-titles {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .en-title { display: block; font-weight: 600; font-size: 1.1rem; }
+        .vi-title { display: block; font-size: 0.9rem; color: #95a5a6; }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #eee;
+            color: #7f8c8d;
+        }
+
+        /* Responsive cho PC */
+        @media (min-width: 768px) {
+            .chapter-list { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Harry Potter & The Chamber of Secrets</h1>
+            <p class="book-info">Quyển 2: Harry Potter và Phòng chứa Bí mật</p>
+        </header>
+
+        <div class="chapter-list" id="chapter-index">
+            </div>
+    </div>
+
+    <script>
+        // Dữ liệu 18 chương Quyển 2
+        const chapters = [
+            { id: 1, en: "The Worst Birthday", vi: "Sinh nhật tệ nhất" },
+            { id: 2, en: "Dobby's Warning", vi: "Lời cảnh báo của Dobby" },
+            { id: 3, en: "The Burrow", vi: "Trang trại Hang Sóc" },
+            { id: 4, en: "At Flourish and Blotts", vi: "Ở tiệm Phú quý và Độc thư" },
+            { id: 5, en: "The Whomping Willow", vi: "Cây Liễu Roi" },
+            { id: 6, en: "Gilderoy Lockhart", vi: "Gilderoy Lockhart" },
+            { id: 7, en: "Mudbloods and Murmurs", vi: "Máu bùn và tiếng thì thầm" },
+            { id: 8, en: "The Deathday Party", vi: "Tiệc Tử nhật" },
+            { id: 9, en: "The Writing on the Wall", vi: "Những dòng chữ trên tường" },
+            { id: 10, en: "The Rogue Bludger", vi: "Trái bóng quái gở" },
+            { id: 11, en: "The Duelling Club", vi: "Câu lạc bộ Đấu tay đôi" },
+            { id: 12, en: "The Polyjuice Potion", vi: "Thuốc Đa dịch" },
+            { id: 13, en: "The Very Secret Diary", vi: "Quyển nhật ký bí mật" },
+            { id: 14, en: "Cornelius Fudge", vi: "Cornelius Fudge" },
+            { id: 15, en: "Aragog", vi: "Aragog" },
+            { id: 16, en: "The Chamber of Secrets", vi: "Phòng chứa Bí mật" },
+            { id: 17, en: "The Heir of Slytherin", vi: "Người kế vị của Slytherin" },
+            { id: 18, en: "Dobby's Reward", vi: "Phần thưởng của Dobby" }
+        ];
+
+        const container = document.getElementById('chapter-index');
+
+        chapters.forEach(chap => {
+            const card = document.createElement('a');
+            card.className = 'chapter-card';
+            
+            // Cập nhật đường dẫn đến thư mục Quyen2
+            card.href = `Quyen2/Chuong${chap.id}.html`; 
+            
+            card.innerHTML = `
+                <div class="chap-number">${chap.id}</div>
+                <div class="chap-titles">
+                    <span class="en-title">${chap.en}</span>
+                    <span class="vi-title">${chap.vi}</span>
+                </div>
+                <div class="status-badge">Đọc ngay</div>
+            `;
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>

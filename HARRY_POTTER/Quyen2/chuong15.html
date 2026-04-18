@@ -1,0 +1,399 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 15: Aragog</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="15_Chapter_15_ Aragog.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Summer was creeping over the grounds (Mùa hè đang lặng lẽ bao phủ khắp khuôn viên) around the castle; (quanh lâu đài;) sky and lake alike turned periwinkle blue (bầu trời và mặt hồ cùng chuyển sang màu xanh dừa cạn) and flowers large as cabbages (và những bông hoa to như bắp cải) burst into bloom in the greenhouses. (nở rộ trong các nhà kính.) But with no Hagrid visible (Nhưng khi không còn thấy bóng dáng bác Hagrid) from the castle windows, (từ các cửa sổ lâu đài,) striding the grounds with Fang at his heels, (sải bước trên sân cùng con Fang bám gót,) the scene didn’t look right to Harry; (khung cảnh đối với Harry dường như có gì đó không ổn;) no better, in fact, (thực tế là chẳng khá hơn chút nào,) than the inside of the castle, (so với bên trong lâu đài,) where things were so horribly wrong. (nơi mọi chuyện đang diễn ra tồi tệ đến kinh khủng.)
+
+Harry and Ron had tried to visit Hermione, (Harry và Ron đã cố gắng đến thăm Hermione,) but visitors were now barred (nhưng khách viếng thăm hiện đã bị cấm) from the hospital wing. (vào bệnh xá.)
+
+‘We’re taking no more chances,’ (‘Chúng ta không thể mạo hiểm thêm nữa,’) Madam Pomfrey told them severely (Bà Pomfrey nghiêm khắc nói với họ) through a crack in the hospital door. (qua một khe hở trên cửa bệnh xá.) ‘No, I’m sorry, (‘Không, tôi rất tiếc,) there’s every chance (hoàn toàn có khả năng) the attacker might come back (kẻ tấn công sẽ quay lại) to finish these people off ...’ (để kết liễu những người này ...’)
+
+With Dumbledore gone, (Khi cụ Dumbledore đã đi khỏi,) fear had spread as never before, (nỗi sợ hãi đã lan rộng hơn bao giờ hết,) so that the sun warming the castle walls outside (đến mức ánh nắng sưởi ấm những bức tường lâu đài bên ngoài) seemed to stop at the mullioned windows. (dường như cũng phải dừng lại ở những ô cửa sổ chia song.) There was barely a face to be seen (Hầu như không thể nhìn thấy một khuôn mặt nào) in the school (trong trường) that didn’t look worried and tense, (mà lại không tỏ ra lo lắng và căng thẳng,) and any laughter that rang through the corridors (và bất kỳ tiếng cười nào vang lên dọc các hành lang) sounded shrill and unnatural (nghe cũng the thé và thiếu tự nhiên) and was quickly stifled. (và bị dập tắt ngay lập tức.)
+
+Harry constantly repeated (Harry liên tục lặp đi lặp lại) Dumbledore’s final words to himself. (những lời cuối cùng của cụ Dumbledore với chính mình.)
+
+‘I will only truly have left this school (‘Tôi sẽ chỉ thực sự rời khỏi ngôi trường này) when none here are loyal to me ... (khi không còn ai ở đây trung thành với tôi nữa ...) Help will always be given at Hogwarts (Sự giúp đỡ sẽ luôn được ban ra tại Hogwarts) to those who ask for it.’ (cho những ai yêu cầu điều đó.’) But what good were these words? (Nhưng những lời này thì có ích gì chứ?) Who exactly were they supposed to ask for help, (Chính xác thì họ phải cầu cứu ai đây,) when everyone was just as confused and scared (khi mà mọi người cũng đang bối rối và sợ hãi) as they were? (y như họ?)
+
+Hagrid’s hint about the spiders (Gợi ý của bác Hagrid về bầy nhện) was far easier to understand – (thì dễ hiểu hơn nhiều –) the trouble was, (vấn đề là,) there didn’t seem to be a single spider left (dường như không còn sót lại một con nhện nào) in the castle to follow. (trong lâu đài để mà đi theo cả.) Harry looked everywhere he went, (Harry đã tìm kiếm ở mọi nơi cậu đến,) helped (rather reluctantly) by Ron. (với sự trợ giúp (khá miễn cưỡng) từ Ron.) They were hampered, of course, (Tất nhiên là họ bị cản trở,) by the fact that they weren’t allowed (bởi thực tế là họ không được phép) to wander off on their own, (tự ý đi lang thang,) but had to move around the castle (mà phải di chuyển quanh lâu đài) in a pack with the other Gryffindors. (theo nhóm cùng với các học sinh nhà Gryffindor khác.) Most of their fellow students seemed glad (Hầu hết các bạn học của họ có vẻ mừng rỡ) that they were being shepherded (vì được chăn dắt/hộ tống) from class to class by teachers, (đi từ lớp này sang lớp khác bởi các giáo viên,) but Harry found it very irksome. (nhưng Harry thì thấy điều đó rất phiền toái.)
+
+One person, however, (Tuy nhiên, có một người,) seemed to be thoroughly enjoying (có vẻ như đang hoàn toàn tận hưởng) the atmosphere of terror and suspicion. (bầu không khí khiếp sợ và nghi ngờ này.) Draco Malfoy was strutting around the school (Draco Malfoy đang vênh váo đi lại quanh trường) as though he had just been appointed Head Boy. (như thể cậu ta vừa được bổ nhiệm làm Thủ lĩnh Nam sinh.) Harry didn’t realise (Harry đã không nhận ra) what he was so pleased about (cậu ta đang đắc ý vì điều gì) until the Potions lesson (cho đến tiết Độc dược) about a fortnight after Dumbledore and Hagrid had left, (khoảng nửa tháng sau khi cụ Dumbledore và bác Hagrid rời đi,) when, sitting right behind Malfoy, (khi đang ngồi ngay phía sau Malfoy,) Harry overheard him gloating (Harry tình cờ nghe được cậu ta hả hê khoe khoang) to Crabbe and Goyle. (với Crabbe và Goyle.)
+
+‘I always thought (‘Tao luôn nghĩ) Father might be the one (cha tao có thể sẽ là người) who got rid of Dumbledore,’ (tống cổ được Dumbledore,’) he said, not troubling to keep his voice down. (cậu ta nói, chẳng buồn hạ giọng xuống.) ‘I told you he thinks Dumbledore’s the worst Headmaster (‘Tao đã bảo chúng mày là ông ấy nghĩ Dumbledore là vị Hiệu trưởng tệ nhất) the school’s ever had. (mà trường này từng có mà.) Maybe we’ll get a decent Headmaster now. (Có lẽ bây giờ chúng ta sẽ có một vị Hiệu trưởng tử tế hơn.) Someone who won’t want the Chamber of Secrets closed. (Một người không muốn đóng cửa Phòng chứa Bí mật.) McGonagall won’t last long, (Bà McGonagall sẽ không trụ được lâu đâu,) she’s only filling in ...’ (bà ấy chỉ đang dạy thế chỗ thôi ...’)
+
+Snape swept past Harry, (Thầy Snape lướt ngang qua Harry,) making no comment (không hề bình luận gì) about Hermione’s empty seat and cauldron. (về chỗ ngồi và cái vạc trống không của Hermione.)
+
+‘Sir,’ said Malfoy loudly. (‘Thưa thầy,’ Malfoy lớn giọng nói.) ‘Sir, why don’t you apply (‘Thưa thầy, sao thầy không nộp đơn) for the Headmaster’s job?’ (cho vị trí Hiệu trưởng ạ?’)
+
+‘Now, now, Malfoy,’ said Snape, (‘Thôi nào, thôi nào, Malfoy,’ thầy Snape nói,) though he couldn’t suppress a thin-lipped smile. (mặc dù thầy không thể giấu nổi một nụ cười mím chi.) ‘Professor Dumbledore has only been suspended (‘Giáo sư Dumbledore chỉ bị đình chỉ công tác) by the governors. (bởi ban quản trị thôi.) I dare say he’ll be back with us soon enough.’ (Thầy dám nói là cụ ấy sẽ sớm trở lại với chúng ta thôi.’)
+
+‘Yeah, right,’ said Malfoy, smirking. (‘Vâng, chắc chắn rồi,’ Malfoy nói, cười khẩy.) ‘I expect you’d have Father’s vote, sir, (‘Em tin là thầy sẽ có được phiếu bầu của cha em, thưa thầy,) if you wanted to apply for the job. (nếu thầy muốn nộp đơn cho công việc đó.) I’ll tell Father you’re the best teacher here, sir ...’ (Em sẽ nói với cha rằng thầy là giáo viên xuất sắc nhất ở đây, thưa thầy ...’)
+
+Snape smirked (Thầy Snape cười khẩy) as he swept off around the dungeon, (khi lướt qua một vòng quanh căn hầm ngục,) fortunately not spotting Seamus Finnigan, (may mắn là không phát hiện ra Seamus Finnigan,) who was pretending to vomit into his cauldron. (người đang giả vờ nôn oẹ vào trong cái vạc của cậu ấy.)
+
+‘I’m quite surprised (‘Tao khá ngạc nhiên) the Mudbloods haven’t all packed their bags by now,’ (là bọn Máu bùn đến giờ vẫn chưa cuốn gói hết đấy,’) Malfoy went on. (Malfoy nói tiếp.) ‘Bet you five Galleons the next one dies. (‘Cá với chúng mày năm đồng Galleon đứa tiếp theo sẽ chết.) Pity it wasn’t Granger ...’ (Tiếc là đó không phải con Granger ...’)
+
+The bell rang at that moment, (Tiếng chuông reo lên ngay lúc đó,) which was lucky; (thật là may mắn;) at Malfoy’s last words, (trước những lời cuối cùng của Malfoy,) Ron had leapt off his stool, (Ron đã bật khỏi ghế,) and in the scramble to collect bags and books, (và trong lúc nhao nhao chen chúc để thu dọn cặp sách,) his attempts to reach Malfoy went unnoticed. (những nỗ lực lao tới chỗ Malfoy của cậu ấy đã không bị ai chú ý.)
+
+‘Let me at him,’ Ron growled, (‘Để mình tẩn nó,’ Ron gầm gừ,) as Harry and Dean hung onto his arms. (trong khi Harry và Dean đu níu lấy hai cánh tay cậu ấy.) ‘I don’t care, I don’t need my wand, (‘Mình cóc quan tâm, mình không cần đũa phép,) I’m going to kill him with my bare hands –’ (mình sẽ giết nó bằng tay không –’)
+
+‘Hurry up, (‘Nhanh lên,) I’ve got to take you all to Herbology,’ (ta phải dẫn tất cả các trò đến lớp Thảo dược học,’) barked Snape over the class’s heads, (thầy Snape quát lớn qua đầu cả lớp,) and off they went, crocodile fashion, (và họ bước đi, nối đuôi nhau thành hàng,) with Harry, Ron and Dean bringing up the rear, (với Harry, Ron và Dean đi bọc hậu,) Ron still trying to get loose. (Ron vẫn đang cố gắng vùng vẫy thoát ra.) It was only safe to let go of him (Chỉ an toàn để buông cậu ấy ra) when Snape had seen them out of the castle, (khi thầy Snape đã dẫn họ ra khỏi lâu đài,) and they were making their way across the vegetable patch (và họ đang băng qua luống rau) towards the greenhouses. (tiến về phía các nhà kính.)
+
+The Herbology class was very subdued; (Lớp Thảo dược học vô cùng ảm đạm;) there were now two missing from their number, (bây giờ sĩ số của họ đã vắng hai người,) Justin and Hermione. (Justin và Hermione.)
+
+Professor Sprout set them all to work (Giáo sư Sprout bắt tất cả bọn họ bắt tay vào việc) pruning the Abyssinian Shrivelfigs. (cắt tỉa những cây sung héo Abyssinia.) Harry went to tip an armful of withered stalks (Harry đi đổ một ôm những cành cây khô héo) onto the compost heap (lên đống phân ủ) and found himself face to face with Ernie Macmillan. (và thấy mình chạm mặt với Ernie Macmillan.)
+
+Ernie took a deep breath (Ernie hít một hơi thật sâu) and said, very formally, (và nói, vô cùng trang trọng,) ‘I just want to say, Harry, (‘Mình chỉ muốn nói, Harry à,) that I’m sorry I ever suspected you. (rằng mình xin lỗi vì đã từng nghi ngờ bồ.) I know you’d never attack Hermione Granger, (Mình biết bồ sẽ không bao giờ tấn công Hermione Granger,) and I apologise for all the stuff I said. (và mình xin lỗi về tất cả những điều mình đã nói.) We’re all in the same boat now, and, well –’ (Bây giờ tất cả chúng ta đều cùng hội cùng thuyền, và, ừm –’)
+
+He held out a pudgy hand, (Cậu ấy chìa một bàn tay mũm mĩm ra,) and Harry shook it. (và Harry đã bắt lấy nó.)
+
+Ernie and his friend Hannah (Ernie và bạn của cậu, Hannah) came to work at the same Shrivelfig as Harry and Ron. (đã đến làm chung một cây sung héo với Harry và Ron.)
+
+‘That Draco Malfoy character,’ (‘Cái tên Draco Malfoy đó,’) said Ernie, breaking off dead twigs, (Ernie nói, vừa bẻ những cành cây chết,) ‘he seems very pleased about all this, doesn’t he? (‘cậu ta có vẻ rất khoái chí về tất cả những chuyện này, phải không? D’you know, I think he might be Slytherin’s heir.’ (Bồ biết không, mình nghĩ cậu ta có thể chính là người thừa kế của Slytherin đấy.’)
+
+‘That’s clever of you,’ (‘Bồ thông minh thật đấy,’) said Ron, who didn’t seem to have forgiven Ernie (Ron nói, người dường như chưa hề tha thứ cho Ernie) as readily as Harry. (một cách dễ dàng như Harry.)
+
+‘Do you think it’s Malfoy, Harry?’ Ernie asked. (‘Bồ có nghĩ đó là Malfoy không, Harry?’ Ernie hỏi.)
+
+‘No,’ said Harry, (‘Không,’ Harry nói,) so firmly that Ernie and Hannah stared. (cương quyết đến mức Ernie và Hannah phải trố mắt nhìn.)
+
+A second later, Harry spotted something (Một giây sau, Harry phát hiện ra một thứ) that made him hit Ron over the hand (khiến cậu đập vào tay Ron) with his pruning shears. (bằng chiếc kéo tỉa cành của mình.)
+
+‘Ouch! What’re you –’ (‘Ái da! Bồ làm gì –’)
+
+Harry was pointing at the ground (Harry đang chỉ xuống mặt đất) a few feet away. (cách đó vài bước chân.) Several large spiders were scurrying across the earth. (Vài con nhện lớn đang vội vã chạy loăng quăng trên mặt đất.)
+
+‘Oh, yeah,’ said Ron, (‘Ồ, phải rồi,’ Ron nói,) trying, and failing, to look pleased. (cố tỏ vẻ mừng rỡ, nhưng thất bại.) ‘But we can’t follow them now ...’ (‘Nhưng bây giờ chúng ta không thể đi theo chúng ...’)
+
+Ernie and Hannah were listening curiously. (Ernie và Hannah đang tò mò lắng nghe.)
+
+Harry watched the spiders running away. (Harry nhìn bầy nhện đang bỏ chạy.)
+
+‘Looks like they’re heading for the Forbidden Forest ...’ (‘Có vẻ như chúng đang hướng về phía Khu rừng Cấm ...’)
+
+And Ron looked even unhappier about that. (Và Ron trông còn sầu thảm hơn nữa về chuyện đó.)
+
+At the end of the lesson (Vào cuối tiết học) Professor Sprout escorted the class (Giáo sư Sprout hộ tống cả lớp) to their Defence Against the Dark Arts lesson. (đến lớp học Phòng chống Nghệ thuật Hắc ám.) Harry and Ron lagged behind the others (Harry và Ron nấn ná tụt lại phía sau những người khác) so they could talk out of earshot. (để họ có thể nói chuyện mà không bị ai nghe thấy.)
+
+‘We’ll have to use the Invisibility Cloak again,’ (‘Chúng ta sẽ phải dùng lại chiếc Áo choàng Tàng hình thôi,’) Harry told Ron. (Harry bảo Ron.) ‘We can take Fang with us. (‘Chúng ta có thể dắt con Fang đi cùng.) He’s used to going into the Forest with Hagrid, (Nó đã quen với việc đi vào Rừng cùng bác Hagrid rồi,) he might be some help.’ (nó có thể giúp ích được gì đó.’)
+
+‘Right,’ said Ron, (‘Phải rồi,’ Ron nói,) who was twirling his wand nervously (người đang bồn chồn xoay xoay cây đũa phép) in his fingers. (trong các ngón tay.) ‘Er – aren’t there – (‘Ờ – chẳng phải –) aren’t there supposed to be werewolves (chẳng phải người ta cho là có ma sói) in the Forest?’ (trong Rừng sao?’) he added, (cậu ấy nói thêm,) as they took their usual places (khi họ về lại chỗ ngồi quen thuộc) at the back of Lockhart’s classroom. (ở cuối lớp học của thầy Lockhart.)
+
+Preferring not to answer that question, (Vì không muốn trả lời câu hỏi đó,) Harry said, (Harry nói,) ‘There are good things in there, too. (‘Trong đó cũng có những thứ tốt đẹp mà.) The centaurs are all right, (Các nhân mã rất ổn,) and the unicorns.’ (và cả những con kỳ lân nữa.’)
+
+Ron had never been (Ron chưa từng đặt chân) into the Forbidden Forest before. (vào Khu rừng Cấm trước đây.) Harry had entered it only once, (Harry mới chỉ vào đó một lần,) and had hoped never to do so again. (và đã hy vọng sẽ không bao giờ phải làm thế nữa.)
+
+Lockhart bounded into the room (Lockhart nhảy tót vào phòng) and the class stared at him. (và cả lớp chằm chằm nhìn thầy.) Every other teacher in the place (Tất cả các giáo viên khác trong trường) was looking grimmer than usual, (đều trông ủ rũ hơn bình thường,) but Lockhart appeared (nhưng Lockhart lại tỏ ra) nothing short of buoyant. (vô cùng hớn hở.)
+
+‘Come now,’ he cried, (‘Nào nào,’ thầy kêu lên,) beaming around him, (cười rạng rỡ nhìn quanh,) ‘why all these long faces?’ (‘sao mặt mũi ai nấy đều ỉu xìu thế kia?’)
+
+People swapped exasperated looks, (Mọi người trao nhau những ánh nhìn ngán ngẩm,) but nobody answered. (nhưng không ai trả lời.)
+
+‘Don’t you people realise,’ (‘Mọi người không nhận ra sao,’) said Lockhart, speaking slowly, (Lockhart nói, chầm chậm nhả chữ,) as though they were all a bit dim, (như thể tất cả bọn họ đều hơi đần độn,) ‘the danger has passed! (‘nguy hiểm đã qua rồi!) The culprit has been taken away.’ (Thủ phạm đã bị tóm đi rồi.’)
+
+‘Says who?’ (‘Ai nói vậy?’) said Dean Thomas loudly. (Dean Thomas lớn tiếng hỏi.)
+
+‘My dear young man, (‘Chàng trai trẻ thân mến của tôi,) the Minister of Magic wouldn’t have taken Hagrid (Bộ trưởng Bộ Pháp thuật đã không bắt Hagrid đi) if he hadn’t been one hundred per cent sure (nếu ông ấy không chắc chắn một trăm phần trăm) that he was guilty,’ (rằng lão ta có tội,’) said Lockhart, (Lockhart nói,) in the tone of someone explaining (bằng giọng điệu của một người đang giải thích) that one and one made two. (rằng một cộng một bằng hai.)
+
+‘Oh, yes he would,’ (‘Ồ, ổng có thể làm vậy lắm chứ,’) said Ron, (Ron cự lại,) even more loudly than Dean. (còn lớn giọng hơn cả Dean.)
+
+‘I flatter myself (‘Tôi tự lấy làm hãnh diện) I know a touch more about Hagrid’s arrest (là tôi biết nhiều hơn một chút về vụ bắt giữ Hagrid) than you do, Mr Weasley,’ (so với trò đấy, trò Weasley,’) said Lockhart (Lockhart nói) in a self-satisfied tone. (bằng một giọng tự mãn.)
+
+Ron started to say (Ron định nói) that he didn’t think so, somehow, (rằng cậu ấy không cho là như vậy,) but stopped in mid-sentence (nhưng đã dừng lại giữa chừng) when Harry kicked him hard (khi bị Harry đá mạnh) under the desk. (dưới gầm bàn.)
+
+‘We weren’t there, remember?’ (‘Chúng ta không có ở đó, nhớ không?’) Harry muttered. (Harry lầm bầm.)
+
+But Lockhart’s disgusting cheeriness, (Nhưng sự vui vẻ đáng tởm của Lockhart,) his hints that he had always thought (những lời ám chỉ của ông ta rằng ông ta luôn nghĩ) Hagrid was no good, (Hagrid chẳng ra gì,) his confidence that the whole business (sự tự tin của ông ta rằng toàn bộ sự việc) was now at an end, (bây giờ đã kết thúc,) irritated Harry so much (làm Harry chướng tai gai mắt đến mức) that he yearned to throw (cậu chỉ khao khát ném thẳng) Gadding with Ghouls (cuốn Đong đưa với Quỷ dại) right in Lockhart’s stupid face. (vào cái bản mặt ngu ngốc của Lockhart.) Instead (Thay vào đó,) he contented himself (cậu tự kìm nén bằng cách) with scrawling a note to Ron: (nguệch ngoạc một mảnh giấy ghi chú cho Ron:) ‘Let’s do it tonight.’ (‘Làm chuyện đó đêm nay luôn đi.’)
+
+Ron read the message, (Ron đọc mẩu tin,) swallowed hard (nuốt khan một cái) and looked sideways at the empty seat (và liếc nhìn chiếc ghế trống) usually filled by Hermione. (nơi Hermione thường ngồi.) The sight seemed to stiffen his resolve, (Cảnh tượng đó dường như củng cố thêm quyết tâm của cậu,) and he nodded. (và cậu ấy gật đầu.)
+
+The Gryffindor common room (Phòng sinh hoạt chung nhà Gryffindor) was always very crowded these days, (dạo này luôn rất đông đúc,) because from six o’clock onwards, (bởi vì từ sáu giờ trở đi,) the Gryffindors had nowhere else to go. (học sinh nhà Gryffindor không còn nơi nào khác để đi.) They also had plenty to talk about, (Họ cũng có vô số chuyện để bàn tán,) with the result that (dẫn đến kết quả là) the common room often didn’t empty (phòng sinh hoạt chung thường không vãn người) until past midnight. (cho đến tận quá nửa đêm.)
+
+Harry went to get the Invisibility Cloak (Harry đi lấy chiếc Áo choàng Tàng hình) out of his trunk (khỏi rương) right after dinner, (ngay sau bữa tối,) and spent the evening sitting on it, (và dành cả buổi tối ngồi lên trên nó,) waiting for the room to clear. (để đợi căn phòng vắng người.) Fred and George challenged Harry and Ron (Fred và George rủ Harry và Ron) to a few games of Exploding Snap (chơi vài ván bài Bài nổ) and Ginny sat watching them, (và Ginny ngồi xem họ,) very subdued (vô cùng lặng lẽ) in Hermione’s usual chair. (trên chiếc ghế quen thuộc của Hermione.) Harry and Ron kept losing on purpose, (Harry và Ron liên tục cố tình thua,) trying to finish the games quickly, (cố gắng kết thúc các ván bài thật nhanh,) but even so, (nhưng dù vậy,) it was well past midnight (cũng phải quá nửa đêm) when Fred, George and Ginny finally went to bed. (Fred, George và Ginny mới chịu đi ngủ.)
+
+Harry and Ron waited (Harry và Ron chờ đợi) for the distant sounds (những âm thanh xa xa) of two dormitory doors closing (của hai cánh cửa phòng ngủ đóng lại) before seizing the Cloak, (trước khi vớ lấy chiếc Áo choàng,) throwing it over themselves, (trùm nó lên người,) and climbing through the portrait hole. (và chui qua lỗ chân dung.)
+
+It was another difficult journey (Lại là một hành trình gian nan nữa) through the castle, (xuyên qua lâu đài,) dodging all the teachers. (lẩn tránh tất cả các giáo viên.) At last they reached the Entrance Hall, (Cuối cùng họ cũng đến được Tiền sảnh,) slid back the lock (gạt chốt khóa) on the oak front doors, (trên cánh cửa chính bằng gỗ sồi,) squeezed between them, (lách qua chúng,) trying to stop any creaking, (cố gắng không để phát ra tiếng cọt kẹt nào,) and stepped out into the moonlit grounds. (và bước ra khoảng sân ngập ánh trăng.)
+
+‘’Course,’ said Ron abruptly, (‘Dĩ nhiên rồi,’ Ron đột ngột nói,) as they strode across the black grass, (khi họ sải bước qua bãi cỏ đen thẫm,) ‘we might get to the Forest (‘chúng ta có thể đến Rừng) and find there’s nothing to follow. (và phát hiện ra chẳng có gì để đi theo cả.) Those spiders might not’ve been going there at all. (Đám nhện đó có khi chẳng đến đó tí nào.) I know it looked like (Mình biết là trông có vẻ như) they were moving in that sort of general direction, (chúng đang di chuyển theo hướng chung chung đó,) but ...’ (nhưng ...’)
+
+His voice tailed away hopefully. (Giọng cậu nhỏ dần một cách đầy hy vọng.)
+
+They reached Hagrid’s house, (Họ đến nhà bác Hagrid,) sad and sorry-looking (trông buồn bã và thê lương) with its blank windows. (với những ô cửa sổ trống hoác.) When Harry pushed the door open, (Khi Harry đẩy cửa bước vào,) Fang went mad with joy (con Fang mừng rỡ phát điên) at the sight of them. (khi nhìn thấy họ.) Worried he might wake everyone at the castle (Sợ nó có thể đánh thức mọi người trong lâu đài) with his deep, booming barks, (bằng những tiếng sủa ồm ồm, vang rền của nó,) they hastily fed him treacle fudge (họ vội vã cho nó ăn kẹo mềm mật đường) from a tin on the mantelpiece, (lấy từ một cái hộp thiếc trên bệ lò sưởi,) which glued his teeth together. (làm dính chặt hai hàm răng của nó lại với nhau.)
+
+Harry left the Invisibility Cloak (Harry bỏ lại chiếc Áo choàng Tàng hình) on Hagrid’s table. (trên bàn của bác Hagrid.) There would be no need for it (Sẽ không cần đến nó) in the pitch-dark Forest. (trong Khu rừng tối om như mực.)
+
+‘C’mon, Fang, we’re going for a walk,’ (‘Nào, Fang, chúng ta đi dạo thôi,’) said Harry, patting his leg, (Harry nói, vỗ vỗ vào chân mình,) and Fang bounded happily (và con Fang hớn hở chồm lên) out of the house behind them, (chạy ra khỏi nhà theo sau họ,) dashed to the edge of the Forest (lao đến bìa Rừng) and lifted his leg (và giơ chân lên) against a large sycamore tree. (tè vào một gốc cây sung dâu lớn.)
+
+Harry took out his wand, (Harry rút đũa phép ra,) murmured, ‘Lumos!’ (lẩm nhẩm, ‘Lumos!’) and a tiny light appeared at the end of it, (và một luồng sáng nhỏ xíu xuất hiện ở đầu đũa,) just enough to let them watch the path (chỉ vừa đủ để họ quan sát con đường) for signs of spiders. (tìm kiếm dấu vết của bầy nhện.)
+
+‘Good thinking,’ said Ron. (‘Chí lý đấy,’ Ron nói.) ‘I’d light mine too, (‘Mình cũng muốn thắp sáng đũa của mình,) but you know – (nhưng bồ biết đấy –) it’d probably blow up or something ...’ (nó có thể sẽ phát nổ hay gì đó ...’)
+
+Harry tapped Ron on the shoulder, (Harry vỗ vai Ron,) pointing at the grass. (chỉ xuống bãi cỏ.) Two solitary spiders (Hai con nhện đơn độc) were hurrying away from the wandlight (đang vội vã chạy trốn khỏi ánh sáng đũa phép) into the shade of the trees. (vào trong bóng cây.)
+
+‘OK,’ Ron sighed, (‘Được rồi,’ Ron thở dài,) as though resigned to the worst, (như thể đã cam chịu điều tồi tệ nhất,) ‘I’m ready. Let’s go.’ (‘Mình sẵn sàng rồi. Đi thôi.’)
+
+So, with Fang scampering around them, (Vậy là, với con Fang chạy lon ton quanh họ,) sniffing tree roots and leaves, (đánh hơi rễ cây và lá rụng,) they entered the Forest. (họ tiến vào Rừng.) By the glow of Harry’s wand, (Dưới ánh sáng lờ mờ từ đũa phép của Harry,) they followed the steady trickle of spiders (họ đi theo dòng nhện cứ đều đặn) moving along the path. (di chuyển dọc theo con đường.) They walked for about twenty minutes, (Họ đi bộ khoảng hai mươi phút,) not speaking, (không nói tiếng nào,) listening hard for noises (căng tai lắng nghe những tiếng động) other than breaking twigs and rustling leaves. (khác ngoài tiếng cành cây gãy và tiếng lá xào xạc.) Then, when the trees had become thicker than ever, (Sau đó, khi cây cối trở nên dày đặc hơn bao giờ hết,) so that the stars overhead (đến nỗi những vì sao trên đầu) were no longer visible, (không còn nhìn thấy được nữa,) and Harry’s wand shone alone (và cây đũa phép của Harry chiếu sáng đơn độc) in the sea of dark, (trong biển bóng tối,) they saw their spider guides (họ thấy những con nhện dẫn đường) leaving the path. (đang rẽ khỏi con đường.)
+
+Harry paused, (Harry dừng lại,) trying to see where the spiders were going, (cố gắng nhìn xem bầy nhện đang đi đâu,) but everything outside his little sphere of light (nhưng mọi thứ bên ngoài vầng sáng nhỏ bé của cậu) was pitch black. (đều tối đen như mực.) He had never been this deep (Cậu chưa bao giờ đi sâu đến thế) into the Forest before. (vào trong Rừng trước đây.) He could vividly remember (Cậu nhớ in đậm) Hagrid advising him (lời khuyên của bác Hagrid) not to leave the Forest path (đừng bao giờ rời khỏi đường mòn trong Rừng) last time he’d been in here. (vào lần trước cậu ở đây.) But Hagrid was miles away now, (Nhưng bác Hagrid giờ đã ở cách xa hàng dặm,) probably sitting in a cell in Azkaban, (có thể đang ngồi trong một phòng giam ở Azkaban,) and he had also said (và bác ấy cũng đã dặn) to follow the spiders. (hãy đi theo bầy nhện.)
+
+Something wet touched Harry’s hand (Một thứ gì đó ướt át chạm vào tay Harry) and he jumped backwards, (và cậu giật bắn mình lùi lại,) crushing Ron’s foot, (giẫm lên chân Ron,) but it was only Fang’s nose. (nhưng đó chỉ là cái mũi của con Fang.)
+
+‘What d’you reckon?’ (‘Bồ tính sao?’) Harry said to Ron, (Harry nói với Ron,) whose eyes he could just make out, (người mà cậu chỉ vừa đủ sức nhìn ra đôi mắt,) reflecting the light from his wand. (đang phản chiếu ánh sáng từ đũa phép của cậu.)
+
+‘We’ve come this far,’ said Ron. (‘Chúng ta đã đến tận đây rồi,’ Ron nói.)
+
+So they followed (Vậy là họ đi theo) the darting shadows of the spiders (những chiếc bóng lao vun vút của bầy nhện) into the trees. (vào sâu trong những tán cây.) They couldn’t move very quickly now; (Bây giờ họ không thể di chuyển nhanh được nữa;) there were tree roots and stumps in their way, (có rễ và gốc cây ngáng đường,) barely visible (hầu như không thể nhìn thấy) in the near blackness. (trong bóng tối gần như đen đặc.)
+
+Harry could feel (Harry có thể cảm nhận) Fang’s hot breath on his hand. (hơi thở nóng hổi của con Fang trên tay mình.) More than once, (Không chỉ một lần,) they had to stop, (họ phải dừng lại,) so that Harry could crouch down (để Harry có thể ngồi xổm xuống) and find the spiders in the wandlight. (và tìm bầy nhện trong ánh sáng đũa phép.)
+
+They walked for what seemed like (Họ đã đi bộ trong khoảng thời gian có vẻ như) at least half an hour, (ít nhất nửa giờ,) their robes snagging (áo choàng của họ vướng) on low-slung branches and brambles. (vào những cành cây thấp và bụi gai sà xuống.) After a while, (Một lúc sau,) they noticed that the ground (họ nhận thấy mặt đất) seemed to be sloping downwards, (dường như đang dốc xuống,) though the trees were as thick as ever. (mặc dù cây cối vẫn dày đặc như trước.)
+
+Then Fang suddenly let loose (Đột nhiên con Fang bật ra) a great, echoing bark, (một tiếng sủa lớn, vang vọng,) making both Harry and Ron (khiến cả Harry và Ron) jump out of their skins. (sợ hết hồn hết vía.)
+
+‘What?’ said Ron loudly, (‘Cái gì?’ Ron lớn tiếng nói,) looking around (nhìn quanh) into the pitch dark, (vào bóng tối đen như mực,) and gripping Harry’s elbow (và nắm chặt lấy cùi chỏ của Harry) very hard. (rất mạnh.)
+
+‘There’s something moving over there,’ (‘Có thứ gì đó đang di chuyển đằng kia,’) Harry breathed. (Harry thì thào.) ‘Listen ... (‘Nghe này ...) Sounds like something big.’ (Nghe như một thứ gì đó rất lớn.’)
+
+They listened. (Họ lắng nghe.) Some distance to their right, (Cách đó một quãng về phía tay phải họ,) the something big (cái thứ to lớn đó) was snapping branches (đang làm gãy răng rắc các cành cây) as it carved a path (khi nó vạch ra một lối đi) through the trees. (xuyên qua đám cây cối.)
+
+‘Oh no,’ said Ron. (‘Ôi không,’ Ron nói.) ‘Oh no, oh no, oh –’ (‘Ôi không, ôi không, ôi –’)
+
+‘Shut up,’ (‘Im đi,’) said Harry frantically. (Harry cuống cuồng nói.) ‘It’ll hear you.’ (‘Nó sẽ nghe thấy cậu đấy.’)
+
+‘Hear me?’ (‘Nghe thấy tớ sao?’) said Ron (Ron nói) in an unnaturally high voice. (bằng một giọng cao vút thiếu tự nhiên.) ‘It’s already heard Fang!’ (‘Nó đã nghe thấy tiếng con Fang rồi!’)
+
+The darkness seemed to be pressing (Bóng tối dường như đang đè nặng) on their eyeballs (lên nhãn cầu của họ) as they stood, terrified, waiting. (khi họ đứng đó, khiếp sợ và chờ đợi.) There was a strange rumbling noise (Có một tiếng ầm ầm kỳ lạ) and then silence. (và rồi im lặng.)
+
+‘What d’you think it’s doing?’ (‘Cậu nghĩ nó đang làm gì?’) said Harry. (Harry nói.)
+
+‘Probably getting ready to pounce,’ (‘Chắc là đang chuẩn bị vồ mồi,’) said Ron. (Ron nói.)
+
+They waited, shivering, (Họ chờ đợi, run rẩy,) hardly daring to move. (hầu như không dám nhúc nhích.)
+
+‘D’you think it’s gone?’ (‘Cậu nghĩ nó đi chưa?’) Harry whispered. (Harry thì thầm.)
+
+‘Dunno –’ (‘Không biết nữa –’)
+
+Then, to their right, (Rồi, về phía tay phải họ,) came a sudden blaze of light, (lóe lên một luồng ánh sáng chói lòa đột ngột,) so bright in the darkness (sáng đến mức trong bóng tối) that both of them flung up their hands (cả hai đều phải vung tay lên) to shield their eyes. (để che mắt lại.) Fang yelped (Con Fang ăng ẳng) and tried to run, (và cố gắng bỏ chạy,) but got lodged in a tangle of thorns (nhưng lại bị mắc kẹt trong một mớ bụi gai lộn xộn) and yelped even louder. (và rống lên to hơn nữa.)
+
+‘Harry!’ Ron shouted, (‘Harry!’ Ron hét lên,) his voice breaking with relief. (giọng cậu vỡ òa trong sự nhẹ nhõm.) ‘Harry, it’s our car!’ (‘Harry, là chiếc xe hơi của chúng ta!’)
+
+‘What?’ (‘Cái gì?’)
+
+‘Come on!’ (‘Đi nào!’)
+
+Harry blundered after Ron (Harry lảo đảo đi theo Ron) towards the light, (về phía ánh sáng,) stumbling and tripping, (vấp váp và loạng choạng,) and a moment later (và một lát sau) they had emerged into a clearing. (họ đã chui ra được một khoảng đất trống.)
+
+Mr Weasley’s car was standing, empty, (Chiếc xe hơi của ông Weasley đang đậu đó, trống không,) in the middle of a circle of thick trees (ở giữa một vòng tròn những cái cây xum xuê) under a roof of dense branches, (dưới một mái vòm cành lá rậm rạp,) its headlamps ablaze. (đèn pha của nó sáng rực.) As Ron walked, open-mouthed, towards it, (Khi Ron há hốc mồm bước về phía nó,) it moved slowly towards him, (nó cũng từ từ di chuyển về phía cậu,) exactly like a large, turquoise dog (hệt như một con chó lớn, màu ngọc lam) greeting its owner. (đang chào đón chủ nhân của mình.)
+
+‘It’s been here all the time!’ (‘Nó đã ở đây suốt thời gian qua!’) said Ron delightedly, (Ron sung sướng nói,) walking around the car. (vừa đi vòng quanh chiếc xe.) ‘Look at it. (‘Nhìn nó xem.) The Forest’s turned it wild ...’ (Khu Rừng đã biến nó thành hoang dã rồi ...’)
+
+The wings of the car (Hai bên sườn xe) were scratched and smeared with mud. (bị trầy xước và lấm lem bùn đất.) Apparently (Rõ ràng là) it had taken to trundling around the Forest (nó đã có thú vui tự lăn bánh dạo quanh Rừng) on its own. (một mình.) Fang didn’t seem at all keen on it; (Con Fang có vẻ chẳng mặn mà gì với nó cả;) he kept close to Harry, (nó nép sát vào Harry,) who could feel him quivering. (người có thể cảm nhận được nó đang run rẩy.) His breathing slowing down again, (Nhịp thở đã chậm lại,) Harry stuffed his wand (Harry nhét cây đũa phép) back into his robes. (trở lại vào trong áo choàng.)
+
+‘And we thought (‘Thế mà chúng ta đã nghĩ) it was going to attack us!’ (nó định tấn công chúng ta!’) said Ron, (Ron nói,) leaning against the car (vừa dựa vào chiếc xe) and patting it. (vừa vỗ vỗ nó.) ‘I wondered where it had gone!’ (‘Mình đã tự hỏi không biết nó đi đâu!’)
+
+Harry squinted around (Harry nheo mắt nhìn quanh) on the floodlit ground (trên nền đất ngập ánh đèn) for signs of more spiders, (để tìm dấu vết của những con nhện khác,) but they had all scuttled away (nhưng chúng đều đã bỏ chạy tản mác hết) from the glare of the headlights. (khỏi ánh sáng chói lòa của đèn pha.)
+
+‘We’ve lost the trail,’ he said. (‘Chúng ta mất dấu rồi,’ cậu nói.) ‘C’mon, let’s go and find them.’ (‘Đi nào, chúng ta đi tìm chúng thôi.’)
+
+Ron didn’t speak. (Ron không nói gì.) He didn’t move. (Cậu ấy không nhúc nhích.) His eyes were fixed (Đôi mắt cậu ấy dán chặt) on a point some ten feet (vào một điểm cách khoảng mười feet) above the Forest floor, (phía trên mặt đất Rừng,) right behind Harry. (ngay phía sau Harry.) His face was livid with terror. (Khuôn mặt cậu ấy xám ngoét vì kinh hãi.)
+
+Harry didn’t even have time (Harry thậm chí không có thời gian) to turn around. (để quay lại.) There was a loud clicking noise (Có một tiếng lách cách lớn) and suddenly he felt (và đột nhiên cậu cảm thấy) something long and hairy (một thứ gì đó dài thườn thượt và đầy lông lá) seize him around the middle (tóm chặt lấy ngang hông cậu) and lift him off the ground, (và nhấc bổng cậu lên khỏi mặt đất,) so that he was hanging, face down. (khiến cậu bị treo lơ lửng, úp mặt xuống.) Struggling, terrified, (Vùng vẫy, kinh khiếp,) he heard more clicking, (cậu nghe thấy thêm nhiều tiếng lách cách nữa,) and saw Ron’s legs (và nhìn thấy hai chân Ron) leave the ground too, (cũng rời khỏi mặt đất,) heard Fang whimpering and howling (nghe tiếng con Fang rên rỉ và tru lên) – next moment, (– khoảnh khắc tiếp theo,) he was being swept away (cậu đang bị cuốn đi) into the dark trees. (vào sâu trong đám cây cối tối tăm.)
+
+Head hanging, (Đầu dốc ngược xuống,) Harry saw that (Harry nhìn thấy) what had hold of him (thứ đang quắp lấy cậu) was marching on (đang sải bước trên) six immensely long, hairy legs, (sáu cái chân đầy lông lá, dài ngoẵng,) the front two clutching him tightly (hai chân trước giữ chặt lấy cậu) below a pair of shining black pincers. (ngay bên dưới một cặp càng đen bóng mướt.) Behind him, (Phía sau cậu,) he could hear (cậu có thể nghe thấy) another of the creatures, (tiếng một con quái vật khác,) no doubt carrying Ron. (chắc chắn là đang quắp theo Ron.)
+
+They were moving (Chúng đang tiến) into the very heart of the Forest. (vào tận trung tâm của Khu rừng.) Harry could hear Fang (Harry có thể nghe tiếng con Fang) fighting to free himself (đang chiến đấu để giải thoát mình) from a third monster, (khỏi con quái vật thứ ba,) whining loudly, (rên rỉ ầm ĩ,) but Harry couldn’t have yelled (nhưng Harry không thể thét lên) even if he had wanted to; (ngay cả khi cậu muốn thế;) he seemed to have left his voice back (cậu dường như đã bỏ lại giọng nói của mình) with the car in the clearing. (cùng với chiếc xe ở bãi đất trống.)
+
+He never knew (Cậu không bao giờ biết được) how long he was (mình đã nằm bao lâu) in the creature’s clutches; (trong bộ móng vuốt của sinh vật đó;) he only knew that (cậu chỉ biết rằng) the darkness suddenly lifted enough (bóng tối đột nhiên giãn ra đủ) for him to see (để cậu nhìn thấy) that the leaf-strewn ground (rằng mặt đất rải đầy lá mục) was now swarming with spiders. (bây giờ đang nhung nhúc toàn nhện.)
+
+Craning his neck sideways, (Nghển cổ sang một bên,) he realised that (cậu nhận ra rằng) they had reached the rim (chúng đã đến mép) of a vast hollow, (của một cái hố khổng lồ,) a hollow which had been cleared of trees, (một cái hố đã được dọn sạch cây cối,) so that the stars shone brightly (để những vì sao chiếu sáng rực rỡ) onto the worst scene (xuống khung cảnh tồi tệ nhất) he had ever clapped eyes upon. (mà cậu từng chứng kiến.)
+
+Spiders. (Nhện.) Not tiny spiders (Không phải là những con nhện bé xíu) like those surging over the leaves below. (như những con đang đùn lên lớp lá rụng bên dưới.) Spiders the size of carthorses, (Mà là những con nhện to bằng cỡ ngựa kéo xe,) eight-eyed, eight-legged, (tám mắt, tám chân,) black, hairy, gigantic. (đen xì, lông lá, khổng lồ.) The massive specimen (Con quái vật khổng lồ) that was carrying Harry (đang chở Harry) made its way down the steep slope, (bò xuống sườn dốc đứng,) towards a misty domed web (hướng về phía một cái mạng nhện hình vòm sương mù) in the very centre of the hollow, (ở ngay chính giữa cái hố,) while its fellows closed in all around it, (trong khi đồng loại của nó túa ra bao vây xung quanh,) clicking their pincers excitedly (lách cách cặp càng đầy phấn khích) at the sight of its load. (khi nhìn thấy "con mồi" của nó.)
+
+Harry fell to the ground (Harry ngã xuống đất) on all fours (bằng cả hai tay hai chân) as the spider released him. (khi con nhện thả cậu ra.) Ron and Fang thudded down (Ron và con Fang rớt bịch xuống) next to him. (ngay cạnh cậu.) Fang wasn’t howling any more, (Con Fang không rống nữa,) but cowering silently on the spot. (mà thu mình run lẩy bẩy trong im lặng ngay tại chỗ.)
+
+Ron looked exactly (Ron trông giống hệt) like Harry felt. (những gì Harry đang cảm thấy.) His mouth was stretched wide (Miệng cậu ấy há hốc) in a kind of silent scream (trong một kiểu la hét câm lặng) and his eyes were popping. (và hai con mắt lồi cả ra.)
+
+Harry suddenly realised (Harry đột nhiên nhận ra) that the spider which had dropped him (rằng con nhện vừa thả cậu xuống) was saying something. (đang nói điều gì đó.) It had been hard to tell, (Rất khó để nhận ra,) because he clicked his pincers (bởi vì nó nhấp nháy cặp càng) with every word he spoke. (theo từng từ nó phát ra.)
+
+‘Aragog!’ it called. (‘Aragog!’ nó gọi.) ‘Aragog!’ (‘Aragog!’)
+
+And from the middle (Và từ giữa) of the misty domed web, (cái mạng nhện hình vòm giăng sương mù,) a spider the size of a small elephant (một con nhện to bằng một con voi con) emerged, very slowly. (trồi ra, rất chậm chạp.) There was grey in the black (Có lốm đốm màu xám lẫn trong màu đen) of his body and legs, (trên thân và chân nó,) and each of the eyes (và mỗi con mắt) on his ugly, pincered head (trên cái đầu gớm ghiếc đầy càng của nó) was milky white. (đều đục ngầu màu trắng sữa.) He was blind. (Nó bị mù.)
+
+‘What is it?’ (‘Chuyện gì thế?’) he said, (nó nói,) clicking his pincers rapidly. (hai cái càng lách cách liên hồi.)
+
+‘Men,’ (‘Con người,’) clicked the spider (con nhện đã tóm Harry lách cách đáp lời.) who had caught Harry.
+
+‘Is it Hagrid?’ (‘Có phải Hagrid không?’) said Aragog, moving closer, (Aragog nói, tiến lại gần hơn,) his eight milky eyes (tám con mắt đục ngầu của nó) wandering vaguely. (đảo quanh một cách vô hồn.)
+
+‘Strangers,’ (‘Người lạ,’) clicked the spider (con nhện đã quắp Ron lách cách nói.) who had brought Ron.
+
+‘Kill them,’ (‘Giết chúng đi,’) clicked Aragog fretfully. (Aragog lách cách một cách bực dọc.) ‘I was sleeping ...’ (‘Ta đang ngủ mà ...’)
+
+‘We’re friends of Hagrid’s,’ (‘Chúng tôi là bạn của bác Hagrid,’) Harry shouted. (Harry hét lên.) His heart seemed to have left his chest (Trái tim cậu dường như đã rời khỏi lồng ngực) to pound in his throat. (để đập thình thịch ở cổ họng.)
+
+Click, click, click (Lách cách, lách cách, lách cách) went the pincers of the spiders (âm thanh vang lên từ những chiếc càng của đám nhện) all around the hollow. (khắp xung quanh cái hố.)
+
+Aragog paused. (Aragog dừng lại.)
+
+‘Hagrid has never sent men (‘Hagrid chưa bao giờ cử con người) into our hollow before,’ (vào cái hố của chúng ta trước đây,’) he said slowly. (nó chậm rãi nói.)
+
+‘Hagrid’s in trouble,’ (‘Bác Hagrid đang gặp rắc rối,’) said Harry, breathing very fast. (Harry nói, thở rất nhanh.) ‘That’s why we’ve come.’ (‘Đó là lý do chúng tôi đến đây.’)
+
+‘In trouble?’ (‘Gặp rắc rối?’) said the aged spider, (con nhện già cỗi nói,) and Harry thought he heard concern (và Harry nghĩ rằng cậu nghe thấy sự lo lắng) beneath the clicking pincers. (bên dưới những tiếng lách cách của cặp càng.) ‘But why has he sent you?’ (‘Nhưng tại sao hắn lại cử các ngươi đến?’)
+
+Harry thought of getting to his feet, (Harry định đứng dậy,) but decided against it; (nhưng quyết định thôi;) he didn’t think (cậu không nghĩ) his legs would support him. (đôi chân của mình có thể trụ vững được.) So he spoke from the ground, (Vì vậy cậu lên tiếng từ dưới đất,) as calmly as he could. (cố giữ bình tĩnh nhất có thể.)
+
+‘They think, up at the school, (‘Trên trường học, họ nghĩ) that Hagrid’s been setting (rằng bác Hagrid đã xúi giục) a – a – something (một – một – thứ gì đó) on students. (tấn công học sinh.) They’ve taken him to Azkaban.’ (Họ đã bắt bác ấy đến ngục Azkaban rồi.’)
+
+Aragog clicked his pincers furiously, (Aragog lách cách cặp càng điên cuồng,) and all around the hollow (và khắp xung quanh cái hố) the sound was echoed (âm thanh đó được dội lại) by the crowd of spiders; (bởi bầy nhện đông đúc;) it was like applause, (nghe như tiếng vỗ tay,) except applause didn’t usually make Harry (chỉ có điều tiếng vỗ tay thường không làm Harry) feel sick with fear. (thấy buồn nôn vì sợ hãi.)
+
+‘But that was years ago,’ (‘Nhưng chuyện đó đã xảy ra từ nhiều năm trước rồi,’) said Aragog fretfully. (Aragog bực bội nói.) ‘Years and years ago. (‘Nhiều năm về trước rồi.) I remember it well. (Ta nhớ rất rõ.) That’s why they made him leave the school. (Đó là lý do bọn họ buộc hắn phải rời trường.) They believed that I was the monster (Bọn họ tin rằng ta là con quái vật) that dwells in what they call (trú ngụ trong cái nơi mà họ gọi là) the Chamber of Secrets. (Phòng chứa Bí mật.) They thought that Hagrid (Bọn họ nghĩ rằng Hagrid) had opened the Chamber (đã mở Căn phòng đó ra) and set me free.’ (và thả ta tự do.’)
+
+‘And you ... you didn’t come (‘Và ngài ... ngài không đến) from the Chamber of Secrets?’ (từ Phòng chứa Bí mật sao?’) said Harry, (Harry nói,) who could feel cold sweat (người có thể cảm thấy mồ hôi lạnh) on his forehead. (toát ra trên trán.)
+
+‘I!’ said Aragog, (‘Ta ư!’ Aragog nói,) clicking angrily. (lách cách đầy giận dữ.) ‘I was not born in the castle. (‘Ta không được sinh ra trong lâu đài.) I come from a distant land. (Ta đến từ một vùng đất xa xôi.) A traveller gave me to Hagrid (Một người lữ khách đã trao ta cho Hagrid) when I was an egg. (khi ta vẫn còn là một quả trứng.) Hagrid was only a boy, (Hagrid khi đó chỉ là một cậu bé,) but he cared for me, (nhưng cậu ấy đã chăm sóc ta,) hidden in a cupboard in the castle, (giấu trong một cái tủ chén trong lâu đài,) feeding me on scraps from the table. (nuôi ta bằng những mẩu thức ăn thừa trên bàn.) Hagrid is my good friend, (Hagrid là người bạn tốt của ta,) and a good man. (và là một người đàn ông tốt.) When I was discovered, (Khi ta bị phát hiện,) and blamed for the death of a girl, (và bị đổ lỗi cho cái chết của một cô gái,) he protected me. (cậu ấy đã bảo vệ ta.) I have lived here in the Forest ever since, (Ta đã sống ở đây trong Rừng kể từ đó,) where Hagrid still visits me. (nơi Hagrid vẫn thường đến thăm ta.) He even found me a wife, Mosag, (Cậu ấy thậm chí còn tìm cho ta một người vợ, Mosag,) and you see how our family has grown, (và các ngươi thấy gia đình ta đã phát triển lớn mạnh thế nào rồi đấy,) all through Hagrid’s goodness ...’ (tất cả là nhờ lòng tốt của Hagrid ...’)
+
+Harry summoned (Harry thu hết) what remained of his courage. (chút can đảm còn sót lại của mình.)
+
+‘So you never – (‘Vậy ngài chưa từng –) never attacked anyone?’ (chưa từng tấn công bất kỳ ai sao?’)
+
+‘Never,’ (‘Chưa từng,’) croaked the old spider. (con nhện già cất giọng khàn khàn.) ‘It would have been my instinct, (‘Đó đáng lẽ là bản năng của ta,) but from respect of Hagrid, (nhưng vì tôn trọng Hagrid,) I never harmed a human. (ta chưa bao giờ làm hại con người.) The body of the girl who was killed (Xác của cô gái bị giết) was discovered in a bathroom. (được phát hiện trong một phòng tắm.) I never saw any part of the castle (Ta chưa từng nhìn thấy bất kỳ phần nào của lâu đài) but the cupboard in which I grew up. (ngoại trừ cái tủ chén nơi ta lớn lên.) Our kind like the dark and the quiet ...’ (Loài của ta thích bóng tối và sự yên tĩnh ...’)
+
+‘But then ... (‘Nhưng vậy thì ...) Do you know what did kill that girl?’ (Ngài có biết thứ gì đã giết cô gái đó không?’) said Harry. (Harry nói.) ‘Because whatever it is, (‘Bởi vì dù đó là thứ gì,) it’s back (nó đã quay trở lại) and attacking people again –’ (và đang tấn công mọi người một lần nữa –’)
+
+His words were drowned (Lời nói của cậu bị lấn át) by a loud outbreak of clicking (bởi một tràng âm thanh lách cách ầm ĩ) and the rustling of many long legs (và tiếng xào xạc của vô số đôi chân dài) shifting angrily; (đang xê dịch một cách giận dữ;) large black shapes (những bóng đen lớn) shifted all around him. (chuyển động khắp xung quanh cậu.)
+
+‘The thing that lives in the castle,’ (‘Thứ sống trong lâu đài,’) said Aragog, (Aragog nói,) ‘is an ancient creature (‘là một sinh vật cổ đại) we spiders fear above all others. (mà loài nhện chúng ta sợ hãi hơn bất cứ thứ gì khác.) Well do I remember (Ta nhớ rất rõ) how I pleaded with Hagrid (ta đã nài nỉ Hagrid như thế nào) to let me go, (để cậu ấy thả ta đi,) when I sensed the beast (khi ta cảm nhận được con quái thú đó) moving about the school.’ (đang di chuyển quanh trường.’)
+
+‘What is it?’ (‘Đó là thứ gì vậy?’) said Harry urgently. (Harry khẩn khoản hỏi.)
+
+More loud clicking, (Thêm nhiều tiếng lách cách lớn hơn,) more rustling; (thêm nhiều tiếng xào xạc hơn;) the spiders seemed to be closing in. (đám nhện dường như đang áp sát lại gần.)
+
+‘We do not speak of it!’ (‘Chúng ta không nói về nó!’) said Aragog fiercely. (Aragog hung tợn nói.) ‘We do not name it! (‘Chúng ta không gọi tên nó!) I never even told Hagrid (Ta thậm chí chưa từng nói cho Hagrid) the name of that dread creature, (cái tên của sinh vật đáng sợ đó,) though he asked me, many times.’ (mặc dù cậu ấy đã hỏi ta, rất nhiều lần.’)
+
+Harry didn’t want to press the subject, (Harry không muốn gặng hỏi thêm về chủ đề này,) not with the spiders (nhất là khi đám nhện) pressing closer on all sides. (đang ép sát lại từ mọi phía.) Aragog seemed to be tired of talking. (Aragog có vẻ đã mệt mỏi với việc nói chuyện.) He was backing slowly (Lão đang lùi chầm chậm) into his domed web, (vào cái mạng nhện hình vòm của mình,) but his fellow spiders (nhưng những con nhện đồng loại của lão) continued to inch slowly (tiếp tục nhích dần từng chút một) towards Harry and Ron. (về phía Harry và Ron.)
+
+‘We’ll just go, then,’ (‘Vậy chúng cháu xin phép đi đây,’) Harry called desperately to Aragog, (Harry tuyệt vọng gọi với theo Aragog,) hearing leaves rustling behind him. (khi nghe thấy tiếng lá xào xạc phía sau mình.)
+
+‘Go?’ (‘Đi sao?’) said Aragog slowly. (Aragog chậm rãi nói.) ‘I think not ...’ (‘Ta nghĩ là không ...’)
+
+‘But – but –’ (‘Nhưng – nhưng –’)
+
+‘My sons and daughters (‘Các con trai và con gái của ta) do not harm Hagrid, (không làm hại Hagrid,) on my command. (theo mệnh lệnh của ta.) But I cannot deny them fresh meat, (Nhưng ta không thể từ chối chúng món thịt tươi,) when it wanders so willingly (khi nó tự nguyện đi lạc) into our midst. (vào giữa bầy đàn của chúng ta thế này.) Goodbye, friend of Hagrid.’ (Tạm biệt, bạn của Hagrid.’)
+
+Harry spun around. (Harry xoay ngoắt người lại.) Feet away, (Cách đó vài feet,) towering above him, (sừng sững phía trên cậu,) was a solid wall of spiders, (là một bức tường nhện đặc xịt,) clicking, (đang kêu lách cách,) their many eyes gleaming (vô số đôi mắt của chúng sáng rực lên) in their ugly black heads ... (trên những cái đầu đen đúa gớm ghiếc ...)
+
+Even as he reached for his wand, (Ngay cả khi thò tay lấy đũa phép,) Harry knew it was no good, (Harry biết việc đó cũng vô ích,) there were too many of them, (chúng có quá đông,) but as he tried to stand, (nhưng khi cậu cố gắng đứng dậy,) ready to die fighting, (sẵn sàng chiến đấu đến chết,) a loud, long note sounded, (một âm thanh lớn, kéo dài vang lên,) and a blaze of light (và một luồng sáng chói lòa) flamed through the hollow. (bừng lên xuyên qua cái hố.)
+
+Mr Weasley’s car (Chiếc xe hơi của ông Weasley) was thundering down the slope, (đang ầm ầm lao xuống dốc,) headlamps glaring, (đèn pha sáng chói,) its horn screeching, (còi xe kêu inh ỏi,) knocking spiders aside; (hất văng đám nhện sang một bên;) several were thrown onto their backs, (vài con bị lật ngửa lưng,) their endless legs waving in the air. (vô số đôi chân của chúng quơ quào trong không khí.) The car screeched to a halt (Chiếc xe thắng rít lên và dừng lại) in front of Harry and Ron (ngay trước mặt Harry và Ron) and the doors flew open. (và các cánh cửa bật mở tung.)
+
+‘Get Fang!’ (‘Bắt lấy con Fang!’) Harry yelled, (Harry hét lên,) diving into the front seat; (lao vào ghế trước;) Ron seized the boarhound round the middle (Ron ôm ngang bụng con chó săn nanh heo) and threw him, yelping, (và ném nó, đang kêu ăng ẳng,) into the back of the car. (vào băng ghế sau của chiếc xe.) The doors slammed shut. (Các cánh cửa đóng sầm lại.) Ron didn’t touch the accelerator (Ron không hề chạm vào chân ga) but the car didn’t need him; (nhưng chiếc xe cũng không cần cậu;) the engine roared (động cơ gầm rú) and they were off, (và chúng vọt đi,) hitting more spiders. (tông trúng thêm nhiều con nhện nữa.) They sped up the slope, (Chúng phóng nhanh lên dốc,) out of the hollow, (thoát ra khỏi cái hố,) and they were soon crashing through the Forest, (và chúng nhanh chóng băng ầm ầm qua Khu Rừng,) branches whipping the windows (những cành cây quất vút vút vào cửa kính) as the car wound its way cleverly (khi chiếc xe lách mình một cách khéo léo) through the widest gaps, (qua những khoảng trống rộng nhất,) following a path it obviously knew. (đi theo một con đường mà rõ ràng là nó đã biết.)
+
+Harry looked sideways at Ron. (Harry liếc nhìn sang Ron.) His mouth was still open (Miệng cậu ấy vẫn há hốc) in the silent scream, (trong một tiếng hét câm lặng,) but his eyes weren’t popping any more. (nhưng đôi mắt cậu ấy không còn lồi ra nữa.)
+
+‘Are you OK?’ (‘Cậu ổn không?’)
+
+Ron stared straight ahead, (Ron chằm chằm nhìn về phía trước,) unable to speak. (không thể thốt nên lời.)
+
+They smashed their way through the undergrowth, (Chúng phá đường xuyên qua những bụi cây thấp,) Fang howling loudly in the back seat, (con Fang tru lên ầm ĩ ở băng ghế sau,) and Harry saw the wing mirror snap off (và Harry thấy chiếc gương chiếu hậu gãy rời ra) as they squeezed past a large oak. (khi chúng chen lách qua một cây sồi lớn.) After ten noisy, rocky minutes, (Sau mười phút ồn ào và xóc nảy,) the trees thinned, (cây cối thưa dần,) and Harry could again see patches of sky. (và Harry lại có thể nhìn thấy những mảng bầu trời.)
+
+The car stopped so suddenly (Chiếc xe dừng lại đột ngột đến mức) that they were nearly thrown (chúng suýt chút nữa bị văng) into the windscreen. (vào kính chắn gió.) They had reached the edge of the Forest. (Họ đã đến được bìa Rừng.) Fang flung himself at the window (Con Fang ném mình vào cửa sổ) in his anxiety to get out (trong sự nóng lòng muốn thoát ra) and when Harry opened the door, (và khi Harry mở cửa,) he shot off through the trees (nó lao vút qua đám cây cối) to Hagrid’s house, (hướng về nhà bác Hagrid,) tail between his legs. (cúp đuôi chạy trốn.) Harry got out too, (Harry cũng bước ra ngoài,) and after a minute or so, (và khoảng một phút sau,) Ron seemed to regain the feeling in his limbs (Ron dường như mới lấy lại được cảm giác ở chân tay) and followed, (và bước theo,) still stiff-necked and staring. (cổ vẫn cứng đơ và mắt nhìn chằm chằm.) Harry gave the car a grateful pat (Harry vỗ nhẹ hàm ơn vào chiếc xe) as it reversed back into the Forest (khi nó lùi lại vào trong Rừng) and disappeared from view. (và biến mất khỏi tầm mắt.)
+
+Harry went back into Hagrid’s cabin (Harry quay lại chòi của bác Hagrid) to get the Invisibility Cloak. (để lấy chiếc Áo choàng Tàng hình.) Fang was trembling under a blanket (Con Fang đang run rẩy dưới một tấm chăn) in his basket. (trong chiếc giỏ của nó.) When Harry got outside again, (Khi Harry trở ra ngoài,) he found Ron being violently sick (cậu thấy Ron đang nôn thốc nôn tháo) in the pumpkin patch. (trong luống bí ngô.)
+
+‘Follow the spiders,’ (‘Đi theo bầy nhện,’) said Ron weakly, (Ron nói một cách yếu ớt,) wiping his mouth on his sleeve. (vừa lấy tay áo quệt miệng.) ‘I’ll never forgive Hagrid. (‘Mình sẽ không bao giờ tha thứ cho bác Hagrid.) We’re lucky to be alive.’ (Chúng ta còn sống đúng là may mắn.’)
+
+‘I bet he thought (‘Mình cá là bác ấy nghĩ) Aragog wouldn’t hurt friends of his,’ (Aragog sẽ không làm hại bạn bè của bác ấy,’) said Harry. (Harry nói.)
+
+‘That’s exactly Hagrid’s problem!’ (‘Đó chính xác là vấn đề của bác Hagrid!’) said Ron, (Ron nói,) thumping the wall of the cabin. (đấm thùm thụp vào bức tường của căn chòi.) ‘He always thinks (‘Bác ấy luôn nghĩ) monsters aren’t as bad (đám quái vật không xấu xa) as they’re made out, (như người ta đồn đại,) and look where it’s got him! (và nhìn xem điều đó đã đưa bác ấy đến đâu!) A cell in Azkaban!’ (Một phòng giam ở ngục Azkaban!’) He was shivering uncontrollably now. (Lúc này cậu ấy đang run rẩy không kiểm soát được.) ‘What was the point (‘Vậy mục đích là gì) of sending us in there? (khi gửi chúng ta vào đó?) What have we found out, (Chúng ta đã phát hiện ra điều gì,) I’d like to know?’ (mình rất muốn biết đấy?’)
+
+‘That Hagrid never opened (‘Đó là bác Hagrid chưa bao giờ mở) the Chamber of Secrets,’ (Phòng chứa Bí mật,’) said Harry, (Harry nói,) throwing the cloak over Ron (trùm chiếc áo choàng lên người Ron) and prodding him in the arm (và thúc vào tay cậu ấy) to make him walk. (để bắt cậu ấy bước đi.) ‘He was innocent.’ (‘Bác ấy vô tội.’)
+
+Ron gave a loud snort. (Ron khịt mũi lớn một tiếng.) Evidently, (Hiển nhiên là,) hatching Aragog out in a cupboard (việc ấp nở Aragog trong một cái tủ chén) wasn’t his idea of being innocent. (không phải là khái niệm vô tội đối với cậu ấy.)
+
+As the castle loomed nearer (Khi lâu đài hiện ra gần hơn) Harry twitched the Cloak (Harry giật giật chiếc Áo choàng) to make sure their feet were hidden, (để chắc chắn chân của họ đã được che kín,) then pushed the creaking front doors ajar. (rồi đẩy hé những cánh cửa chính đang kêu cọt kẹt.) They walked carefully back (Họ cẩn thận đi trở lại) across the Entrance Hall (qua Tiền sảnh) and up the marble staircase, (và lên cầu thang cẩm thạch,) holding their breath (nín thở) as they passed corridors (khi họ đi qua những hành lang) where watchful sentries were walking. (nơi những người lính gác cảnh giác đang đi dạo.) At last they reached the safety (Cuối cùng họ cũng về đến nơi an toàn) of the Gryffindor common room, (là phòng sinh hoạt chung nhà Gryffindor,) where the fire had burned itself (nơi ngọn lửa đã tự lụi tàn) into glowing ash. (thành tro hồng.) They took off the Cloak (Họ cởi Áo choàng ra) and climbed the winding staircase (và leo lên chiếc cầu thang xoắn ốc) to their dormitory. (về phòng ngủ của họ.)
+
+Ron fell onto his bed (Ron ngã lăn ra giường) without bothering to get undressed. (chẳng buồn cởi quần áo.) Harry, however, (Harry, tuy nhiên,) didn’t feel very sleepy. (không cảm thấy buồn ngủ lắm.) He sat on the edge of his four-poster, (Cậu ngồi trên mép chiếc giường bốn cọc của mình,) thinking hard about everything (suy nghĩ lung tung về mọi điều) Aragog had said. (mà Aragog đã nói.)
+
+The creature that was lurking somewhere (Sinh vật đang ẩn nấp đâu đó) in the castle, (trong lâu đài,) he thought, (cậu nghĩ,) sounded like a sort of monster Voldemort (nghe có vẻ giống như một kiểu quái vật Voldemort) – even other monsters didn’t want to name it. (– thậm chí những con quái vật khác cũng không muốn gọi tên nó.) But he and Ron were no closer (Nhưng cậu và Ron vẫn chưa tiến gần hơn chút nào) to finding out what it was, (trong việc tìm ra nó là cái gì,) or how it Petrified its victims. (hoặc cách mà nó Hóa đá các nạn nhân.) Even Hagrid had never known (Ngay cả bác Hagrid cũng chưa bao giờ biết) what was in the Chamber of Secrets. (thứ gì nằm trong Phòng chứa Bí mật.)
+
+Harry swung his legs up onto his bed (Harry đu chân lên giường) and leaned back against his pillows, (và ngả lưng vào gối,) watching the moon glinting at him (ngắm nhìn ánh trăng lóe lên chiếu vào cậu) through the tower window. (qua cửa sổ tháp.)
+
+He couldn’t see what else they could do. (Cậu không thể nghĩ ra họ có thể làm gì khác nữa.) They had hit dead ends everywhere. (Họ đã đâm sầm vào ngõ cụt ở khắp mọi nơi.) Riddle had caught the wrong person, (Riddle đã bắt nhầm người,) the heir of Slytherin had got off, (kẻ thừa kế của Slytherin đã trốn thoát,) and no one could tell (và không ai có thể biết) whether it was the same person, (liệu đó có phải là cùng một người,) or a different one, (hay là một kẻ khác,) who had opened the Chamber this time. (đã mở Căn phòng lần này.) There was nobody else to ask. (Chẳng còn ai khác để mà đi hỏi cả.) Harry lay down, (Harry nằm xuống,) still thinking about what Aragog said. (vẫn đang suy nghĩ về những gì Aragog đã nói.)
+
+He was becoming drowsy (Cậu đang trở nên mơ màng) when what seemed like their very last hope (thì bỗng điều dường như là tia hy vọng cuối cùng của họ) occurred to him (lóe lên trong đầu cậu) and he suddenly sat bolt upright. (và cậu đột ngột ngồi thẳng lưng dậy.)
+
+‘Ron,’ he hissed (‘Ron,’ cậu rít lên) through the dark. ‘Ron!’ (trong bóng tối. ‘Ron!’)
+
+Ron woke with a yelp like Fang’s, (Ron tỉnh giấc với một tiếng kêu ăng ẳng như con Fang,) stared wildly around (nhìn quanh một cách hoang dại) and saw Harry. (và nhìn thấy Harry.)
+
+‘Ron – that girl who died. (‘Ron – cô gái đã chết đó.) Aragog said she was found in a bathroom,’ (Aragog nói cô ấy được tìm thấy trong một phòng tắm,’) said Harry, (Harry nói,) ignoring Neville’s snuffling snores (bỏ qua tiếng ngáy khụt khịt của Neville) from the corner. (từ trong góc phòng.) ‘What if she never left the bathroom? (‘Nhỡ đâu cô ấy chưa bao giờ rời khỏi phòng tắm?) What if she’s still there?’ (Nhỡ đâu cô ấy vẫn ở đó thì sao?’)
+
+Ron rubbed his eyes, (Ron dụi dụi mắt,) frowning through the moonlight. (cau mày nhìn qua ánh trăng.) And then he understood. (Và rồi cậu ấy hiểu ra.)
+
+‘You don’t think – (‘Cậu không nghĩ là –) not Moaning Myrtle?’ (không phải là con ma Myrtle Khóc nhè chứ?’)
+
+           
+    `;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

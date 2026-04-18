@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 2: The Vanishing Glass</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="Chapter 2.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 0. KHAI BÁO BIẾN TOÀN CỤC ĐỂ TRÁNH LỖI REFERENCE ERROR ---
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Nearly ten years had passed (Gần mười năm đã trôi qua) since the Dursleys had woken up to find their nephew on the front step (kể từ khi nhà Dursley thức dậy và phát hiện ra đứa cháu trai nằm trên bậc thềm trước nhà), but Privet Drive had hardly changed at all (nhưng đường Privet Drive hầu như chẳng có gì thay đổi). The sun rose on the same tidy front gardens (Mặt trời mọc chiếu lên cùng những khu vườn trước nhà gọn gàng) and lit up the brass number four on the Dursleys’ front door (và chiếu sáng con số bốn bằng đồng trên cửa trước của nhà Dursley); it crept into their living-room (nó len lỏi vào phòng khách của họ), which was almost exactly the same as it had been on the night (nơi gần như giống hệt với cái đêm) when Mr Dursley had seen that fateful news report about the owls (khi ông Dursley xem được bản tin định mệnh về những con cú). Only the photographs on the mantelpiece really showed how much time had passed (Chỉ có những bức ảnh trên bệ lò sưởi mới thực sự cho thấy bao nhiêu thời gian đã trôi qua). Ten years ago, there had been lots of pictures of what looked like a large pink beach ball wearing different-coloured bobble hats (Mười năm trước, ở đó có rất nhiều bức ảnh chụp một thứ trông giống như một quả bóng bãi biển lớn màu hồng đội những chiếc mũ len đính cục bông nhiều màu sắc khác nhau) – but Dudley Dursley was no longer a baby (– nhưng Dudley Dursley không còn là một đứa trẻ sơ sinh nữa), and now the photographs showed a large, blond boy riding his first bicycle (và giờ đây những bức ảnh cho thấy một cậu bé to béo, tóc vàng đang đạp chiếc xe đạp đầu tiên của mình), on a roundabout at the fair (chơi vòng quay ngựa gỗ ở hội chợ), playing a computer game with his father (chơi trò chơi điện tử với bố), being hugged and kissed by his mother (được mẹ ôm và hôn). The room held no sign at all that another boy lived in the house, too (Căn phòng không hề có dấu hiệu nào cho thấy có một cậu bé khác cũng sống trong ngôi nhà này).
+
+Yet Harry Potter was still there (Thế nhưng Harry Potter vẫn ở đó), asleep at the moment, but not for long (hiện đang ngủ, nhưng sẽ không được lâu nữa). His Aunt Petunia was awake (Dì Petunia của cậu đã thức dậy) and it was her shrill voice which made the first noise of the day (và chính giọng nói lanh lảnh của dì đã tạo ra tiếng ồn đầu tiên trong ngày).
+
+‘Up! Get up! Now!’ (‘Dậy! Dậy ngay! Mau lên!’)
+
+Harry woke with a start (Harry giật mình tỉnh giấc). His aunt rapped on the door again (Dì cậu lại gõ mạnh vào cửa).
+
+‘Up!’ she screeched (‘Dậy!’ dì thét lên). Harry heard her walking towards the kitchen (Harry nghe tiếng dì bước về phía nhà bếp) and then the sound of the frying pan being put on the cooker (và sau đó là tiếng chảo chiên được đặt lên bếp). He rolled on to his back and tried to remember the dream he had been having (Cậu nằm ngửa ra và cố gắng nhớ lại giấc mơ mà mình vừa thấy). It had been a good one (Đó là một giấc mơ đẹp). There had been a flying motorbike in it (Có một chiếc xe máy bay trong đó). He had a funny feeling he’d had the same dream before (Cậu có một cảm giác kỳ lạ rằng mình đã từng có giấc mơ tương tự trước đây).
+
+His aunt was back outside the door (Dì cậu đã quay lại ngoài cửa).
+
+‘Are you up yet?’ she demanded (‘Mày đã dậy chưa?’ dì hạch hỏi).
+
+‘Nearly,’ said Harry (‘Sắp rồi ạ,’ Harry đáp).
+
+‘Well, get a move on (‘Vậy thì nhanh cái chân lên), I want you to look after the bacon (tao muốn mày trông chừng chỗ thịt muối). And don’t you dare let it burn (Và đừng có dám để nó khét đấy), I want everything perfect on Duddy’s birthday.’ (tao muốn mọi thứ phải thật hoàn hảo trong ngày sinh nhật của cục cưng Duddy.’)
+
+Harry groaned (Harry rên rỉ).
+
+‘What did you say?’ his aunt snapped through the door (‘Mày nói cái gì?’ dì cậu quát qua cánh cửa).
+
+‘Nothing, nothing ...’ (‘Dạ không, không có gì ...’)
+
+Dudley’s birthday – how could he have forgotten? (Sinh nhật của Dudley – làm sao cậu có thể quên được chứ?) Harry got slowly out of bed and started looking for socks (Harry chầm chậm bước ra khỏi giường và bắt đầu tìm tất). He found a pair under his bed (Cậu tìm thấy một đôi dưới gầm giường) and, after pulling a spider off one of them, put them on (và, sau khi giũ một con nhện ra khỏi chiếc tất, cậu xỏ chúng vào). Harry was used to spiders (Harry đã quá quen với lũ nhện), because the cupboard under the stairs was full of them (bởi vì cái tủ dưới gầm cầu thang chứa đầy nhện), and that was where he slept (và đó chính là nơi cậu ngủ).
+
+When he was dressed he went down the hall into the kitchen (Khi đã thay đồ xong, cậu đi dọc theo hành lang vào bếp). The table was almost hidden beneath all Dudley’s birthday presents (Cái bàn gần như bị che khuất bên dưới tất cả những món quà sinh nhật của Dudley). It looked as though Dudley had got the new computer he wanted (Trông có vẻ như Dudley đã nhận được dàn máy tính mới mà nó muốn), not to mention the second television and the racing bike (chưa kể đến chiếc ti vi thứ hai và chiếc xe đạp đua). Exactly why Dudley wanted a racing bike was a mystery to Harry (Chính xác thì tại sao Dudley lại muốn một chiếc xe đạp đua là một bí ẩn đối với Harry), as Dudley was very fat and hated exercise (vì Dudley rất béo và ghét tập thể dục) – unless of course it involved punching somebody (– trừ phi dĩ nhiên việc đó liên quan đến việc đấm ai đó). Dudley’s favourite punch-bag was Harry (Cái bao cát yêu thích của Dudley chính là Harry), but he couldn’t often catch him (nhưng nó không thường xuyên bắt được cậu). Harry didn’t look it, but he was very fast (Trông Harry không có vẻ gì như vậy, nhưng cậu chạy rất nhanh).
+
+Perhaps it had something to do with living in a dark cupboard (Có lẽ điều đó có liên quan phần nào đến việc phải sống trong một cái tủ tối tăm), but Harry had always been small and skinny for his age (nhưng Harry luôn nhỏ bé và gầy gò so với tuổi của mình). He looked even smaller and skinnier than he really was (Trông cậu thậm chí còn nhỏ bé và gầy gò hơn thực tế) because all he had to wear were old clothes of Dudley’s (bởi vì tất cả những gì cậu có thể mặc là những bộ quần áo cũ của Dudley) and Dudley was about four times bigger than he was (mà Dudley thì to gấp bốn lần cậu). Harry had a thin face, knobbly knees, black hair and bright-green eyes (Harry có một khuôn mặt gầy, đầu gối củ lạc, mái tóc đen và đôi mắt xanh lá cây sáng rực). He wore round glasses held together with a lot of Sellotape (Cậu đeo cặp kính tròn được dán dính lại với nhau bằng rất nhiều băng dính trong) because of all the times Dudley had punched him on the nose (vì vô số lần Dudley đã đấm trúng mũi cậu). The only thing Harry liked about his own appearance (Điều duy nhất Harry thích về ngoại hình của mình) was a very thin scar on his forehead which was shaped like a bolt of lightning (là một vết sẹo rất mỏng trên trán có hình dạng giống như một tia chớp). He had had it as long as he could remember (Cậu đã có nó từ khi cậu bắt đầu có ký ức) and the first question he could ever remember asking his Aunt Petunia was how he had got it (và câu hỏi đầu tiên mà cậu có thể nhớ là mình đã hỏi Dì Petunia làm sao cậu lại có vết sẹo đó).
+
+‘In the car crash when your parents died,’ she had said (‘Trong vụ tai nạn xe hơi khi ba mẹ mày chết,’ dì đã nói). ‘And don’t ask questions.’ (‘Và đừng có hỏi lằng nhằng.’)
+
+Don’t ask questions – that was the first rule for a quiet life with the Dursleys (Đừng hỏi lằng nhằng – đó là quy tắc đầu tiên để có một cuộc sống yên ổn với gia đình Dursley).
+
+Uncle Vernon entered the kitchen as Harry was turning over the bacon (Dượng Vernon bước vào bếp khi Harry đang lật miếng thịt muối).
+
+‘Comb your hair!’ he barked, by way of a morning greeting (‘Chải tóc đi!’ dượng quát, thay cho một lời chào buổi sáng).
+
+About once a week (Khoảng mỗi tuần một lần), Uncle Vernon looked over the top of his newspaper and shouted that Harry needed a haircut (dượng Vernon nhìn qua mép trên của tờ báo và quát tháo rằng Harry cần phải cắt tóc). Harry must have had more haircuts than the rest of the boys in his class put together (Harry chắc hẳn đã đi cắt tóc nhiều hơn số lần của tất cả bọn con trai trong lớp cậu cộng lại), but it made no difference (nhưng điều đó chẳng tạo ra sự khác biệt nào), his hair simply grew that way – all over the place (tóc cậu cứ mọc theo kiểu đó – chĩa ra tứ tung).
+
+Harry was frying eggs (Harry đang chiên trứng) by the time Dudley arrived in the kitchen with his mother (vào lúc Dudley cùng mẹ nó bước vào bếp). Dudley looked a lot like Uncle Vernon. (Dudley trông rất giống dượng Vernon.) He had a large, pink face (Nó có khuôn mặt to, đỏ hồng), not much neck (cổ ngắn tủn), small, watery blue eyes (đôi mắt nhỏ màu xanh lờ đờ) and thick, blond hair (và mái tóc vàng hoe dày cộp) that lay smoothly on his thick, fat head (nằm bẹp dí trên cái đầu to béo của nó). Aunt Petunia often said (Dì Petunia thường nói) that Dudley looked like a baby angel (rằng Dudley trông giống như một thiên thần bé nhỏ) – Harry often said (còn Harry thì hay bảo) that Dudley looked like a pig in a wig (rằng Dudley trông chẳng khác nào một con lợn đội tóc giả).
+
+Harry put the plates of egg and bacon on the table (Harry đặt những đĩa trứng và thịt muối lên bàn), which was difficult as there wasn’t much room (việc này khá khó khăn vì không còn nhiều chỗ trống). Dudley, meanwhile, was counting his presents. (Trong khi đó, Dudley đang đếm những món quà của mình.) His face fell. (Mặt nó xị xuống.)
+
+‘Thirty-six,’ he said (‘Ba mươi sáu,’ nó nói), looking up at his mother and father (ngước nhìn ba mẹ nó). ‘That’s two less than last year.’ (‘Ít hơn năm ngoái hai cái.’)
+
+‘Darling, you haven’t counted Auntie Marge’s present (‘Cục cưng à, con chưa đếm món quà của cô Marge kìa), see, it’s here under this big one from Mummy and Daddy.’ (xem này, nó nằm ở đây, bên dưới cái hộp lớn này của ba mẹ nè.’)
+
+‘All right, thirty-seven then,’ said Dudley (‘Thôi được, thế thì ba mươi bảy,’ Dudley nói), going red in the face (mặt đỏ gay lên).
+
+Harry, who could see a huge Dudley tantrum coming on (Harry, có thể nhận thấy một cơn ăn vạ khổng lồ của Dudley sắp nổ ra), began wolfing down his bacon as fast as possible (bắt đầu ngấu nghiến chỗ thịt muối của mình nhanh nhất có thể) in case Dudley turned the table over (phòng khi Dudley lật tung cái bàn lên).
+
+Aunt Petunia obviously scented danger too (Dì Petunia hiển nhiên cũng đánh hơi thấy sự nguy hiểm), because she said quickly (nên dì vội vàng nói), ‘And we’ll buy you another two presents while we’re out today. (‘Và chúng ta sẽ mua cho con thêm hai món quà nữa khi đi chơi hôm nay nhé.) How’s that, popkin? (Thế nào hả, cục cưng?) Two more presents. (Thêm hai món nữa.) Is that all right?’ (Được chứ con?’)
+
+Dudley thought for a moment. (Dudley suy nghĩ một lúc.) It looked like hard work. (Việc đó có vẻ khá khó nhọc.) Finally he said slowly (Cuối cùng nó chậm rãi nói), ‘So I’ll have thirty ... thirty ...’ (‘Vậy là con sẽ có ba mươi ... ba mươi ...’)
+
+‘Thirty-nine, sweetums,’ said Aunt Petunia. (‘Ba mươi chín, cục vàng ạ,’ dì Petunia nói.)
+
+‘Oh.’ Dudley sat down heavily and grabbed the nearest parcel. (‘Ồ.’ Dudley ngồi phịch xuống và chộp lấy gói quà gần nhất.) ‘All right then.’ (‘Thế thì được.’)
+
+Uncle Vernon chuckled. (Dượng Vernon cười khúc khích.)
+
+‘Little tyke wants his money’s worth (‘Thằng quỷ nhỏ muốn mọi thứ phải đáng đồng tiền bát gạo), just like his father. (y hệt như ba nó.) Attaboy, Dudley!’ (Giỏi lắm, Dudley!’) He ruffled Dudley’s hair. (Dượng vò đầu Dudley.)
+
+At that moment the telephone rang (Đúng lúc đó chuông điện thoại reo) and Aunt Petunia went to answer it (và dì Petunia đi nghe máy) while Harry and Uncle Vernon watched Dudley unwrap (trong khi Harry và dượng Vernon đứng nhìn Dudley xé bọc) the racing bike, a cine-camera, a remote-control aeroplane, sixteen new computer games and a video recorder (chiếc xe đạp đua, một máy quay phim, một chiếc máy bay điều khiển từ xa, mười sáu đĩa trò chơi điện tử mới và một đầu máy video). He was ripping the paper off a gold wristwatch (Nó đang xé toạc giấy gói một chiếc đồng hồ đeo tay bằng vàng) when Aunt Petunia came back from the telephone (thì dì Petunia đi nghe điện thoại quay lại), looking both angry and worried (trông vừa tức giận vừa lo lắng).
+
+‘Bad news, Vernon,’ she said. (‘Tin buồn đây, Vernon,’ dì nói.) ‘Mrs Figg’s broken her leg. (‘Bà Figg bị gãy chân rồi.) She can’t take him.’ (Bà ấy không thể trông nó được.’) She jerked her head in Harry’s direction. (Dì hất đầu về phía Harry.)
+
+Dudley’s mouth fell open in horror (Miệng Dudley há hốc ra vì kinh hãi) but Harry’s heart gave a leap (nhưng tim Harry thì nhảy cẫng lên). Every year on Dudley’s birthday (Năm nào vào ngày sinh nhật của Dudley) his parents took him and a friend out for the day (ba mẹ nó cũng đưa nó và một người bạn đi chơi cả ngày), to adventure parks, hamburger bars or the cinema (đến các công viên giải trí, quán bơ-gơ hay rạp chiếu phim). Every year, Harry was left behind with Mrs Figg (Năm nào Harry cũng bị bỏ lại cho bà Figg), a mad old lady who lived two streets away (một bà lão gàn dở sống cách đó hai con phố). Harry hated it there. (Harry rất ghét ở đó.) The whole house smelled of cabbage (Cả ngôi nhà nặc mùi bắp cải) and Mrs Figg made him look at photographs of all the cats she’d ever owned (và bà Figg thì luôn bắt cậu xem những bức ảnh chụp tất cả những con mèo mà bà từng nuôi).
+
+‘Now what?’ said Aunt Petunia (‘Giờ sao đây?’ dì Petunia nói), looking furiously at Harry as though he’d planned this (nhìn Harry một cách giận dữ như thể cậu đã lên kế hoạch cho việc này). Harry knew he ought to feel sorry (Harry biết mình nên cảm thấy tiếc) that Mrs Figg had broken her leg (vì bà Figg bị gãy chân), but it wasn’t easy when he reminded himself (nhưng thật khó mà tiếc được khi cậu tự nhủ rằng) it would be a whole year before he had to look at Tibbies, Snowy, Mr Paws and Tufty again (phải trọn một năm nữa cậu mới phải nhìn lại mấy con mèo Tibbies, Snowy, Mr Paws và Tufty).
+
+‘We could phone Marge,’ Uncle Vernon suggested. (‘Chúng ta có thể gọi cho Marge,’ dượng Vernon gợi ý.)
+
+‘Don’t be silly, Vernon, she hates the boy.’ (‘Đừng có ngốc thế chứ, Vernon, cô ấy ghét thằng bé này mà.’)
+
+The Dursleys often spoke about Harry like this (Gia đình Dursley thường nói về Harry như vậy), as though he wasn’t there (như thể cậu không có ở đó) – or rather, as though he was something very nasty that couldn’t understand them, like a slug (– hay đúng hơn, như thể cậu là một thứ gì đó vô cùng gớm ghiếc không hiểu được tiếng người, như một con sên chẳng hạn).
+
+‘What about what’s-her-name, your friend – Yvonne?’ (‘Thế còn cái cô gì tên là – bạn của bà – Yvonne thì sao?’)
+
+‘On holiday in Majorca,’ snapped Aunt Petunia. (‘Đang đi nghỉ ở Majorca rồi,’ dì Petunia gắt.)
+
+‘You could just leave me here,’ Harry put in hopefully (‘Dì dượng có thể cứ để cháu ở lại đây,’ Harry hy vọng xen vào) (he’d be able to watch what he wanted on television for a change (cậu sẽ có thể xem bất cứ thứ gì cậu muốn trên ti vi để đổi gió) and maybe even have a go on Dudley’s computer) (và thậm chí có thể được chơi thử trên máy tính của Dudley).
+
+Aunt Petunia looked as though she’d just swallowed a lemon. (Dì Petunia trông như thể dì vừa mới nuốt phải một quả chanh.)
+
+‘And come back and find the house in ruins?’ she snarled. (‘Rồi để lúc về thấy cái nhà này biến thành đống đổ nát sao?’ dì gầm gừ.)
+
+‘I won’t blow up the house,’ said Harry (‘Cháu sẽ không làm nổ tung ngôi nhà đâu,’ Harry nói), but they weren’t listening (nhưng họ không hề lắng nghe).
+
+‘I suppose we could take him to the zoo,’ said Aunt Petunia slowly (‘Tôi cho là chúng ta có thể đưa nó đến sở thú,’ dì Petunia chậm rãi nói), ‘... and leave him in the car ...’ (‘... và để nó ở trong xe ...’)
+
+‘That car’s new, he’s not sitting in it alone ...’ (‘Cái xe đó mới mua, nó không thể ngồi trong đó một mình được ...’)
+
+Dudley began to cry loudly. (Dudley bắt đầu khóc rống lên.) In fact, he wasn’t really crying (Thực ra, nó không hề khóc thật), it had been years since he’d really cried (đã nhiều năm rồi nó không thực sự khóc), but he knew that if he screwed up his face and wailed (nhưng nó biết rằng nếu nó nhăn nhó mặt mũi và gào thét), his mother would give him anything he wanted (mẹ nó sẽ cho nó bất cứ thứ gì nó muốn).
+
+‘Dinky Duddydums, don’t cry (‘Cục cưng Duddydums nhỏ bé, đừng khóc), Mummy won’t let him spoil your special day!’ she cried (mẹ sẽ không để nó làm hỏng ngày đặc biệt của con đâu!’ dì kêu lên), flinging her arms around him (vòng tay ôm chầm lấy nó).
+
+‘I ... don’t ... want ... him ... t-t-to come!’ Dudley yelled between huge pretend sobs. (‘Con ... không ... muốn ... nó ... đ-đ-đi cùng!’ Dudley hét lên giữa những tiếng nức nở giả vờ to tướng.) ‘He always sp-spoils everything!’ (‘Nó luôn l-làm hỏng mọi thứ!’) He shot Harry a nasty grin through the gap in his mother’s arms. (Nó phóng cho Harry một nụ cười nhăn nhở xấu xa qua khe hở giữa hai cánh tay của mẹ nó.)
+
+Just then, the doorbell rang (Đúng lúc đó, chuông cửa reo) – ‘Oh, Good Lord, they’re here!’ said Aunt Petunia frantically (– ‘Ôi, lạy Chúa, họ đến rồi!’ dì Petunia cuống cuồng nói) – and a moment later, Dudley’s best friend, Piers Polkiss, walked in with his mother (– và một lát sau, thằng bạn thân nhất của Dudley, Piers Polkiss, bước vào cùng mẹ nó). Piers was a scrawny boy with a face like a rat. (Piers là một thằng nhóc gầy gò với khuôn mặt giống như một con chuột.) He was usually the one who held people’s arms behind their backs while Dudley hit them. (Nó thường là đứa giữ quặt tay người khác ra sau lưng trong lúc Dudley đấm họ.) Dudley stopped pretending to cry at once. (Dudley lập tức ngừng khóc giả vờ ngay.)
+
+Half an hour later (Nửa giờ sau), Harry, who couldn’t believe his luck (Harry, người không thể tin vào sự may mắn của mình), was sitting in the back of the Dursleys’ car with Piers and Dudley (đang ngồi ở băng ghế sau trong xe của nhà Dursley cùng với Piers và Dudley), on the way to the zoo for the first time in his life (trên đường đến sở thú lần đầu tiên trong đời). His aunt and uncle hadn’t been able to think of anything else to do with him (Dì và dượng của cậu đã không thể nghĩ ra việc gì khác để làm với cậu), but before they’d left, Uncle Vernon had taken Harry aside (nhưng trước khi họ khởi hành, dượng Vernon đã kéo Harry ra một góc).
+
+‘I’m warning you,’ he had said (‘Tao cảnh cáo mày,’ dượng nói), putting his large purple face right up close to Harry’s (dí sát cái khuôn mặt to tướng đỏ gay vào mặt Harry), ‘I’m warning you now, boy (‘Tao cảnh cáo mày ngay bây giờ, ranh con) – any funny business, anything at all (– bất kỳ trò lố lăng nào, bất cứ thứ gì) – and you’ll be in that cupboard from now until Christmas.’ (– và mày sẽ bị nhốt trong cái tủ đó từ giờ cho đến tận Giáng sinh.’)
+
+‘I’m not going to do anything,’ said Harry, ‘honestly ...’ (‘Cháu sẽ không làm gì đâu,’ Harry nói, ‘thật đấy ...’)
+
+But Uncle Vernon didn’t believe him. (Nhưng dượng Vernon không tin cậu.) No one ever did. (Chưa bao giờ có ai tin cả.)
+
+The problem was (Vấn đề là), strange things often happened around Harry (những chuyện kỳ lạ thường xuyên xảy ra xung quanh Harry) and it was just no good telling the Dursleys he didn’t make them happen (và có nói với nhà Dursley rằng cậu không hề gây ra chúng cũng vô ích).
+
+Once, Aunt Petunia (Có một lần, dì Petunia), tired of Harry coming back from the barber’s looking as though he hadn’t been at all (quá mệt mỏi với việc Harry đi cắt tóc về mà trông như chưa hề cắt), had taken a pair of kitchen scissors (đã lấy một cây kéo làm bếp) and cut his hair so short he was almost bald (và cắt tóc cậu ngắn đến mức cậu gần như trọc lóc) except for his fringe (ngoại trừ phần tóc mái), which she left ‘to hide that horrible scar’ (mà dì chừa lại ‘để che đi cái sẹo khủng khiếp đó’). Dudley had laughed himself silly at Harry (Dudley đã cười ngặt nghẽo vào mặt Harry), who spent a sleepless night imagining school the next day (người đã trải qua một đêm mất ngủ để tưởng tượng đến cảnh ở trường vào ngày hôm sau), where he was already laughed at for his baggy clothes and Sellotaped glasses (nơi cậu vốn dĩ đã bị chế nhạo vì bộ quần áo thùng thình và cặp kính dán chằng chịt băng keo). Next morning, however (Tuy nhiên, sáng hôm sau), he had got up to find his hair exactly as it had been before Aunt Petunia had sheared it off (cậu thức dậy và thấy tóc mình y hệt như trước khi dì Petunia xén nó đi). He had been given a week in his cupboard for this (Cậu đã bị phạt nhốt trong tủ một tuần vì chuyện này), even though he had tried to explain that he couldn’t explain how it had grown back so quickly (mặc dù cậu đã cố gắng giải thích rằng chính cậu cũng không thể giải thích được làm sao nó lại mọc lại nhanh đến thế).
+
+Another time (Lần khác), Aunt Petunia had been trying to force him into a revolting old jumper of Dudley’s (dì Petunia đã cố gắng ép cậu mặc một cái áo len chui đầu cũ kỹ tởm lợm của Dudley) (brown with orange bobbles) (màu nâu với những cục bông màu cam). The harder she tried to pull it over his head (Dì càng cố kéo nó qua đầu cậu), the smaller it seemed to become (thì nó dường như càng nhỏ lại), until finally it might have fitted a glove puppet (cho đến cuối cùng nó có lẽ chỉ vừa cho một con rối tay), but certainly wouldn’t fit Harry (chứ chắc chắn là không thể vừa với Harry). Aunt Petunia had decided it must have shrunk in the wash (Dì Petunia đã quyết định rằng chắc hẳn nó bị co rút khi giặt) and, to his great relief, Harry wasn’t punished (và, thật vô cùng nhẹ nhõm cho cậu, Harry đã không bị phạt).
+
+On the other hand (Mặt khác), he’d got into terrible trouble for being found on the roof of the school kitchens (cậu từng vướng vào một rắc rối khủng khiếp vì bị phát hiện trên nóc nhà bếp của trường). Dudley’s gang had been chasing him as usual (Băng đảng của Dudley đang truy đuổi cậu như thường lệ) when, as much to Harry’s surprise as anyone else’s (thì, trước sự ngạc nhiên của Harry cũng như bất kỳ ai khác), there he was sitting on the chimney (cậu thấy mình đang ngồi chễm chệ trên ống khói). The Dursleys had received a very angry letter from Harry’s headmistress (Gia đình Dursley đã nhận được một bức thư vô cùng giận dữ từ cô hiệu trưởng của Harry) telling them Harry had been climbing school buildings (báo với họ rằng Harry đã leo trèo lên các tòa nhà trong trường). But all he’d tried to do (Nhưng tất cả những gì cậu định làm) (as he shouted at Uncle Vernon through the locked door of his cupboard) (như cậu đã hét lên với dượng Vernon qua cánh cửa tủ bị khóa) was jump behind the big bins outside the kitchen doors (chỉ là nhảy ra nấp sau những cái thùng rác lớn bên ngoài cửa bếp). Harry supposed that the wind must have caught him in mid-jump (Harry cho rằng chắc là gió đã cuốn cậu đi giữa lúc đang nhảy).
+
+But today, nothing was going to go wrong. (Nhưng hôm nay, sẽ không có chuyện gì tồi tệ xảy ra cả.) It was even worth being with Dudley and Piers (Dù có phải đi cùng Dudley và Piers thì cũng đáng) to be spending the day somewhere that wasn’t school (để dành trọn một ngày ở một nơi nào đó không phải là trường học), his cupboard or Mrs Figg’s cabbage-smelling living-room (cái tủ của cậu, hay phòng khách sực mùi bắp cải của bà Figg).
+
+While he drove, Uncle Vernon complained to Aunt Petunia. (Trong lúc lái xe, dượng Vernon phàn nàn với dì Petunia.) He liked to complain about things: (Dượng rất thích phàn nàn về mọi thứ:) people at work, Harry, the council, Harry, the bank and Harry were just a few of his favourite subjects (những người ở chỗ làm, Harry, hội đồng thành phố, Harry, ngân hàng và Harry chỉ là một vài trong số các chủ đề yêu thích của dượng). This morning, it was motorbikes. (Sáng nay, chủ đề là xe mô tô.)
+
+‘... roaring along like maniacs, the young hoodlums,’ he said (‘... gầm rú phóng đi như những kẻ điên rồ, bọn du côn trẻ tuổi,’ dượng nói), as a motorbike overtook them (khi một chiếc xe mô tô vượt qua họ).
+
+‘I had a dream about a motorbike,’ said Harry, remembering suddenly. (‘Cháu đã mơ thấy một chiếc xe mô tô,’ Harry nói, chợt nhớ ra.) ‘It was flying.’ (‘Nó đang bay.’)
+
+Uncle Vernon nearly crashed into the car in front. (Dượng Vernon suýt nữa thì đâm sầm vào chiếc xe phía trước.) He turned right around in his seat and yelled at Harry (Dượng quay ngoắt người lại trên ghế và hét vào mặt Harry), his face like a gigantic beetroot with a moustache (khuôn mặt dượng giống hệt một củ dền khổng lồ có ria mép), ‘MOTORBIKES DON’T FLY!’ (‘MÔ TÔ KHÔNG BIẾT BAY!’)
+
+Dudley and Piers sniggered. (Dudley và Piers cười khục khặc.)
+
+‘I know they don’t,’ said Harry. (‘Cháu biết là chúng không biết bay,’ Harry nói.) ‘It was only a dream.’ (‘Đó chỉ là một giấc mơ thôi.’)
+
+But he wished he hadn’t said anything. (Nhưng cậu ước gì mình đã không nói điều đó.) If there was one thing the Dursleys hated even more than his asking questions (Nếu có một thứ mà gia đình Dursley ghét cay ghét đắng hơn cả việc cậu hay hỏi lằng nhằng), it was his talking about anything acting in a way it shouldn’t (thì đó là việc cậu nói về bất cứ điều gì hoạt động trái với quy luật bình thường), no matter if it was in a dream or even a cartoon (dù đó là trong giấc mơ hay thậm chí trong phim hoạt hình) – they seemed to think he might get dangerous ideas (– họ dường như nghĩ rằng cậu có thể nhiễm những ý nghĩ nguy hiểm).
+
+It was a very sunny Saturday and the zoo was crowded with families. (Hôm đó là một ngày thứ Bảy vô cùng rực nắng và sở thú chật ních các gia đình.) The Dursleys bought Dudley and Piers large chocolate ice-creams at the entrance (Gia đình Dursley mua cho Dudley và Piers hai cây kem sô cô la khổng lồ ngay tại cổng vào) and then, because the smiling lady in the van had asked Harry what he wanted before they could hurry him away (và sau đó, vì cô bán hàng tươi cười trong xe tải nhỏ đã hỏi Harry muốn ăn gì trước khi họ có thể lôi cậu đi), they bought him a cheap lemon ice lolly (họ đã mua cho cậu một cây kem đá vị chanh rẻ tiền). It wasn’t bad either, Harry thought (Thế cũng không tệ, Harry nghĩ), licking it as they watched a gorilla scratching its head (vừa liếm kem vừa xem một con khỉ đột đang gãi đầu) and looking remarkably like Dudley, except that it wasn’t blond (và trông vô cùng giống Dudley, ngoại trừ việc nó không có mái tóc vàng hoe).
+
+Harry had the best morning he’d had in a long time. (Harry đã có một buổi sáng tuyệt vời nhất từ rất lâu rồi.) He was careful to walk a little way apart from the Dursleys (Cậu cẩn thận đi cách xa gia đình Dursley một chút) so that Dudley and Piers, who were starting to get bored with the animals by lunch-time (để Dudley và Piers, những đứa bắt đầu cảm thấy chán ngán với lũ động vật vào lúc đến giờ ăn trưa), wouldn’t fall back on their favourite hobby of hitting him (sẽ không quay lại với sở thích yêu thích của chúng là đánh cậu). They ate in the zoo restaurant (Họ ăn ở nhà hàng của sở thú) and when Dudley had a tantrum because his knickerbocker glory wasn’t big enough (và khi Dudley nổi cơn thịnh nộ vì ly kem trái cây của nó không đủ to), Uncle Vernon bought him another one and Harry was allowed to finish the first (dượng Vernon đã mua cho nó một ly khác và Harry được phép ăn nốt ly đầu tiên).
+
+Harry felt, afterwards (Sau này Harry cảm thấy), that he should have known it was all too good to last (rằng đáng lẽ cậu phải biết mọi chuyện đã quá tốt đẹp để có thể kéo dài).
+
+After lunch they went to the reptile house (Sau bữa trưa, họ đến khu bò sát). It was cool and dark in here (Ở trong này mát mẻ và tối tăm), with lit windows all along the walls (với những ô kính được thắp sáng dọc theo các bức tường). Behind the glass (Phía sau tấm kính), all sorts of lizards and snakes (đủ các loại thằn lằn và rắn) were crawling and slithering over bits of wood and stone (đang trườn bò và trượt trên những mẩu gỗ và đá). Dudley and Piers wanted to see (Dudley và Piers muốn xem) huge, poisonous cobras (những con rắn hổ mang khổng lồ, có nọc độc) and thick, man-crushing pythons (và những con trăn to dày có thể siết chết người). Dudley quickly found the largest snake in the place (Dudley nhanh chóng tìm thấy con rắn lớn nhất ở đó). It could have wrapped its body twice around Uncle Vernon’s car (Nó có thể quấn cơ thể mình hai vòng quanh chiếc xe của dượng Vernon) and crushed it into a dustbin (và nghiền nát nó thành một cái thùng rác) – but at the moment it didn’t look in the mood (– nhưng lúc này trông nó có vẻ không có hứng). In fact, it was fast asleep (Thực tế, nó đang ngủ say).
+
+Dudley stood with his nose pressed against the glass (Dudley đứng áp mũi vào kính), staring at the glistening brown coils (chằm chằm nhìn vào những cuộn thân màu nâu bóng nhẫy).
+
+‘Make it move,’ he whined at his father (‘Làm nó nhúc nhích đi ba,’ nó nhõng nhẽo với ba mình). Uncle Vernon tapped on the glass (Dượng Vernon gõ gõ lên kính), but the snake didn’t budge (nhưng con rắn không hề nhúc nhích).
+
+‘Do it again,’ Dudley ordered (‘Làm lại đi ba,’ Dudley ra lệnh). Uncle Vernon rapped the glass smartly with his knuckles (Dượng Vernon lấy đốt ngón tay gõ mạnh vào kính), but the snake just snoozed on (nhưng con rắn vẫn cứ ngủ gà ngủ gật).
+
+‘This is boring,’ Dudley moaned (‘Chán òm,’ Dudley rên rỉ). He shuffled away (Nó lê bước bỏ đi).
+
+Harry moved in front of the tank and looked intently at the snake (Harry bước tới trước bể kính và chăm chú nhìn con rắn). He wouldn’t have been surprised (Cậu sẽ không ngạc nhiên) if it had died of boredom itself (nếu bản thân nó chết vì buồn chán) – no company except stupid people (– không có bầu bạn ngoại trừ những kẻ ngu ngốc) drumming their fingers on the glass (cứ gõ ngón tay lên kính) trying to disturb it all day long (cố làm phiền nó cả ngày trời). It was worse than having a cupboard as a bedroom (Như vậy còn tệ hơn cả việc phải dùng cái tủ làm phòng ngủ), where the only visitor was Aunt Petunia (nơi vị khách duy nhất là dì Petunia) hammering on the door to wake you up (đập cửa ầm ầm để gọi bạn dậy) – at least he got to visit the rest of the house (– ít ra thì cậu còn được đi thăm thú phần còn lại của ngôi nhà).
+
+The snake suddenly opened its beady eyes (Con rắn đột nhiên mở đôi mắt nhỏ như hạt cườm của nó). Slowly, very slowly (Chậm rãi, rất chậm rãi), it raised its head until its eyes were on a level with Harry’s (nó ngóc đầu lên cho đến khi mắt nó ngang tầm với mắt của Harry).
+
+It winked (Nó nháy mắt).
+
+Harry stared (Harry nhìn trân trân). Then he looked quickly around (Rồi cậu đảo mắt nhìn nhanh xung quanh) to see if anyone was watching (xem có ai đang để để ý không). They weren’t (Không có ai cả). He looked back at the snake and winked, too (Cậu nhìn lại con rắn và cũng nháy mắt).
+
+The snake jerked its head towards Uncle Vernon and Dudley (Con rắn hất đầu về phía dượng Vernon và Dudley), then raised its eyes to the ceiling (rồi ngước mắt lên trần nhà). It gave Harry a look that said quite plainly: (Nó trao cho Harry một ánh mắt nói lên khá rõ ràng:) ‘I get that all the time.’ (‘Tôi bị thế này suốt.’)
+
+‘I know,’ Harry murmured through the glass (‘Tôi biết mà,’ Harry lầm bầm qua tấm kính), though he wasn’t sure the snake could hear him (dù cậu không chắc con rắn có thể nghe thấy mình không). ‘It must be really annoying.’ (‘Chắc hẳn là bực mình lắm.’)
+
+The snake nodded vigorously (Con rắn gật đầu mạnh mẽ).
+
+‘Where do you come from, anyway?’ Harry asked (‘Mà bạn từ đâu đến vậy?’ Harry hỏi).
+
+The snake jabbed its tail at a little sign next to the glass (Con rắn chĩa đuôi vào một tấm biển nhỏ cạnh tấm kính). Harry peered at it (Harry hé mắt nhìn).
+
+Boa Constrictor, Brazil (Trăn xiết mồi, Brazil).
+
+‘Was it nice there?’ (‘Ở đó có đẹp không?’)
+
+The boa constrictor jabbed its tail at the sign again (Con trăn xiết mồi lại chĩa đuôi vào tấm biển) and Harry read on: (và Harry đọc tiếp:) This specimen was bred in the zoo. (Mẫu vật này được nhân giống trong sở thú.) ‘Oh, I see (‘À, tôi hiểu rồi) – so you’ve never been to Brazil?’ (– vậy là bạn chưa từng đến Brazil sao?’)
+
+As the snake shook its head (Khi con rắn lắc đầu), a deafening shout behind Harry made both of them jump (một tiếng hét chói tai đằng sau Harry khiến cả hai giật nảy mình).
+
+‘DUDLEY! MR DURSLEY! (‘DUDLEY! BÁC DURSLEY!) COME AND LOOK AT THIS SNAKE! (ĐẾN XEM CON RẮN NÀY ĐI!) YOU WON’T BELIEVE WHAT IT’S DOING!’ (MỌI NGƯỜI SẼ KHÔNG TIN ĐƯỢC NÓ ĐANG LÀM GÌ ĐÂU!’)
+
+Dudley came waddling towards them as fast as he could (Dudley lạch bạch chạy tới chỗ họ nhanh nhất có thể).
+
+‘Out of the way, you,’ he said (‘Tránh đường ra, mày,’ nó nói), punching Harry in the ribs (và đấm một cú vào sườn Harry).
+
+Caught by surprise (Bị bất ngờ), Harry fell hard on the concrete floor (Harry ngã đập người xuống sàn bê tông cứng). What came next happened so fast (Chuyện xảy ra tiếp theo diễn ra quá nhanh) no one saw how it happened (không ai kịp thấy nó xảy ra thế nào) – one second, Piers and Dudley were leaning right up close to the glass (– một giây trước, Piers và Dudley còn đang áp sát người vào kính), the next, they had leapt back with howls of horror (giây tiếp theo, chúng đã nhảy lùi lại với những tiếng hú kinh hoàng).
+
+Harry sat up and gasped (Harry ngồi bật dậy và thở hổn hển); the glass front of the boa constrictor’s tank had vanished (mặt kính phía trước của bể trăn xiết mồi đã biến mất). The great snake was uncoiling itself rapidly (Con trăn khổng lồ đang tháo những cuộn mình ra một cách nhanh chóng), slithering out on to the floor (trườn ra ngoài sàn nhà) – people throughout the reptile house screamed (– mọi người khắp khu bò sát la hét) and started running for the exits (và bắt đầu chạy ào ra các cửa thoát hiểm).
+
+As the snake slid swiftly past him (Khi con rắn trượt nhanh qua người cậu), Harry could have sworn a low, hissing voice said (Harry dám thề là có một giọng nói trầm, xì xào cất lên), ‘Brazil, here I come ... Thanksss, amigo.’ (‘Brazil, ta đến đây ... Cảmmm ơn, anh bạn.’)
+
+The keeper of the reptile house was in shock (Người quản lý khu bò sát đang bị sốc).
+
+‘But the glass,’ he kept saying (‘Nhưng tấm kính,’ ông ta cứ lặp đi lặp lại), ‘where did the glass go?’ (‘tấm kính đã đi đâu rồi?’)
+
+The zoo director himself made Aunt Petunia a cup of strong sweet tea (Đích thân giám đốc sở thú đã pha cho dì Petunia một tách trà ngọt đặc) while he apologised over and over again (trong khi ông xin lỗi đi xin lỗi lại). Piers and Dudley could only gibber (Piers và Dudley chỉ còn biết nói năng lắp bắp). As far as Harry had seen (Theo như Harry thấy), the snake hadn’t done anything (con rắn không làm gì cả) except snap playfully at their heels as it passed (ngoại trừ việc đớp đùa vào gót chân chúng khi đi ngang qua), but by the time they were all back in Uncle Vernon’s car (nhưng đến khi tất cả quay lại xe của dượng Vernon), Dudley was telling them how it had nearly bitten off his leg (Dudley đang kể lể về việc con rắn đã suýt cắn đứt chân nó như thế nào), while Piers was swearing it had tried to squeeze him to death (trong khi Piers thì thề thốt rằng con rắn đã cố siết chết nó). But worst of all, for Harry at least (Nhưng tồi tệ nhất, ít nhất là đối với Harry), was Piers calming down enough to say (là khi Piers đủ bình tĩnh để nói), ‘Harry was talking to it, weren’t you, Harry?’ (‘Harry đã nói chuyện với nó, đúng không Harry?’)
+
+Uncle Vernon waited until Piers was safely out of the house (Dượng Vernon đợi cho đến khi Piers ra khỏi nhà an toàn) before starting on Harry (rồi mới bắt đầu xử lý Harry). He was so angry he could hardly speak (Dượng giận đến mức hầu như không nói nên lời). He managed to say (Dượng cố rặn ra), ‘Go – cupboard – stay – no meals,’ (‘Đi – vào tủ – ở đó – nhịn đói,’) before he collapsed into a chair (trước khi đổ gục xuống ghế) and Aunt Petunia had to run and get him a large brandy (và dì Petunia phải chạy đi lấy cho dượng một ly rượu mạnh lớn).
+
+Harry lay in his dark cupboard much later (Harry nằm trong cái tủ tối tăm của mình rất lâu sau đó), wishing he had a watch (ước gì cậu có một chiếc đồng hồ). He didn’t know what time it was (Cậu không biết mấy giờ rồi) and he couldn’t be sure the Dursleys were asleep yet (và cậu không thể chắc là nhà Dursley đã ngủ hay chưa). Until they were (Cho đến khi họ ngủ), he couldn’t risk sneaking to the kitchen for some food (cậu không dám mạo hiểm lẻn vào bếp để kiếm chút đồ ăn).
+
+He’d lived with the Dursleys almost ten years (Cậu đã sống với gia đình Dursley gần mười năm), ten miserable years (mười năm khốn khổ), as long as he could remember (từ khi cậu bắt đầu có ký ức), ever since he’d been a baby (kể từ khi cậu còn là một đứa trẻ sơ sinh) and his parents had died in that car crash (và ba mẹ cậu qua đời trong vụ tai nạn xe hơi đó). He couldn’t remember being in the car when his parents had died (Cậu không thể nhớ việc mình đã ở trong xe khi ba mẹ cậu mất). Sometimes, when he strained his memory during long hours in his cupboard (Đôi khi, khi cậu căng trí nhớ ra trong những giờ dài dằng dặc ở trong tủ), he came up with a strange vision: (cậu lại thấy một ảo ảnh kỳ lạ:) a blinding flash of green light (một tia sáng xanh lá chói lòa) and a burning pain on his forehead (và một nỗi đau dữ dội trên trán). This, he supposed, was the crash (Đó, cậu cho là, là vụ tai nạn), though he couldn’t imagine where all the green light came from (dù cậu không thể tưởng tượng được tất cả thứ ánh sáng xanh đó từ đâu ra). He couldn’t remember his parents at all (Cậu hoàn toàn không nhớ gì về ba mẹ mình). His aunt and uncle never spoke about them (Dì và dượng của cậu không bao giờ nhắc đến họ), and of course he was forbidden to ask questions (và tất nhiên cậu bị cấm hỏi lằng nhằng). There were no photographs of them in the house (Trong nhà cũng không có bức ảnh nào của họ).
+
+When he had been younger (Khi còn nhỏ hơn), Harry had dreamed and dreamed of some unknown relation coming to take him away (Harry đã từng mơ đi mơ lại về một người họ hàng vô danh nào đó đến đón cậu đi), but it had never happened (nhưng điều đó chưa bao giờ xảy ra); the Dursleys were his only family (nhà Dursley là gia đình duy nhất của cậu). Yet sometimes he thought (or maybe hoped) (Thế nhưng đôi khi cậu nghĩ (hoặc có lẽ là hy vọng)) that strangers in the street seemed to know him (rằng những người xa lạ trên phố dường như biết cậu). Very strange strangers they were, too (Họ cũng là những người xa lạ rất kỳ dị). A tiny man in a violet top hat had bowed to him once (Một người đàn ông bé nhỏ đội chiếc mũ chóp cao màu tím nhạt đã từng cúi chào cậu một lần) while out shopping with Aunt Petunia and Dudley (khi cậu đi mua sắm cùng dì Petunia và Dudley). After asking Harry furiously if he knew the man (Sau khi tức giận hỏi Harry có biết người đàn ông đó không), Aunt Petunia had rushed them out of the shop without buying anything (dì Petunia đã lùa chúng ra khỏi cửa hàng mà không mua bất cứ thứ gì). A wild-looking old woman dressed all in green had waved merrily at him once on a bus (Một bà lão trông hoang dã mặc đồ xanh lá cây từ đầu đến chân từng vui vẻ vẫy tay với cậu một lần trên xe buýt). A bald man in a very long purple coat had actually shaken his hand in the street the other day (Một người đàn ông hói đầu mặc một chiếc áo khoác màu tím rất dài thực sự đã bắt tay cậu trên phố vào ngày hôm nọ) and then walked away without a word (rồi bỏ đi không nói một lời). The weirdest thing about all these people (Điều kỳ lạ nhất về tất cả những người này) was the way they seemed to vanish (là cái cách họ dường như tan biến đi) the second Harry tried to get a closer look (ngay cái giây phút Harry cố gắng nhìn gần hơn).
+
+At school, Harry had no one (Ở trường, Harry không có ai cả). Everybody knew that Dudley’s gang hated that odd Harry Potter (Ai cũng biết băng đảng của Dudley ghét thằng bé Harry Potter lập dị đó) in his baggy old clothes and broken glasses (trong những bộ quần áo cũ kỹ thùng thình và chiếc kính vỡ), and nobody liked to disagree with Dudley’s gang (và chẳng ai lại muốn làm mếch lòng băng của Dudley cả).
+
+        `;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

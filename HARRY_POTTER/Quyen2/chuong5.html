@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 5: The Whomping Willow</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="05_Chapter_5_ The_Whomping_Willow.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 0. KHAI BÁO BIẾN TOÀN CỤC ĐỂ TRÁNH LỖI REFERENCE ERROR ---
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+        
+The end of the summer holidays came too quickly for Harry’s liking. (Kỳ nghỉ hè kết thúc quá nhanh so với mong muốn của Harry.) He was looking forward to getting back to Hogwarts, (Cậu đang mong ngóng được quay trở lại Hogwarts,) but his month at The Burrow had been the happiest of his life. (nhưng một tháng ở Trang trại Hang Sóc đã là khoảng thời gian hạnh phúc nhất trong đời cậu.) It was difficult not to feel jealous of Ron (Thật khó để không cảm thấy ghen tị với Ron) when he thought of the Dursleys (khi cậu nghĩ đến gia đình Dursley) and the sort of welcome he could expect next time he turned up in Privet Drive. (và kiểu chào đón mà cậu có thể dự đoán trong lần tới xuất hiện ở đường Privet Drive.)
+
+On their last evening, Mrs Weasley conjured up a sumptuous dinner (Vào buổi tối cuối cùng của họ, bà Weasley đã dọn ra một bữa tối thịnh soạn) which included all of Harry’s favourite things, (bao gồm tất cả những món khoái khẩu của Harry,) ending with a mouthwatering treacle pudding. (kết thúc bằng một món bánh pudding mật đường ngon chảy nước miếng.) Fred and George rounded off the evening with a display of Filibuster fireworks; (Fred và George khép lại buổi tối bằng một màn trình diễn pháo hoa Filibuster;) they filled the kitchen with red and blue stars (họ lấp đầy căn bếp bằng những ngôi sao màu đỏ và xanh lam) that bounced from ceiling to wall for at least half an hour. (nảy tưng tưng từ trần xuống tường trong ít nhất nửa giờ đồng hồ.) Then it was time for a last mug of hot chocolate and bed. (Sau đó là lúc thưởng thức ly sô-cô-la nóng cuối cùng rồi đi ngủ.)
+
+It took a long while to get started next morning. (Phải mất một lúc lâu mọi người mới rục rịch khởi hành được vào sáng hôm sau.) They were up at cock-crow, (Họ đã dậy từ lúc gà gáy,) but somehow they still seemed to have a great deal to do. (nhưng không hiểu sao họ dường như vẫn còn vô khối việc phải làm.) Mrs Weasley dashed about in a bad mood looking for spare socks and quills, (Bà Weasley tất tả chạy ngược chạy xuôi trong tâm trạng cáu kỉnh để tìm những chiếc tất lẻ và những cây bút lông chim,) people kept colliding on the stairs, (mọi người liên tục va vào nhau trên cầu thang,) half-dressed with bits of toast in their hands, (quần áo mặc dở dang với những mẩu bánh mì nướng trên tay,) and Mr Weasley nearly broke his neck, (và ông Weasley suýt chút nữa gãy cổ,) tripping over a stray chicken as he crossed the yard carrying Ginny’s trunk to the car. (do vấp phải một con gà đi lạc khi ông xách rương của Ginny băng qua sân ra xe hơi.)
+
+Harry couldn’t see how eight people, six large trunks, two owls and a rat (Harry không thể hiểu nổi làm thế nào mà tám người, sáu cái rương lớn, hai con cú và một con chuột) were going to fit into one small Ford Anglia. (lại có thể nhét vừa vào một chiếc Ford Anglia nhỏ xíu.) He had reckoned, of course, without the special features which Mr Weasley had added. (Tất nhiên, cậu đã đánh giá mà không tính đến những tính năng đặc biệt mà ông Weasley đã thêm vào.)
+
+‘Not a word to Molly,’ he whispered to Harry (‘Đừng hé nửa lời với Molly nhé,’ ông thì thầm với Harry) as he opened the boot (khi ông mở cốp xe) and showed him how it had been magically expanded so that the trunks fitted easily. (và cho cậu xem nó đã được dùng phép mở rộng ra sao để những cái rương nằm lọt thỏm một cách dễ dàng.)
+
+When at last they were all in the car, (Đến khi rốt cuộc tất cả đã yên vị trong xe,) Mrs Weasley glanced into the back seat, (Bà Weasley liếc nhìn ra băng ghế sau,) where Harry, Ron, Fred, George and Percy were all sitting comfortably side by side, and said, (nơi Harry, Ron, Fred, George và Percy đều đang ngồi cạnh nhau rất thoải mái, và nói,) ‘Muggles do know more than we give them credit for, don’t they?’ (‘Người Muggle thực sự biết nhiều hơn là chúng ta vẫn tưởng, đúng không?’) She and Ginny got into the front seat, (Bà và Ginny bước vào băng ghế trước,) which had been stretched so that it resembled a park bench. (thứ đã được kéo dài ra đến mức trông giống như một chiếc ghế đá công viên.) ‘I mean, you’d never know it was this roomy from the outside, would you?’ (‘Ý mẹ là, nhìn từ bên ngoài thì không đời nào biết được nó lại rộng rãi thế này, đúng không?’)
+
+Mr Weasley started up the engine and they trundled out of the yard, (Ông Weasley nổ máy và họ rề rề lăn bánh ra khỏi sân,) Harry turning back for a last look at the house. (Harry ngoái lại nhìn ngôi nhà lần cuối.) He barely had time to wonder when he’d see it again when they were back: (Cậu hầu như chưa kịp tự hỏi khi nào mình mới được thấy nó lần nữa thì họ đã quay lại:) George had forgotten his box of Filibuster fireworks. (George đã để quên hộp pháo hoa Filibuster của mình.) Five minutes after that, they skidded to a halt in the yard (Năm phút sau đó, họ lại thắng lết bánh dừng lại trong sân) so that Fred could run in for his broomstick. (để Fred có thể chạy vào lấy cây chổi bay.) They had almost reached the motorway (Họ gần như đã ra tới đường cao tốc) when Ginny shrieked that she’d left her diary. (thì Ginny ré lên rằng cô bé đã để quên cuốn nhật ký.) By the time she had clambered back into the car, (Tới lúc cô bé lồm cồm trèo lại vào trong xe,) they were running very late, and tempers were running high. (thì họ đã trễ giờ rất nhiều, và ai nấy đều bắt đầu mất bình tĩnh.)
+
+Mr Weasley glanced at his watch and then at his wife. (Ông Weasley liếc nhìn đồng hồ rồi quay sang nhìn vợ.)
+
+‘Molly, dear –’ (‘Molly, mình à –’)
+
+‘No, Arthur.’ (‘Không, Arthur.’)
+
+‘No one would see. (‘Sẽ chẳng ai thấy đâu.) This little button here is an Invisibility Booster I installed – (Cái nút nhỏ xíu ở đây là một Bộ khuếch đại Tàng hình do tôi lắp đặt –) that’d get us up in the air – then we fly above the clouds. (nó sẽ đưa chúng ta lên không trung – rồi chúng ta bay trên những đám mây.) We’d be there in ten minutes and no one would be any the wiser ...’ (Chúng ta sẽ đến nơi trong mười phút nữa và chẳng ai mảy may biết gì đâu ...’)
+
+‘I said no, Arthur, not in broad daylight.’ (‘Tôi nói không là không, Arthur, không thể bay giữa thanh thiên bạch nhật được.’)
+
+They reached King’s Cross at a quarter to eleven. (Họ đến nhà ga King's Cross lúc mười một giờ kém mười lăm.) Mr Weasley dashed across the road to get trolleys for their trunks (Ông Weasley chạy băng qua đường để lấy xe đẩy chở rương) and they all hurried into the station. (và tất cả vội vã tiến vào nhà ga.)
+
+Harry had caught the Hogwarts Express the previous year. (Năm ngoái Harry đã từng bắt chuyến Tàu tốc hành Hogwarts rồi.) The tricky bit was getting onto platform nine and three-quarters, (Phần gay go nhất là làm sao để vào được sân ga Chín và Ba Phần Tư,) which wasn’t visible to the Muggle eye. (nơi không thể nhìn thấy bằng mắt thường của dân Muggle.) What you had to do was walk through the solid barrier dividing platforms nine and ten. (Việc cháu phải làm là đi xuyên qua hàng rào chắn vững chắc ngăn cách giữa sân ga số chín và số mười.) It didn’t hurt, but it had to be done carefully (Việc đó không hề gây đau đớn, nhưng phải được thực hiện thật cẩn thận) so that none of the Muggles noticed you vanishing. (để không có người Muggle nào nhận ra cháu đang biến mất.)
+
+‘Percy first,’ said Mrs Weasley, (‘Percy đi trước,’ bà Weasley nói,) looking nervously at the clock overhead, (lo lắng nhìn lên chiếc đồng hồ trên cao,) which showed they had only five minutes to disappear casually through the barrier. (chiếc đồng hồ báo rằng họ chỉ còn đúng năm phút để giả vờ vô tình biến mất qua hàng rào chắn.)
+
+Percy strode briskly forward and vanished. (Percy sải bước nhanh nhẹn về phía trước và biến mất.) Mr Weasley went next, Fred and George followed. (Ông Weasley đi tiếp theo, Fred và George theo sau.)
+
+‘I’ll take Ginny and you two come right after us,’ Mrs Weasley told Harry and Ron, (‘Bác sẽ đưa Ginny qua, còn hai đứa đi theo ngay sau tụi bác nhé,’ bà Weasley bảo Harry và Ron,) grabbing Ginny’s hand and setting off. In the blink of an eye they were gone. (nắm lấy tay Ginny và cất bước. Trong chớp mắt, họ đã biến mất.)
+
+‘Let’s go together, we’ve only got a minute,’ Ron said to Harry. (‘Mình đi cùng nhau đi, chúng ta chỉ còn một phút thôi,’ Ron nói với Harry.)
+
+Harry made sure that Hedwig’s cage was safely wedged on top of his trunk (Harry đảm bảo rằng lồng của Hedwig đã được nhét chặt an toàn trên nóc rương) and wheeled his trolley about to face the barrier. (và xoay xe đẩy của mình hướng thẳng về phía hàng rào chắn.) He felt perfectly confident; (Cậu cảm thấy hoàn toàn tự tin;) this wasn’t nearly as uncomfortable as using Floo powder. (việc này còn lâu mới khó chịu bằng việc sử dụng Bột Floo.) Both of them bent low over the handles of their trolleys (Cả hai khom người xuống thật thấp trên tay cầm của chiếc xe đẩy) and walked purposefully towards the barrier, gathering speed. (và quả quyết tiến về phía hàng rào, bắt đầu lấy đà tăng tốc.) A few feet away from it, they broke into a run and – CRASH. (Cách đó vài feet, họ chuyển sang chạy và – RẦM.)
+
+Both trolleys hit the barrier and bounced backwards. (Cả hai xe đẩy đều tông vào rào chắn và nảy ngược trở lại.) Ron’s trunk fell off with a loud thump, (Cái rương của Ron rớt xuống với một tiếng bịch lớn,) Harry was knocked off his feet, (Harry bị hất ngã nhào,) and Hedwig’s cage bounced onto the shiny floor and she rolled away, shrieking indignantly. (còn lồng của Hedwig thì nảy lên mặt sàn bóng loáng và lăn lông lốc ra xa, con cú rít lên đầy công phẫn.) People all around them stared (Mọi người xung quanh đều quay lại trố mắt nhìn) and a guard nearby yelled, ‘What in blazes d’you think you’re doing?’ (và một người bảo vệ gần đó quát lớn, ‘Cái quái gì thế, hai đứa bây nghĩ mình đang làm gì vậy hả?’)
+
+‘Lost control of the trolley,’ Harry gasped, (‘Tuột tay lái xe đẩy ạ,’ Harry thở dốc,) clutching his ribs as he got up. (ôm mạng sườn trong lúc đứng dậy.) Ron ran to pick up Hedwig, (Ron chạy đến nhặt Hedwig lên,) who was causing such a scene (con cú đang làm ầm ĩ một trận) that there was a lot of muttering about cruelty to animals from the surrounding crowd. (đến mức có vô số tiếng xầm xì về tội ngược đãi động vật từ đám đông xung quanh.)
+
+‘Why can’t we get through?’ Harry hissed to Ron. (‘Sao chúng ta không qua được?’ Harry rít lên với Ron.)
+
+‘I dunno –’ (‘Mình không biết –’)
+
+Ron looked wildly around. (Ron hoảng hốt nhìn quanh.) A dozen curious people were still watching them. (Cả tá người hiếu kỳ vẫn đang theo dõi họ.)
+
+‘We’re going to miss the train,’ Ron whispered. (‘Chúng ta sẽ lỡ chuyến tàu mất,’ Ron thì thầm.) ‘I don’t understand why the gateway’s sealed itself ...’ (‘Mình không hiểu tại sao lối đi lại tự đóng kín lại ...’)
+
+Harry looked up at the giant clock (Harry ngước nhìn chiếc đồng hồ khổng lồ) with a sickening feeling in the pit of his stomach. (với một cảm giác nôn nao thắt lại trong ruột gan.) Ten seconds ... nine seconds ... (Mười giây ... chín giây ...)
+
+He wheeled his trolley forward cautiously (Cậu thận trọng đẩy xe hành lý về phía trước) until it was right against the barrier, (cho đến khi nó áp sát vào rào chắn,) and pushed with all his might. (và đẩy với tất cả sức lực của mình.) The metal remained solid. (Lớp kim loại vẫn cứng ngắc.)
+
+Three seconds ... two seconds ... one second ... (Ba giây ... hai giây ... một giây ...)
+
+‘It’s gone,’ said Ron, sounding stunned. (‘Tàu đi mất rồi,’ Ron nói, giọng choáng váng.) ‘The train’s left. (‘Chuyến tàu đã rời đi.) What if Mum and Dad can’t get back through to us? (Lỡ ba mẹ không thể quay lại qua rào chắn với chúng ta thì sao?) Have you got any Muggle money?’ (Bồ có đồng tiền Muggle nào không?’)
+
+Harry gave a hollow laugh. (Harry bật cười cay đắng.) ‘The Dursleys haven’t given me pocket money for about six years.’ (‘Nhà Dursley đã không cho mình tiền tiêu vặt khoảng sáu năm nay rồi.’)
+
+Ron pressed his ear to the cold barrier. (Ron áp tai vào rào chắn lạnh lẽo.)
+
+‘Can’t hear a thing,’ he said tensely. (‘Không nghe thấy gì cả,’ cậu căng thẳng nói.) ‘What’re we going to do? (‘Chúng ta phải làm sao đây?) I don’t know how long it’ll take Mum and Dad to get back to us.’ (Mình không biết ba mẹ sẽ mất bao lâu mới quay lại được với tụi mình.’)
+
+They looked around. (Họ nhìn quanh.) People were still watching them, (Mọi người vẫn đang theo dõi họ,) mainly because of Hedwig’s continuing screeches. (chủ yếu là vì những tiếng rít chói tai không dứt của Hedwig.)
+
+‘I think we’d better go and wait by the car,’ said Harry. (‘Mình nghĩ tốt hơn là chúng ta nên ra đợi cạnh chiếc xe hơi,’ Harry nói.) ‘We’re attracting too much atten–’ (‘Chúng ta đang thu hút quá nhiều sự chú–’)
+
+‘Harry!’ said Ron, his eyes gleaming. ‘The car!’ (‘Harry!’ Ron gọi, mắt sáng rực lên. ‘Chiếc xe hơi!’)
+
+‘What about it?’ (‘Nó thì sao chứ?’)
+
+‘We can fly the car to Hogwarts!’ (‘Chúng ta có thể lái chiếc xe bay đến Hogwarts!’)
+
+‘But I thought –’ (‘Nhưng mình tưởng –’)
+
+‘We’re stuck, right? (‘Tụi mình đang bị kẹt, đúng không?) And we’ve got to get to school, haven’t we? (Và tụi mình phải đến trường, phải không nào?) And even underage wizards are allowed to use magic (Và thậm chí các phù thủy vị thành niên cũng được phép sử dụng phép thuật) if it’s a real emergency, (nếu đó là một trường hợp thực sự khẩn cấp,) section nineteen or something of the Restriction of Thingy ...’ (điều mười chín hay gì đó của Đạo luật Hạn chế Cái-Gì-Đó ...’)
+
+Harry’s feeling of panic turned suddenly to excitement. (Cảm giác hoảng loạn của Harry bỗng chốc chuyển thành sự phấn khích.)
+
+‘Can you fly it?’ (‘Bồ lái được nó chứ?’)
+
+‘No problem,’ said Ron, (‘Không thành vấn đề,’ Ron nói,) wheeling his trolley around to face the exit. (quay ngoắt xe hành lý hướng về phía lối ra.) ‘C’mon, let’s go, (‘Nào, đi thôi,) if we hurry we’ll be able to follow the Hogwarts Express.’ (nếu nhanh lên tụi mình sẽ có thể bám theo chuyến Tàu tốc hành Hogwarts.’)
+
+And they marched off through the crowd of curious Muggles, (Và họ sải bước xuyên qua đám đông người Muggle tò mò,) out of the station (ra khỏi nhà ga) and back into the side road where the old Ford Anglia was parked. (và quay lại con đường phụ nơi chiếc Ford Anglia cũ đang đậu.)
+
+Ron unlocked the cavernous boot (Ron mở khóa cái cốp xe rộng thênh thang) with a series of taps from his wand. (bằng một loạt cú gõ từ chiếc đũa phép.) They heaved their trunks back in, (Họ nhấc bổng rương của mình trở vào,) put Hedwig on the back seat and got into the front. (đặt Hedwig ở băng ghế sau và chui lên băng ghế trước.)
+
+‘Check no one’s watching,’ said Ron, (‘Kiểm tra xem có ai đang nhìn không,’ Ron nói,) starting the ignition with another tap of his wand. (khởi động máy bằng một cú gõ đũa phép khác.) Harry stuck his head out of the window: (Harry thò đầu ra ngoài cửa sổ:) traffic was rumbling along the main road ahead, (dòng xe cộ đang chạy ầm ầm dọc theo con đường chính phía trước,) but their street was empty. (nhưng con phố của họ thì vắng ngắt.)
+
+‘OK,’ he said. (‘Ổn rồi,’ cậu nói.)
+
+Ron pressed a tiny silver button on the dashboard. (Ron nhấn một cái nút nhỏ màu bạc trên bảng điều khiển.) The car around them vanished – and so did they. (Chiếc xe hơi quanh họ biến mất – và họ cũng vậy.) Harry could feel the seat vibrating beneath him, (Harry có thể cảm thấy chiếc ghế rung bần bật bên dưới,) hear the engine, (nghe tiếng động cơ,) feel his hands on his knees and his glasses on his nose, (cảm nhận đôi tay trên đầu gối và cặp kính trên mũi mình,) but for all he could see, (nhưng tất cả những gì cậu có thể thấy,) he had become a pair of eyeballs, (là cậu đã biến thành một đôi nhãn cầu,) floating a few feet above the ground (lơ lửng cách mặt đất vài feet) in a dingy street full of parked cars. (trên một con phố tối tăm đầy rẫy xe hơi đang đậu.)
+
+‘Let’s go,’ said Ron’s voice from his right. (‘Đi thôi,’ giọng nói của Ron vang lên từ bên phải cậu.)
+
+The ground and the dirty buildings on either side fell away, (Mặt đất và những tòa nhà bẩn thỉu ở hai bên tụt lại phía sau,) dropping out of sight as the car rose; (khuất dần khỏi tầm mắt khi chiếc xe bốc lên cao;) in seconds, the whole of London lay, smoky and glittering, below them. (chỉ trong vài giây, toàn bộ London mờ sương và lấp lánh trải dài bên dưới họ.)
+
+Then there was a popping noise and the car, Harry and Ron reappeared. (Sau đó có một tiếng "bốp" vang lên và chiếc xe, Harry cùng Ron lại hiện hình.)
+
+‘Uh oh,’ said Ron, jabbing at the Invisibility Booster. (‘Ái chà,’ Ron nói, chọc chọc vào Bộ khuếch đại Tàng hình.) ‘It’s faulty –’ (‘Nó bị lỗi rồi –’)
+
+Both of them pummelled it. (Cả hai đều đấm thùm thụp vào nó.) The car vanished. (Chiếc xe biến mất.) Then it flickered back again. (Rồi nó lại chập chờn hiện ra.)
+
+‘Hold on!’ Ron yelled, (‘Bám chắc nhé!’ Ron hét lên,) and he slammed his foot on the accelerator; (và cậu đạp mạnh chân ga;) they shot straight into the low woolly clouds (họ lao thẳng vào những đám mây thấp xốp như bông) and everything turned dull and foggy. (và mọi thứ xung quanh trở nên xám xịt và mù sương.)
+
+‘Now what?’ said Harry, (‘Bây giờ sao?’ Harry hỏi,) blinking at the solid mass of cloud (chớp mắt nhìn khối mây đặc sệt) pressing in on them from all sides. (đang ép chặt lấy họ từ tứ phía.)
+
+‘We need to see the train to know what direction to go in,’ said Ron. (‘Chúng ta cần nhìn thấy đoàn tàu để biết phải đi theo hướng nào,’ Ron nói.)
+
+‘Dip back down again – quickly –’ (‘Hạ thấp xuống lại đi – nhanh lên –’)
+
+They dropped back beneath the clouds (Họ lao xuống lại bên dưới những đám mây) and twisted around in their seats, squinting at the ground – (và xoay người trên ghế, nheo mắt nhìn xuống mặt đất –)
+
+‘I can see it!’ Harry yelled. (‘Mình thấy nó rồi!’ Harry hét lên.) ‘Right ahead – there!’ (‘Ngay phía trước – kia kìa!’)
+
+The Hogwarts Express was streaking along below them like a scarlet snake. (Chuyến Tàu tốc hành Hogwarts đang phóng dọc bên dưới họ như một con rắn màu đỏ tươi.)
+
+‘Due north,’ said Ron, checking the compass on the dashboard. (‘Chính Bắc,’ Ron nói, kiểm tra la bàn trên bảng điều khiển.) ‘OK, we’ll just have to check on it every half an hour or so. (‘Được rồi, tụi mình chỉ cần kiểm tra lại khoảng nửa giờ một lần là ổn. Hold on ...’ And they shot up through the clouds. (Bám chắc nhé ...’ Và họ lại lao vọt lên xuyên qua những đám mây.)
+
+A minute later, they burst out into a blaze of sunlight. (Một phút sau, họ bứt ra lao vào một quầng sáng mặt trời chói lọi.)
+
+It was a different world. (Đó là một thế giới hoàn toàn khác biệt.) The wheels of the car skimmed the sea of fluffy cloud, (Bánh xe lướt trên một biển mây xốp bồng bềnh,) the sky a bright, endless blue under the blinding white sun. (bầu trời xanh ngắt, bao la bất tận dưới ánh mặt trời trắng lóa.)
+
+‘All we’ve got to worry about now are aeroplanes,’ said Ron. (‘Bây giờ tất cả những gì tụi mình phải lo chỉ là mấy chiếc máy bay thôi,’ Ron nói.)
+
+They looked at each other and started to laugh; (Họ nhìn nhau và bắt đầu cười;) for a long time, they couldn’t stop. (trong một khoảng thời gian dài, họ không thể nào nín được.)
+
+It was as though they had been plunged into a fabulous dream. (Cảm giác cứ như thể họ đã lao mình vào một giấc mơ tuyệt diệu.) This, thought Harry, was surely the only way to travel: (Harry thầm nghĩ, đây chắc chắn là cách di chuyển duy nhất trên đời:) past swirls and turrets of snowy cloud, (lướt qua những vòng xoáy và những ngọn tháp bằng mây trắng như tuyết,) in a car full of hot, bright sunlight, (trong một chiếc xe ngập tràn ánh nắng chói chang, ấm áp,) with a fat pack of toffees in the glove compartment, (với một bịch kẹo bơ cứng to bự trong ngăn đựng găng tay,) and the prospect of seeing Fred and George’s jealous faces (và viễn cảnh được nhìn thấy vẻ mặt ghen tị của Fred và George) when they landed smoothly and spectacularly (khi họ hạ cánh một cách êm ái và ngoạn mục) on the sweeping lawn in front of Hogwarts castle. (trên bãi cỏ trải rộng trước lâu đài Hogwarts.)
+
+They made regular checks on the train (Họ thường xuyên kiểm tra đoàn tàu) as they flew further and further north, (khi bay ngày càng xa về phía bắc,) each dip beneath the clouds showing them a different view. (mỗi lần lặn xuống dưới những đám mây lại mở ra trước mắt họ một khung cảnh khác nhau.) London was soon far behind them, (London chẳng mấy chốc đã bị bỏ lại rất xa phía sau,) replaced by neat green fields (được thay thế bằng những cánh đồng xanh ngăn ngắp) which gave way in turn to wide, purplish moors, (rồi lần lượt nhường chỗ cho những cánh đồng hoang rộng lớn ngả màu tim tím,) villages with tiny toy churches (những ngôi làng với những nhà thờ nhỏ xíu như đồ chơi) and a great city alive with cars like multi-coloured ants. (và một thành phố rộng lớn sôi động với những chiếc xe hơi trông như những con kiến nhiều màu.)
+
+Several uneventful hours later, however, (Tuy nhiên, sau vài giờ đồng hồ trôi qua bình lặng,) Harry had to admit that some of the fun was wearing off. (Harry phải thừa nhận rằng sự hào hứng đã bắt đầu phai nhạt đi đôi chút.) The toffees had made them extremely thirsty (Những viên kẹo bơ cứng đã khiến họ khát khô cả cổ) and they had nothing to drink. (và họ lại chẳng có gì để uống.) He and Ron had pulled off their jumpers, (Cậu và Ron đã phải cởi phăng áo len ra,) but Harry’s T-shirt was sticking to the back of his seat (nhưng áo thun của Harry cứ dính bết vào lưng ghế) and his glasses kept sliding down to the end of his sweaty nose. (và cặp kính của cậu thì liên tục trượt xuống tận chóp mũi đẫm mồ hôi.) He had stopped noticing the fantastic cloud shapes now, (Giờ thì cậu đã ngừng chú ý đến những hình thù đám mây tuyệt đẹp,) and was thinking longingly of the train miles below, (và đang khao khát nghĩ đến chuyến tàu cách đó nhiều dặm bên dưới,) where you could buy ice-cold pumpkin juice (nơi bạn có thể mua thứ nước ép bí rợ lạnh buốt) from a trolley pushed by a plump witch. (từ một chiếc xe đẩy do một mụ phù thủy mũm mĩm kéo đi.) Why hadn’t they been able to get onto platform nine and three-quarters? (Tại sao họ lại không thể vào được sân ga Chín và Ba Phần Tư cơ chứ?)
+
+‘Can’t be much further, can it?’ croaked Ron, hours later still, (‘Chắc không còn xa nữa đâu, phải không?’ Ron thều thào, thêm nhiều giờ đồng hồ trôi qua,) as the sun started to sink into their floor of cloud, (khi mặt trời bắt đầu lặn xuống thảm mây của họ,) staining it a deep pink. (nhuộm nó thành một màu hồng sậm.) ‘Ready for another check on the train?’ (‘Sẵn sàng để kiểm tra đoàn tàu lần nữa chưa?’)
+
+It was still right below them, (Nó vẫn ở ngay bên dưới họ,) winding its way past a snow-capped mountain. (uốn lượn lách qua một ngọn núi phủ tuyết.) It was much darker beneath the canopy of clouds. (Bên dưới tầng mây trời tối hơn rất nhiều.)
+
+Ron put his foot on the accelerator and drove them upwards again, (Ron đạp chân ga và lái xe vọt lên lại,) but as he did so, the engine began to whine. (nhưng khi cậu làm vậy, động cơ bắt đầu rên rỉ.)
+
+Harry and Ron exchanged nervous glances. (Harry và Ron lo lắng nhìn nhau.)
+
+‘It’s probably just tired,’ said Ron. (‘Chắc là nó chỉ mệt thôi,’ Ron nói.) ‘It’s never been this far before ...’ (‘Nó chưa bao giờ đi xa đến thế này ...’)
+
+And they both pretended not to notice (Và cả hai đều vờ như không để ý) the whining growing louder and louder (tiếng rên rỉ ngày càng lớn hơn) as the sky became steadily darker. (khi bầu trời chìm dần vào bóng tối.) Stars were blossoming in the blackness. (Những vì sao đang nở rộ trong màn đêm đen kịt.) Harry pulled his jumper back on, (Harry mặc lại chiếc áo len của mình,) trying to ignore the way the windscreen wipers were now waving feebly, (cố lờ đi việc cần gạt nước trên kính chắn gió lúc này đang vẫy vẫy một cách yếu ớt,) as though in protest. (như thể đang phản đối.)
+
+‘Not far,’ said Ron, more to the car than to Harry, (‘Không xa nữa đâu,’ Ron nói, giống như đang nói với chiếc xe hơn là với Harry,) ‘not far now,’ and he patted the dashboard nervously. (‘giờ không còn xa nữa đâu,’ và cậu bồn chồn vỗ vỗ lên bảng điều khiển.)
+
+When they flew back beneath the clouds a little while later, (Khi họ bay trở lại xuống dưới những đám mây một lúc sau đó,) they had to squint through the darkness for a landmark they knew. (họ phải nheo mắt nhìn qua bóng tối để tìm một cột mốc mà họ biết.)
+
+‘There!’ Harry shouted, making Ron and Hedwig jump. (‘Kìa!’ Harry hét lên, làm Ron và Hedwig giật bắn mình.) ‘Straight ahead!’ (‘Ngay phía trước!’)
+
+Silhouetted on the dark horizon, (In bóng trên đường chân trời tăm tối,) high on the cliff over the lake, (nằm tít trên vách đá phía trên mặt hồ,) stood the many turrets and towers of Hogwarts castle. (là vô số những tháp canh và ngọn tháp của lâu đài Hogwarts.)
+
+But the car had begun to shudder and was losing speed. (Nhưng chiếc xe đã bắt đầu rung bần bật và đang mất dần tốc độ.)
+
+‘Come on,’ Ron said cajolingly, (‘Cố lên nào,’ Ron dỗ dành,) giving the steering wheel a little shake, (lắc nhẹ vô lăng,) ‘nearly there, come on –’ (‘sắp đến nơi rồi, cố lên –’)
+
+The engine groaned. (Động cơ rên rỉ.) Narrow jets of steam were issuing from under the bonnet. (Những tia hơi nước nhỏ hẹp đang xịt ra từ dưới nắp ca-pô.) Harry found himself gripping the edges of his seat very hard (Harry thấy mình đang bám chặt lấy mép ghế) as they flew towards the lake. (khi họ bay về phía mặt hồ.)
+
+The car gave a nasty wobble. (Chiếc xe lảo đảo một cú tồi tệ.) Glancing out of his window, (Liếc nhìn ra ngoài cửa sổ,) Harry saw the smooth, black, glassy surface of the water, a mile below. (Harry nhìn thấy mặt nước đen ngòm, phẳng lặng như gương ở cách một dặm bên dưới.) Ron’s knuckles were white on the steering wheel. (Các khớp ngón tay của Ron trắng bệch trên vô lăng.) The car wobbled again. (Chiếc xe lại lảo đảo lần nữa.)
+
+‘Come on,’ Ron muttered. (‘Cố lên nào,’ Ron lầm bầm.)
+
+They were over the lake ... (Họ đang bay phía trên mặt hồ ...) the castle was right ahead ... (lâu đài ở ngay phía trước ...) Ron put his foot down. (Ron đạp chân ga sát ván.)
+
+There was a loud clunk, a splutter, (Có một tiếng "cạch" lớn, một tiếng nổ lụp bụp,) and the engine died completely. (và động cơ tắt ngóm hoàn toàn.)
+
+‘Uh oh,’ said Ron, into the silence. (‘Ái chà,’ Ron cất tiếng, phá vỡ sự im lặng.)
+
+The nose of the car dropped. (Mũi xe chúi xuống.) They were falling, gathering speed, (Họ đang rơi, với tốc độ ngày càng tăng,) heading straight for the solid castle wall. (lao thẳng về phía bức tường lâu đài vững chãi.)
+
+‘Noooooo!’ Ron yelled, swinging the steering wheel around; (‘Khôôôông!’ Ron hét lên, bẻ ngoặt vô lăng;) they missed the dark stone wall by inches (họ tránh được bức tường đá sẫm màu trong gang tấc) as the car turned in a great arc, (khi chiếc xe ngoặt thành một vòng cung lớn,) soaring over the dark greenhouses, (lướt qua phía trên những nhà kính tối om,) then the vegetable patch (rồi đến luống rau) and then out over the black lawns, (và lướt ra phía trên những thảm cỏ đen kịt,) losing height all the time. (suốt lúc đó vẫn không ngừng tụt độ cao.)
+
+Ron let go of the steering wheel completely (Ron buông hẳn vô lăng ra) and pulled his wand out of his back pocket. (và rút đũa phép từ túi quần sau ra.)
+
+‘STOP! STOP!’ he yelled, (‘DỪNG LẠI! DỪNG LẠI!’ cậu hét lên,) whacking the dashboard and the windscreen, (quật đũa vào bảng điều khiển và kính chắn gió,) but they were still plummeting, (nhưng họ vẫn đang cắm đầu rơi xuống,) the ground flying up towards them ... (mặt đất đang lao vọt lên về phía họ ...)
+
+‘MIND THAT TREE!’ Harry bellowed, (‘COI CHỪNG CÁI CÂY KÌA!’ Harry rống lên,) lunging for the steering wheel, but too late – (lao người tới vồ lấy vô lăng, nhưng đã quá muộn –)
+
+CRUNCH. (RẦM.)
+
+With an ear-splitting bang of metal on wood, (Với một tiếng kim loại va đập vào gỗ chói tai,) they hit the thick tree trunk (họ đâm sầm vào thân cây xù xì dày cộp) and dropped to the ground with a heavy jolt. (và rớt xuống mặt đất với một cú xóc nảy lửa.) Steam was billowing from under the crumpled bonnet; (Hơi nước đang cuồn cuộn bốc lên từ dưới nắp ca-pô đã bị vò nát;) Hedwig was shrieking in terror, (Hedwig đang rít lên trong kinh hãi,) a golf-ball-sized lump was throbbing on Harry’s head (một cục u to bằng quả bóng golf đang giật thon thót trên đầu Harry) where he had hit the windscreen, (chỗ cậu đập đầu vào kính chắn gió,) and to his right, Ron let out a low, despairing groan. (và ở bên phải cậu, Ron bật ra một tiếng rên rỉ tuyệt vọng, trầm đục.)
+
+‘Are you OK?’ Harry said urgently. (‘Bồ có sao không?’ Harry khẩn trương hỏi.)
+
+‘My wand,’ said Ron, in a shaky voice. ‘Look at my wand.’ (‘Đũa phép của mình,’ Ron nói bằng một giọng run rẩy. ‘Nhìn đũa phép của mình này.’)
+
+It had snapped, almost in two; (Nó đã bị gãy, gần như đứt làm đôi;) the tip was dangling limply, (phần đầu đũa lủng lẳng rũ rượi,) held on by a few splinters. (chỉ còn dính lại bởi vài mảnh gỗ dăm.)
+
+Harry opened his mouth to say (Harry há miệng định nói) he was sure they’d be able to mend it up at the school, (rằng cậu chắc chắn họ sẽ có thể sửa nó ở trên trường,) but he never even got started. (nhưng cậu thậm chí còn chưa kịp thốt nên lời.) At that very moment, (Ngay khoảnh khắc đó,) something hit his side of the car (thứ gì đó đập vào mạn xe phía cậu) with the force of a charging bull, (với sức mạnh của một con bò tót hung hãn đang lao tới,) sending him lurching sideways into Ron, (khiến cậu ngã dúi dụi sang một bên đập vào người Ron,) just as an equally heavy blow hit the roof. (đúng lúc một cú giáng nặng nề không kém nện xuống nóc xe.)
+
+‘What’s happen–?’ (‘Chuyện gì đ–?’)
+
+Ron gasped, staring through the windscreen, (Ron thở hổn hển, trố mắt nhìn qua kính chắn gió,) and Harry looked around just in time (và Harry nhìn quanh vừa kịp lúc) to see a branch as thick as a python smash into it. (thấy một cành cây to bằng con trăn gấm quật rầm vào đó.) The tree they had hit was attacking them. (Cái cây mà họ vừa đâm trúng đang tấn công họ.) Its trunk was bent almost double, (Thân của nó uốn cong gần như gập đôi lại,) and its gnarled boughs were pummelling every inch of the car it could reach. (và những cành cây sần sùi của nó đang đấm thùm thụp vào từng tấc của chiếc xe mà nó có thể với tới.)
+
+‘Aaargh!’ said Ron, (‘Á á á!’ Ron la lên,) as another twisted limb punched a large dent into his door; (khi một nhánh cây xoắn xít khác giáng một vết lõm to đùng vào cửa xe phía cậu;) the windscreen was now trembling under a hail of blows (kính chắn gió lúc này đang rung lên bần bật dưới một trận mưa những cú đập) from knuckle-like twigs (từ những cành con trông như những khớp ngón tay) and a branch as thick as a battering ram (và một nhánh cây to bằng khúc gỗ phá thành) was pounding furiously on the roof, which seemed to be caving in – (đang nện điên cuồng lên nóc xe, khiến nó như muốn sập xuống –)
+
+‘Run for it!’ Ron shouted, (‘Bỏ chạy đi!’ Ron hét lên,) throwing his full weight against his door, (quăng toàn bộ sức nặng cơ thể vào cánh cửa xe,) but next second he had been knocked backwards into Harry’s lap (nhưng ngay giây tiếp theo cậu đã bị hất văng ngược lại vào lòng Harry) by a vicious upper cut from another branch. (bởi một cú đấm móc ác hiểm từ một cành cây khác.)
+
+‘We’re done for!’ he moaned, (‘Tụi mình tiêu đời rồi!’ cậu rên rỉ,) as the ceiling sagged, (khi trần xe võng xuống,) but suddenly the floor of the car was vibrating (nhưng đột nhiên sàn xe rung bần bật) – the engine had re-started. (– động cơ đã nổ máy trở lại.)
+
+‘Reverse!’ Harry yelled, (‘Lùi lại!’ Harry hét lên,) and the car shot backwards. (và chiếc xe vọt lùi ra sau.) The tree was still trying to hit them; (Cái cây vẫn đang cố đập vào họ;) they could hear its roots creaking as it almost ripped itself up, (họ có thể nghe thấy rễ của nó kêu răng rắc khi nó gần như tự bứng mình lên,) lashing out at them as they sped out of reach. (vung vẩy quất về phía họ trong khi họ tăng tốc chạy thoát khỏi tầm với.)
+
+‘That,’ panted Ron, ‘was close. Well done, car.’ (‘Vừa rồi,’ Ron thở hổn hển, ‘suýt chết. Làm tốt lắm, xe ơi.’)
+
+The car, however, had reached the end of its tether. (Tuy nhiên, chiếc xe đã đến giới hạn chịu đựng cuối cùng của nó.) With two smart clunks, the doors flew open (Với hai tiếng "cạch" dứt khoát, hai cánh cửa bật mở) and Harry felt his seat tip sideways: (và Harry cảm thấy ghế của mình nghiêng sang một bên:) next thing he knew he was sprawled on the damp ground. (điều tiếp theo cậu biết là mình đang nằm sõng soài trên mặt đất ẩm ướt.)
+
+Loud thuds told him (Những tiếng bình bịch lớn cho cậu biết) that the car was ejecting their luggage from the boot. (rằng chiếc xe đang tống khứ hành lý của họ ra khỏi cốp.) Hedwig’s cage flew through the air and burst open; (Lồng của Hedwig bay vèo qua không trung và bật nắp tung ra;) she rose out of it with a loud, angry screech (con cú vút ra khỏi đó với một tiếng rít lớn, đầy tức giận) and sped off towards the castle without a backwards look. (và lao về phía lâu đài mà không thèm ngoái nhìn lại.) Then, dented, scratched and steaming, (Rồi, móp méo, trầy xước và bốc khói,) the car rumbled off into the darkness, (chiếc xe ầm ầm chạy đi vào trong bóng tối,) its rear lights blazing angrily. (những chiếc đèn hậu của nó sáng rực lên một cách giận dữ.)
+
+‘Come back!’ Ron yelled after it, (‘Quay lại!’ Ron hét với theo nó,) brandishing his broken wand. (vung vẩy cây đũa phép gãy của mình.) ‘Dad’ll kill me!’ (‘Ba sẽ giết mình mất!’)
+
+But the car disappeared from view (Nhưng chiếc xe đã khuất dạng khỏi tầm mắt) with one last snort from its exhaust. (với một tiếng khịt cuối cùng từ ống xả.)
+
+‘Can you believe our luck?’ said Ron miserably, (‘Bồ có tin nổi cái vận rủi của tụi mình không?’ Ron đau khổ nói,) bending down to pick up Scabbers the rat. (cúi xuống nhặt con chuột Scabbers lên.) ‘Of all the trees we could’ve hit, (‘Trong vô số những cái cây mà tụi mình có thể đâm trúng,) we had to get one that hits back.’ (tụi mình lại đâm ngay phải cái cây biết đánh trả.’)
+
+He glanced over his shoulder at the ancient tree, (Cậu ngoái nhìn lại cái cây cổ thụ,) which was still flailing its branches threateningly. (thứ vẫn đang quật những cành lá của nó một cách đầy đe dọa.)
+
+‘Come on,’ said Harry wearily, (‘Đi thôi,’ Harry uể oải nói,) ‘we’d better get up to the school ...’ (‘tốt hơn là chúng ta nên đi lên trường ...’)
+
+It wasn’t at all the triumphant arrival they had pictured. (Đó hoàn toàn không phải là màn xuất hiện đắc thắng mà họ đã mường tượng.) Stiff, cold and bruised, (Cứng đơ, lạnh lẽo và bầm dập,) they seized the ends of their trunks (họ nắm lấy đầu rương của mình) and began dragging them up the grassy slope, (và bắt đầu kéo chúng lết lên sườn dốc đầy cỏ,) towards the great oak front doors. (hướng về phía những cánh cửa trước bằng gỗ sồi khổng lồ.)
+
+‘I think the feast’s already started,’ said Ron, (‘Mình nghĩ bữa tiệc đã bắt đầu rồi,’ Ron nói,) dropping his trunk at the foot of the front steps (thả cái rương xuống chân những bậc thềm trước cửa) and crossing quietly to look through a brightly lit window. (và lặng lẽ bước tới nhìn qua một ô cửa sổ sáng rực.) ‘Hey, Harry, come and look – it’s the Sorting!’ (‘Này, Harry, lại đây nhìn này – là Lễ Phân loại!’)
+
+Harry hurried over and, together, he and Ron peered in at the Great Hall. (Harry vội vã chạy lại và, cùng nhau, cậu và Ron hé mắt nhìn vào Đại sảnh đường.)
+
+Innumerable candles were hovering in mid-air (Vô số những ngọn nến đang lơ lửng giữa không trung) over four long, crowded tables, (bên trên bốn dãy bàn dài đông đúc,) making the golden plates and goblets sparkle. (làm cho những chiếc đĩa và ly uống bằng vàng tỏa sáng lấp lánh.) Overhead, the bewitched ceiling (Trên cao, trần nhà bị yểm bùa) which always mirrored the sky outside, (thứ luôn phản chiếu bầu trời bên ngoài,) sparkled with stars. (đang lấp lánh những vì sao.)
+
+Through the forest of pointed black Hogwarts hats, (Xuyên qua một rừng những chiếc nón Hogwarts chóp nhọn màu đen,) Harry saw a long line of scared-looking first-years filing into the Hall. (Harry nhìn thấy một hàng dài những học sinh năm nhất với vẻ mặt sợ sệt đang nối đuôi nhau bước vào Đại sảnh.) Ginny was amongst them, (Ginny cũng ở trong số đó,) easily visible because of her vivid Weasley hair. (dễ dàng nhận ra bởi mái tóc màu Weasley rực rỡ của cô bé.) Meanwhile, Professor McGonagall, (Trong khi đó, Giáo sư McGonagall,) a bespectacled witch with her hair in a tight bun, (một nữ phù thủy đeo kính với mái tóc búi chặt,) was placing the famous Hogwarts Sorting Hat on a stool before the newcomers. (đang đặt chiếc Nón Phân loại Hogwarts nổi tiếng lên một cái ghế đẩu trước mặt những người mới đến.)
+
+
+Every year, this aged old hat, patched, frayed and dirty, (Mỗi năm, chiếc nón già nua, chắp vá, sờn rách và bẩn thỉu này,) sorted new students into the four Hogwarts houses (lại phân loại các học sinh mới vào bốn nhà của Hogwarts) (Gryffindor, Hufflepuff, Ravenclaw and Slytherin). ( (Gryffindor, Hufflepuff, Ravenclaw và Slytherin) ). Harry well remembered putting it on, exactly one year ago, (Harry vẫn nhớ rất rõ khoảnh khắc đội nó lên đầu, vào đúng một năm trước,) and waiting, petrified, for its decision (và hóa đá ngồi chờ quyết định của nó) as it muttered aloud in his ear. (khi nó lầm bầm thành tiếng bên tai cậu.) For a few horrible seconds (Trong vài giây kinh khủng đó,) he had feared that the hat was going to put him in Slytherin, (cậu đã sợ rằng chiếc nón sẽ xếp cậu vào nhà Slytherin,) the house which had turned out more dark witches and wizards than any other (ngôi nhà đã sản sinh ra nhiều nam nữ phù thủy hắc ám hơn bất kỳ nhà nào khác) – but he had ended up in Gryffindor, (– nhưng cuối cùng cậu đã được vào Gryffindor,) along with Ron, Hermione and the rest of the Weasleys. (cùng với Ron, Hermione và những người còn lại trong gia đình Weasley.) Last term, Harry and Ron had helped Gryffindor win the House Championship, (Học kỳ trước, Harry và Ron đã giúp Gryffindor giành được Cúp Nhà,) beating Slytherin for the first time in seven years. (đánh bại Slytherin lần đầu tiên trong suốt bảy năm.)
+
+A very small, mousey-haired boy had been called forward (Một cậu bé xíu xiu, với mái tóc màu lông chuột vừa được gọi lên phía trước) to place the hat on his head. (để đội chiếc nón lên đầu.) Harry’s eyes wandered past him (Ánh mắt Harry lướt qua cậu bé) to where Professor Dumbledore, the Headmaster, (đến chỗ Giáo sư Dumbledore, vị Hiệu trưởng,) sat watching the Sorting from the staff table, (đang ngồi theo dõi Lễ Phân loại từ dãy bàn của giáo viên,) his long silver beard and half-moon glasses shining brightly in the candlelight. (bộ râu bạc dài và cặp kính hình bán nguyệt của thầy tỏa sáng rực rỡ dưới ánh nến.) Several seats along, Harry saw Gilderoy Lockhart, (Cách đó vài ghế, Harry nhìn thấy Gilderoy Lockhart,) dressed in robes of aquamarine. (đang mặc chiếc áo chùng màu xanh ngọc biển.) And there at the end was Hagrid, (Và ở tít đầu kia là Hagrid,) huge and hairy, drinking deeply from his goblet. (to lớn và đầy lông lá, đang nốc cạn chiếc ly uống của mình.)
+
+‘Hang on ...’ Harry muttered to Ron. (‘Khoan đã ...’ Harry lầm bầm với Ron.) ‘There’s an empty chair at the staff table ... Where’s Snape?’ (‘Có một chiếc ghế trống ở bàn giáo viên kìa ... Thầy Snape đâu rồi?’)
+
+Professor Severus Snape was Harry’s least favourite teacher. (Giáo sư Severus Snape là giáo viên mà Harry ít yêu thích nhất.) Harry also happened to be Snape’s least favourite student. (Harry cũng tình cờ là học sinh mà thầy Snape ít ưa nhất.) Cruel, sarcastic and disliked by everybody (Tàn nhẫn, thích mỉa mai và bị mọi người ghét bỏ) except the students from his own house (Slytherin), (ngoại trừ những học sinh thuộc chính nhà của thầy (Slytherin),) Snape taught Potions. (thầy Snape dạy môn Độc dược.)
+
+‘Maybe he’s ill!’ said Ron hopefully. (‘Có lẽ ổng bị ốm!’ Ron đầy hy vọng nói.)
+
+‘Maybe he’s left,’ said Harry, (‘Có lẽ ổng đã nghỉ việc rồi,’ Harry nói,) ‘because he missed out on the Defence Against the Dark Arts job again!’ (‘vì ổng lại để tuột mất vị trí dạy môn Phòng chống Nghệ thuật Hắc ám một lần nữa!’)
+
+‘Or he might have been sacked!’ said Ron enthusiastically. (‘Hoặc ổng có thể đã bị sa thải!’ Ron nói một cách hào hứng.) ‘I mean, everyone hates him –’ (‘Ý mình là, ai mà chả ghét ổng –’)
+
+‘Or maybe,’ said a very cold voice right behind them, (‘Hoặc có lẽ,’ một giọng nói lạnh ngắt cất lên ngay đằng sau họ,) ‘he’s waiting to hear why you two didn’t arrive on the school train.’ (‘thầy ấy đang chờ để nghe xem tại sao hai anh không đến bằng tàu hỏa của trường.’)
+
+Harry spun around. (Harry quay ngoắt lại.) There, his black robes rippling in a cold breeze, (Ở đó, với lớp áo chùng đen nhấp nhô trong làn gió lạnh,) stood Severus Snape. (Severus Snape đang đứng sừng sững.) He was a thin man with sallow skin, (Thầy là một người đàn ông gầy gò với làn da nhợt nhạt,) a hooked nose and greasy, shoulder-length black hair, (cái mũi khoằm và mái tóc đen dài rủ xuống vai bết dính mỡ màng,) and at this moment, he was smiling in a way (và vào lúc này, thầy đang mỉm cười theo cái cách) that told Harry he and Ron were in very deep trouble. (báo cho Harry biết rằng cậu và Ron đang gặp rắc rối vô cùng lớn.)
+
+‘Follow me,’ said Snape. (‘Theo ta,’ thầy Snape nói.)
+
+Not daring even to look at each other, (Thậm chí không dám nhìn nhau,) Harry and Ron followed Snape up the steps (Harry và Ron bám theo thầy Snape bước lên những bậc thềm) into the vast, echoing Entrance Hall, (đi vào Tiền sảnh rộng mênh mông, vang vọng,) which was lit with flaming torches. (nơi được thắp sáng bởi những ngọn đuốc cháy hừng hực.) A delicious smell of food was wafting from the Great Hall, (Một mùi thức ăn thơm lừng đang tỏa ra từ Đại sảnh đường,) but Snape led them away from the warmth and light, (nhưng thầy Snape đã dẫn họ rời xa khỏi sự ấm áp và ánh sáng đó,) down a narrow stone staircase that led into the dungeons. (đi xuống một cầu thang đá chật hẹp dẫn vào những căn hầm ngầm.)
+
+‘In!’ he said, (‘Vào!’ thầy nói,) opening a door halfway down the cold passageway and pointing. (mở một cánh cửa ở lưng chừng hành lang lạnh lẽo và chỉ tay.)
+
+They entered Snape’s office, shivering. (Họ bước vào văn phòng của thầy Snape, run rẩy.) The shadowy walls were lined with shelves of large glass jars, (Dọc theo những bức tường râm ran bóng tối là những chiếc kệ xếp đầy những lọ thủy tinh lớn,) in which floated all manner of revolting things (bên trong đó lơ lửng đủ thứ gớm ghiếc) Harry didn’t really want to know the name of at the moment. (mà Harry thực sự không muốn biết tên vào lúc này.) The fireplace was dark and empty. (Lò sưởi thì tối om và trống trơn.) Snape closed the door and turned to look at them. (Thầy Snape đóng cửa lại và quay sang nhìn họ.)
+
+‘So,’ he said softly, (‘Vậy ra,’ thầy nói một cách nhẹ nhàng,) ‘the train isn’t good enough for the famous Harry Potter (‘chuyến tàu hỏa là không đủ tốt đối với Harry Potter nổi tiếng) and his faithful sidekick Weasley. (và tên đồng bọn trung thành Weasley của cậu ta.) Wanted to arrive with a bang, did we, boys?’ (Muốn có một màn xuất hiện gây tiếng vang cơ đấy, phải không, mấy cậu trai?’)
+
+‘No, sir, it was the barrier at King’s Cross, it –’ (‘Thưa không, thưa thầy, đó là do cái rào chắn ở ga King’s Cross, nó –’)
+
+‘Silence!’ said Snape coldly. (‘Im lặng!’ thầy Snape lạnh lùng nói.) ‘What have you done with the car?’ (‘Các anh đã làm gì với chiếc xe?’)
+
+Ron gulped. (Ron nuốt nước bọt.) This wasn’t the first time Snape had given Harry the impression (Đây không phải là lần đầu tiên thầy Snape mang lại cho Harry cảm giác) of being able to read minds. (rằng thầy có khả năng đọc được suy nghĩ người khác.) But a moment later, he understood, (Nhưng một lát sau, cậu đã hiểu ra,) as Snape unrolled today’s issue of the Evening Prophet. (khi thầy Snape trải phẳng tờ Nhật báo Tiên tri Buổi tối số ra ngày hôm nay.)
+
+‘You were seen,’ he hissed, showing them the headline: (‘Các anh đã bị nhìn thấy,’ thầy rít lên, chỉ cho họ xem dòng tít lớn:) FLYING FORD ANGLIA MYSTIFIES MUGGLES. (CHIẾC FORD ANGLIA BAY LÀM MUGGLES KINH NGẠC.) He began to read aloud. (Thầy bắt đầu đọc to lên.)
+
+‘ “Two Muggles in London, convinced they saw an old car flying over the Post Office tower ... (‘ “Hai người Muggle ở London, quả quyết rằng họ đã nhìn thấy một chiếc xe hơi cũ bay qua tháp Bưu điện ...) at noon in Norfolk, Mrs Hetty Bayliss, while hanging out her washing ... (vào buổi trưa ở Norfolk, bà Hetty Bayliss, trong lúc đang phơi đồ ...) Mr Angus Fleet, of Peebles, reported to police” ... (Ông Angus Fleet, ở vùng Peebles, đã báo cáo với cảnh sát” ...) six or seven Muggles in all. (tổng cộng sáu hay bảy người Muggle.) I believe your father works in the Misuse of Muggle Artefacts Office?’ he said, (Ta tin là cha anh làm việc ở Văn phòng Lạm dụng Đồ vật Muggle thì phải?’ thầy nói,) looking up at Ron and smiling still more nastily. (ngước lên nhìn Ron và mỉm cười một cách cay độc hơn nữa.) ‘Dear, dear ... his own son ...’ (‘Chao ôi là chao ôi ... chính đứa con trai ruột của ông ta ...’)
+
+Harry felt as though he’d just been walloped in the stomach (Harry cảm thấy như thể cậu vừa bị đấm một cú trời giáng vào bụng) by one of the mad tree’s larger branches. (bởi một trong những nhánh cây to hơn của cái cây điên khùng đó.) If anyone found out Mr Weasley had bewitched the car ... (Nếu có ai phát hiện ra ông Weasley đã ếm bùa chiếc xe ...) he hadn’t thought of that ... (cậu đã không nghĩ đến chuyện đó ...)
+
+‘I noticed, in my search of the park, (‘Trong lúc tuần tra khu vực quanh trường, ta đã chú ý thấy) that considerable damage seems to have been done to a very valuable Whomping Willow,’ (rằng dường như có một thiệt hại đáng kể đã xảy ra đối với một cây Liễu Roi vô cùng quý giá,’) Snape went on. (thầy Snape nói tiếp.)
+
+‘That tree did more damage to us than we –’ Ron blurted out. (‘Cái cây đó còn gây nhiều thiệt hại cho tụi em hơn là tụi em –’ Ron buột miệng.)
+
+‘Silence!’ snapped Snape again. (‘Im lặng!’ thầy Snape lại nạt nộ.) ‘Most unfortunately, you are not in my house (‘Thật hết sức đáng tiếc, các anh không thuộc nhà của ta) and the decision to expel you does not rest with me. (và quyết định đuổi học các anh không nằm trong tay ta.) I shall go and fetch the people who do have that happy power. (Ta sẽ đi gọi những người có được cái quyền hành sung sướng đó.) You will wait here.’ (Các anh sẽ đợi ở đây.’)
+
+Harry and Ron stared at each other, white-faced. (Harry và Ron nhìn nhau trân trân, mặt tái mét.) Harry didn’t feel hungry any more. (Harry không còn cảm thấy đói nữa.) He now felt extremely sick. (Bây giờ cậu cảm thấy cực kỳ buồn nôn.) He tried not to look at a large, slimy something (Cậu cố gắng không nhìn vào một thứ gì đó to lớn, nhơn nhớt) suspended in green liquid on a shelf behind Snape’s desk. (được ngâm trong chất lỏng màu xanh lá cây trên chiếc kệ phía sau bàn làm việc của thầy Snape.)
+
+If Snape had gone to fetch Professor McGonagall, head of Gryffindor house, (Nếu thầy Snape đi gọi Giáo sư McGonagall, chủ nhiệm nhà Gryffindor,) they were hardly any better off. (thì tình cảnh của họ cũng chẳng khá khẩm hơn là bao.) She might be fairer than Snape, (Cô có thể công bằng hơn thầy Snape,) but she was still extremely strict. (nhưng cô vẫn cực kỳ nghiêm khắc.)
+
+Ten minutes later, Snape returned, (Mười phút sau, thầy Snape quay lại,) and sure enough it was Professor McGonagall who accompanied him. (và y như rằng người đi cùng thầy chính là Giáo sư McGonagall.) Harry had seen Professor McGonagall angry on several occasions, (Harry đã từng thấy Giáo sư McGonagall tức giận trong vài dịp,) but either he had forgotten just how thin her mouth could go, (nhưng hoặc là cậu đã quên mất môi cô có thể mím chặt mỏng dính đến mức nào,) or he had never seen her this angry before. (hoặc là cậu chưa bao giờ thấy cô tức giận đến thế này trước đây.) She raised her wand the moment she entered. (Cô giơ đũa phép lên ngay khoảnh khắc cô bước vào.) Harry and Ron both flinched, (Cả Harry và Ron đều rúm người lại,) but she merely pointed it at the empty fireplace, (nhưng cô chỉ chĩa nó vào cái lò sưởi trống không,) where flames suddenly erupted. (nơi những ngọn lửa đột ngột bùng lên.)
+
+‘Sit,’ she said, (‘Ngồi xuống,’ cô nói,) and they both backed into chairs by the fire. (và cả hai lùi lại ngồi xuống những chiếc ghế bên lò sưởi.)
+
+‘Explain,’ she said, her glasses glinting ominously. (‘Giải thích đi,’ cô nói, mắt kính của cô lóe sáng đầy điềm gở.)
+
+Ron launched into the story, (Ron bắt đầu kể lại câu chuyện,) starting with the barrier at the station refusing to let them through. (bắt đầu với việc hàng rào chắn ở nhà ga từ chối cho họ đi qua.)
+
+‘... so we had no choice, Professor, we couldn’t get on the train.’ (‘... nên tụi em không có sự lựa chọn nào khác, thưa Cô, tụi em không thể lên được tàu.’)
+
+‘Why didn’t you send us a letter by owl? (‘Tại sao các trò không gửi một bức thư cho chúng tôi bằng cú?) I believe you have an owl?’ (Ta tin là trò có một con cú phải không?’) Professor McGonagall said coldly to Harry. (Giáo sư McGonagall lạnh lùng hỏi Harry.)
+
+Harry gaped at her. (Harry há hốc miệng nhìn cô.) Now she said it, (Bây giờ khi cô nói ra,) that seemed the obvious thing to have done. (đó dường như là điều hiển nhiên mà họ lẽ ra phải làm.)
+
+‘I – I didn’t think –’ (‘Em – em đã không nghĩ đến –’)
+
+‘That,’ said Professor McGonagall, ‘is obvious.’ (‘Điều đó,’ Giáo sư McGonagall nói, ‘thì rõ quá rồi.’)
+
+There was a knock on the office door (Có tiếng gõ lên cửa văn phòng) and Snape, now looking happier than ever, opened it. (và thầy Snape, trông có vẻ hỉ hả hơn bao giờ hết, ra mở cửa.) There stood the Headmaster, Professor Dumbledore. (Đứng đó là vị Hiệu trưởng, Giáo sư Dumbledore.)
+
+Harry’s whole body went numb. (Toàn thân Harry trở nên tê dại.) Dumbledore was looking unusually grave. (Thầy Dumbledore trông nghiêm nghị một cách khác thường.) He stared down his very crooked nose at them (Thầy nhìn xuống họ dọc theo cái mũi rất khoằm của mình) and Harry suddenly found himself wishing (và Harry chợt thấy mình mong ước) he and Ron were still being beaten up by the Whomping Willow. (rằng cậu và Ron vẫn đang bị cây Liễu Roi đánh nhừ tử thì hơn.)
+
+There was a long silence. (Có một sự im lặng kéo dài.) Then Dumbledore said, ‘Please explain why you did this.’ (Sau đó thầy Dumbledore lên tiếng, ‘Làm ơn giải thích lý do tại sao hai trò lại làm như vậy.’)
+
+It would have been better if he had shouted. (Thà thầy cứ hét lên thì còn tốt hơn.) Harry hated the disappointment in his voice. (Harry ghét sự thất vọng trong giọng nói của thầy.) For some reason, he was unable to look Dumbledore in the eyes, (Vì lý do nào đó, cậu không thể nhìn thẳng vào mắt thầy Dumbledore,) and spoke instead to his knees. (và thay vào đó lại cúi gằm mặt thủ thỉ với đầu gối của mình.) He told Dumbledore everything (Cậu kể cho thầy Dumbledore nghe mọi chuyện) except that Mr Weasley owned the bewitched car, (ngoại trừ việc ông Weasley là chủ nhân của chiếc xe bị ếm bùa,) making it sound as though he and Ron (khiến cho câu chuyện nghe như thể cậu và Ron) had happened to find a flying car parked outside the station. (chỉ tình cờ tìm thấy một chiếc xe bay đậu ngay bên ngoài nhà ga.) He knew Dumbledore would see through this at once, (Cậu biết thầy Dumbledore sẽ nhìn thấu điều này ngay lập tức,) but Dumbledore asked no questions about the car. (nhưng thầy Dumbledore không hỏi câu nào về chiếc xe.) When Harry had finished, (Khi Harry kể xong,) he merely continued to peer at them through his spectacles. (thầy chỉ tiếp tục nhìn chăm chú vào họ qua cặp kính của mình.)
+
+‘We’ll go and get our stuff,’ said Ron in a hopeless sort of voice. (‘Tụi em sẽ đi dọn đồ đạc,’ Ron nói bằng một giọng đầy tuyệt vọng.)
+
+‘What are you talking about, Weasley?’ barked Professor McGonagall. (‘Trò đang nói cái gì vậy, Weasley?’ Giáo sư McGonagall sẵng giọng.)
+
+‘Well, you’re expelling us, aren’t you?’ said Ron. (‘Dạ, thầy cô đang định đuổi học tụi em, phải không ạ?’ Ron nói.)
+
+Harry looked quickly at Dumbledore. (Harry liếc nhanh sang thầy Dumbledore.)
+
+‘Not today, Mr Weasley,’ said Dumbledore. (‘Hôm nay thì không, trò Weasley à,’ thầy Dumbledore nói.) ‘But I must impress upon both of you the seriousness of what you have done. (‘Nhưng ta phải nhấn mạnh cho cả hai trò thấy mức độ nghiêm trọng của những gì hai trò đã làm.) I will be writing to both your families tonight. (Tối nay ta sẽ viết thư cho gia đình của hai trò.) I must also warn you that if you do anything like this again, (Ta cũng phải cảnh cáo hai trò rằng nếu các trò còn làm bất cứ chuyện gì giống như thế này một lần nữa,) I will have no choice but to expel you.’ (ta sẽ không có lựa chọn nào khác ngoài việc đuổi học các trò.’)
+
+Snape looked as though Christmas had been cancelled. (Thầy Snape trông như thể lễ Giáng sinh vừa bị hủy bỏ vậy.) He cleared his throat and said, (Thầy hắng giọng và nói,) ‘Professor Dumbledore, these boys have flouted the Decree for the Restriction of Underage Wizardry, (‘Thưa Giáo sư Dumbledore, những cậu bé này đã coi thường Đạo luật Hạn chế Phù thủy Vị thành niên,) caused serious damage to an old and valuable tree ... (gây hư hại nghiêm trọng cho một cái cây cổ thụ quý giá ...) surely acts of this nature ...’ (chắc chắn những hành vi mang bản chất thế này ...’)
+
+‘It will be for Professor McGonagall to decide on these boys’ punishments, Severus,’ (‘Việc quyết định hình phạt cho hai cậu bé này sẽ do Giáo sư McGonagall đảm nhận, Severus à,’) said Dumbledore calmly. (thầy Dumbledore điềm tĩnh nói.) ‘They are in her house and are therefore her responsibility.’ (‘Chúng thuộc nhà của cô ấy và do đó là trách nhiệm của cô ấy.’) He turned to Professor McGonagall. (Thầy quay sang Giáo sư McGonagall.) ‘I must go back to the feast, Minerva, I’ve got to give out a few notices. (‘Tôi phải quay lại bữa tiệc đây, Minerva, tôi cần phải đưa ra một vài thông báo.) Come, Severus, there’s a delicious-looking custard tart I want to sample.’ (Đi nào, Severus, có một cái bánh tart trứng trông rất ngon mà tôi đang muốn nếm thử.’)
+
+Snape shot a look of pure venom at Harry and Ron (Thầy Snape phóng một cái nhìn chứa đầy nọc độc vào Harry và Ron) as he allowed himself to be swept out of his office, (khi thầy để mặc cho mình bị kéo ra khỏi văn phòng,) leaving them alone with Professor McGonagall, (bỏ lại họ một mình với Giáo sư McGonagall,) who was still eyeing them like a wrathful eagle. (người vẫn đang nhìn họ chằm chằm như một con đại bàng phẫn nộ.)
+
+‘You’d better get along to the hospital wing, Weasley, you’re bleeding.’ (‘Tốt hơn là trò nên đến bệnh thất đi, Weasley, trò đang chảy máu kìa.’)
+
+‘Not much,’ said Ron, (‘Không nhiều đâu ạ,’ Ron nói,) hastily wiping the cut over his eye with his sleeve. (vội vã dùng tay áo quệt vết cắt trên mắt mình.) ‘Professor, I wanted to watch my sister being Sorted –’ (‘Thưa Cô, em muốn xem em gái em được Phân loại –’)
+
+‘The Sorting Ceremony is over,’ said Professor McGonagall. (‘Lễ Phân loại đã kết thúc rồi,’ Giáo sư McGonagall nói.) ‘Your sister is also in Gryffindor.’ (‘Em gái của trò cũng vào nhà Gryffindor.’)
+
+‘Oh, good,’ said Ron. (‘Ôi, may quá,’ Ron nói.)
+
+‘And speaking of Gryffindor –’ Professor McGonagall said sharply, (‘Và nhân tiện nhắc đến nhà Gryffindor –’ Giáo sư McGonagall nói một cách gay gắt,) but Harry cut in: (nhưng Harry cắt ngang:) ‘Professor, when we took the car, term hadn’t started, (‘Thưa Cô, lúc tụi em lấy chiếc xe, học kỳ vẫn chưa bắt đầu,) so – so Gryffindor shouldn’t really have points taken from it, should it?’ (nên – nên nhà Gryffindor không thực sự bị trừ điểm đâu, phải không ạ?’) he finished, watching her anxiously. (cậu dứt lời, căng thẳng nhìn cô.)
+
+Professor McGonagall gave him a piercing look, (Giáo sư McGonagall ném cho cậu một cái nhìn sắc lẹm,) but he was sure she had almost smiled. (nhưng cậu chắc chắn rằng cô suýt nữa đã mỉm cười.) Her mouth looked less thin, anyway. (Dù sao thì miệng cô trông cũng bớt mỏng dính hơn rồi.)
+
+‘I will not take any points from Gryffindor,’ she said, (‘Ta sẽ không trừ điểm nào của nhà Gryffindor,’ cô nói,) and Harry’s heart lightened considerably. (và trái tim Harry nhẹ nhõm đi đáng kể.) ‘But you will both get a detention.’ (‘Nhưng cả hai trò sẽ bị cấm túc.’)
+
+It was better than Harry had expected. (Kết quả này tốt hơn những gì Harry đã dự kiến.) As for Dumbledore’s writing to the Dursleys, that was nothing. (Còn về việc thầy Dumbledore viết thư cho nhà Dursley, chuyện đó chẳng là gì cả.) Harry knew perfectly well (Harry thừa biết) they’d just be disappointed that the Whomping Willow hadn’t squashed him flat. (họ sẽ chỉ thất vọng vì cây Liễu Roi đã không đè bẹp dí cậu mà thôi.)
+
+Professor McGonagall raised her wand again and pointed it at Snape’s desk. (Giáo sư McGonagall lại giơ đũa phép lên và chĩa vào bàn làm việc của thầy Snape.) A large plate of sandwiches, two silver goblets and a jug of iced pumpkin juice appeared with a pop. (Một đĩa bánh mì kẹp lớn, hai cái ly bạc và một bình nước ép bí rợ đá lạnh hiện ra với một tiếng "bốp".)
+
+‘You will eat in here and then go straight up to your dormitory,’ she said. (‘Các trò sẽ ăn ở đây rồi đi thẳng lên ký túc xá của mình,’ cô nói.) ‘I must also return to the feast.’ (‘Ta cũng phải quay lại bữa tiệc.’)
+
+When the door had closed behind her, Ron let out a long, low whistle. (Khi cánh cửa đóng lại sau lưng cô, Ron thổi một tiếng sáo dài và thấp.)
+
+‘I thought we’d had it,’ he said, grabbing a sandwich. (‘Mình đã tưởng tụi mình tiêu đời rồi chứ,’ cậu nói, với lấy một cái bánh mì kẹp.)
+
+‘So did I,’ said Harry, taking one too. (‘Mình cũng tưởng vậy,’ Harry nói, cũng lấy một cái.)
+
+‘Can you believe our luck, though?’ (‘Nhưng bồ có tin nổi vận may của tụi mình không?’) said Ron thickly through a mouthful of chicken and ham. (Ron nói giọng lúng búng qua một miệng đầy thịt gà và giăm bông.) ‘Fred and George must’ve flown that car five or six times (‘Fred và George chắc hẳn đã lái chiếc xe đó bay năm hay sáu lần rồi) and no Muggle ever saw them.’ (và chẳng có người Muggle nào từng nhìn thấy họ.’)
+
+He swallowed and took another huge bite. (Cậu nuốt cái ực và cắn thêm một miếng to tướng nữa.) ‘Why couldn’t we get through the barrier?’ (‘Tại sao tụi mình lại không thể đi qua cái rào chắn chứ?’)
+
+Harry shrugged. (Harry nhún vai.) ‘We’ll have to watch our step from now on, though,’ he said, (‘Dù sao thì từ giờ tụi mình cũng sẽ phải đi đứng cẩn thận hơn,’ cậu nói,) taking a grateful swig of pumpkin juice. (tu một ngụm nước ép bí rợ đầy khoan khoái.) ‘Wish we could’ve gone up to the feast ...’ (‘Ước gì tụi mình có thể lên dự tiệc ...’)
+
+‘She didn’t want us showing off,’ said Ron sagely. (‘Cô không muốn tụi mình chơi trội,’ Ron ra vẻ triết lý nói.) ‘Doesn’t want people to think it’s clever, arriving by flying car.’ (‘Không muốn mọi người nghĩ rằng việc đến trường bằng xe bay là chuyện hay ho.’)
+
+When they had eaten as many sandwiches as they could (Khi họ đã ăn nhiều bánh mì kẹp nhất có thể) (the plate kept re-filling itself) ( (cái đĩa cứ tự động đầy lại) ) they rose and left the office, (họ đứng dậy và rời khỏi văn phòng,) treading the familiar path to Gryffindor Tower. (rảo bước trên con đường quen thuộc dẫn đến Tháp Gryffindor.) The castle was quiet; it seemed that the feast was over. (Lâu đài im ắng; có vẻ như bữa tiệc đã kết thúc.)
+
+They walked past muttering portraits and creaking suits of armour, (Họ đi ngang qua những bức chân dung đang xì xầm và những bộ áo giáp kêu cọt kẹt,) and climbed narrow flights of stone stairs, (và leo lên những nhịp cầu thang đá chật hẹp,) until at last they reached the passage (cho đến khi rốt cuộc họ cũng tới được hành lang) where the secret entrance to Gryffindor Tower was hidden, (nơi giấu lối vào bí mật của Tháp Gryffindor,) behind an oil painting of a very fat woman in a pink silk dress. (đằng sau một bức tranh sơn dầu vẽ một người phụ nữ rất béo trong chiếc váy lụa màu hồng.)
+
+‘Password?’ she said, as they approached. (‘Mật khẩu?’ bà hỏi, khi họ tiến đến gần.)
+
+‘Er –’ said Harry. (‘Ờ –’ Harry ấp úng.)
+
+They didn’t know the new year’s password, (Họ không biết mật khẩu của năm học mới,) not having met a Gryffindor Prefect yet, (do chưa gặp Huynh trưởng nhà Gryffindor nào,) but help came almost immediately; (nhưng sự trợ giúp đến gần như ngay lập tức;) they heard hurrying feet behind them (họ nghe thấy tiếng bước chân vội vã phía sau) and turned to see Hermione dashing towards them. (và quay lại thì thấy Hermione đang lao về phía họ.)
+
+‘There you are! Where have you been? (‘Hai bồ đây rồi! Hai bồ đã ở đâu vậy?) The most ridiculous rumours – (Toàn những lời đồn đại nực cười nhất –) someone said you’d been expelled for crashing a flying car.’ (có người nói hai bồ đã bị đuổi học vì lái một chiếc xe bay đâm sầm vào cây.’)
+
+‘Well, we haven’t been expelled,’ Harry assured her. (‘Chà, tụi này chưa bị đuổi học đâu,’ Harry trấn an cô bé.)
+
+‘You’re not telling me you did fly here?’ said Hermione, (‘Đừng nói với mình là hai bồ đã thực sự bay đến đây nhé?’ Hermione nói,) sounding almost as severe as Professor McGonagall. (giọng nghe gần như nghiêm khắc y hệt Giáo sư McGonagall.)
+
+‘Skip the lecture,’ said Ron impatiently, (‘Bỏ qua bài thuyết giáo đi,’ Ron mất kiên nhẫn nói,) ‘and tell us the new password.’ (‘và nói cho tụi này biết mật khẩu mới đi.’)
+
+‘It’s “wattlebird”,’ said Hermione impatiently, (‘Là “chim yếm thịt”,’ Hermione cũng mất kiên nhẫn đáp,) ‘but that’s not the point –’ (‘nhưng đó không phải là vấn đề –’)
+
+Her words were cut short, however, (Tuy nhiên, những lời của cô bé bị cắt ngang,) as the portrait of the fat lady swung open (khi bức chân dung của Bà Béo bật mở ra) and there was a sudden storm of clapping. (và có một tràng vỗ tay rào rào như bão táp đột ngột vang lên.)
+
+It looked as though the whole of Gryffindor house was still awake, (Trông cứ như thể toàn bộ học sinh nhà Gryffindor vẫn còn thức,) packed into the circular common room, (nhồi nhét chật cứng trong phòng sinh hoạt chung hình tròn,) standing on the lop-sided tables and squashy armchairs, (đứng trên những chiếc bàn xiêu vẹo và những chiếc ghế bành êm ái,) waiting for them to arrive. (chờ đợi họ đến.) Arms reached through the portrait hole to pull Harry and Ron inside, (Những cánh tay thò qua lỗ hổng chân dung để kéo Harry và Ron vào trong,) leaving Hermione to scramble in after them. (bỏ mặc Hermione phải lồm cồm trèo vào theo sau họ.)
+
+‘Brilliant!’ yelled Lee Jordan. ‘Inspired! What an entrance! (‘Tuyệt cú mèo!’ Lee Jordan hét lên. ‘Đầy cảm hứng! Quả là một màn xuất hiện hoành tráng!) Flying a car right into the Whomping Willow, (Lái một chiếc xe bay đâm thẳng vào cây Liễu Roi,) people’ll be talking about that one for years!’ (người ta sẽ còn bàn tán về chuyện đó trong nhiều năm tới cho xem!’)
+
+‘Good on you,’ said a fifth-year Harry had never spoken to; (‘Làm tốt lắm,’ một nam sinh năm thứ năm mà Harry chưa từng nói chuyện cùng lên tiếng;) someone was patting him on the back as though he’d just won a marathon. (ai đó đang vỗ bộp bộp vào lưng cậu như thể cậu vừa chiến thắng một cuộc chạy marathon.)
+
+Fred and George pushed their way to the front of the crowd and said together, (Fred và George chen lên phía trước đám đông và đồng thanh nói,) ‘Why couldn’t you’ve called us back, eh?’ (‘Sao hai đứa không gọi tụi anh quay lại hả?’)
+
+Ron was scarlet in the face, grinning embarrassedly, (Mặt Ron đỏ lựng lên, cười toét miệng một cách bẽn lẽn,) but Harry could see one person who didn’t look happy at all. (nhưng Harry có thể nhìn thấy một người trông không hề vui vẻ chút nào.) Percy was visible over the heads of some excited first-years, (Có thể nhìn thấy đầu Percy nhô lên cao hơn mấy đứa năm nhất đang phấn khích,) and he seemed to be trying to get near enough to start telling them off. (và anh có vẻ như đang cố gắng tiến lại đủ gần để bắt đầu mắng nhiếc họ.)
+
+Harry nudged Ron in the ribs and nodded in Percy’s direction. (Harry huých cùi chỏ vào mạn sườn Ron và hất đầu về hướng của Percy.) Ron got the point at once. (Ron hiểu ý ngay lập tức.)
+
+‘Got to get upstairs – bit tired,’ he said, (‘Phải lên lầu thôi – hơi mệt rồi,’ cậu nói,) and the two of them started pushing their way towards the door on the other side of the room, (và cả hai bắt đầu chen đường tiến về phía cánh cửa ở phía bên kia căn phòng,) which led to a spiral staircase and the dormitories. (nơi dẫn đến một cầu thang xoắn ốc và các phòng ngủ.)
+
+‘Night,’ Harry called back to Hermione, (‘Chúc ngủ ngon,’ Harry nói vọng lại với Hermione,) who was wearing a scowl just like Percy’s. (người đang mang một nét mặt cau có y hệt Percy.)
+
+They managed to get to the other side of the common room, (Họ xoay xở sang được tới bờ bên kia của phòng sinh hoạt chung,) still having their backs slapped, and gained the peace of the staircase. (trong khi vẫn bị mọi người vỗ lưng bôm bốp, và giành được sự yên bình của cầu thang.)
+
+They hurried up it, right to the top, (Họ hối hả bước lên đó, lên tít tận trên cùng,) and at last reached the door of their old dormitory, (và rốt cuộc cũng đến được cánh cửa phòng ngủ cũ của họ,) which now had a sign on it saying ‘second-years’. (bây giờ đã có gắn một tấm biển ghi ‘năm thứ hai’.)
+
+They entered the familiar, circular room, (Họ bước vào căn phòng hình tròn quen thuộc,) with its five four-posters hung with red velvet and its high, narrow windows. (với năm chiếc giường cọc giăng rèm nhung đỏ và những ô cửa sổ hẹp, cao vút.) Their trunks had been brought up for them and placed at the ends of their beds. (Rương của họ đã được mang lên sẵn và đặt ở cuối giường.)
+
+Ron grinned guiltily at Harry. (Ron cười nhăn nhở đầy tội lỗi với Harry.)
+
+‘I know I shouldn’t’ve enjoyed that or anything, but –’ (‘Mình biết là mình không nên tỏ ra thích thú với chuyện đó hay gì cả, nhưng –’)
+
+The dormitory door flew open (Cánh cửa phòng ngủ bật mở) and in came the other second-year Gryffindor boys, (và những nam sinh năm thứ hai khác của nhà Gryffindor bước vào,) Seamus Finnigan, Dean Thomas and Neville Longbottom. (Seamus Finnigan, Dean Thomas và Neville Longbottom.)
+
+‘Unbelievable!’ beamed Seamus. (‘Thật không thể tin nổi!’ Seamus cười rạng rỡ.)
+
+‘Cool,’ said Dean. (‘Ngầu đét,’ Dean nói.)
+
+‘Amazing,’ said Neville, awestruck. (‘Tuyệt đỉnh,’ Neville thốt lên, đầy vẻ kính sợ.)
+
+Harry couldn’t help it. He grinned, too. (Harry không thể kìm nén được. Cậu cũng toét miệng cười.)
+
+
+                `;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

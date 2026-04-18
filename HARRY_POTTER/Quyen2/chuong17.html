@@ -1,0 +1,454 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 17: The Heir of Slytherin</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="17_Chapter_17_ The_Heir_of_Slytherin.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+
+He was standing at the end (Cậu đang đứng ở cuối) of a very long, dimly lit chamber. (của một căn phòng rất dài và thiếu sáng.) Towering stone pillars (Những cột đá cao chót vót) entwined with more carved serpents (quấn quanh bởi nhiều con rắn chạm khắc hơn nữa) rose to support a ceiling (vươn cao đỡ lấy một trần nhà) lost in darkness, (chìm khuất trong bóng tối,) casting long black shadows (đổ những cái bóng đen dài) through the odd, greenish gloom (xuyên qua bóng tối mờ ảo, ngả xanh kỳ lạ) that filled the place. (bao trùm khắp nơi này.)
+
+His heart beating very fast, (Tim đập rất nhanh,) Harry stood listening (Harry đứng lắng nghe) to the chill silence. (sự im lặng ớn lạnh.) Could the Basilisk be lurking (Liệu Tử xà Basilisk có đang rình rập) in a shadowy corner, (trong một góc tối nào đó,) behind a pillar? (phía sau một cái cột?) And where was Ginny? (Và Ginny đang ở đâu?)
+
+He pulled out his wand (Cậu rút đũa phép ra) and moved forward (và tiến về phía trước) between the serpentine columns. (giữa những cột đá hình rắn.) Every careful footstep (Mỗi bước chân cẩn trọng) echoed loudly (đều vang vọng thật to) off the shadowy walls. (dội lại từ những bức tường đầy bóng tối.) He kept his eyes narrowed, (Cậu nheo hẹp mắt lại,) ready to clamp them shut (sẵn sàng nhắm nghiền lại) at the smallest sign of movement. (trước dấu hiệu chuyển động nhỏ nhất.) The hollow eye sockets (Những hốc mắt trống rỗng) of the stone snakes (của những con rắn đá) seemed to be following him. (dường như đang dõi theo cậu.) More than once, (Không chỉ một lần,) with a jolt of the stomach, (với cảm giác quặn thắt cả dạ dày,) he thought he saw one stir. (cậu tưởng như mình đã thấy một con cựa quậy.)
+
+Then, (Sau đó,) as he drew level (khi cậu đi đến ngang hàng) with the last pair of pillars, (với cặp cột cuối cùng,) a statue high as the Chamber itself (một bức tượng cao bằng chính Căn phòng) loomed into view, (lù lù hiện ra trong tầm mắt,) standing against the back wall. (đứng tựa vào bức tường phía sau.)
+
+Harry had to crane his neck (Harry phải rướn cổ lên) to look up into the giant face above: (để nhìn lên khuôn mặt khổng lồ phía trên:) it was ancient and monkey-like, (nó già nua và trông giống như khỉ,) with a long thin beard (với một bộ râu dài và lưa thưa) that fell almost to the bottom (rủ xuống gần sát gấu) of the wizard’s sweeping stone robes, (chiếc áo choàng bằng đá quét đất của vị pháp sư,) where two enormous grey feet (nơi hai bàn chân xám ngoét khổng lồ) stood on the smooth chamber floor. (đứng trên mặt sàn nhẵn thín của căn phòng.) And between the feet, (Và ở giữa hai bàn chân đó,) face down, (nằm úp mặt xuống,) lay a small, black-robed figure (là một bóng người nhỏ bé, mặc áo choàng đen) with flaming red hair. (với mái tóc đỏ rực.)
+
+‘Ginny!’ Harry muttered, (‘Ginny!’ Harry lầm bầm,) sprinting to her (lao đến chỗ cô bé) and dropping to his knees. (và khuỵu gối xuống.) ‘Ginny! Don’t be dead! (‘Ginny! Đừng chết! Please don’t be dead!’ (Làm ơn đừng chết!’) He flung his wand aside, (Cậu quăng đũa phép sang một bên,) grabbed Ginny’s shoulders (nắm lấy hai vai Ginny) and turned her over. (và lật ngửa cô bé lại.) Her face was white as marble, (Khuôn mặt cô bé trắng bệch như đá cẩm thạch,) and as cold, (và lạnh toát,) yet her eyes were closed, (nhưng đôi mắt cô bé đang nhắm,) so she wasn’t Petrified. (nên cô bé không bị Hóa đá.) But then she must be ... (Nhưng vậy thì cô bé ắt hẳn là ...)
+
+‘Ginny, please wake up,’ (‘Ginny, làm ơn tỉnh lại đi,’) Harry muttered desperately, (Harry tuyệt vọng lầm bầm,) shaking her. (vừa lay gọi cô bé.) Ginny’s head lolled hopelessly (Đầu Ginny dặt dẹo một cách vô vọng) from side to side. (từ bên này sang bên kia.)
+
+‘She won’t wake,’ (‘Nó sẽ không tỉnh lại đâu,’) said a soft voice. (một giọng nói êm ả cất lên.)
+
+Harry jumped (Harry giật nảy mình) and spun around on his knees. (và xoay ngoắt lại trong tư thế đang quỳ.)
+
+A tall, black-haired boy (Một thiếu niên cao ráo, tóc đen) was leaning against the nearest pillar, (đang tựa lưng vào cây cột gần nhất,) watching. (đứng nhìn.) He was strangely blurred around the edges, (Đường nét quanh người cậu ta mờ ảo một cách kỳ lạ,) as though Harry was looking at him (như thể Harry đang nhìn cậu ta) through a misted window. (qua một ô cửa sổ đọng sương.) But there was no mistaking him. (Nhưng không thể nhầm lẫn cậu ta vào đâu được.)
+
+‘Tom – Tom Riddle?’ (‘Tom – Tom Riddle?’)
+
+Riddle nodded, (Riddle gật đầu,) not taking his eyes off Harry’s face. (không rời mắt khỏi khuôn mặt Harry.)
+
+‘What d’you mean, (‘Ý anh là sao,) she won’t wake?’ (em ấy sẽ không tỉnh lại?’) Harry said desperately. (Harry tuyệt vọng hỏi.) ‘She’s not – she’s not –?’ (‘Em ấy chưa – em ấy chưa –?’)
+
+‘She’s still alive,’ said Riddle. (‘Nó vẫn còn sống,’ Riddle nói.) ‘But only just.’ (‘Nhưng chỉ thoi thóp thôi.’)
+
+Harry stared at him. (Harry trân trối nhìn cậu ta.) Tom Riddle had been at Hogwarts (Tom Riddle đã học ở Hogwarts) fifty years ago, (từ năm mươi năm trước,) yet here he stood, (vậy mà cậu ta lại đang đứng đây,) a weird, misty light shining about him, (một thứ ánh sáng mờ ảo, kỳ dị tỏa ra quanh người,) not a day older than sixteen. (trông không già hơn mười sáu tuổi lấy một ngày.)
+
+‘Are you a ghost?’ (‘Anh là ma sao?’) Harry said uncertainly. (Harry cất giọng bấp bênh.)
+
+‘A memory,’ (‘Một ký ức,’) said Riddle quietly. (Riddle lặng lẽ đáp.) ‘Preserved in a diary for fifty years.’ (‘Được lưu giữ trong một cuốn nhật ký suốt năm mươi năm qua.’)
+
+He pointed towards the floor (Cậu ta chỉ tay xuống sàn nhà) near the statue’s giant toes. (gần những ngón chân khổng lồ của bức tượng.) Lying open there (Nằm mở bung ở đó) was the little black diary (chính là cuốn nhật ký nhỏ màu đen) Harry had found in Moaning Myrtle’s bathroom. (mà Harry đã tìm thấy trong phòng tắm của Myrtle Khóc nhè.) For a second, (Trong một giây,) Harry wondered how it had got there – (Harry tự hỏi làm thế nào nó lại ở đó –) but there were more pressing matters to deal with. (nhưng còn có những vấn đề cấp bách hơn cần phải giải quyết.)
+
+‘You’ve got to help me, Tom,’ (‘Anh phải giúp tôi, Tom,’) Harry said, (Harry nói,) raising Ginny’s head again. (đỡ đầu Ginny lên lần nữa.) ‘We’ve got to get her out of here. (‘Chúng ta phải đưa em ấy ra khỏi đây.) There’s a Basilisk ... (Có một con Tử xà Basilisk ... ) I don’t know where it is, (tôi không biết nó đang ở đâu,) but it could be along any moment. (nhưng nó có thể trườn tới đây bất cứ lúc nào.) Please, help me ...’ (Làm ơn, giúp tôi với ...’)
+
+Riddle didn’t move. (Riddle không nhúc nhích.) Harry, sweating, (Harry, mồ hôi nhễ nhại,) managed to hoist Ginny half off the floor, (cố gắng xốc Ginny lên nửa chừng khỏi mặt sàn,) and bent to pick up his wand again. (và cúi xuống định nhặt lại đũa phép.)
+
+But his wand had gone. (Nhưng cây đũa phép của cậu đã biến mất.)
+
+‘Did you see –?’ (‘Anh có thấy –?’)
+
+He looked up. (Cậu ngước lên.) Riddle was still watching him – (Riddle vẫn đang nhìn cậu –) twirling Harry’s wand (vê xoay cây đũa phép của Harry) between his long fingers. (giữa những ngón tay thon dài.)
+
+‘Thanks,’ said Harry, (‘Cảm ơn,’ Harry nói,) stretching out his hand for it. (chìa tay ra để xin lại nó.)
+
+A smile curled the corners of Riddle’s mouth. (Một nụ cười cong lên ở khóe miệng Riddle.) He continued to stare at Harry, (Cậu ta tiếp tục chằm chằm nhìn Harry,) twirling the wand idly. (vê cây đũa phép một cách hờ hững.)
+
+‘Listen,’ said Harry urgently, (‘Nghe này,’ Harry khẩn trương nói,) his knees sagging with Ginny’s dead weight, (hai đầu gối oằn xuống vì sức nặng như người chết của Ginny,) ‘we’ve got to go! (‘chúng ta phải đi thôi!) If the Basilisk comes ...’ (Nếu con Tử xà Basilisk đến ...’)
+
+‘It won’t come until it is called,’ (‘Nó sẽ không đến cho đến khi được gọi,’) said Riddle calmly. (Riddle bình thản nói.)
+
+Harry lowered Ginny back onto the floor, (Harry đặt Ginny nằm lại xuống sàn,) unable to hold her up any longer. (không thể đỡ cô bé thêm được nữa.)
+
+‘What d’you mean?’ he said. (‘Ý anh là sao?’ cậu hỏi.) ‘Look, give me my wand, (‘Này, đưa tôi đũa phép đi,) I might need it.’ (tôi có thể sẽ cần đến nó.’)
+
+Riddle’s smile broadened. (Nụ cười của Riddle nở rộng hơn.)
+
+‘You won’t be needing it,’ he said. (‘Mày sẽ không cần đến nó đâu,’ cậu ta nói.)
+
+Harry stared at him. (Harry trân trối nhìn cậu ta.)
+
+‘What d’you mean, I won’t be –?’ (‘Ý anh là sao, tôi sẽ không –?’)
+
+‘I’ve waited a long time for this, Harry Potter,’ (‘Ta đã chờ đợi khoảnh khắc này rất lâu rồi, Harry Potter,’) said Riddle. (Riddle nói.) ‘For the chance to see you. (‘Chờ cơ hội được gặp mày.) To speak to you.’ (Để nói chuyện với mày.’)
+
+‘Look,’ said Harry, losing patience, (‘Này,’ Harry nói, mất dần kiên nhẫn,) ‘I don’t think you get it. (‘tôi không nghĩ anh hiểu chuyện đâu.) We’re in the Chamber of Secrets. (Chúng ta đang ở trong Phòng chứa Bí mật đấy.) We can talk later.’ (Chúng ta có thể nói chuyện sau.’)
+
+‘We’re going to talk now,’ (‘Chúng ta sẽ nói chuyện ngay bây giờ,’) said Riddle, still smiling broadly, (Riddle nói, nụ cười vẫn nở rộng,) and he pocketed Harry’s wand. (và cậu ta đút cây đũa phép của Harry vào túi.)
+
+Harry stared at him. (Harry chằm chằm nhìn cậu ta.) There was something very funny going on here. (Có điều gì đó rất mờ ám đang diễn ra ở đây.)
+
+‘How did Ginny get like this?’ (‘Làm sao Ginny lại ra nông nỗi này?’) he asked slowly. (cậu chậm rãi hỏi.)
+
+‘Well, that’s an interesting question,’ (‘Chà, đó là một câu hỏi thú vị đấy,’) said Riddle pleasantly. (Riddle vui vẻ đáp.) ‘And quite a long story. (‘Và là một câu chuyện khá dài.) I suppose the real reason (Ta cho rằng lý do thực sự) Ginny Weasley’s like this (khiến Ginny Weasley ra nông nỗi này) is because she opened her heart (là vì nó đã mở rộng cõi lòng) and spilled all her secrets (và trút hết mọi bí mật của mình) to an invisible stranger.’ (cho một kẻ lạ mặt vô hình.’)
+
+‘What are you talking about?’ (‘Anh đang nói cái quái gì vậy?’) said Harry. (Harry nói.)
+
+‘The diary,’ said Riddle. (‘Cuốn nhật ký,’ Riddle nói.) ‘My diary. (‘Nhật ký của ta.) Little Ginny’s been writing in it (Con bé Ginny ngoan ngoãn đã viết vào đó) for months and months, (suốt nhiều tháng ròng,) telling me all her pitiful worries and woes: (kể cho ta nghe tất cả những nỗi lo âu và đau khổ thảm hại của nó:) how her brothers tease her, (rằng các anh trai hay trêu chọc nó ra sao,) how she had to come to school (rằng nó đã phải đến trường) with second-hand robes and books, (với áo choàng và sách vở xài lại như thế nào,) how –’ (rằng –’) Riddle’s eyes glinted (đôi mắt Riddle lóe lên) ‘– how she didn’t think (‘– rằng nó không nghĩ) famous, good, great Harry Potter (một Harry Potter nổi tiếng, tốt bụng, vĩ đại) would ever like her ...’ (sẽ có ngày đoái hoài đến nó ...’)
+
+All the time he spoke, (Trong suốt lúc cậu ta nói,) Riddle’s eyes never left Harry’s face. (đôi mắt Riddle chưa từng dời khỏi khuôn mặt Harry.) There was an almost hungry look in them. (Có một cái nhìn gần như thèm khát trong đôi mắt đó.)
+
+‘It’s very boring, (‘Thật vô cùng nhàm chán,) having to listen to the silly little troubles (khi phải lắng nghe những rắc rối vặt vãnh ngu ngốc) of an eleven-year-old girl,’ (của một đứa con gái mười một tuổi,’) he went on. (cậu ta nói tiếp.) ‘But I was patient. (‘Nhưng ta đã rất kiên nhẫn.) I wrote back, I was sympathetic, I was kind. (Ta đã viết thư lại, ta tỏ ra cảm thông, ta rất tử tế.) Ginny simply loved me. (Ginny đơn giản là đã phải lòng ta.) No one’s ever understood me like you, Tom ... (Chưa từng có ai hiểu em như anh, Tom ... ) I’m so glad I’ve got this diary to confide in ... (Em rất mừng vì có cuốn nhật ký này để tâm sự ... ) It’s like having a friend I can carry round in my pocket ...’ (Giống như có một người bạn mà em có thể mang theo trong túi áo vậy ...’)
+
+Riddle laughed, (Riddle cười lớn,) a high, cold laugh (một tiếng cười sắc lạnh, cao vút) that didn’t suit him. (hoàn toàn không phù hợp với cậu ta.) It made the hairs stand up (Nó làm cho những sợi lông tơ dựng đứng lên) on the back of Harry’s neck. (sau gáy Harry.)
+
+‘If I say it myself, Harry, (‘Nếu phải tự nói về mình, Harry à,) I’ve always been able to charm the people I needed. (ta luôn có khả năng mê hoặc những kẻ mà ta cần.) So Ginny poured out her soul to me, (Thế là Ginny trút bầu tâm sự với ta,) and her soul happened to be exactly what I wanted. (và linh hồn của nó tình cờ lại chính xác là thứ mà ta muốn.) I grew stronger and stronger (Ta ngày càng trở nên mạnh mẽ hơn) on a diet of her deepest fears, (nhờ hấp thụ những nỗi sợ hãi thẳm sâu nhất,) her darkest secrets. (những bí mật đen tối nhất của nó.) I grew powerful, (Ta trở nên đầy quyền lực,) far more powerful than little Miss Weasley. (quyền lực hơn rất nhiều so với cô nhóc Weasley nhỏ bé.) Powerful enough (Đủ sức mạnh) to start feeding Miss Weasley (để bắt đầu mớm cho cô bé Weasley) a few of my secrets, (một vài bí mật của ta,) to start pouring a little of my soul (để bắt đầu rót một chút linh hồn của ta) back into her ...’ (ngược trở lại vào nó ...’)
+
+‘What d’you mean?’ (‘Ý anh là sao?’) said Harry, (Harry nói,) whose mouth had gone very dry. (miệng cậu đã trở nên vô cùng khô khốc.)
+
+‘Haven’t you guessed yet, Harry Potter?’ (‘Mày vẫn chưa đoán ra sao, Harry Potter?’) said Riddle softly. (Riddle nhẹ nhàng nói.)
+
+‘Ginny Weasley opened the Chamber of Secrets. (‘Ginny Weasley đã mở Phòng chứa Bí mật.) She strangled the school roosters (Nó đã bóp cổ những con gà trống của trường) and daubed threatening messages on the walls. (và bôi những thông điệp đe dọa lên tường.) She set the serpent of Slytherin (Nó đã xua con rắn của Slytherin) on four Mudbloods, (tấn công bốn đứa Máu bùn,) and the Squib’s cat.’ (và con mèo của lão Squib.’)
+
+‘No,’ Harry whispered. (‘Không,’ Harry thì thầm.)
+
+‘Yes,’ said Riddle, calmly. (‘Có chứ,’ Riddle bình thản nói.) ‘Of course, she didn’t know what she was doing at first. (‘Dĩ nhiên, ban đầu nó không biết mình đang làm gì.) It was very amusing. (Chuyện đó thật vô cùng thú vị.) I wish you could have seen her new diary entries ... (Ta ước gì mày có thể nhìn thấy những dòng nhật ký mới của nó ...) Far more interesting, they became ... (Chúng đã trở nên thú vị hơn rất nhiều ...)
+
+Dear Tom,’ he recited, (‘Tom thân mến,’ cậu ta đọc thuộc lòng,) watching Harry’s horrified face, (vừa ngắm nhìn khuôn mặt kinh hoàng của Harry,) ‘I think I’m losing my memory. (‘Em nghĩ là em đang mất trí nhớ.) There are rooster feathers all over my robes (Có những chiếc lông gà trống vương vãi khắp áo choàng của em) and I don’t know how they got there. (và em không biết làm sao chúng lại ở đó.) Dear Tom, I can’t remember what I did (Tom thân mến, em không thể nhớ mình đã làm gì) on the night of Hallowe’en, (vào đêm Halloween,) but a cat was attacked (nhưng có một con mèo đã bị tấn công) and I’ve got paint all down my front. (và phía trước áo em lại dính đầy vết sơn.) Dear Tom, Percy keeps telling me I’m pale (Tom thân mến, anh Percy cứ bảo em trông nhợt nhạt) and I’m not myself. (và không giống em thường ngày.) I think he suspects me ... (Em nghĩ là anh ấy nghi ngờ em ...) There was another attack today (Hôm nay lại có thêm một vụ tấn công nữa) and I don’t know where I was. (và em không biết mình đã ở đâu.) Tom, what am I going to do? (Tom, em phải làm gì đây?) I think I’m going mad ... (Em nghĩ là em đang phát điên mất ...) I think I’m the one attacking everyone, Tom!’ (Em nghĩ em chính là kẻ đang tấn công mọi người, Tom à!’)
+
+Harry’s fists were clenched, (Hai nắm tay Harry siết chặt,) the nails digging deep into his palms. (các móng tay cắm phập sâu vào lòng bàn tay.)
+
+‘It took a very long time (‘Phải mất một thời gian rất dài) for stupid little Ginny (để con ranh Ginny ngu ngốc) to stop trusting her diary,’ (ngừng tin tưởng vào cuốn nhật ký của nó,’) said Riddle. (Riddle nói.) ‘But she finally became suspicious (‘Nhưng cuối cùng nó cũng bắt đầu nghi ngờ) and tried to dispose of it. (và cố gắng vứt bỏ nó.) And that’s where you came in, Harry. (Và đó là lúc mày xuất hiện, Harry.) You found it, (Mày đã tìm thấy nó,) and I couldn’t have been more delighted. (và ta không thể vui mừng hơn được nữa.) Of all the people who could have picked it up, (Trong số tất cả những kẻ có thể nhặt được nó,) it was you, (lại là mày,) the very person I was most anxious to meet ...’ (chính cái kẻ mà ta khao khát được gặp nhất ...’)
+
+‘And why did you want to meet me?’ said Harry. (‘Và tại sao anh lại muốn gặp tôi?’ Harry hỏi.) Anger was coursing through him (Cơn giận dữ đang chạy rần rần trong người cậu) and it was an effort to keep his voice steady. (và cậu phải nỗ lực mới giữ được cho giọng mình bình tĩnh.)
+
+‘Well, you see, Ginny told me all about you, Harry,’ (‘Chà, mày thấy đấy, Ginny đã kể cho ta nghe mọi thứ về mày, Harry à,’) said Riddle. (Riddle nói.) ‘Your whole fascinating history.’ (‘Toàn bộ tiểu sử đầy hấp dẫn của mày.’) His eyes roved over (Đôi mắt cậu ta lướt qua) the lightning scar on Harry’s forehead, (vết sẹo hình tia chớp trên trán Harry,) and his expression grew hungrier. (và vẻ mặt cậu ta ngày càng trở nên thèm khát hơn.) ‘I knew I must find out more about you, (‘Ta biết ta phải tìm hiểu nhiều hơn về mày,) talk to you, meet you if I could. (nói chuyện với mày, gặp mày nếu có thể.) So I decided to show you (Vì vậy ta đã quyết định cho mày xem) my famous capture of that great oaf, Hagrid, (cú bắt giữ khét tiếng của ta với thằng ngu to xác Hagrid đó,) to gain your trust.’ (để giành được lòng tin của mày.’)
+
+‘Hagrid’s my friend,’ said Harry, (‘Bác Hagrid là bạn tôi,’ Harry nói,) his voice now shaking. (giọng cậu giờ đây đang run rẩy.) ‘And you framed him, didn’t you? (‘Và anh đã vu oan cho bác ấy, đúng không?) I thought you made a mistake, but –’ (Tôi đã nghĩ là anh nhầm lẫn, nhưng –’)
+
+Riddle laughed his high laugh again. (Riddle lại cất lên tiếng cười cao vút của mình một lần nữa.)
+
+‘It was my word against Hagrid’s, Harry. (‘Đó là lời nói của ta chống lại lời của Hagrid, Harry à.) Well, you can imagine how it looked (Chà, mày có thể tưởng tượng nó trông như thế nào) to old Armando Dippet. (trong mắt lão Armando Dippet già cỗi.) On the one hand, Tom Riddle, (Một bên là Tom Riddle,) poor but brilliant, (nghèo khó nhưng xuất chúng,) parentless but so brave, (mồ côi nhưng lại vô cùng dũng cảm,) school Prefect, model student; (Huynh trưởng của trường, học sinh gương mẫu;) on the other hand, big, blundering Hagrid, (bên kia là tên Hagrid to xác, vụng về,) in trouble every other week, (cứ cách tuần lại dính vào một rắc rối,) trying to raise werewolf cubs under his bed, (cố gắng nuôi nấng đám ma sói con dưới gầm giường,) sneaking off to the Forbidden Forest to wrestle trolls. (lẻn vào Khu Rừng Cấm để vật nhau với quỷ khổng lồ.) But I admit, even I was surprised (Nhưng ta thừa nhận, ngay cả ta cũng ngạc nhiên) how well the plan worked. (khi kế hoạch lại trót lọt đến thế.) I thought someone must realise (Ta đã nghĩ chắc chắn phải có ai đó nhận ra) that Hagrid couldn’t possibly be the heir of Slytherin. (rằng Hagrid không đời nào có thể là kẻ thừa kế của Slytherin.) It had taken me five whole years (Ta đã mất trọn năm năm trời) to find out everything I could (để tìm hiểu mọi thứ ta có thể) about the Chamber of Secrets (về Phòng chứa Bí mật) and discover the secret entrance ... (và khám phá ra lối vào bí mật ...) as though Hagrid had the brains, or the power! (làm như thể Hagrid có đủ đầu óc, hay quyền năng vậy!)
+
+‘Only the Transfiguration teacher, Dumbledore, (‘Chỉ có giáo viên môn Biến hình, Dumbledore,) seemed to think Hagrid was innocent. (dường như nghĩ rằng Hagrid vô tội.) He persuaded Dippet to keep Hagrid (Lão đã thuyết phục Dippet giữ Hagrid lại) and train him as gamekeeper. (và đào tạo hắn làm người gác cổng.) Yes, I think Dumbledore might have guessed. (Đúng vậy, ta nghĩ Dumbledore có lẽ đã đoán ra.) Dumbledore never seemed to like me (Dumbledore dường như chưa bao giờ thích ta) as much as the other teachers did ...’ (nhiều như các giáo viên khác ...’)
+
+‘I bet Dumbledore saw right through you,’ (‘Tôi cá là cụ Dumbledore đã nhìn thấu anh,’) said Harry, his teeth gritted. (Harry nói, nghiến chặt răng.)
+
+‘Well, he certainly kept an annoyingly close watch on me (‘Chà, lão ta chắc chắn đã giữ một sự giám sát chặt chẽ đầy khó chịu đối với ta) after Hagrid was expelled,’ said Riddle carelessly. (sau khi Hagrid bị đuổi học,’ Riddle thản nhiên nói.) ‘I knew it wouldn’t be safe to open the Chamber again (‘Ta biết sẽ không an toàn nếu mở Căn phòng ra lần nữa) while I was still at school. (khi ta vẫn còn đang học ở trường.) But I wasn’t going to waste those long years (Nhưng ta không định lãng phí những năm tháng dài đằng đẵng đó) I’d spent searching for it. (mà ta đã bỏ ra để tìm kiếm nó.) I decided to leave behind a diary, (Ta quyết định để lại một cuốn nhật ký,) preserving my sixteen-year-old self in its pages, (lưu giữ bản ngã mười sáu tuổi của ta trong những trang giấy,) so that one day, with luck, (để một ngày nào đó, với chút may mắn,) I would be able to lead another in my footsteps, (ta sẽ có thể dẫn dắt một kẻ khác đi theo bước chân ta,) and finish Salazar Slytherin’s noble work.’ (và hoàn thành công trình vĩ đại của Salazar Slytherin.’)
+
+‘Well, you haven’t finished it,’ said Harry triumphantly. (‘Chà, anh đã không hoàn thành được nó,’ Harry nói với vẻ đắc thắng.) ‘No one’s died this time, not even the cat. (‘Lần này không có ai chết cả, thậm chí ngay cả con mèo.) In a few hours the Mandrake Draught will be ready (Trong vài giờ tới, Nước Tẩy Mandrake sẽ sẵn sàng) and everyone who was Petrified will be all right again.’ (và tất cả những ai bị Hóa đá sẽ lại khỏe mạnh thôi.’)
+
+‘Haven’t I already told you,’ said Riddle quietly, (‘Chẳng phải ta đã nói với mày rồi sao,’ Riddle lặng lẽ nói,) ‘that killing Mudbloods doesn’t matter to me any more? (‘rằng việc giết bọn Máu bùn không còn quan trọng với ta nữa?) For many months now, my new target has been – you.’ (Trong nhiều tháng qua, mục tiêu mới của ta là – mày.’)
+
+Harry stared at him. (Harry trân trối nhìn cậu ta.)
+
+‘Imagine how angry I was (‘Hãy tưởng tượng xem ta đã tức giận đến mức nào) when the next time my diary was opened, (khi lần tiếp theo cuốn nhật ký của ta được mở ra,) it was Ginny who was writing to me, not you. (chính Ginny là người viết cho ta, chứ không phải mày.) She saw you with the diary, you see, and panicked. (Nó nhìn thấy mày giữ cuốn nhật ký, mày thấy đấy, và nó hoảng loạn.) What if you found out how to work it, (Nhỡ mày tìm ra cách sử dụng nó,) and I repeated all her secrets to you? (và ta lặp lại tất cả những bí mật của nó cho mày nghe thì sao?) What if, even worse, (Nhỡ đâu, còn tệ hơn nữa,) I told you who’d been strangling roosters? (ta nói cho mày biết ai là kẻ đã bóp cổ những con gà trống thì sao?) So the foolish little brat (Thế là con ranh con ngu ngốc đó) waited until your dormitory was deserted and stole it back. (đã chờ cho đến khi phòng ngủ của mày vắng người và đánh cắp nó lại.) But I knew what I must do. (Nhưng ta biết ta phải làm gì.) It was clear to me (Với ta mọi chuyện thật rõ ràng) that you were on the trail of Slytherin’s heir. (rằng mày đang bám theo dấu vết kẻ thừa kế của Slytherin.) From everything Ginny had told me about you, (Từ những gì Ginny đã kể cho ta nghe về mày,) I knew you would go to any lengths to solve the mystery (ta biết mày sẽ làm bất cứ giá nào để giải quyết bí ẩn này) – particularly if one of your best friends was attacked. (– đặc biệt là nếu một trong những người bạn thân nhất của mày bị tấn công.) And Ginny had told me (Và Ginny đã kể với ta) the whole school was buzzing (cả trường đang xôn xao bàn tán) because you could speak Parseltongue ... (bởi vì mày có thể nói được Xà ngữ ...)
+
+‘So I made Ginny write her own farewell on the wall (‘Vậy nên ta đã bắt Ginny tự viết lời vĩnh biệt của nó lên tường) and come down here to wait. (và đi xuống đây để chờ đợi.) She struggled and cried and became very boring. (Nó đã vùng vẫy và gào khóc và trở nên vô cùng nhàm chán.) But there isn’t much life left in her: (Nhưng nó chẳng còn chút sức sống nào trong người nữa:) she put too much into the diary, into me. (nó đã truyền quá nhiều vào cuốn nhật ký, vào ta.) Enough to let me leave its pages at last. (Đủ để cuối cùng ta có thể thoát ra khỏi những trang giấy của nó.) I have been waiting for you to appear (Ta đã đợi mày xuất hiện) since we arrived here. (kể từ lúc bọn ta đến đây.) I knew you’d come. (Ta biết mày sẽ đến.) I have many questions for you, Harry Potter.’ (Ta có rất nhiều câu hỏi dành cho mày, Harry Potter.’)
+
+‘Like what?’ Harry spat, fists still clenched. (‘Như cái gì cơ?’ Harry nhổ toẹt lời nói, hai tay vẫn siết chặt.)
+
+‘Well,’ said Riddle, smiling pleasantly, (‘Chà,’ Riddle nói, mỉm cười vui vẻ,) ‘how is it that a baby (‘làm thế nào mà một đứa trẻ sơ sinh) with no extraordinary magical talent (chẳng có tài năng phép thuật gì phi thường) managed to defeat the greatest wizard of all time? (lại có thể xoay xở đánh bại vị phù thủy vĩ đại nhất mọi thời đại?) How did you escape with nothing but a scar, (Làm thế nào mà mày trốn thoát với không gì khác ngoài một vết sẹo,) while Lord Voldemort’s powers were destroyed?’ (trong khi quyền năng của Chúa tể Voldemort lại bị tiêu diệt?’)
+
+There was an odd red gleam in his hungry eyes now. (Giờ đây có một tia sáng đỏ kỳ lạ trong ánh mắt thèm khát của cậu ta.)
+
+‘Why do you care how I escaped?’ said Harry slowly. (‘Tại sao anh lại quan tâm đến việc tôi trốn thoát như thế nào?’ Harry chậm rãi hỏi.) ‘Voldemort was after your time.’ (‘Voldemort là chuyện sau thời đại của anh mà.’)
+
+‘Voldemort,’ said Riddle softly, (‘Voldemort,’ Riddle nhẹ nhàng nói,) ‘is my past, present and future, Harry Potter ...’ (‘chính là quá khứ, hiện tại và tương lai của ta, Harry Potter ...’)
+
+He pulled Harry’s wand from his pocket (Cậu ta rút đũa phép của Harry khỏi túi áo) and began to trace it through the air, (và bắt đầu vạch nó vào không trung,) writing three shimmering words: (viết ra ba từ lấp lánh:)
+
+TOM MARVOLO RIDDLE (TOM MARVOLO RIDDLE)
+
+Then he waved the wand once, (Sau đó cậu ta vẩy đũa phép một cái,) and the letters of his name rearranged themselves: (và các chữ cái trong tên cậu ta tự sắp xếp lại với nhau:)
+
+I AM LORD VOLDEMORT (TA LÀ CHÚA TỂ VOLDEMORT)
+
+‘You see?’ he whispered. (‘Mày thấy chứ?’ cậu ta thì thầm.) ‘It was a name I was already using at Hogwarts, (‘Đó là cái tên mà ta đã sử dụng ngay từ lúc ở Hogwarts,) to my most intimate friends only, of course. (tất nhiên là chỉ dùng với những người bạn thân thiết nhất của ta thôi.) You think I was going to use (Mày nghĩ ta định sẽ sử dụng) my filthy Muggle father’s name for ever? (cái tên của thằng cha Muggle dơ bẩn của ta mãi mãi sao?) I, in whose veins runs the blood of Salazar Slytherin himself, (Ta, kẻ mà trong huyết quản chảy dòng máu của chính Salazar Slytherin,) through my mother’s side? (thông qua đằng ngoại?) I, keep the name of a foul, common Muggle, (Ta, lại giữ cái tên của một thằng Muggle tầm thường, bẩn thỉu,) who abandoned me even before I was born, (kẻ đã vứt bỏ ta ngay cả trước khi ta ra đời,) just because he found out his wife was a witch? (chỉ vì hắn phát hiện ra vợ mình là một phù thủy sao?) No, Harry. (Không, Harry à.) I fashioned myself a new name, (Ta đã tự tạo cho mình một cái tên mới,) a name I knew wizards everywhere (một cái tên mà ta biết các pháp sư ở khắp nơi) would one day fear to speak, (một ngày nào đó sẽ phải sợ hãi khi nhắc đến,) when I had become the greatest sorcerer in the world!’ (khi ta đã trở thành pháp sư vĩ đại nhất thế giới!’)
+
+Harry’s brain seemed to have jammed. (Đầu óc Harry dường như đã đông cứng lại.) He stared numbly at Riddle, (Cậu chết lặng nhìn chằm chằm vào Riddle,) at the orphaned boy who had grown up to murder (vào cậu bé mồ côi kẻ đã lớn lên để sát hại) Harry’s own parents, and so many others ... (chính cha mẹ của Harry, và rất nhiều người khác ...) At last he forced himself to speak. (Cuối cùng cậu cũng ép được bản thân mình lên tiếng.)
+
+‘You’re not,’ he said, his quiet voice full of hatred. (‘Ngươi không phải,’ cậu nói, giọng điệu tĩnh lặng chứa đầy sự căm hận.)
+
+‘Not what?’ (‘Không phải cái gì?’) snapped Riddle. (Riddle gắt gỏng.)
+
+‘Not the greatest sorcerer in the world,’ (‘Không phải là pháp sư vĩ đại nhất thế giới,’) said Harry, breathing fast. (Harry nói, thở gấp.) ‘Sorry to disappoint you, and all that, (‘Xin lỗi vì đã làm anh thất vọng, và đại loại thế,) but the greatest wizard in the world is Albus Dumbledore. (nhưng vị phù thủy vĩ đại nhất thế giới là Albus Dumbledore.) Everyone says so. (Mọi người đều nói thế.) Even when you were strong, (Ngay cả khi anh còn hùng mạnh,) you didn’t dare try and take over at Hogwarts. (anh cũng không dám mưu đồ chiếm lấy trường Hogwarts.) Dumbledore saw through you (Cụ Dumbledore đã nhìn thấu anh) when you were at school (ngay từ khi anh còn đi học) and he still frightens you now, (và cụ ấy vẫn làm anh khiếp sợ cho đến tận bây giờ,) wherever you’re hiding these days.’ (bất kể dạo này anh đang trốn chui trốn nhủi ở xó xỉnh nào.’)
+
+The smile had gone from Riddle’s face, (Nụ cười đã vụt tắt trên khuôn mặt Riddle,) to be replaced by a very ugly look. (để nhường chỗ cho một vẻ mặt vô cùng khó coi.)
+
+‘Dumbledore’s been driven out of this castle (‘Dumbledore đã bị đuổi khỏi tòa lâu đài này) by the mere memory of me!’ (chỉ bằng chính ký ức của ta!’) he hissed. (hắn rít lên.)
+
+‘He’s not as gone as you might think!’ (‘Cụ ấy không biến mất hẳn như anh tưởng đâu!’) Harry retorted. (Harry vặn lại.) He was speaking at random, (Cậu chỉ đang nói bừa,) wanting to scare Riddle, (muốn làm Riddle hoảng sợ,) wishing rather than believing it to be true. (khao khát điều đó là sự thật hơn là thực sự tin vào nó.)
+
+Riddle opened his mouth, but froze. (Riddle há miệng ra, nhưng rồi chết trân.)
+
+Music was coming from somewhere. (Âm nhạc đang vang lên từ đâu đó.) Riddle whirled around (Riddle xoay ngoắt lại) to stare down the empty chamber. (nhìn chằm chằm dọc theo căn phòng trống rỗng.) The music was growing louder. (Tiếng nhạc ngày càng lớn hơn.) It was eerie, spine-tingling, unearthly; (Nó kỳ bí, rợn tóc gáy, không thuộc về thế gian này;) it lifted the hair on Harry’s scalp (nó làm dựng đứng cả tóc gáy Harry) and made his heart feel (và làm cho tim cậu có cảm giác) as though it was swelling to twice its normal size. (như thể đang phồng to lên gấp đôi kích thước bình thường.) Then, as the music reached such a pitch (Sau đó, khi tiếng nhạc đạt đến một cao độ) that Harry felt it vibrating inside his own ribs, (khiến Harry cảm thấy nó rung lên bên trong chính lồng ngực mình,) flames erupted (những ngọn lửa bùng lên) at the top of the nearest pillar. (trên đỉnh của cây cột gần nhất.)
+
+A crimson bird the size of a swan (Một con chim màu đỏ thẫm to bằng một con thiên nga) had appeared, (đã xuất hiện,) piping its weird music (cất lên tiếng nhạc kỳ lạ của nó) to the vaulted ceiling. (ngân vang lên tận trần nhà hình vòm.) It had a glittering golden tail (Nó có một cái đuôi vàng lấp lánh) as long as a peacock’s (dài như đuôi công) and gleaming golden talons, (và bộ móng vuốt vàng óng ánh,) which were gripping a ragged bundle. (đang quắp một mớ giẻ rách rưới.)
+
+A second later, (Một giây sau,) the bird was flying straight at Harry. (con chim bay thẳng về phía Harry.) It dropped the ragged thing (Nó thả cái mớ giẻ rách rưới) it was carrying at his feet, (mà nó đang mang xuống dưới chân cậu,) then landed heavily on his shoulder. (rồi đáp nặng nề xuống vai cậu.) As it folded its great wings, (Khi nó khép đôi cánh vĩ đại lại,) Harry looked up and saw (Harry ngước nhìn và thấy) it had a long, sharp golden beak (nó có một cái mỏ vàng dài, sắc nhọn) and beady black eyes. (và đôi mắt đen láy như hột cườm.)
+
+The bird stopped singing. (Con chim ngừng hót.) It sat still and warm (Nó đậu yên tĩnh và ấm áp) next to Harry’s cheek, (bên má Harry,) gazing steadily at Riddle. (nhìn chằm chằm vào Riddle.)
+
+‘That’s a phoenix ...’ (‘Đó là một con phượng hoàng ...’) said Riddle, (Riddle nói,) staring shrewdly back at it. (nhìn lại nó với ánh mắt thâm hiểm.)
+
+‘Fawkes?’ Harry breathed, (‘Fawkes?’ Harry thều thào,) and he felt the bird’s golden claws (và cậu cảm thấy móng vuốt vàng của con chim) squeeze his shoulder gently. (bóp nhẹ vào vai cậu.)
+
+‘And that –’ (‘Và cái đó –’) said Riddle, (Riddle nói,) now eyeing the ragged thing (lúc này đang để mắt đến cái mớ giẻ rách) that Fawkes had dropped, (mà Fawkes vừa thả xuống,) ‘that’s the old school Sorting Hat.’ (‘đó là chiếc Nón Phân loại cũ kỹ của trường.’)
+
+So it was. (Đúng là nó thật.) Patched, frayed and dirty, (Chắp vá, sờn rách và bẩn thỉu,) the Hat lay motionless (chiếc Nón nằm bất động) at Harry’s feet. (dưới chân Harry.)
+
+Riddle began to laugh again. (Riddle lại bắt đầu cười.) He laughed so hard (Hắn cười ngặt nghẽo đến mức) that the dark chamber rang with it, (căn phòng tối tăm vang dội tiếng cười đó,) as though ten Riddles were laughing at once. (như thể có mười tên Riddle đang cùng cười một lúc.)
+
+‘This is what Dumbledore sends his defender! (‘Đây là những gì Dumbledore gửi cho người bảo vệ của lão sao!)* A songbird and an old hat! (Một con chim hót và một cái nón cũ rích!)* Do you feel brave, Harry Potter? (Mày có cảm thấy dũng cảm không, Harry Potter?) Do you feel safe now?’ (Bây giờ mày đã cảm thấy an toàn chưa?’)
+
+Harry didn’t answer. (Harry không trả lời.) He might not see what use (Cậu có thể chưa thấy được công dụng) Fawkes or the Sorting Hat were, (của Fawkes hay chiếc Nón Phân loại là gì,) but he was no longer alone, (nhưng cậu không còn đơn độc nữa,) and he waited with mounting courage (và cậu chờ đợi với lòng can đảm đang dâng trào) for Riddle to stop laughing. (cho đến khi Riddle ngừng cười.)
+
+‘To business, Harry,’ (‘Vào việc thôi, Harry,’) said Riddle, still smiling broadly. (Riddle nói, nụ cười vẫn nở rộng.) ‘Twice – in your past, in my future – we have met. (‘Hai lần – trong quá khứ của mày, trong tương lai của ta – chúng ta đã gặp nhau.) And twice I failed to kill you. (Và cả hai lần ta đều thất bại trong việc giết mày.) How did you survive? (Làm thế nào mà mày sống sót được?) Tell me everything. (Kể cho ta nghe mọi thứ đi.) The longer you talk,’ (‘Mày nói càng dài,’) he added softly, (hắn nhẹ nhàng nói thêm,) ‘the longer you stay alive.’ (‘thì mày càng được sống lâu hơn.’)
+
+Harry was thinking fast, (Harry đang suy nghĩ rất nhanh,) weighing his chances. (cân nhắc những cơ hội của mình.) Riddle had the wand. (Riddle có đũa phép.) He, Harry, had Fawkes and the Sorting Hat, (Cậu, Harry, có Fawkes và chiếc Nón Phân loại,) neither of which would be much good in a duel. (cả hai thứ đều chẳng có ích lợi gì mấy trong một cuộc đấu tay đôi.) It looked bad, all right. (Tình hình trông có vẻ tệ thật đấy.) But the longer Riddle stood there, (Nhưng Riddle đứng đó càng lâu,) the more life was dwindling out of Ginny ... (thì sự sống càng cạn kiệt khỏi Ginny ...) and in the meantime, Harry noticed suddenly, (và trong lúc đó, Harry đột nhiên nhận ra,) Riddle’s outline was becoming clearer, more solid. (đường nét của Riddle đang trở nên rõ ràng hơn, thực thể hơn.) If it had to be a fight between him and Riddle, (Nếu nhất định phải có một trận chiến giữa cậu và Riddle,) better sooner than later. (thì thà đánh sớm còn hơn muộn.)
+
+‘No one knows why you lost your powers (‘Không ai biết tại sao anh lại mất đi quyền năng của mình) when you attacked me,’ (khi anh tấn công tôi,’) said Harry abruptly. (Harry bất chợt nói.) ‘I don’t know myself. (‘Bản thân tôi cũng không biết.) But I know why you couldn’t kill me. (Nhưng tôi biết tại sao anh không thể giết được tôi.) Because my mother died to save me. (Bởi vì mẹ tôi đã chết để cứu tôi.) My common Muggle-born mother,’ (‘Người mẹ gốc Muggle tầm thường của tôi,’) he added, shaking with suppressed rage. (cậu nói thêm, run lên vì cơn giận dữ kìm nén.) ‘She stopped you killing me. (‘Bà ấy đã ngăn anh giết tôi.) And I’ve seen the real you, (Và tôi đã nhìn thấy con người thật của anh,) I saw you last year. (tôi đã thấy anh năm ngoái.) You’re a wreck. (Anh là một đống đổ nát.) You’re barely alive. (Anh chỉ còn sống lay lắt.) That’s where all your power got you. (Đó là nơi mà tất cả quyền năng của anh đã đưa anh đến.) You’re in hiding. (Anh đang phải lẩn trốn.) You’re ugly, you’re foul!’ (Anh gớm ghiếc, anh tởm lợm!’)
+
+Riddle’s face contorted. (Khuôn mặt Riddle vặn vẹo.) Then he forced it into an awful smile. (Sau đó hắn ép nó biến thành một nụ cười khủng khiếp.)
+
+‘So. Your mother died to save you. (‘Ra vậy. Mẹ mày đã chết để cứu mày.) Yes, that’s a powerful counter-charm. (Đúng, đó là một lá bùa phản nguyền mạnh mẽ.) I can see now – (Giờ thì ta đã hiểu –) there is nothing special about you, after all. (rốt cuộc thì mày chẳng có gì đặc biệt cả.) I wondered, you see. (Mày thấy đấy, ta đã tự hỏi.) Because there are strange likenesses between us, Harry Potter. (Bởi vì có những điểm giống nhau kỳ lạ giữa chúng ta, Harry Potter à.) Even you must have noticed. (Ngay cả mày chắc cũng đã nhận ra.) Both half-bloods, orphans, raised by Muggles. (Cả hai đều là máu lai, mồ côi, được nuôi dưỡng bởi bọn Muggle.) Probably the only two Parselmouths (Có lẽ là hai Xà khẩu duy nhất) to come to Hogwarts (đến học ở Hogwarts) since the great Slytherin himself. (kể từ thời của chính Salazar Slytherin vĩ đại.) We even look something alike ... (Chúng ta thậm chí còn có vẻ ngoại hình giông giống nhau ...) But after all, (Nhưng rốt cuộc thì,) it was merely a lucky chance (đó chỉ đơn thuần là một cơ hội may mắn) that saved you from me. (đã cứu mày khỏi tay ta.) That’s all I wanted to know.’ (Đó là tất cả những gì ta muốn biết.’)
+
+Harry stood, tense, (Harry đứng đó, căng thẳng,) waiting for Riddle to raise his wand. (chờ đợi Riddle giơ đũa phép lên.) But Riddle’s twisted smile was widening again. (Nhưng nụ cười vặn vẹo của Riddle lại đang mở rộng ra.)
+
+‘Now, Harry, I’m going to teach you a little lesson. (‘Bây giờ, Harry, ta sẽ dạy cho mày một bài học nhỏ.) Let’s match the powers of Lord Voldemort, (Hãy đọ sức mạnh của Chúa tể Voldemort,) heir of Salazar Slytherin, (kẻ thừa kế của Salazar Slytherin,) against famous Harry Potter, (với Harry Potter nổi tiếng,) and the best weapons Dumbledore can give him.’ (và những thứ vũ khí tốt nhất mà Dumbledore có thể ban cho nó.’)
+
+He cast an amused eye over Fawkes (Hắn phóng một ánh mắt thích thú lướt qua Fawkes) and the Sorting Hat, (và chiếc Nón Phân loại,) then walked away. (rồi bước đi.) Harry, fear spreading up his numb legs, (Harry, với nỗi sợ hãi lan dọc lên đôi chân tê cứng,) watched Riddle stop between the high pillars (nhìn Riddle dừng lại giữa những cây cột cao) and look up into the stone face of Slytherin, (và ngước nhìn lên khuôn mặt bằng đá của Slytherin,) high above him in the half-darkness. (nằm tít trên cao phía trên hắn trong bóng tối nhập nhoạng.) Riddle opened his mouth wide and hissed – (Riddle há to miệng và rít lên –) but Harry understood what he was saying. (nhưng Harry hiểu hắn đang nói gì.)
+
+‘Speak to me, Slytherin, greatest of the Hogwarts Four.’ (‘Hãy nói với ta, Slytherin, người vĩ đại nhất trong Nhóm Bốn Nhà sáng lập Hogwarts.’)
+
+Harry wheeled around to look up at the statue, (Harry xoay ngoắt lại ngước nhìn lên bức tượng,) Fawkes swaying on his shoulder. (Fawkes chao đảo trên vai cậu.)
+
+Slytherin’s gigantic stone face was moving. (Khuôn mặt đá khổng lồ của Slytherin đang chuyển động.) Horror-struck, (Kinh hoàng tột độ,) Harry saw his mouth opening, (Harry nhìn thấy miệng lão đang mở ra,) wider and wider, (ngày càng rộng hơn,) to make a huge black hole. (để tạo thành một cái hố đen ngòm khổng lồ.)
+
+And something was stirring inside the statue’s mouth. (Và có thứ gì đó đang cựa quậy bên trong miệng bức tượng.) Something was slithering up from its depths. (Có thứ gì đó đang trườn lên từ sâu thẳm bên trong nó.)
+
+Harry backed away (Harry lùi lại) until he hit the dark Chamber wall, (cho đến khi cậu va vào bức tường tối tăm của Căn phòng,) and as he shut his eyes tight (và khi cậu nhắm chặt mắt lại) he felt Fawkes’s wing sweep his cheek (cậu cảm thấy cánh của Fawkes quẹt qua má mình) as he took flight. (khi nó cất cánh bay đi.) Harry wanted to shout, ‘Don’t leave me!’ (Harry muốn hét lên, ‘Đừng bỏ tôi lại!’) but what chance did a phoenix have (nhưng một con phượng hoàng thì có cơ may nào) against the king of serpents? (để chống lại vua của các loài rắn cơ chứ?)
+
+Something huge hit the stone floor of the chamber, (Một thứ gì đó khổng lồ đập xuống nền đá của căn phòng,) Harry felt it shudder. (Harry cảm thấy nền nhà rung lên.) He knew what was happening, (Cậu biết chuyện gì đang xảy ra,) he could sense it, (cậu có thể cảm nhận được nó,) could almost see the giant serpent uncoiling itself (gần như có thể nhìn thấy con rắn khổng lồ đang tháo những vòng cuộn của mình) from Slytherin’s mouth. (từ trong miệng Slytherin ra.) Then he heard Riddle’s hissing voice: (Rồi cậu nghe thấy giọng nói xì xào của Riddle:) ‘Kill him.’ (‘Giết nó.’)
+
+The Basilisk was moving towards Harry, (Tử xà Basilisk đang tiến về phía Harry,) he could hear its heavy body slithering ponderously (cậu có thể nghe thấy thân hình nặng nề của nó trườn đi một cách ục ịch) across the dusty floor. (ngang qua mặt sàn bụi bặm.) Eyes still tightly shut, (Đôi mắt vẫn nhắm nghiền,) Harry began to run blindly sideways, (Harry bắt đầu cắm cúi chạy ngang một cách mù quáng,) his hands outstretched, (hai tay dang rộng,) feeling his way. (mò mẫm tìm đường.) Riddle was laughing ... (Riddle đang cười ...)
+
+Harry tripped. (Harry vấp ngã.) He fell hard onto the stone (Cậu ngã đập mạnh xuống nền đá) and tasted blood. (và nếm thấy vị máu.) The serpent was barely feet from him, (Con rắn chỉ còn cách cậu có vài feet,) he could hear it coming. (cậu có thể nghe thấy nó đang lao tới.)
+
+There was a loud, explosive spitting sound (Có một âm thanh phì phì, bùng nổ lớn vang lên) right above him (ngay phía trên cậu) and then something heavy hit Harry so hard (và rồi một thứ gì đó nặng nề đập vào Harry mạnh đến mức) that he was smashed against the wall. (cậu bị ép chặt vào tường.) Waiting for fangs to sink through his body (Trong lúc chờ đợi những chiếc nanh cắm phập xuyên qua cơ thể mình) he heard more mad hissing, (cậu nghe thấy thêm những tiếng rít điên cuồng,) something thrashing wildly off the pillars. (thứ gì đó đang quẫy đạp dữ dội đập vào những cây cột.)
+
+He couldn’t help it. (Cậu không thể kìm nén được nữa.) He opened his eyes wide enough (Cậu mở mắt hé ra đủ rộng) to squint at what was going on. (để nheo nheo nhìn xem chuyện gì đang xảy ra.)
+
+The enormous serpent, bright, poisonous green, (Con rắn khổng lồ, màu xanh lục sáng rực, đầy nọc độc,) thick as an oak trunk, (dày như thân cây sồi,) had raised itself high in the air (đã vươn mình lên cao tít trong không trung) and its great blunt head (và cái đầu to tù tì của nó) was weaving drunkenly between the pillars. (đang lắc lư lảo đảo giữa các thân cột.) As Harry trembled, (Khi Harry run rẩy,) ready to close his eyes if it turned, (sẵn sàng nhắm mắt lại nếu nó quay đầu,) he saw what had distracted the snake. (cậu đã nhìn thấy thứ gì khiến con rắn bị phân tâm.)
+
+Fawkes was soaring around its head, (Fawkes đang bay lượn vút qua quanh đầu nó,) and the Basilisk was snapping furiously at him (và Tử xà Basilisk đang đớp phập phập vào con chim một cách điên cuồng) with fangs long and thin as sabres. (bằng những chiếc nanh dài và mỏng như những thanh kiếm.)
+
+Fawkes dived. (Fawkes lao xuống.) His long golden beak sank out of sight (Cái mỏ vàng dài của nó ngập sâu khuất khỏi tầm mắt) and a sudden shower of dark blood spattered the floor. (và một cơn mưa máu đen bất ngờ bắn tung tóe xuống sàn.) The snake’s tail thrashed, (Cái đuôi của con rắn quẫy mạnh,) narrowly missing Harry, (suýt nữa thì quật trúng Harry,) and before Harry could shut his eyes, it turned. (và trước khi Harry kịp nhắm mắt lại, nó đã quay ngoắt đầu lại.) Harry looked straight into its face, (Harry nhìn thẳng vào mặt nó,) and saw that its eyes, (và thấy rằng đôi mắt của nó,) both its great bulbous yellow eyes, (cả hai con mắt màu vàng lồi to vĩ đại,) had been punctured by the phoenix; (đã bị con phượng hoàng mổ thủng;) blood was streaming to the floor (máu đang chảy ròng ròng xuống sàn) and the snake was spitting in agony. (và con rắn đang rít lên phì phì trong đau đớn tột cùng.)
+
+‘No!’ Harry heard Riddle screaming. (‘Không!’ Harry nghe thấy tiếng Riddle gào lên.) ‘Leave the bird! Leave the bird! (‘Mặc kệ con chim! Mặc kệ con chim!) The boy is behind you! You can still smell him! Kill him!’ (Thằng ranh đó ở phía sau mi! Mi vẫn có thể ngửi thấy mùi của nó! Giết nó đi!’)
+
+The blinded serpent swayed, confused, still deadly. (Con rắn mù đong đưa, bối rối, nhưng vẫn đầy chết chóc.) Fawkes was circling its head, piping his eerie song, (Fawkes bay lượn vòng quanh đầu nó, cất tiếng hót kỳ bí,) jabbing here and there at the Basilisk’s scaly nose (mổ chốc chốc vào cái mũi đầy vảy của Tử xà Basilisk) as the blood poured from its ruined eyes. (khi máu tuôn ra từ đôi mắt đã bị hủy hoại của nó.)
+
+‘Help me, help me,’ Harry muttered wildly, ‘someone, anyone!’ (‘Giúp tôi với, giúp tôi với,’ Harry lầm bầm điên cuồng, ‘ai đó, bất cứ ai!’)
+
+The snake’s tail whipped across the floor again. (Cái đuôi con rắn lại quật ngang qua mặt sàn.) Harry ducked. (Harry thụp người xuống.) Something soft hit his face. (Một thứ gì đó mềm mại đập vào mặt cậu.)
+
+The Basilisk had swept the Sorting Hat into Harry’s arms. (Tử xà Basilisk đã quét văng chiếc Nón Phân loại vào vòng tay Harry.) Harry seized it. (Harry vồ lấy nó.) It was all he had left, his only chance. (Đó là tất cả những gì cậu còn lại, cơ hội duy nhất của cậu.) He rammed it onto his head (Cậu dập mạnh nó lên đầu) and threw himself flat onto the floor (và ném mình nằm rạp xuống sàn) as the Basilisk’s tail swung over him again. (khi cái đuôi của Tử xà Basilisk lại quật qua phía trên cậu.)
+
+‘Help me ... help me ...’ Harry thought, his eyes screwed tight under the Hat. ‘Please help me!’ (‘Giúp tôi ... giúp tôi với ...’ Harry thầm nghĩ, nhắm nghiền mắt dưới chiếc Nón. ‘Làm ơn giúp tôi!’)
+
+There was no answering voice. (Không có tiếng trả lời.) Instead, the Hat contracted, (Thay vào đó, chiếc Nón co rúm lại,) as though an invisible hand was squeezing it very tightly. (như thể có một bàn tay vô hình đang bóp nó cực kỳ chặt.)
+
+Something very hard and heavy thudded onto the top of Harry’s head, (Một vật gì đó rất cứng và nặng rớt cái bịch xuống đỉnh đầu Harry,) almost knocking him out. (suýt làm cậu ngất xỉu.) Stars winking in front of his eyes, (Mắt nổ đom đóm,) he grabbed the top of the Hat to pull it off (cậu túm lấy chóp Nón để kéo nó ra) and felt something long and hard beneath it. (và cảm thấy một thứ gì đó dài và cứng bên dưới nó.)
+
+A gleaming silver sword had appeared inside the Hat, (Một thanh gươm bạc sáng loáng đã xuất hiện bên trong chiếc Nón,) its handle glittering with rubies the size of eggs. (chuôi gươm lấp lánh những viên hồng ngọc to bằng quả trứng.)
+
+‘Kill the boy! Leave the bird! The boy is behind you! Sniff – smell him!’ (‘Giết thằng nhãi! Mặc kệ con chim! Thằng nhãi ở phía sau mi! Ngửi – ngửi mùi nó đi!’)
+
+Harry was on his feet, ready. (Harry đã đứng bật dậy, sẵn sàng.) The Basilisk’s head was falling, (Đầu của Tử xà Basilisk đang hạ xuống,) its body coiling around, (thân hình nó cuộn tròn lại,) hitting pillars as it twisted to face him. (đập vào các cây cột khi nó vặn mình quay lại đối mặt với cậu.) He could see the vast, bloody eye sockets, (Cậu có thể nhìn thấy những hốc mắt to lớn đẫm máu,) see the mouth stretching wide, (nhìn thấy cái miệng há to hoác,) wide enough to swallow him whole, (đủ rộng để nuốt chửng cậu,) lined with fangs long as his sword, thin, glittering, venomous ... (dàn hàng những chiếc nanh dài như thanh gươm của cậu, sắc mỏng, lấp lánh, đầy nọc độc ...)
+
+It lunged blindly. (Nó phóng tới một cách mù quáng.) Harry dodged and it hit the Chamber wall. (Harry né kịp và nó tông sầm vào bức tường Căn phòng.) It lunged again, (Nó lao tới lần nữa,) and its forked tongue lashed Harry’s side. (và cái lưỡi chẻ đôi của nó quất vào sườn Harry.) He raised the sword in both his hands. (Cậu giương cao thanh gươm bằng cả hai tay.)
+
+The Basilisk lunged again, and this time its aim was true. (Tử xà Basilisk lại phóng tới, và lần này mục tiêu của nó rất chuẩn xác.) Harry threw his whole weight behind the sword (Harry dồn toàn bộ sức nặng cơ thể vào thanh gươm) and drove it to the hilt into the roof of the serpent’s mouth. (và đâm lút cán vào vòm miệng con rắn.)
+
+But as warm blood drenched Harry’s arms, (Nhưng khi dòng máu nóng hổi tưới ướt sũng hai cánh tay Harry,) he felt a searing pain just above his elbow. (cậu cảm thấy một cơn đau buốt rát ngay phía trên khuỷu tay.) One long, poisonous fang (Một chiếc nanh dài, đầy nọc độc) was sinking deeper and deeper into his arm (đang cắm phập ngày càng sâu vào cánh tay cậu) and it splintered (và nó vỡ vụn ra) as the Basilisk keeled over sideways and fell, twitching, to the floor. (khi Tử xà Basilisk đổ gục sang một bên và ngã xuống sàn, giãy giụa.)
+
+Harry slid down the wall. (Harry trượt người gục xuống tường.) He gripped the fang (Cậu nắm chặt lấy chiếc nanh) that was spreading poison through his body (đang lan truyền chất độc khắp cơ thể mình) and wrenched it out of his arm. (và giật mạnh nó ra khỏi cánh tay.) But he knew it was too late. (Nhưng cậu biết đã quá muộn.) White-hot pain was spreading slowly and steadily from the wound. (Cơn đau buốt tận óc đang lan ra chậm rãi và đều đặn từ vết thương.) Even as he dropped the fang (Ngay cả khi cậu buông rơi chiếc nanh) and watched his own blood soaking his robes, (và nhìn máu mình thấm ướt đẫm áo choàng,) his vision went foggy. (tầm nhìn của cậu mờ sương đi.) The Chamber was dissolving in a whirl of dull colour. (Căn phòng đang tan biến trong một mớ màu sắc xám xịt xoáy tít.)
+
+A patch of scarlet swam past (Một vệt màu đỏ tươi bơi lướt qua) and Harry heard a soft clatter of claws beside him. (và Harry nghe thấy tiếng lạch cạch nhè nhẹ của móng vuốt bên cạnh mình.)
+
+‘Fawkes,’ said Harry thickly. ‘You were brilliant, Fawkes ...’ (‘Fawkes,’ Harry nói giọng đặc quánh. ‘Mày cừ lắm, Fawkes ...’) He felt the bird lay its beautiful head (Cậu cảm nhận được con chim áp cái đầu xinh đẹp của nó) on the spot where the serpent’s fang had pierced him. (lên ngay vết thương nơi chiếc nanh rắn đã đâm xuyên qua.)
+
+He could hear echoing footsteps (Cậu có thể nghe thấy những tiếng bước chân vang vọng) and then a dark shadow moved in front of him. (và rồi một cái bóng đen di chuyển tới trước mặt cậu.)
+
+‘You’re dead, Harry Potter,’ said Riddle’s voice above him. (‘Mày chết chắc rồi, Harry Potter,’ giọng Riddle vang lên phía trên cậu.) ‘Dead. Even Dumbledore’s bird knows it. (‘Chết. Ngay cả con chim của Dumbledore cũng biết điều đó.) Do you see what he’s doing, Potter? He’s crying.’ (Mày có thấy nó đang làm gì không, Potter? Nó đang khóc đấy.’)
+
+Harry blinked. (Harry chớp mắt.) Fawkes’s head slid in and out of focus. (Đầu của Fawkes lúc mờ lúc tỏ.) Thick, pearly tears were trickling down the glossy feathers. (Những giọt nước mắt tròn trịa như ngọc trai đang lăn dài trên bộ lông bóng mượt.)
+
+‘I’m going to sit here and watch you die, Harry Potter. (‘Ta sẽ ngồi đây và nhìn mày chết, Harry Potter.) Take your time. I’m in no hurry.’ (Cứ từ từ. Ta không có gì phải vội.’)
+
+Harry felt drowsy. Everything around him seemed to be spinning. (Harry cảm thấy buồn ngủ. Mọi thứ xung quanh cậu dường như đang quay cuồng.)
+
+‘So ends the famous Harry Potter,’ said Riddle’s distant voice. (‘Thế là tàn đời thằng nhãi Harry Potter nổi tiếng,’ giọng nói xa xăm của Riddle cất lên.) ‘Alone in the Chamber of Secrets, (‘Cô độc trong Phòng chứa Bí mật,) forsaken by his friends, (bị bạn bè ruồng bỏ,) defeated at last by the Dark Lord he so unwisely challenged. (rốt cuộc cũng bị đánh bại bởi Chúa tể Hắc ám mà nó đã dại dột thách thức.) You’ll be back with your dear Mudblood mother soon, Harry ... (Mày sẽ sớm được đoàn tụ với bà mẹ Máu bùn thân yêu của mày thôi, Harry ...) She bought you twelve years of borrowed time ... (Bà ta đã mua cho mày mười hai năm sống vay mượn ...) but Lord Voldemort got you in the end, as you knew he must.’ (nhưng cuối cùng Chúa tể Voldemort cũng tóm được mày, điều tất yếu mà mày vốn đã biết.’)
+
+If this is dying, thought Harry, it’s not so bad. (Nếu đây là cái chết, Harry nghĩ, thì cũng không đến nỗi quá tệ.) Even the pain was leaving him ... (Ngay cả nỗi đau cũng đang rời bỏ cậu ...)
+
+But was this dying? (Nhưng đây có phải là đang chết không?) Instead of going black, the Chamber seemed to be coming back into focus. (Thay vì tối sầm lại, Căn phòng dường như đang rõ nét trở lại.) Harry gave his head a little shake (Harry khẽ lắc đầu) and there was Fawkes, still resting his head on Harry’s arm. (và Fawkes đang ở đó, vẫn tựa đầu lên cánh tay Harry.) A pearly patch of tears was shining all around the wound – (Một vệt nước mắt long lanh như ngọc trai đang tỏa sáng quanh vết thương –) except that there was no wound. (ngoại trừ việc chẳng có vết thương nào cả.)
+
+‘Get away, bird,’ said Riddle’s voice suddenly. (‘Tránh ra, con chim kia,’ giọng Riddle đột nhiên vang lên.) ‘Get away from him. I said, get away!’ (‘Tránh xa nó ra. Ta bảo, tránh ra!’)
+
+Harry raised his head. (Harry ngẩng đầu lên.) Riddle was pointing Harry’s wand at Fawkes; (Riddle đang chĩa đũa phép của Harry vào Fawkes;) there was a bang like a gun (có một tiếng đoàng như súng nổ) and Fawkes took flight again in a whirl of gold and scarlet. (và Fawkes lại cất cánh bay lên trong một vòng xoáy màu vàng và đỏ thẫm.)
+
+‘Phoenix tears ...’ said Riddle quietly, staring at Harry’s arm. (‘Nước mắt phượng hoàng ...’ Riddle lặng lẽ nói, chằm chằm nhìn cánh tay Harry.) ‘Of course ... healing powers ... I forgot ...’ (‘Tất nhiên rồi ... năng lực chữa lành ... ta đã quên mất ...’)
+
+He looked into Harry’s face. (Hắn nhìn vào mặt Harry.) ‘But it makes no difference. (‘Nhưng chuyện đó chẳng làm thay đổi được gì.) In fact, I prefer it this way. (Thực ra, ta lại thích thế này hơn.) Just you and me, Harry Potter ... you and me ...’ (Chỉ có mày và ta, Harry Potter ... mày và ta ...’)
+
+He raised the wand. (Hắn giơ đũa phép lên.)
+
+Then, in a rush of wings, Fawkes soared back overhead (Sau đó, trong một tiếng vỗ cánh lao vút, Fawkes bay là là trở lại phía trên đầu) and something fell into Harry’s lap – the diary. (và một thứ gì đó rơi xuống lòng Harry – cuốn nhật ký.)
+
+For a split second, both Harry and Riddle, wand still raised, stared at it. (Trong một tích tắc, cả Harry và Riddle, đũa phép vẫn giương cao, cùng chằm chằm nhìn nó.) Then, without thinking, without considering, (Rồi, không một chút suy nghĩ, không mảy may cân nhắc,) as though he had meant to do it all along, (như thể cậu vốn đã định làm như vậy từ đầu,) Harry seized the Basilisk fang on the floor next to him (Harry vồ lấy chiếc nanh Basilisk trên sàn bên cạnh mình) and plunged it straight into the heart of the book. (và đâm phập nó thẳng vào chính giữa cuốn sách.)
+
+There was a long, dreadful, piercing scream. (Có một tiếng thét dài, kinh hoàng, chói tai vang lên.) Ink spurted out of the diary in torrents, (Mực phun ra từ cuốn nhật ký xối xả,) streaming over Harry’s hands, flooding the floor. (chảy ròng ròng qua hai bàn tay Harry, làm lênh láng cả sàn.) Riddle was writhing and twisting, screaming and flailing and then ... (Riddle đang quằn quại và vặn vẹo, gào thét và vùng vẫy và rồi ...)
+
+He had gone. (Hắn đã biến mất.) Harry’s wand fell to the floor with a clatter (Đũa phép của Harry rớt lạch cạch xuống sàn) and there was silence. (và sự im lặng bao trùm.) Silence except for the steady drip drip of ink still oozing from the diary. (Im lặng ngoại trừ tiếng mực vẫn đang rỉ ra nhỏ giọt tỏng tỏng đều đặn từ cuốn nhật ký.) The Basilisk venom had burned a sizzling hole right through it. (Nọc độc Basilisk đã thiêu rụi một lỗ hổng xèo xèo xuyên thẳng qua nó.)
+
+Shaking all over, Harry pulled himself up. (Run rẩy toàn thân, Harry gượng người đứng dậy.) His head was spinning (Đầu cậu đang quay cuồng) as though he’d just travelled miles by Floo powder. (như thể cậu vừa đi hàng dặm bằng Bột Floo.) Slowly, he gathered together his wand and the Sorting Hat, (Một cách chậm chạp, cậu nhặt lại đũa phép và chiếc Nón Phân loại,) and, with a huge tug, (và, với một cú giật cực mạnh,) retrieved the glittering sword from the roof of the Basilisk’s mouth. (rút thanh gươm lấp lánh ra khỏi vòm miệng Basilisk.)
+
+Then came a faint moan from the end of the Chamber. (Rồi có một tiếng rên khe khẽ từ cuối Căn phòng.) Ginny was stirring. (Ginny đang cựa quậy.) As Harry hurried towards her, she sat up. (Khi Harry vội vã tiến về phía cô bé, cô bé ngồi bật dậy.) Her bemused eyes travelled from the huge form of the dead Basilisk, (Đôi mắt bàng hoàng của cô bé lướt từ xác hình khổng lồ của con Basilisk đã chết,) over Harry, in his blood-soaked robes, (sang Harry, trong chiếc áo choàng ướt sũng máu,) then to the diary in his hand. (rồi đến cuốn nhật ký trên tay cậu.) She drew a great, shuddering gasp (Cô bé hít vào một hơi thở hắt run rẩy) and tears began to pour down her face. (và nước mắt bắt đầu tuôn rơi trên má.)
+
+‘Harry – oh, Harry – I tried to tell you at b-breakfast, (‘Harry – ôi, Harry – em đã cố nói với anh vào bữa s-sáng,) but I c-couldn’t say it in front of Percy. (nhưng em kh-không thể nói điều đó trước mặt anh Percy.) It was me, Harry – (Đó là em, Harry –) but I – I s-swear I d-didn’t mean to – (nhưng em – em th-thề là em kh-không cố ý –) R-Riddle made me, he t-took me over – and – (R-Riddle đã ép em, hắn ta đã th-thao túng em – và –) how did you kill that – that thing? (làm sao anh giết được cái – cái thứ đó?) W-where’s Riddle? (Riddle ở đ-đâu rồi?) The last thing I r-remember is him coming out of the diary –’ (Điều cuối cùng em nh-nhớ được là hắn ta chui ra từ cuốn nhật ký –’)
+
+‘It’s all right,’ said Harry, (‘Không sao rồi,’ Harry nói,) holding up the diary, (giơ cuốn nhật ký lên,) and showing Ginny the fang hole, (và cho Ginny xem cái lỗ thủng do nanh cắm vào,) ‘Riddle’s finished. (‘Riddle tiêu đời rồi.) Look! Him and the Basilisk. (Nhìn này! Hắn và con Tử xà Basilisk.) C’mon, Ginny, let’s get out of here –’ (Đi nào, Ginny, chúng ta ra khỏi đây thôi –’)
+
+‘I’m going to be expelled!’ Ginny wept, (‘Em sẽ bị đuổi học mất!’ Ginny khóc lóc,) as Harry helped her awkwardly to her feet. (khi Harry lóng ngóng đỡ cô bé đứng dậy.) ‘I’ve looked forward to coming to Hogwarts (‘Em đã mong chờ được đến Hogwarts) ever since B-Bill came (kể từ khi anh B-Bill nhập học) and n-now I’ll have to leave (và b-bây giờ em sẽ phải rời đi) and – w-what’ll Mum and Dad say?’ (và – b-ba má sẽ nói gì đây?’)
+
+Fawkes was waiting for them, (Fawkes đang đợi họ,) hovering in the Chamber entrance. (bay lượn lơ lửng ở lối vào Căn phòng.) Harry urged Ginny forward; (Harry giục Ginny bước tới;) they stepped over the motionless coils (họ bước qua những khúc thân cuộn tròn bất động) of the dead Basilisk, (của con Tử xà Basilisk đã chết,) through the echoing gloom (xuyên qua bóng tối vang vọng) and back into the tunnel. (và trở lại đường hầm.) Harry heard the stone doors close behind them (Harry nghe thấy những cánh cửa đá đóng lại phía sau họ) with a soft hiss. (với một tiếng xì xào nhè nhẹ.)
+
+After a few minutes’ progress (Sau vài phút tiến lên) up the dark tunnel, (dọc theo đường hầm tối tăm,) a distant sound of slowly shifting rock (một âm thanh xa xăm của đá đang dịch chuyển chậm chạp) reached Harry’s ears. (lọt vào tai Harry.)
+
+‘Ron!’ Harry yelled, speeding up. (‘Ron!’ Harry hét lên, tăng tốc.) ‘Ginny’s OK! I’ve got her!’ (‘Ginny không sao! Mình cứu được em ấy rồi!’)
+
+He heard Ron give a strangled cheer (Cậu nghe tiếng Ron reo lên nghẹn ngào) and they turned the next bend (và họ rẽ qua khúc cua tiếp theo) to see his eager face (để nhìn thấy khuôn mặt hăm hở của cậu ấy) staring through the sizeable gap (đang nhìn chằm chằm qua một khoảng trống khá lớn) he had managed to make in the rock fall. (mà cậu ấy đã xoay xở tạo ra được trong đống đá lở.)
+
+‘Ginny!’ Ron thrust an arm (‘Ginny!’ Ron thò một cánh tay) through the gap in the rock (qua khe hở trên đống đá) to pull her through first. (để kéo cô bé qua trước.) ‘You’re alive! I don’t believe it! (‘Em còn sống! Anh không thể tin được! What happened?’ (Chuyện gì đã xảy ra vậy?’)
+
+He tried to hug her (Cậu cố gắng ôm cô bé) but Ginny held him off, sobbing. (nhưng Ginny đẩy cậu ra, nức nở.)
+
+‘But you’re okay, Ginny,’ (‘Nhưng em không sao rồi, Ginny,’) said Ron, beaming at her. (Ron nói, cười rạng rỡ với cô bé.) ‘It’s over now, it’s – (‘Mọi chuyện kết thúc rồi, nó –) where did that bird come from?’ (con chim đó từ đâu ra vậy?’)
+
+Fawkes had swooped through the gap (Fawkes đã sà qua khe hở) after Ginny. (ngay sau Ginny.)
+
+‘He’s Dumbledore’s,’ said Harry, (‘Nó là của cụ Dumbledore,’ Harry nói,) squeezing through himself. (trong lúc tự mình lách qua khe hở.)
+
+‘And how come you’ve got a sword?’ (‘Và sao bồ lại có một thanh gươm?’) said Ron, gaping (Ron nói, há hốc mồm) at the glittering weapon in Harry’s hand. (nhìn chằm chằm vào món vũ khí lấp lánh trong tay Harry.)
+
+‘I’ll explain when we get out of here,’ (‘Mình sẽ giải thích khi chúng ta ra khỏi đây,’) said Harry, (Harry nói,) with a sideways glance at Ginny. (kèm theo một cái liếc nhìn sang Ginny.)
+
+‘But –’ (‘Nhưng –’)
+
+‘Later,’ Harry said quickly. (‘Để sau đi,’ Harry nói nhanh.) He didn’t think it was a good idea (Cậu không nghĩ sẽ là một ý hay) to tell Ron yet (nếu nói ngay cho Ron biết) who’d been opening the Chamber, (ai là người đã mở Căn phòng,) not in front of Ginny, anyway. (dù sao thì cũng không phải trước mặt Ginny.) ‘Where’s Lockhart?’ (‘Lockhart đâu rồi?’)
+
+‘Back there,’ said Ron, grinning (‘Ở đằng sau kìa,’ Ron nói, toét miệng cười) and jerking his head up the tunnel (và hất đầu ngược lên đường hầm) towards the pipe. (về phía đường ống.) ‘He’s in a bad way. (‘Ổng đang ở trong tình trạng tồi tệ lắm.) Come and see.’ (Đến xem mà coi.’)
+
+Led by Fawkes, (Được dẫn đường bởi Fawkes,) whose wide scarlet wings emitted (đôi cánh rộng màu đỏ thẫm của nó tỏa ra) a soft golden glow in the darkness, (một ánh sáng vàng dịu nhẹ trong bóng tối,) they walked all the way back (họ đi bộ suốt quãng đường trở lại) to the mouth of the pipe. (miệng của đường ống.) Gilderoy Lockhart was sitting there, (Gilderoy Lockhart đang ngồi đó,) humming placidly to himself. (đang điềm nhiên ngâm nga một mình.)
+
+‘His memory’s gone,’ said Ron. (‘Trí nhớ của ổng mất tiêu rồi,’ Ron nói.) ‘The Memory Charm backfired. (‘Bùa Lú bị phản tác dụng.) Hit him instead of us. (Đánh trúng ổng thay vì bọn mình.) Hasn’t got a clue who he is, (Chẳng có chút manh mối nào về việc ổng là ai,) or where he is, or who we are. (hay ổng đang ở đâu, hay bọn mình là ai.) I told him to come and wait here. (Mình bảo ổng đến và đợi ở đây.) He’s a danger to himself.’ (Ổng đúng là mối nguy hiểm cho chính mình.’)
+
+Lockhart peered good-naturedly (Lockhart nhìn chằm chằm một cách hiền lành) up at them all. (lên tất cả bọn họ.)
+
+‘Hello,’ he said. (‘Xin chào,’ ông ta nói.) ‘Odd sort of place, this, isn’t it? (‘Chỗ này kỳ cục thật đấy, đúng không?) Do you live here?’ (Các cháu sống ở đây à?’)
+
+‘No,’ said Ron, (‘Không ạ,’ Ron nói,) raising his eyebrows at Harry. (nhướn mày với Harry.)
+
+Harry bent down (Harry cúi xuống) and looked up the long, dark pipe. (và ngước nhìn lên đường ống dài tăm tối.)
+
+‘Have you thought (‘Bồ đã nghĩ ra cách) how we’re going to get back up this?’ (làm sao chúng ta leo ngược lên cái này chưa?’) he said to Ron. (cậu hỏi Ron.)
+
+Ron shook his head, (Ron lắc đầu,) but Fawkes the phoenix (nhưng phượng hoàng Fawkes) had swooped past Harry (đã bay sà qua Harry) and was now fluttering in front of him, (và bây giờ đang vỗ cánh bay lượn trước mặt cậu,) his beady eyes bright in the dark. (đôi mắt đen lóng lánh của nó sáng rực trong bóng tối.) He was waving his long golden tail feathers. (Nó đang vẫy vẫy những chiếc lông đuôi vàng dài của mình.)
+
+Harry looked uncertainly at him. (Harry nhìn nó với vẻ không chắc chắn.)
+
+‘He looks like he wants you to grab hold ...’ (‘Trông nó như thể muốn bồ nắm lấy vậy ...’) said Ron, looking perplexed. (Ron nói, trông có vẻ bối rối.) ‘But you’re much too heavy (‘Nhưng bồ quá nặng) for a bird to pull up there.’ (so với việc để một con chim kéo lên đó.’)
+
+‘Fawkes,’ said Harry, (‘Fawkes,’ Harry nói,) ‘isn’t an ordinary bird.’ (‘không phải là một con chim bình thường.’) He turned quickly to the others. (Cậu nhanh chóng quay sang những người khác.) ‘We’ve got to hold on to each other. (‘Chúng ta phải bám chặt lấy nhau.) Ginny, grab Ron’s hand. (Ginny, nắm tay anh Ron đi.) Professor Lockhart –’ (Giáo sư Lockhart –’)
+
+‘He means you,’ (‘Cậu ấy đang gọi ông đấy,’) said Ron sharply to Lockhart. (Ron gay gắt nói với Lockhart.)
+
+‘You hold Ginny’s other hand.’ (‘Ông nắm lấy tay kia của Ginny đi.’)
+
+Harry tucked the sword and the Sorting Hat (Harry giắt thanh gươm và chiếc Nón Phân loại) into his belt, (vào thắt lưng của mình,) Ron took hold of the back of Harry’s robes, (Ron túm lấy mặt sau áo choàng của Harry,) and Harry reached out (và Harry với tay ra) and took hold of Fawkes’s strangely hot tail feathers. (và nắm lấy những chiếc lông đuôi nóng rẫy một cách kỳ lạ của Fawkes.)
+
+An extraordinary lightness (Một sự nhẹ bẫng phi thường) seemed to spread through his whole body, (dường như lan tỏa khắp cơ thể cậu,) and next second, (và giây tiếp theo,) with a whoosh, (với một tiếng vút,) they were flying upwards through the pipe. (họ đang bay ngược lên qua đường ống.) Harry could hear Lockhart dangling below him, (Harry có thể nghe thấy Lockhart đang lủng lẳng bên dưới mình,) saying, ‘Amazing! Amazing! This is just like magic!’ (nói rằng, ‘Thật kinh ngạc! Thật kinh ngạc! Cái này cứ như có phép thuật vậy!’) The chill air was whipping through Harry’s hair, (Luồng không khí ớn lạnh quất phần phật qua tóc Harry,) and before he’d stopped enjoying the ride, (và trước khi cậu kịp ngừng tận hưởng chuyến đi,) it was over – (nó đã kết thúc –) all four of them were hitting the wet floor (cả bốn người họ đang đập xuống nền đất ướt) of Moaning Myrtle’s bathroom, (của phòng tắm Myrtle Khóc nhè,) and as Lockhart straightened his hat, (và khi Lockhart chỉnh lại cái nón của ông ta,) the sink that hid the pipe (cái bồn rửa tay che giấu đường ống) was sliding back into place. (đang trượt trở lại vị trí cũ.)
+
+Myrtle goggled at them. (Myrtle trợn tròn mắt nhìn họ.)
+
+‘You’re alive,’ she said blankly to Harry. (‘Cậu còn sống,’ cô nàng nói thẫn thờ với Harry.)
+
+‘There’s no need to sound so disappointed,’ (‘Không cần phải tỏ giọng thất vọng như thế đâu,’) he said grimly, (cậu mỉa mai nói,) wiping flecks of blood and slime (vừa lau những vết máu và chất nhầy) off his glasses. (khỏi mắt kính của mình.)
+
+‘Oh, well ... I’d just been thinking. (‘Ồ, chà ... tôi chỉ vừa mới nghĩ là.) If you had died, (Nếu cậu mà chết,) you’d have been welcome to share my toilet,’ (cậu sẽ được hoan nghênh chia sẻ bồn cầu của tôi,’) said Myrtle, blushing silver. (Myrtle nói, đỏ mặt ngượng ngùng thành màu bàng bạc.)
+
+‘Urgh!’ said Ron, (‘Ọe!’ Ron nói,) as they left the bathroom (khi họ rời khỏi phòng tắm) for the dark, deserted corridor outside. (để ra hành lang vắng vẻ, tối tăm bên ngoài.) ‘Harry! I think Myrtle’s got fond of you! (‘Harry! Mình nghĩ Myrtle đã phải lòng bồ rồi đấy! You’ve got competition, Ginny!’ (Em có tình địch rồi đấy, Ginny!’)
+
+But tears were still flooding silently (Nhưng những giọt nước mắt vẫn đang lặng lẽ tuôn trào) down Ginny’s face. (trên khuôn mặt Ginny.)
+
+‘Where now?’ said Ron, (‘Bây giờ đi đâu?’ Ron nói,) with an anxious look at Ginny. (kèm theo một cái nhìn lo lắng về phía Ginny.) Harry pointed. (Harry chỉ tay.)
+
+Fawkes was leading the way, (Fawkes đang dẫn đường,) glowing gold along the corridor. (tỏa sáng rực rỡ dọc theo hành lang.) They strode after him, (Họ sải bước theo nó,) and moments later, (và một lát sau,) found themselves outside Professor McGonagall’s office. (thấy mình đang đứng trước văn phòng của Giáo sư McGonagall.)
+
+Harry knocked and pushed the door open. (Harry gõ cửa và đẩy cánh cửa mở ra.)
+
+          
+    `;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

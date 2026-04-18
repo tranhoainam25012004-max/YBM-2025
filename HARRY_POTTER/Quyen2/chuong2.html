@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 2: Dobby’s Warning</b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="02_Chapter_2_ Dobby_s_Warning.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 0. KHAI BÁO BIẾN TOÀN CỤC ĐỂ TRÁNH LỖI REFERENCE ERROR ---
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Harry managed not to shout out (Harry cố kìm để không hét lên), but it was a close thing (nhưng cũng suýt chút nữa thì hét). The little creature on the bed (Sinh vật nhỏ bé trên giường) had large, bat-like ears (có đôi tai to như tai dơi) and bulging green eyes (và đôi mắt xanh lá lồi ra) the size of tennis balls (to bằng quả bóng tennis). Harry knew instantly (Harry nhận ra ngay lập tức) that this was what had been watching him (rằng đây chính là thứ đã theo dõi cậu) out of the garden hedge that morning (từ ngoài hàng rào khu vườn sáng nay).
+
+As they stared at each other (Khi họ đang trân trân nhìn nhau), Harry heard Dudley’s voice from the hall (Harry nghe thấy giọng của Dudley từ ngoài hành lang).
+
+‘May I take your coats, Mr and Mrs Mason?’ (‘Cháu có thể cất áo khoác giúp ông bà được không, ông bà Mason?’)
+
+The creature slipped off the bed (Sinh vật đó trượt xuống khỏi giường) and bowed so low (và cúi chào thấp đến mức) that the end of its long thin nose touched the carpet (chóp của cái mũi dài nhọn hoắt của nó chạm cả xuống thảm). Harry noticed (Harry để ý thấy) that it was wearing what looked like an old pillowcase (rằng nó đang mặc một thứ trông như cái vỏ gối cũ), with rips for arm and leg holes (bị xé rách để tạo thành lỗ xỏ tay và chân).
+
+‘Er – hello,’ said Harry nervously (‘Ờ – xin chào,’ Harry hồi hộp nói).
+
+‘Harry Potter!’ said the creature (‘Harry Potter!’ sinh vật đó cất tiếng), in a high-pitched voice (bằng một giọng lanh lảnh) Harry was sure would carry down the stairs (mà Harry chắc mẩm là sẽ vang vọng hẳn xuống tận lầu dưới). ‘So long has Dobby wanted to meet you, sir ... (‘Từ lâu Dobby đã rất muốn được gặp ngài ...) Such an honour it is ...’ (Thật là một niềm vinh hạnh ...’)
+
+‘Th-thank you,’ said Harry (‘C-cảm ơn,’ Harry nói), edging along the wall (mon men đi men theo bức tường) and sinking into his desk chair (và ngồi sụp xuống chiếc ghế bàn học), next to Hedwig (cạnh Hedwig), who was asleep in her large cage (đang ngủ say trong cái lồng lớn của nó). He wanted to ask, ‘What are you?’ (Cậu muốn hỏi, ‘Ngươi là cái gì?’) but thought it would sound too rude (nhưng nghĩ như vậy nghe thô lỗ quá), so instead he said, ‘Who are you?’ (nên thay vào đó cậu nói, ‘Bạn là ai?’)
+
+‘Dobby, sir. Just Dobby. (‘Dobby, thưa ngài. Chỉ là Dobby thôi.) Dobby the house-elf,’ said the creature (Dobby một gia tinh,’ sinh vật đó đáp).
+
+‘Oh – really?’ said Harry. (‘Ồ – vậy sao?’ Harry nói.) ‘Er – I don’t want to be rude or anything (‘Ờ – tôi không muốn tỏ ra thô lỗ hay gì đâu), but – this isn’t a great time for me (nhưng – đây không phải là lúc thích hợp để tôi) to have a house-elf in my bedroom.’ (có một gia tinh ở trong phòng ngủ.’)
+
+Aunt Petunia’s high, false laugh (Tiếng cười the thé, giả tạo của dì Petunia) sounded from the living room (vang lên từ phòng khách).
+
+The elf hung his head (Con gia tinh cúi gầm mặt xuống).
+
+‘Not that I’m not pleased to meet you,’ said Harry quickly (‘Không phải là tôi không vui khi gặp bạn,’ Harry vội nói), ‘but, er, is there any particular reason you’re here?’ (‘nhưng, ờ, có lý do đặc biệt nào khiến bạn đến đây không?’)
+
+‘Oh, yes, sir,’ said Dobby earnestly (‘Ồ, có chứ thưa ngài,’ Dobby khẩn khoản nói). ‘Dobby has come to tell you, sir ... (‘Dobby đến để báo cho ngài biết, thưa ngài ...) it is difficult, sir ... (chuyện này khó nói lắm, thưa ngài ...) Dobby wonders where to begin ...’ (Dobby không biết phải bắt đầu từ đâu ...’)
+
+‘Sit down,’ said Harry politely (‘Ngồi xuống đi,’ Harry lịch sự nói), pointing at the bed (chỉ tay về phía chiếc giường).
+
+To his horror (Trước sự kinh hãi của cậu), the elf burst into tears (con gia tinh òa khóc nức nở) – very noisy tears (– những tiếng khóc vô cùng ồn ào).
+
+‘S-sit down!’ he wailed (‘Ng-ngồi xuống ư!’ nó gào khóc). ‘Never ... never ever ...’ (‘Chưa bao giờ ... chưa bao giờ có chuyện đó ...’)
+
+Harry thought he heard the voices downstairs falter (Harry nghĩ rằng cậu nghe thấy những giọng nói dưới nhà chợt khựng lại).
+
+‘I’m sorry,’ he whispered (‘Tôi xin lỗi,’ cậu thì thào), ‘I didn’t mean to offend you or anything.’ (‘tôi không cố ý xúc phạm bạn hay gì đâu.’)
+
+‘Offend Dobby!’ choked the elf (‘Xúc phạm Dobby ư!’ con gia tinh nghẹn ngào). ‘Dobby has never been asked to sit down by a wizard (‘Dobby chưa bao giờ được một phù thủy mời ngồi) – like an equal –’ (– như một người bình đẳng –’)
+
+Harry, trying to say ‘Shh!’ (Harry, vừa cố xuýt xoa ‘Suỵt!’) and look comforting at the same time (vừa tỏ vẻ an ủi), ushered Dobby back onto the bed (đã dẫn Dobby quay lại ngồi lên giường) where he sat hiccoughing (nơi nó ngồi nấc cụt), looking like a large and very ugly doll (trông như một con búp bê to xác và cực kỳ xấu xí). At last he managed to control himself (Cuối cùng nó cũng xoay sở kiểm soát được bản thân), and sat with his great eyes fixed on Harry (và ngồi đực ra với đôi mắt to tướng nhìn Harry chằm chằm) in an expression of watery adoration (với một vẻ ngưỡng mộ ướt át).
+
+‘You can’t have met many decent wizards,’ said Harry (‘Chắc là bạn chưa gặp được nhiều phù thủy tử tế,’ Harry nói), trying to cheer him up (cố gắng làm nó vui lên).
+
+Dobby shook his head (Dobby lắc đầu). Then, without warning (Rồi, không báo trước), he leapt up (nó bật dậy) and started banging his head furiously on the window (và bắt đầu đập đầu điên cuồng vào cửa sổ), shouting, ‘Bad Dobby! Bad Dobby!’ (miệng la hét, ‘Dobby tồi tệ! Dobby tồi tệ!’)
+
+‘Don’t – what are you doing?’ Harry hissed (‘Đừng – bạn đang làm cái gì vậy?’ Harry rít lên), springing up (bật dậy) and pulling Dobby back onto the bed (và kéo Dobby trở lại giường). Hedwig had woken up (Hedwig đã thức giấc) with a particularly loud screech (với một tiếng rít đặc biệt chói tai) and was beating her wings wildly against the bars of her cage (và đang đập cánh loạn xạ vào những song sắt của lồng).
+
+‘Dobby had to punish himself, sir,’ said the elf (‘Dobby phải tự trừng phạt mình, thưa ngài,’ con gia tinh nói), who had gone slightly cross-eyed (với hai mắt hơi lác đi). ‘Dobby almost spoke ill of his family, sir ...’ (‘Dobby suýt nữa thì nói xấu gia đình mình, thưa ngài ...’)
+
+‘Your family?’ (‘Gia đình bạn?’)
+
+‘The wizard family Dobby serves, sir ... (‘Gia đình phù thủy mà Dobby phục vụ, thưa ngài ...) Dobby is a house-elf (Dobby là một gia tinh) – bound to serve one house and one family for ever ...’ (– bị ràng buộc phải phục vụ một ngôi nhà và một gia đình mãi mãi ...’)
+
+‘Do they know you’re here?’ asked Harry curiously (‘Họ có biết bạn ở đây không?’ Harry tò mò hỏi).
+
+Dobby shuddered (Dobby rùng mình).
+
+‘Oh no, sir, no ... (‘Ôi không, thưa ngài, không ...) Dobby will have to punish himself most grievously (Dobby sẽ phải tự trừng phạt mình một cách đau đớn nhất) for coming to see you, sir. (vì đã đến gặp ngài, thưa ngài.) Dobby will have to shut his ears in the oven door for this. (Dobby sẽ phải kẹp tai mình vào cửa lò nướng vì chuyện này.) If they ever knew, sir –’ (Nếu họ mà biết được, thưa ngài –’)
+
+‘But won’t they notice if you shut your ears in the oven door?’ (‘Nhưng chẳng lẽ họ không chú ý nếu bạn kẹp tai vào cửa lò nướng sao?’)
+
+‘Dobby doubts it, sir. (‘Dobby nghi ngờ điều đó, thưa ngài.) Dobby is always having to punish himself for something, sir. (Dobby lúc nào cũng phải tự trừng phạt mình vì một chuyện gì đó, thưa ngài.) They lets Dobby get on with it, sir. (Họ mặc kệ cho Dobby tự làm việc đó, thưa ngài.) Sometimes they reminds me to do extra punishments ...’ (Đôi khi họ còn nhắc nhở tôi phải thực hiện thêm các hình phạt ...’)
+
+‘But why don’t you leave? Escape?’ (‘Nhưng tại sao bạn không bỏ đi? Trốn thoát?’)
+
+‘A house-elf must be set free, sir. (‘Một gia tinh phải được giải phóng, thưa ngài.) And the family will never set Dobby free ... (Và gia đình đó sẽ không bao giờ giải phóng cho Dobby ...) Dobby will serve the family until he dies, sir ...’ (Dobby sẽ phục vụ gia đình đó cho đến lúc chết, thưa ngài ...’)
+
+Harry stared (Harry trân trân nhìn)
+
+‘And I thought I was hard-done-by (‘Và tôi cứ tưởng mình đã quá khổ sở) staying here for another four weeks,’ he said. (khi phải ở lại đây thêm bốn tuần nữa,’ cậu nói.) ‘This makes the Dursleys sound almost human. (‘Điều này khiến nhà Dursley nghe có vẻ gần giống con người hơn rồi đấy.) Can’t anyone help you? Can’t I?’ (Không ai có thể giúp bạn sao? Tôi không thể giúp gì được sao?’)
+
+Almost at once, Harry wished he hadn’t spoken. (Gần như ngay lập tức, Harry ước gì mình đã không nói ra điều đó.) Dobby dissolved again into wails of gratitude. (Dobby lại vỡ òa ra trong những tiếng gào khóc biết ơn.)
+
+‘Please,’ Harry whispered frantically, (‘Làm ơn,’ Harry điên cuồng thì thầm,) ‘please be quiet. (‘làm ơn giữ im lặng đi.) If the Dursleys hear anything, if they know you’re here ...’ (Nếu nhà Dursley nghe thấy bất cứ tiếng động nào, nếu họ biết bạn ở đây ...’)
+
+‘Harry Potter asks if he can help Dobby ... (‘Harry Potter hỏi xem ngài ấy có thể giúp Dobby không ...) Dobby has heard of your greatness, sir, (Dobby đã nghe về sự vĩ đại của ngài, thưa ngài,) but of your goodness, Dobby never knew ...’ (nhưng về lòng tốt của ngài, Dobby chưa từng được biết ...’)
+
+Harry, who was feeling distinctly hot in the face, said, (Harry, người đang cảm thấy mặt mình nóng ran lên rõ rệt, nói,) ‘Whatever you’ve heard about my greatness is a load of rubbish. (‘Bất cứ điều gì bạn nghe được về sự vĩ đại của tôi đều là một mớ rác rưởi vớ vẩn thôi.) I’m not even top of my year at Hogwarts, (Tôi thậm chí còn không đứng đầu khóa của mình ở Hogwarts,) that’s Hermione, she –’ (đó là Hermione, bồ ấy –’)
+
+But he stopped quickly, because thinking about Hermione was painful. (Nhưng cậu dừng lại ngay, vì nghĩ đến Hermione lúc này thật đau lòng.)
+
+‘Harry Potter is humble and modest,’ said Dobby reverently, (‘Harry Potter thật khiêm tốn và nhún nhường,’ Dobby cung kính nói,) his orb-like eyes aglow. (đôi mắt to như hai quả cầu của nó sáng rực lên.) ‘Harry Potter speaks not of his triumph over He Who Must Not Be Named.’ (‘Harry Potter không hề nhắc đến chiến thắng của mình trước Kẻ-Mà-Ai-Cũng-Biết-Là-Ai.’)
+
+‘Voldemort?’ said Harry. (‘Voldemort sao?’ Harry nói.)
+
+Dobby clapped his hands over his bat ears and moaned, (Dobby ôm hai tay lên đôi tai dơi của mình và rên rỉ,) ‘Ah, speak not the name, sir! Speak not the name!’ (‘Á, xin đừng gọi cái tên đó, thưa ngài! Xin đừng gọi cái tên đó!’)
+
+‘Sorry,’ said Harry quickly. (‘Xin lỗi,’ Harry vội nói.) ‘I know lots of people don’t like it – my friend Ron ...’ (‘Tôi biết nhiều người không thích cái tên đó – bạn tôi Ron ...’)
+
+He stopped again. Thinking about Ron was painful, too. (Cậu lại dừng lại. Việc nghĩ về Ron cũng thật đau lòng.)
+
+Dobby leaned towards Harry, his eyes wide as headlamps. (Dobby chồm về phía Harry, đôi mắt nó mở to như hai cái đèn pha.)
+
+‘Dobby heard tell,’ he said hoarsely, (‘Dobby nghe người ta kể lại,’ nó nói khàn khàn,) ‘that Harry Potter met the Dark Lord for a second time, just weeks ago ... (‘rằng Harry Potter đã chạm trán Chúa tể Hắc ám lần thứ hai, chỉ mới vài tuần trước ...) that Harry Potter escaped yet again.’ (rằng Harry Potter lại trốn thoát một lần nữa.’)
+
+Harry nodded and Dobby’s eyes suddenly shone with tears. (Harry gật đầu và đôi mắt Dobby bỗng nhiên ngấn lệ rưng rưng.)
+
+‘Ah, sir,’ he gasped, (‘Chao ôi, thưa ngài,’ nó hổn hển,) dabbing his face with a corner of the grubby pillowcase he was wearing. (chùi mặt bằng một góc của cái vỏ gối bẩn thỉu mà nó đang mặc.) ‘Harry Potter is valiant and bold! (‘Harry Potter thật dũng cảm và gan dạ!) He has braved so many dangers already! (Ngài ấy đã đương đầu với biết bao nhiêu hiểm nguy rồi!) But Dobby has come to protect Harry Potter, to warn him, (Nhưng Dobby đến đây để bảo vệ Harry Potter, để cảnh báo ngài ấy,) even if he does have to shut his ears in the oven door later ... (ngay cả khi nó có phải kẹp tai mình vào cửa lò nướng sau đó ...) Harry Potter must not go back to Hogwarts.’ (Harry Potter không được quay lại Hogwarts.’)
+
+There was a silence broken only by the chink of knives and forks from downstairs (Có một sự im lặng chỉ bị phá vỡ bởi tiếng lách cách của dao nĩa từ dưới lầu) and the distant rumble of Uncle Vernon’s voice. (và tiếng ầm ừ xa xa của giọng dượng Vernon.)
+
+‘W-what?’ Harry stammered. (‘C-cái gì?’ Harry lắp bắp.) ‘But I’ve got to go back – term starts on September the first. (‘Nhưng tôi phải quay lại đó chứ – học kỳ bắt đầu vào ngày mùng một tháng Chín.) It’s all that’s keeping me going. (Đó là tất cả những gì giúp tôi sống tiếp.) You don’t know what it’s like here. (Bạn không biết ở đây như thế nào đâu.) I don’t belong here. I belong in your world – at Hogwarts.’ (Tôi không thuộc về nơi này. Tôi thuộc về thế giới của các bạn – tại Hogwarts.’)
+
+‘No, no, no,’ squeaked Dobby, (‘Không, không, không,’ Dobby rít lên,) shaking his head so hard his ears flapped. (lắc đầu mạnh đến nỗi hai cái tai phấp phới.) ‘Harry Potter must stay where he is safe. (‘Harry Potter phải ở lại nơi ngài ấy được an toàn.) He is too great, too good, to lose. (Ngài ấy quá vĩ đại, quá tốt đẹp, không thể để mất đi được.) If Harry Potter goes back to Hogwarts, he will be in mortal danger.’ (Nếu Harry Potter quay lại Hogwarts, ngài ấy sẽ gặp nguy hiểm chết người.’)
+
+‘Why?’ said Harry in surprise. (‘Tại sao?’ Harry ngạc nhiên hỏi.)
+
+‘There is a plot, Harry Potter. (‘Có một âm mưu, Harry Potter.) A plot to make most terrible things happen at Hogwarts School of Witchcraft and Wizardry this year,’ (Một âm mưu nhằm tạo ra những điều khủng khiếp nhất tại Trường Phù thủy và Pháp sư Hogwarts vào năm nay,’) whispered Dobby, suddenly trembling all over. (Dobby thì thầm, đột nhiên run rẩy khắp toàn thân.) ‘Dobby has known it for months, sir. (‘Dobby đã biết điều này từ nhiều tháng nay rồi, thưa ngài.) Harry Potter must not put himself in peril. (Harry Potter không được đặt bản thân mình vào vòng nguy hiểm.) He is too important, sir!’ (Ngài ấy quá quan trọng, thưa ngài!’)
+
+‘What terrible things?’ said Harry at once. (‘Những điều khủng khiếp gì?’ Harry hỏi ngay.) ‘Who’s plotting them?’ (‘Ai đang vạch ra âm mưu đó?’)
+
+Dobby made a funny choking noise (Dobby phát ra một tiếng nghẹn kỳ cục) and then banged his head madly against the wall. (rồi bắt đầu đập đầu điên cuồng vào tường.)
+
+‘All right!’ cried Harry, (‘Được rồi!’ Harry kêu lên,) grabbing the elf’s arm to stop him. (chộp lấy cánh tay con gia tinh để cản nó lại.) ‘You can’t say, I understand. (‘Bạn không thể nói được, tôi hiểu rồi.) But why are you warning me?’ (Nhưng tại sao bạn lại đến cảnh báo cho tôi?’) A sudden, unpleasant thought struck him. (Một ý nghĩ khó chịu chợt lóe lên trong đầu cậu.) ‘Hang on – this hasn’t got anything to do with Vol– sorry – with You Know Who, has it? (‘Đợi đã – chuyện này không có liên quan gì tới Vol– xin lỗi – tới Kẻ-Mà-Ai-Cũng-Biết-Là-Ai, đúng không?) You could just shake or nod,’ he added hastily, (Bạn chỉ cần lắc hoặc gật đầu thôi,’ cậu vội vàng nói thêm,) as Dobby’s head tilted worryingly close to the wall again. (khi đầu của Dobby lại nghiêng nghiêng áp sát vào tường một cách đáng ngại.)
+
+Slowly, Dobby shook his head. (Dobby chậm rãi lắc đầu.)
+
+‘Not – not He Who Must Not Be Named, sir.’ (‘Không – không phải Kẻ-Mà-Ai-Cũng-Biết-Là-Ai đâu, thưa ngài.’)
+
+But Dobby’s eyes were wide (Nhưng đôi mắt của Dobby mở to) and he seemed to be trying to give Harry a hint. (và nó dường như đang cố ra ám hiệu cho Harry.) Harry, however, was completely at sea. (Tuy nhiên, Harry lại hoàn toàn mù tịt.)
+
+‘He hasn’t got a brother, has he?’ (‘Hắn làm gì có anh em trai nào, đúng không?’)
+
+Dobby shook his head, his eyes wider than ever. (Dobby lắc đầu, mắt nó mở to hơn bao giờ hết.)
+
+‘Well then, I can’t think who else would have a chance of making horrible things happen at Hogwarts,’ said Harry. (‘Vậy thì, tôi không thể nghĩ ra ai khác có cơ hội làm những điều khủng khiếp đó xảy ra ở Hogwarts,’ Harry nói.) ‘I mean, there’s Dumbledore, for one thing (‘Ý tôi là, trước hết ở đó có thầy Dumbledore) – you know who Dumbledore is, don’t you?’ (– bạn biết Dumbledore là ai mà, đúng không?’)
+
+Dobby bowed his head. (Dobby cúi đầu.)
+
+‘Albus Dumbledore is the greatest Headmaster Hogwarts has ever had. (‘Albus Dumbledore là vị Hiệu trưởng vĩ đại nhất mà Hogwarts từng có.) Dobby knows it, sir. (Dobby biết điều đó, thưa ngài.) Dobby has heard Dumbledore’s powers rival those of He Who Must Not Be Named at the height of his strength. (Dobby có nghe nói quyền năng của cụ Dumbledore ngang ngửa với Kẻ-Mà-Ai-Cũng-Biết-Là-Ai ở thời kỳ đỉnh cao sức mạnh.) But sir,’ Dobby’s voice dropped to an urgent whisper, (Nhưng thưa ngài,’ giọng Dobby trầm xuống thành một tiếng thì thầm khẩn thiết,) ‘there are powers Dumbledore doesn’t ... (‘có những quyền năng mà cụ Dumbledore không ...) powers no decent wizard ...’ (những quyền năng mà không một phù thủy tử tế nào ...’)
+
+And before Harry could stop him, (Và trước khi Harry kịp ngăn cậu ta lại,) Dobby bounded off the bed, (Dobby nhảy khỏi giường,) seized Harry’s desk lamp (chộp lấy chiếc đèn bàn của Harry) and started beating himself around the head (và bắt đầu tự đập vào đầu mình) with ear-splitting yelps. (cùng những tiếng ré lên chói tai.)
+
+A sudden silence (Một sự im lặng đột ngột) fell downstairs. (bao trùm tầng dưới.) Two seconds later (Hai giây sau) Harry, heart thudding madly, (Harry, tim đập thình thịch liên hồi,) heard Uncle Vernon coming into the hall, (nghe tiếng dượng Vernon bước ra sảnh,) calling, (gọi lớn,) ‘Dudley must have left his television on again, (Chắc là Dudley lại để tivi bật rồi,) the little tyke!’ (thằng nhóc ranh mãnh này!’)
+
+‘Quick! In the wardrobe!’ (‘Nhanh lên! Vào trong tủ quần áo!’) hissed Harry, (Harry rít lên,) stuffing Dobby in, (nhét Dobby vào trong,) shutting the door (đóng cửa lại) and flinging himself onto the bed (và ném mình lên giường) just as the doorhandle turned. (ngay lúc tay nắm cửa xoay.)
+
+‘What – the – devil – are – you – doing?’ (‘Mày – đang – làm – cái – quái – gì – thế?’) said Uncle Vernon through gritted teeth, (dượng Vernon nói qua kẽ răng nghiến chặt,) his face horribly close to Harry’s. (mặt dượng dí sát vào Harry một cách đáng sợ.) ‘You’ve just ruined the punchline (Mày vừa phá hỏng đoạn kết) of my Japanese-golfer joke ... (trong câu chuyện cười về tay gôn người Nhật của tao rồi đấy ...) one more sound (thêm một tiếng động nữa) and you’ll wish you’d never been born, boy!’ (và mày sẽ ước gì mình chưa từng được sinh ra, ranh con!’)
+
+He stomped flat-footed (Dượng dậm chân huỳnh huỵch) from the room. (bước ra khỏi phòng.)
+
+Shaking, (Run rẩy,) Harry let Dobby out of the wardrobe. (Harry thả Dobby ra khỏi tủ quần áo.)
+
+‘See what it’s like here?’ he said. (‘Thấy ở đây như thế nào chưa?’ cậu nói.) ‘See why I’ve got to go back to Hogwarts? (‘Hiểu tại sao tôi phải quay lại Hogwarts chưa?) It’s the only place I’ve got – (Đó là nơi duy nhất tôi có –) well, I think I’ve got friends.’ (chà, tôi nghĩ là tôi có bạn bè.’)
+
+‘Friends who don’t even write to Harry Potter?’ (‘Những người bạn mà thậm chí không thèm viết thư cho Harry Potter sao?’) said Dobby slyly. (Dobby ranh mãnh nói.)
+
+‘I expect they’ve just been – hang on,’ (‘Tôi cho là họ chỉ đang – khoan đã,’) said Harry, frowning. (Harry nói, cau mày.) ‘How do you know (Làm sao anh biết) my friends haven’t been writing to me?’ (bạn bè không hề viết thư cho tôi?’)
+
+Dobby shuffled his feet. (Dobby lê chân lúng túng.)
+
+‘Harry Potter mustn’t be angry with Dobby – (‘Harry Potter đừng giận Dobby –) Dobby did it for the best ...’ (Dobby làm vậy vì muốn tốt nhất thôi ...’)
+
+‘Have you been stopping my letters?’ (‘Anh đã chặn thư của tôi sao?’)
+
+‘Dobby has them here, sir,’ (‘Dobby giữ chúng ở đây, thưa cậu,’) said the elf. (con gia tinh nói.) Stepping nimbly out of Harry’s reach, (Nhanh nhẹn lùi ra khỏi tầm với của Harry,) he pulled a thick wad of envelopes (nó lôi ra một xấp phong bì dày) from the inside of the pillowcase (từ bên trong chiếc vỏ gối) he was wearing. (mà nó đang mặc trên người.) Harry could make out (Harry có thể nhận ra) Hermione’s neat writing, (nét chữ nắn nót của Hermione,) Ron’s untidy scrawl (chữ viết nguệch ngoạc của Ron) and even a scribble that looked as though it was (và cả những nét gạch xóa trông có vẻ như là) from the Hogwarts gamekeeper, Hagrid. (từ bác bảo vệ trường Hogwarts, Hagrid.)
+
+Dobby blinked anxiously (Dobby lo lắng chớp mắt) up at Harry. (nhìn lên Harry.)
+
+‘Harry Potter mustn’t be angry ... (‘Harry Potter đừng giận nha ...) Dobby hoped ... (Dobby hy vọng ...) if Harry Potter thought his friends had forgotten him ... (nếu Harry Potter nghĩ rằng bạn bè đã quên mình ...) Harry Potter might not want to go back to school, sir ...’ (Harry Potter có thể sẽ không muốn quay lại trường nữa, thưa cậu ...’)
+
+Harry wasn’t listening. (Harry không nghe nữa.) He made a grab for the letters, (Cậu chồm tới chộp lấy những lá thư,) but Dobby jumped out of reach. (nhưng Dobby đã nhảy ra khỏi tầm với.)
+
+‘Harry Potter will have them, sir, (‘Harry Potter sẽ có lại chúng, thưa cậu,) if he gives Dobby his word (nếu cậu hứa với Dobby) that he will not return to Hogwarts. (rằng cậu sẽ không quay lại Hogwarts.) Ah, sir, this is a danger you must not face! (Ôi, thưa cậu, đây là một mối nguy hiểm mà cậu không được phép đối mặt!) Say you won’t go back, sir!’ (Hãy nói là cậu sẽ không quay lại đi, thưa cậu!’)
+
+‘No,’ said Harry angrily. (‘Không,’ Harry tức giận nói.) ‘Give me my friends’ letters!’ (‘Trả lại thư của bạn bè cho tôi!’)
+
+‘Then Harry Potter leaves Dobby no choice,’ (‘Vậy thì Harry Potter không để cho Dobby có sự lựa chọn nào khác,’) said the elf sadly. (con gia tinh buồn bã nói.)
+
+Before Harry could move, (Trước khi Harry kịp nhúc nhích,) Dobby had darted to the bedroom door, (Dobby đã lao ra cửa phòng ngủ,) pulled it open – (kéo tung nó ra –) and sprinted down the stairs. (và phóng vọt xuống cầu thang.)
+
+Mouth dry, stomach lurching, (Miệng đắng ngắt, ruột gan cồn cào,) Harry sprang after him, (Harry lao theo nó,) trying not to make a sound. (cố gắng không tạo ra tiếng động.) He jumped the last six stairs, (Cậu nhảy qua sáu bậc thang cuối cùng,) landing cat-like on the hall carpet, (tiếp đất nhẹ như mèo trên tấm thảm ngoài sảnh,) looking around for Dobby. (nhìn quanh tìm Dobby.) From the dining room (Từ phòng ăn) he heard Uncle Vernon saying, (cậu nghe tiếng dượng Vernon đang nói,) ‘... tell Petunia that very funny story (‘... hãy kể cho Petunia nghe câu chuyện rất buồn cười) about those American plumbers, Mr Mason, (về những người thợ sửa ống nước nước Mỹ đó đi, ông Mason,) she’s been dying to hear ...’ (bà ấy đang khao khát được nghe lắm đấy ...’)
+
+Harry ran up the hall into the kitchen (Harry chạy dọc theo hành lang vào bếp) and felt his stomach disappear. (và cảm thấy bụng dạ mình như đánh thót một cái.)
+
+Aunt Petunia’s masterpiece of a pudding, (Kiệt tác bánh pudding của dì Petunia,) the mountain of cream and sugared violets, (một núi kem và hoa violet tẩm đường,) was floating up near the ceiling. (đang lơ lửng gần trần nhà.) On top of a cupboard in the corner (Trên nóc chiếc tủ ở góc bếp) crouched Dobby. (Dobby đang thu mình ngồi đó.)
+
+‘No,’ croaked Harry. (‘Không,’ Harry khàn giọng.) ‘Please ... they’ll kill me ...’ (‘Làm ơn ... họ sẽ giết tôi mất ...’)
+
+‘Harry Potter must say (‘Harry Potter phải nói) he’s not going back to school –’ (cậu ấy sẽ không quay lại trường –’)
+
+‘Dobby ... please ...’ (‘Dobby ... làm ơn đi ...’)
+
+‘Say it, sir ...’ (‘Nói đi, thưa cậu ...’)
+
+‘I can’t!’ (‘Tôi không thể!’)
+
+Dobby gave him a tragic look. (Dobby nhìn cậu với ánh mắt bi thảm.)
+
+‘Then Dobby must do it, sir, (‘Vậy thì Dobby phải làm thế thôi, thưa cậu,) for Harry Potter’s own good.’ (vì lợi ích của chính Harry Potter.’)
+
+The pudding fell to the floor (Chiếc bánh pudding rơi xuống sàn) with a heart-stopping crash. (với một tiếng vỡ thót tim.) Cream splattered the windows and walls (Kem văng tung tóe lên cửa sổ và tường) as the dish shattered. (khi chiếc đĩa vỡ tan tành.)
+
+With a crack like a whip, (Với một tiếng "bốp" như roi quất,) Dobby vanished. (Dobby biến mất.)
+
+There were screams from the dining room (Có những tiếng la hét từ phòng ăn) and Uncle Vernon burst into the kitchen (và dượng Vernon xông vào bếp) to find Harry, rigid with shock, (thấy Harry đang cứng đờ vì sốc,) covered from head to foot in Aunt Petunia’s pudding. (bị phủ từ đầu đến chân bằng bánh pudding của dì Petunia.)
+
+At first, it looked as though (Lúc đầu, có vẻ như) Uncle Vernon would manage to gloss the whole thing over (dượng Vernon sẽ xoay xở để che đậy mọi chuyện) (‘Just our nephew – very disturbed – (‘Chỉ là thằng cháu của chúng tôi – thần kinh hơi bất ổn –) meeting strangers upsets him, (việc gặp người lạ làm nó hoảng loạn,) so we kept him upstairs ...’) (nên chúng tôi mới giữ nó ở trên lầu ...’)) He shooed the shocked Masons (Dượng lùa ông bà Mason đang bị sốc) back into the dining room, (quay lại phòng ăn,) promised Harry he would flay him to within an inch of his life (hứa với Harry rằng dượng sẽ đánh đòn cậu đến thừa sống thiếu chết) when the Masons had left, (khi nhà Mason rời đi,) and handed him a mop. (và dúi vào tay cậu một cây lau nhà.) Aunt Petunia dug some ice-cream out of the freezer (Dì Petunia lấy một ít kem ra khỏi tủ đông) and Harry, still shaking, (và Harry, người vẫn đang run lẩy bẩy,) started scrubbing the kitchen clean. (bắt đầu lau dọn nhà bếp cho sạch sẽ.)
+
+Uncle Vernon might still have been able to make his deal – (Dượng Vernon có lẽ vẫn có thể chốt được thỏa thuận làm ăn của mình –) if it hadn’t been for the owl. (nếu như không có con cú đó.)
+
+Aunt Petunia was just handing round a box of after-dinner mints (Dì Petunia vừa mới chuyền tay một hộp kẹo bạc hà tráng miệng sau bữa tối) when a huge barn owl swooped through the dining room window, (thì một con cú lợn khổng lồ sà qua cửa sổ phòng ăn,) dropped a letter on Mrs Mason’s head (thả một lá thư trúng đầu bà Mason) and swooped out again. (rồi lại sà ra ngoài.) Mrs Mason screamed like a banshee (Bà Mason hét lên như một nữ thần báo tử) and ran from the house, shouting about lunatics. (và chạy thục mạng ra khỏi nhà, la hét về những kẻ điên rồ.) Mr Mason stayed just long enough (Ông Mason chỉ nán lại vừa đủ lâu) to tell the Dursleys that his wife was mortally afraid of birds of all shapes and sizes, (để nói với gia đình Dursley rằng vợ ông sợ chết khiếp các loại chim đủ mọi hình dáng và kích cỡ,) and to ask whether this was their idea of a joke. (và để hỏi xem liệu đây có phải là trò đùa của họ hay không.)
+
+Harry stood in the kitchen, (Harry đứng trong bếp,) clutching the mop for support (bám chặt lấy cây lau nhà để tựa vào) as Uncle Vernon advanced on him, (khi dượng Vernon tiến về phía cậu,) a demonic glint in his tiny eyes. (với một tia nhìn ác quỷ trong đôi mắt nhỏ xíu của dượng.)
+
+‘Read it!’ he hissed evilly, (‘Đọc đi!’ dượng rít lên một cách độc ác,) brandishing the letter the owl had delivered. (vung vẩy lá thư mà con cú vừa giao.) ‘Go on – read it!’ (‘Đọc đi – đọc nó đi!’)
+
+Harry took it. (Harry cầm lấy nó.) It did not contain birthday greetings. (Nó không hề chứa những lời chúc mừng sinh nhật.)
+
+Dear Mr Potter, (Kính gửi Cậu Potter,)
+
+We have received intelligence (Chúng tôi đã nhận được thông tin tình báo) that a Hover Charm was used at your place of residence (rằng một Bùa Bay đã được sử dụng tại nơi cư trú của cậu) this evening at twelve minutes past nine. (vào lúc chín giờ mười hai phút tối nay.) As you know, underage wizards are not permitted to perform spells outside school, (Như cậu đã biết, các phù thủy vị thành niên không được phép thực hiện phép thuật bên ngoài trường học,) and further spellwork on your part (và việc cậu tiếp tục sử dụng phép thuật) may lead to expulsion from said school (có thể dẫn đến việc bị đuổi khỏi ngôi trường nói trên) (Decree for the Reasonable Restriction of Underage Sorcery, 1875, Paragraph C). ( (Nghị định về Hạn chế Hợp lý đối với Phép thuật Vị thành niên, năm 1875, Khoản C) ).
+
+We would also ask you to remember (Chúng tôi cũng yêu cầu cậu nhớ cho rằng) that any magical activity which risks notice by members of the non-magical community (Muggles) (bất kỳ hoạt động pháp thuật nào có nguy cơ gây sự chú ý đối với các thành viên của cộng đồng phi pháp thuật (Muggle)) is a serious offence, (là một vi phạm nghiêm trọng,) under section 13 of the International Confederation of Warlocks’ Statute of Secrecy. (theo điều 13 của Đạo luật Bảo mật của Liên đoàn Pháp sư Quốc tế.)
+
+Enjoy your holidays! (Chúc cậu tận hưởng kỳ nghỉ của mình!)
+
+Yours sincerely, (Trân trọng,)
+
+Mafalda Hopkirk (Mafalda Hopkirk)
+
+Improper Use of Magic Office (Văn phòng Lạm dụng Pháp thuật)
+
+Ministry of Magic (Bộ Pháp thuật)
+
+Harry looked up from the letter and gulped. (Harry ngẩng lên từ bức thư và nuốt nước bọt.)
+
+‘You didn’t tell us you weren’t allowed to use magic outside school,’ (‘Mày không nói với bọn tao là mày không được phép dùng phép thuật ngoài trường học,’) said Uncle Vernon, a mad gleam dancing in his eyes. (dượng Vernon nói, một tia sáng điên cuồng nhảy múa trong đôi mắt dượng.) ‘Forgot to mention it ... slipped your mind, I dare say ...’ (‘Quên nhắc đến cơ đấy ... vuột khỏi trí nhớ của mày cơ đấy, tao dám cá là vậy ...’)
+
+He was bearing down on Harry like a great bulldog, (Dượng đang lao sầm sập về phía Harry như một con chó mặt xệ khổng lồ,) all his teeth bared. (nhe hết cả răng ra.) ‘Well, I’ve got news for you, boy ... (‘Chà, tao có tin mới cho mày đây, ranh con ...) I’m locking you up ... (Tao sẽ nhốt mày lại ...) you’re never going back to that school ... never ... (mày sẽ không bao giờ được quay lại cái trường đó nữa ... không bao giờ ...) and if you try and magic yourself out – they’ll expel you!’ (và nếu mày cố dùng phép thuật để thoát ra ngoài – họ sẽ đuổi học mày!’)
+
+And laughing like a maniac, he dragged Harry back upstairs. (Và vừa cười như một kẻ điên, dượng vừa lôi xềnh xệch Harry lên lầu.)
+
+Uncle Vernon was as bad as his word. (Dượng Vernon đã làm đúng như lời đe dọa tồi tệ của mình.) The following morning, (Sáng hôm sau,) he paid a man to fit bars on Harry’s window. (dượng đã thuê một người đàn ông đến lắp chấn song trên cửa sổ của Harry.) He himself fitted the cat-flap in the bedroom door, (Chính dượng tự tay lắp một cái cửa cho mèo trên cửa phòng ngủ,) so that small amounts of food could be pushed inside three times a day. (để có thể đẩy những phần thức ăn nhỏ vào trong ba lần một ngày.) They let Harry out to use the bathroom morning and evening. (Họ chỉ cho Harry ra ngoài để dùng phòng tắm vào buổi sáng và buổi tối.) Otherwise, he was locked in his room around the clock. (Ngoài ra, cậu bị nhốt trong phòng suốt ngày đêm.)
+
+Three days later, (Ba ngày sau,) the Dursleys were showing no sign of relenting (nhà Dursley vẫn không có dấu hiệu gì là sẽ mủi lòng) and Harry couldn’t see any way out of his situation. (và Harry không thể tìm thấy bất kỳ lối thoát nào cho hoàn cảnh của mình.) He lay on his bed (Cậu nằm trên giường) watching the sun sinking behind the bars on the window (nhìn mặt trời lặn sau những chấn song trên cửa sổ) and wondered miserably what was going to happen to him. (và tự hỏi một cách đau khổ xem chuyện gì sẽ xảy ra với mình.)
+
+What was the good of magicking himself out of his room (Làm phép để thoát khỏi phòng thì có ích lợi gì) if Hogwarts would expel him for doing it? (nếu Hogwarts sẽ đuổi học cậu vì làm điều đó?) Yet life at Privet Drive had reached an all-time low. (Tuy nhiên, cuộc sống ở đường Privet Drive đã chạm đến mức tồi tệ nhất từ trước đến nay.) Now the Dursleys knew they weren’t going to wake up as fruitbats, (Bây giờ khi nhà Dursley biết rằng họ sẽ không bị biến thành loài dơi ăn quả khi thức dậy,) he had lost his only weapon. (cậu đã mất đi thứ vũ khí duy nhất của mình.) Dobby might have saved Harry from horrible happenings at Hogwarts, (Dobby có thể đã cứu Harry khỏi những chuyện kinh khủng ở Hogwarts,) but the way things were going, (nhưng với đà này,) he’d probably starve to death anyway. (cậu có lẽ sẽ chết đói mất thôi.)
+
+The cat-flap rattled (Cái cửa cho mèo lách cách kêu) and Aunt Petunia’s hand appeared, (và bàn tay của dì Petunia xuất hiện,) pushing a bowl of tinned soup into the room. (đẩy một bát súp đóng hộp vào trong phòng.) Harry, whose insides were aching with hunger, (Harry, người mà ruột gan đang đau thắt lại vì đói,) jumped off his bed and seized it. (nhảy khỏi giường và chộp lấy nó.) The soup was stone cold, (Bát súp lạnh ngắt như đá,) but he drank half of it in one gulp. (nhưng cậu đã uống cạn một nửa chỉ trong một hớp.) Then he crossed the room to Hedwig’s cage (Sau đó cậu đi ngang qua phòng đến lồng của Hedwig) and tipped the soggy vegetables at the bottom of the bowl (và trút những miếng rau củ sũng nước ở đáy bát) into her empty food tray. (vào cái khay đựng thức ăn trống rỗng của nó.) She ruffled her feathers (Nó xù lông lên) and gave him a look of deep disgust. (và trao cho cậu một ánh mắt chán ghét tột độ.)
+
+‘It’s no good turning your beak up at it, (‘Mày có hếch mỏ lên chê bai cũng vô ích thôi,) that’s all we’ve got,’ (đó là tất cả những gì chúng ta có,’) said Harry grimly. (Harry nói một cách rầu rĩ.)
+
+He put the empty bowl back on the floor (Cậu đặt cái bát không trở lại trên sàn nhà) next to the cat-flap (cạnh cái cửa cho mèo) and lay back down on the bed, (và nằm ngửa ra giường,) somehow even hungrier than he had been before the soup. (không hiểu sao lại còn thấy đói hơn so với trước khi ăn súp.)
+
+Supposing he was still alive in another four weeks, (Giả sử cậu vẫn còn sống trong bốn tuần nữa,) what would happen if he didn’t turn up at Hogwarts? (chuyện gì sẽ xảy ra nếu cậu không xuất hiện tại Hogwarts?) Would someone be sent to see (Liệu có ai đó được cử đến để xem) why he hadn’t come back? (tại sao cậu không quay lại trường không?) Would they be able to make the Dursleys let him go? (Liệu họ có thể ép nhà Dursley để cậu đi không?)
+
+The room was growing dark. (Căn phòng đang dần trở nên tối tăm.) Exhausted, stomach rumbling, (Kiệt sức, bụng sôi sùng sục,) mind spinning over the same unanswerable questions, (tâm trí quay cuồng với những câu hỏi không có lời đáp lặp đi lặp lại,) Harry fell into an uneasy sleep. (Harry chìm vào một giấc ngủ trằn trọc.)
+
+He dreamed that he was on show in a zoo, (Cậu mơ thấy mình đang bị đem ra trưng bày trong một sở thú,) with a card reading ‘Underage Wizard’ attached to his cage. (với một tấm thẻ ghi ‘Phù thủy Vị thành niên’ gắn trên lồng của cậu.) People goggled through the bars at him (Mọi người trợn trừng mắt nhìn cậu qua những chấn song) as he lay, starving and weak, on a bed of straw. (khi cậu nằm đó, chết đói và yếu ớt, trên một chiếc giường rơm.)
+
+He saw Dobby’s face in the crowd (Cậu nhìn thấy khuôn mặt của Dobby trong đám đông) and shouted out, asking for help, (và hét lớn lên, cầu xin sự giúp đỡ,) but Dobby called, ‘Harry Potter is safe there, sir!’ and vanished. (nhưng Dobby gọi lại, ‘Harry Potter được an toàn ở đó, thưa ngài!’ rồi biến mất.)
+
+Then the Dursleys appeared (Rồi nhà Dursley xuất hiện) and Dudley rattled the bars of the cage, laughing at him. (và Dudley rung lắc những chấn song của cái lồng, cười nhạo cậu.)
+
+‘Stop it,’ Harry muttered, (‘Dừng lại đi,’ Harry lầm bầm,) as the rattling pounded in his sore head. (khi tiếng rung lắc giáng từng nhát vào cái đầu đau nhức của cậu.) ‘Leave me alone ... cut it out ... I’m trying to sleep ...’ (‘Để tôi yên ... thôi đi ... tôi đang cố ngủ ...’)
+
+He opened his eyes. (Cậu mở mắt ra.) Moonlight was shining through the bars on the window. (Ánh trăng đang chiếu xuyên qua những chấn song trên cửa sổ.) And someone was goggling through the bars at him: (Và ai đó đang trợn mắt nhìn cậu qua những chấn song:) a freckle-faced, red-haired, long-nosed someone. (một ai đó có khuôn mặt tàn nhang, mái tóc đỏ và cái mũi dài.)
+
+Ron Weasley was outside Harry’s window. (Ron Weasley đang ở bên ngoài cửa sổ của Harry.)
+
+
+                `;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>
