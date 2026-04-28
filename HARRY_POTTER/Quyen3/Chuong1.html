@@ -1,0 +1,345 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 1: Aunt Marge’s Big Mistake </b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="18_Chapter_18_ Dobby_s_Reward.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Harry went down (Harry đi xuống) to breakfast (ăn sáng) next morning (vào sáng hôm sau) to find (để thấy) the three Dursleys (ba người nhà Dursley) already sitting (đã ngồi sẵn) around the kitchen table. (quanh bàn bếp) 
+
+They were watching (Họ đang xem) a brand-new television, (một chiếc tivi mới toanh) a welcome-home-for-the-summer present (một món quà chào mừng về nhà nghỉ hè) for Dudley, (dành cho Dudley) who had been complaining loudly (đứa đã phàn nàn ầm ĩ) about the long walk (về quãng đường đi bộ xa xôi) between the fridge (giữa tủ lạnh) and the television (và cái tivi) in the living room. (ở phòng khách) 
+
+Dudley had spent (Dudley đã dành) most of the summer (phần lớn thời gian nghỉ hè) in the kitchen, (trong bếp) his piggy little eyes (đôi mắt ti hí như mắt lợn của nó) fixed on the screen (dán chặt vào màn hình) and his five chins wobbling (và năm cái nọng cằm rung rinh) as he ate continually. (khi nó ăn liên tục)
+
+Harry sat down (Harry ngồi xuống) between Dudley and Uncle Vernon, (giữa Dudley và dượng Vernon) a large, beefy man (một người đàn ông to béo, lực lưỡng) with very little neck (với cái cổ ngắn ngủn) and a lot of moustache. (và bộ ria mép xồm xoàm) 
+
+Far from wishing Harry (Thay vì chúc Harry) a happy birthday, (một sinh nhật vui vẻ) none of the Dursleys (không ai trong nhà Dursley) gave any sign (có vẻ gì) that they had noticed (là nhận ra) Harry enter the room, (Harry đã bước vào phòng) but Harry was far too used to this (nhưng Harry đã quá quen với điều này) to care. (nên cũng chẳng bận tâm) 
+
+He helped himself (Cậu tự lấy cho mình) to a piece of toast (một lát bánh mì nướng) and then looked up (rồi ngước nhìn) at the newsreader (phát thanh viên) on the television, (trên tivi) who was halfway through (người đang đọc dở) a report (bản tin) on an escaped convict. (về một tên tù nhân vượt ngục)
+
+‘... the public is warned (‘... công chúng được cảnh báo) that Black is armed (rằng Black có vũ trang) and extremely dangerous. (và cực kỳ nguy hiểm) A special hotline (Một đường dây nóng đặc biệt) has been set up, (đã được thiết lập) and any sighting of Black (và bất kỳ ai nhìn thấy Black) should be reported immediately.’ (đều phải báo cáo ngay lập tức’)
+
+‘No need to tell us (‘Khỏi cần nói cũng biết) he’s no good,’ (gã là kẻ chẳng ra gì’) snorted Uncle Vernon, (dượng Vernon khịt mũi) staring (nhìn chằm chằm) over the top of his newspaper (qua mép trên tờ báo) at the prisoner. (vào tên tù nhân) ‘Look at the state of him, (‘Nhìn bộ dạng gã kìa) the filthy layabout! (tên vô công rỗi nghề dơ dáy) Look at his hair!’ (Nhìn tóc gã kìa’)
+
+He shot a nasty look sideways (Ông ta liếc xéo một cách khó chịu) at Harry, (sang Harry) whose untidy hair (người có mái tóc bù xù) had always been (luôn là) a source of great annoyance (nỗi bực dọc lớn) to Uncle Vernon. (đối với dượng Vernon) 
+
+Compared to the man (Tuy nhiên, so với gã đàn ông) on the television, however, (trên tivi) whose gaunt face (người có khuôn mặt hốc hác) was surrounded (bị bao quanh) by a matted, elbow-length tangle, (bởi mớ tóc rối bù, bết rệt dài đến tận khuỷu tay) Harry felt (Harry cảm thấy) very well groomed indeed. (mình thực sự vẫn còn vô cùng gọn gàng chán)
+
+The newsreader (Phát thanh viên) had reappeared. (đã xuất hiện trở lại)
+
+‘The Ministry of Agriculture and Fisheries (‘Bộ Nông nghiệp và Thủy sản) will announce today –’ (hôm nay sẽ thông báo –’)
+
+‘Hang on!’ (‘Khoan đã’) barked Uncle Vernon, (dượng Vernon sủa lên) staring furiously (trừng mắt giận dữ) at the newsreader. (nhìn phát thanh viên) ‘You didn’t tell us (‘Cô chưa nói cho chúng tôi biết) where that maniac’s escaped from! (tên điên đó trốn thoát từ đâu) What use is that? (Thế thì có ích gì chứ) Lunatic could be coming up (Kẻ tâm thần đó có khi đang đi tới) the street right now!’ (con đường này ngay lúc này cũng nên’)
+
+Aunt Petunia, (Dì Petunia) who was bony and horse-faced, (người gầy giơ xương và có khuôn mặt dài như mặt ngựa) whipped around (quay ngoắt lại) and peered intently (và chăm chú nhìn) out of the kitchen window. (ra ngoài cửa sổ bếp) Harry knew (Harry biết) Aunt Petunia would simply love (dì Petunia hẳn là cực kỳ thích) to be the one (trở thành người) to call the hotline number. (gọi cho số đường dây nóng) She was the nosiest woman (Dì là người phụ nữ tọc mạch nhất) in the world (trên thế giới) and spent most of her life (và dành phần lớn cuộc đời mình) spying on (để rình mò) her boring, law-abiding neighbours. (những người hàng xóm tẻ nhạt, tuân thủ pháp luật của mình)
+
+‘When will they learn,’ (‘Đến bao giờ họ mới chịu hiểu’) said Uncle Vernon, (dượng Vernon nói) pounding the table (đập xuống bàn) with his large purple fist, (bằng nắm đấm to bự, đỏ gay) ‘that hanging’s the only way (‘rằng treo cổ là cách duy nhất) to deal with these people?’ (để xử lý những kẻ này’)
+
+‘Very true,’ (‘Rất đúng’) said Aunt Petunia, (dì Petunia nói) who was still squinting (người vẫn đang nheo mắt) into next door’s runner-beans. (nhìn chằm chằm vào giàn đậu ván nhà hàng xóm)
+
+Uncle Vernon drained his teacup, (Dượng Vernon uống cạn tách trà) glanced at his watch (liếc nhìn đồng hồ) and added, (và nói thêm) ‘I’d better be off (‘Anh phải đi ngay đây) in a minute, Petunia, (Petunia à) Marge’s train gets in at ten.’ (tàu của Marge sẽ đến lúc mười giờ’)
+
+Harry, (Harry) whose thoughts had been upstairs (người đang mải để tâm trí trên lầu) with the Broomstick Servicing Kit, (với Bộ Đồ Nghề Bảo Dưỡng Chổi Bay) was brought back to earth (bị kéo tuột trở lại thực tại) with an unpleasant bump. (bởi một cú sốc khó chịu)
+
+‘Aunt Marge?’ (‘Dì Marge ạ’) he blurted out. (cậu thốt lên) ‘Sh-she’s not coming here, is she?’ (‘Dì-dì ấy đâu có đến đây, phải không’)
+
+Aunt Marge (Dì Marge) was Uncle Vernon’s sister. (là em gái của dượng Vernon) Even though she was not (Mặc dù dì không phải) a blood relative of Harry’s (là họ hàng ruột thịt của Harry) (whose mother had been Aunt Petunia’s sister), (người có mẹ là chị gái của dì Petunia) he had been forced (cậu đã bị ép) to call her ‘Aunt’ (phải gọi bà ấy là ‘Dì’) all his life. (trong suốt cuộc đời mình) 
+
+Aunt Marge lived in the country, (Dì Marge sống ở nông thôn) in a house with a large garden, (trong một ngôi nhà có khu vườn lớn) where she bred bulldogs. (nơi dì nhân giống chó mặt xệ) She didn’t often stay (Dì không thường xuyên ở lại) in Privet Drive, (đường Privet Drive) because she couldn’t bear (bởi vì dì không thể chịu đựng được) to leave her precious dogs, (việc phải rời xa những con chó cưng của mình) but each of her visits (nhưng mỗi chuyến viếng thăm của dì) stood out horribly vividly (đều in đậm một cách kinh hoàng) in Harry’s mind. (trong tâm trí Harry)
+
+At Dudley’s fifth birthday party, (Vào bữa tiệc sinh nhật lần thứ năm của Dudley) Aunt Marge had whacked Harry (dì Marge đã vụt Harry) around the shins (vào ống chân) with her walking stick (bằng cây gậy đi bộ của dì) to stop him beating Dudley (để ngăn cậu thắng Dudley) at musical statues. (trong trò chơi tượng âm nhạc) A few years later, (Vài năm sau) she had turned up at Christmas (dì đã xuất hiện vào dịp Giáng sinh) with a computerised robot (với một con rô bốt được lập trình) for Dudley (cho Dudley) and a box of dog biscuits (và một hộp bánh quy dành cho chó) for Harry. (cho Harry) On her last visit, (Vào chuyến viếng thăm gần nhất của dì) the year before (một năm trước khi) Harry had started at Hogwarts, (Harry bắt đầu nhập học tại Hogwarts) Harry had accidentally trodden (Harry đã vô tình giẫm) on the paw of her favourite dog. (lên chân con chó mà dì cưng nhất) Ripper had chased Harry (Con Ripper đã rượt Harry) out into the garden (chạy ra vườn) and up a tree, (và trèo lên cây) and Aunt Marge had refused (và dì Marge đã từ chối) to call him off (gọi nó lại) until past midnight. (cho đến tận qua nửa đêm) The memory of this incident (Ký ức về sự việc này) still brought tears of laughter (vẫn làm chảy cả nước mắt vì cười) to Dudley’s eyes. (trong mắt Dudley)
+
+‘Marge’ll be here for a week,’ (‘Marge sẽ ở đây một tuần’) Uncle Vernon snarled, (dượng Vernon gầm gừ) ‘and while we’re on the subject,’ (‘và nhân tiện nói về chuyện này’) he pointed a fat finger threateningly (ông ta chĩa ngón tay mập mạp đe dọa) at Harry, (vào Harry) ‘we need to get a few things straight (‘chúng ta cần phải nói rõ ràng vài chuyện) before I go and collect her.’ (trước khi tao đi đón nó’)
+
+Dudley smirked (Dudley cười khẩy) and withdrew his gaze (và dời mắt) from the television. (khỏi cái tivi) Watching Harry being bullied (Việc xem Harry bị bắt nạt) by Uncle Vernon (bởi dượng Vernon) was Dudley’s favourite form of entertainment. (là hình thức giải trí yêu thích của Dudley)
+
+‘Firstly,’ (‘Thứ nhất’) growled Uncle Vernon, (dượng Vernon gầm gừ) ‘you’ll keep a civil tongue in your head (‘mày phải ăn nói cho tử tế) when you’re talking to Marge.’ (khi mày nói chuyện với Marge’)
+
+‘All right,’ (‘Được thôi’) said Harry bitterly, (Harry cay đắng nói) ‘if she does (‘nếu bà ấy cũng làm thế) when she’s talking to me.’ (khi nói chuyện với cháu’)
+
+‘Secondly,’ (‘Thứ hai’) said Uncle Vernon, (dượng Vernon nói) acting as though (tỏ vẻ như thể) he had not heard Harry’s reply, (ông không hề nghe thấy câu trả lời của Harry) ‘as Marge doesn’t know anything (‘vì Marge không biết gì) about your abnormality, (về sự bất thường của mày) I don’t want any – any funny stuff (tao không muốn có bất kỳ – bất kỳ trò mèo nào) while she’s here. (trong lúc nó ở đây) You behave yourself, got me?’ (Mày liệu mà cư xử cho ngoan ngoãn, rõ chưa’)
+
+‘I will if she does,’ (‘Cháu sẽ làm vậy nếu bà ấy cũng làm vậy’) said Harry through gritted teeth. (Harry nói qua kẽ răng nghiến chặt)
+
+‘And thirdly,’ (‘Và thứ ba’) said Uncle Vernon, (dượng Vernon nói) his mean little eyes (đôi mắt nhỏ ti hí của ông ta) now slits (giờ chỉ còn là hai khe hẹp) in his great purple face, (trên khuôn mặt to bự, đỏ gay) ‘we’ve told Marge (‘chúng tao đã nói với Marge) you attend St Brutus’s Secure Centre (mày đang học tại Trung tâm An ninh St Brutus) for Incurably Criminal Boys.’ (dành cho Nam sinh Phạm tội Vô phương Cứu chữa’)
+
+‘What?’ (‘Cái gì’) Harry yelled. (Harry hét lên)
+
+‘And you’ll be sticking to that story, boy, (‘Và mày phải bám sát câu chuyện đó, ranh con) or there’ll be trouble,’ (nếu không mày sẽ gặp rắc rối to đấy’) spat Uncle Vernon. (dượng Vernon phun phì phì)
+
+Harry sat there, (Harry ngồi đó) white-faced and furious, (mặt trắng bệch và giận dữ) staring at Uncle Vernon, (trừng mắt nhìn dượng Vernon) hardly able to believe it. (gần như không thể tin nổi) Aunt Marge coming (Dì Marge đến chơi) for a weeklong visit – (một tuần liền –) it was the worst birthday present (đó là món quà sinh nhật tệ nhất) the Dursleys had ever given him, (mà nhà Dursley từng tặng cậu) including that pair (kể cả đôi) of Uncle Vernon’s old socks. (tất cũ kỹ kia của dượng Vernon)
+
+‘Well, Petunia,’ (‘Thôi được rồi, Petunia’) said Uncle Vernon, (dượng Vernon nói) getting heavily to his feet, (nặng nhọc đứng dậy) ‘I’ll be off to the station, then. (‘anh sẽ ra ga đây) Want to come along for the ride, Dudders?’ (Có muốn đi cùng cho vui không, Dudders’)
+
+‘No,’ (‘Không’) said Dudley, (Dudley nói) whose attention had returned (sự chú ý của nó đã quay trở lại) to the television (với cái tivi) now that Uncle Vernon had finished (khi mà dượng Vernon đã hoàn tất) threatening Harry. (việc đe dọa Harry)
+
+‘Duddy’s got to make himself smart (‘Duddy phải diện đồ thật bảnh) for his auntie,’ (cho dì của nó chứ’) said Aunt Petunia, (dì Petunia nói) smoothing Dudley’s thick blond hair. (vuốt ve mái tóc vàng hoe dày cộp của Dudley) ‘Mummy’s bought him (‘Mẹ đã mua cho cưng) a lovely new bow-tie.’ (một chiếc nơ bướm mới tuyệt đẹp rồi’)
+
+Uncle Vernon clapped Dudley (Dượng Vernon vỗ Dudley) on his porky shoulder. (vào bờ vai núng nính thịt)
+
+‘See you in a bit, then,’ (‘Gặp lại sau nhé’) he said, and he left the kitchen. (ông nói, và rời khỏi bếp)
+
+Harry, (Harry) who had been sitting (người nãy giờ vẫn đang ngồi) in a kind of horrified trance, (trong một cơn choáng váng kinh hoàng) had a sudden idea. (chợt nảy ra một ý tưởng) Abandoning his toast, (Bỏ lại miếng bánh mì nướng) he got quickly to his feet (cậu nhanh chóng đứng dậy) and followed Uncle Vernon (và đi theo dượng Vernon) to the front door. (ra cửa trước)
+
+Uncle Vernon was pulling on (Dượng Vernon đang khoác) his car coat. (áo đi xe)
+
+‘I’m not taking you,’ (‘Tao không đưa mày đi đâu’) he snarled, (ông gầm gừ) as he turned to see (khi quay lại thấy) Harry watching him. (Harry đang nhìn mình)
+
+‘Like I wanted to come,’ (‘Làm như cháu muốn đi lắm ấy’) said Harry coldly. (Harry lạnh lùng nói) ‘I want to ask you something.’ (‘Cháu muốn hỏi dượng một chuyện’)
+
+Uncle Vernon eyed him suspiciously. (Dượng Vernon nhìn cậu nghi ngờ)
+
+‘Third-years at Hog – (‘Học sinh năm thứ ba ở Hog –) at my school (ở trường cháu) are allowed to visit the village sometimes,’ (thỉnh thoảng được phép đến thăm ngôi làng’) said Harry. (Harry nói)
+
+‘So?’ (‘Thì sao’) snapped Uncle Vernon, (dượng Vernon táp lại) taking his car keys (lấy chìa khóa xe) from a hook next to the door. (từ cái móc cạnh cửa)
+
+‘I need you to sign (‘Cháu cần dượng ký) the permission form,’ (vào tờ đơn xin phép’) said Harry in a rush. (Harry nói vội)
+
+‘And why should I do that?’ (‘Và tại sao tao phải làm thế’) sneered Uncle Vernon. (dượng Vernon cười khẩy)
+
+‘Well,’ (‘Chà’) said Harry, choosing his words carefully, (Harry nói, thận trọng lựa lời) ‘it’ll be hard work, (‘sẽ rất khó khăn) pretending to Aunt Marge (khi phải giả vờ với dì Marge) I go to that St Whatsits ...’ (là cháu học ở cái trường St Gì Đó...’)
+
+‘St Brutus’s Secure Centre (‘Trung tâm An ninh St Brutus) for Incurably Criminal Boys!’ (dành cho Nam sinh Phạm tội Vô phương Cứu chữa’) bellowed Uncle Vernon, (dượng Vernon rống lên) and Harry was pleased to hear (và Harry hài lòng khi nghe thấy) a definite note of panic (rõ sự hoảng hốt) in Uncle Vernon’s voice. (trong giọng nói của dượng Vernon)
+
+‘Exactly,’ (‘Chính xác’) said Harry, (Harry nói) looking calmly up (bình tĩnh ngước nhìn) into Uncle Vernon’s large, purple face. (khuôn mặt to bự, đỏ gay của dượng Vernon) ‘It’s a lot to remember. (‘Có rất nhiều thứ phải nhớ đấy) I’ll have to make it sound convincing, (Cháu sẽ phải làm cho nó nghe thật thuyết phục) won’t I? (đúng không) What if I accidentally let something slip?’ (Lỡ cháu vô tình lỡ lời thì sao’)
+
+‘You’ll get the stuffing knocked out of you, (‘Mày sẽ bị đánh cho nhừ tử) won’t you?’ (phải không’) roared Uncle Vernon, (dượng Vernon rống lên) advancing on Harry (tiến về phía Harry) with his fist raised. (với nắm đấm giơ lên) But Harry stood his ground. (Nhưng Harry vẫn đứng vững không lùi bước)
+
+‘Knocking the stuffing out of me (‘Đánh cháu nhừ tử) won’t make Aunt Marge forget (cũng không làm dì Marge quên được) what I could tell her,’ (những gì cháu có thể kể cho bà ấy’) he said grimly. (cậu nói dứt khoát)
+
+Uncle Vernon stopped, (Dượng Vernon khựng lại) his fist still raised, (nắm đấm vẫn giơ lên) his face an ugly puce. (khuôn mặt chuyển sang màu tím bầm xấu xí)
+
+‘But if you sign (‘Nhưng nếu dượng ký) my permission form,’ (vào tờ đơn xin phép của cháu’) Harry went on quickly, (Harry nhanh nhảu nói tiếp) ‘I swear I’ll remember (‘Cháu thề sẽ nhớ) where I’m supposed to go to school, (cái nơi mà cháu được cho là đang theo học) and I’ll act like a Mug – (và cháu sẽ cư xử như một Mug –) like I’m normal and everything.’ (như một kẻ bình thường và mọi thứ’)
+
+Harry could tell (Harry có thể nhận ra) that Uncle Vernon was thinking it over, (rằng dượng Vernon đang suy nghĩ về điều đó) even if his teeth were bared (dù cho răng ông ta đang nhe ra) and a vein was throbbing (và một đường gân đang đập thình thịch) in his temple. (trên thái dương)
+
+‘Right,’ (‘Được thôi’) he snapped finally. (cuối cùng ông gắt lên) ‘I shall monitor your behaviour carefully (‘Tao sẽ giám sát kỹ hành vi của mày) during Marge’s visit. (trong suốt chuyến thăm của Marge) If, at the end of it, (Nếu, khi kết thúc,) you’ve toed the line (mày cư xử ngoan ngoãn) and kept to the story, (và bám sát câu chuyện,) I’ll sign your ruddy form.’ (tao sẽ ký cái tờ đơn chết tiệt của mày’)
+
+He wheeled around, (Ông quay ngoắt lại) pulled open the front door (kéo tung cửa trước) and slammed it so hard (và sầm nó lại mạnh đến mức) that one of the little panes of glass (một trong những tấm kính nhỏ) at the top fell out. (ở phía trên rơi ra ngoài)
+
+Harry didn’t return to the kitchen. (Harry không quay lại bếp) He went back upstairs (Cậu trở lên lầu) to his bedroom. (vào phòng ngủ của mình) If he was going to act (Nếu cậu định cư xử) like a real Muggle, (như một Muggle thực thụ) he’d better start now. (tốt hơn là cậu nên bắt đầu ngay bây giờ) Slowly and sadly (Chậm rãi và buồn bã) he gathered up (cậu gom lại) all his presents and his birthday cards (tất cả quà tặng và thiệp sinh nhật của mình) and hid them (và giấu chúng) under the loose floorboard (dưới tấm ván sàn lỏng lẻo) with his homework. (cùng với đống bài tập về nhà) Then he went (Sau đó cậu đi) to Hedwig’s cage. (đến lồng của Hedwig) Errol seemed to have recovered; (Errol có vẻ đã bình phục) he and Hedwig were both asleep, (nó và Hedwig đều đang ngủ) heads under their wings. (đầu rúc dưới cánh) Harry sighed, (Harry thở dài) then poked them both awake. (rồi chọc cho cả hai tỉnh giấc)
+
+‘Hedwig,’ (‘Hedwig’) he said gloomily, (cậu buồn bã nói) ‘you’re going to have (‘mày sẽ phải) to clear off (bay đi chỗ khác) for a week. (trong một tuần) Go with Errol, (Đi cùng Errol nhé) Ron’ll look after you. (Ron sẽ chăm sóc mày) I’ll write him a note, (Tao sẽ viết cho cậu ấy một tờ giấy nhắn) explaining. (để giải thích) And don’t look at me (Và đừng nhìn tao) like that’ – (như thế’ –) Hedwig’s large amber eyes (đôi mắt màu hổ phách to tròn của Hedwig) were reproachful, (đầy vẻ trách móc) ‘it’s not my fault. (‘đó không phải lỗi của tao) It’s the only way (Đó là cách duy nhất) I’ll be allowed (tao được phép) to visit Hogsmeade (đến thăm Hogsmeade) with Ron and Hermione.’ (cùng với Ron và Hermione’)
+
+Ten minutes later, (Mười phút sau) Errol and Hedwig (Errol và Hedwig) (who had a note (con cú đang có tờ giấy nhắn) to Ron (cho Ron) bound to her leg) (buộc ở chân) soared out (vút ra ngoài) of the window (cửa sổ) and out of sight. (và bay khuất tầm mắt) Harry, (Harry) now feeling (giờ đây cảm thấy) thoroughly miserable, (hoàn toàn khổ sở) put the empty cage away (cất cái lồng trống không) inside the wardrobe. (vào trong tủ quần áo)
+
+But Harry didn’t have long (Nhưng Harry không có nhiều thời gian) to brood. (để ủ rũ) In next to no time, (Chỉ trong chớp mắt) Aunt Petunia (dì Petunia) was shrieking (đã hét lên) up the stairs (từ dưới lầu vọng lên) for Harry to come down (bảo Harry đi xuống) and get ready (và chuẩn bị sẵn sàng) to welcome their guest. (để đón khách của họ)
+
+‘Do something (‘Làm gì đó) about your hair!’ (với mái tóc của mày đi’) Aunt Petunia snapped (dì Petunia gắt gỏng) as he reached the hall. (khi cậu bước xuống sảnh)
+
+Harry couldn’t see the point (Harry chẳng thấy có lý do gì) of trying to make (để cố làm cho) his hair lie flat. (tóc mình xẹp xuống) Aunt Marge loved (Dì Marge rất thích) criticising him, (chỉ trích cậu) so the untidier he looked, (nên trông cậu càng lôi thôi) the happier she would be. (dì ấy sẽ càng vui vẻ)
+
+All too soon, (Rất nhanh sau đó) there was a crunch of gravel (có tiếng sỏi lạo xạo) outside (bên ngoài) as Uncle Vernon’s car (khi xe của dượng Vernon) pulled back (lùi lại) into the driveway, (vào đường lái xe) then the clunk (sau đó là tiếng sầm) of the car doors, (của cửa xe) and footsteps (và tiếng bước chân) on the garden path. (trên lối đi trong vườn)
+
+‘Get the door!’ (‘Ra mở cửa đi’) Aunt Petunia hissed (dì Petunia rít lên) at Harry. (với Harry)
+
+A feeling of great gloom (Với một cảm giác vô cùng ảm đạm) in his stomach, (trong ruột gan) Harry pulled the door open. (Harry kéo cửa mở ra)
+
+On the threshold (Trên ngưỡng cửa) stood Aunt Marge. (là dì Marge đang đứng) She was very like Uncle Vernon; (Dì rất giống dượng Vernon) large, beefy (to béo, lực lưỡng) and purple-faced, (và mặt đỏ gay) she even had a moustache, (dì thậm chí còn có ria mép) though not as bushy as his. (mặc dù không rậm rạp bằng dượng) In one hand (Một tay) she held an enormous suitcase, (dì xách một cái va li to tướng) and tucked under the other (và kẹp dưới tay kia) was an old and evil-tempered bulldog. (là một con chó mặt xệ già nua và dữ tợn)
+
+‘Where’s my Dudders?’ (‘Dudders của dì đâu rồi’) roared Aunt Marge. (dì Marge rống lên) ‘Where’s my neffy poo?’ (‘Cháu trai cưng của dì đâu rồi’)
+
+Dudley came waddling (Dudley lạch bạch bước tới) down the hall, (dọc theo hành lang) his blond hair (mái tóc vàng hoe của nó) plastered flat (ép sát) to his fat head, (vào cái đầu béo ngậy) a bow-tie just visible (một chiếc nơ bướm chỉ vừa đủ lộ ra) under his many chins. (dưới vô số cái nọng cằm của nó)
+
+Aunt Marge thrust the suitcase (Dì Marge thúc cái va li) into Harry’s stomach, (vào bụng Harry) knocking the wind out of him, (làm cậu nghẹt thở) seized Dudley (tóm lấy Dudley) in a tight one-armed hug (bằng một cái ôm chặt bằng một tay) and planted a large kiss (và đặt một nụ hôn to tướng) on his cheek. (lên má nó)
+
+Harry knew perfectly well (Harry biết rất rõ) that Dudley only put up with (rằng Dudley chỉ chịu đựng) Aunt Marge’s hugs (những cái ôm của dì Marge) because he was well paid for it, (bởi vì nó được trả công hậu hĩnh cho việc đó) and sure enough, (và quả nhiên) when they broke apart, (khi họ buông nhau ra) Dudley had a crisp twenty-pound note (Dudley đã có một tờ hai mươi bảng Anh láng coóng) clutched (được nắm chặt) in his fat fist. (trong nắm đấm mập mạp của nó)
+
+‘Petunia!’ (‘Petunia’) shouted Aunt Marge, (dì Marge hét lên) striding past Harry (sải bước ngang qua Harry) as though he was a hat-stand. (như thể cậu là một cái giá treo mũ) Aunt Marge and Aunt Petunia (Dì Marge và dì Petunia) kissed, (hôn nhau) or rather, (hay đúng hơn là) Aunt Marge bumped (dì Marge cộc) her large jaw (cái hàm to bự của mình) against Aunt Petunia’s bony cheekbone. (vào gò má gầy guộc của dì Petunia)
+
+Uncle Vernon now came in, (Dượng Vernon lúc này mới bước vào) smiling jovially (cười rạng rỡ) as he shut the door. (khi đóng cửa lại)
+
+‘Tea, Marge?’ (‘Uống trà nhé, Marge’) he said. (dượng nói) ‘And what will Ripper take?’ (‘Và Ripper sẽ dùng gì đây’)
+
+‘Ripper can have some tea (‘Ripper có thể uống chút trà) out of my saucer,’ (từ cái đĩa đệm tách của em’) said Aunt Marge, (dì Marge nói) as they all trooped (khi tất cả họ kéo nhau) into the kitchen, (vào bếp) leaving Harry alone (bỏ lại Harry một mình) in the hall (ngoài sảnh) with the suitcase. (với cái va li) But Harry wasn’t complaining; (Nhưng Harry không hề phàn nàn) any excuse (bất kỳ cớ gì) not to be with Aunt Marge (để không phải ở cùng dì Marge) was fine by him, (đều tốt cho cậu) so he began to heave (nên cậu bắt đầu hì hục vác) the case upstairs (cái va li lên lầu) into the spare bedroom, (vào phòng ngủ dành cho khách) taking as long as he could. (kéo dài thời gian lâu nhất có thể)
+
+By the time he got back (Đến lúc cậu quay trở lại) to the kitchen, (nhà bếp) Aunt Marge had been supplied (dì Marge đã được phục vụ) with tea and fruitcake (trà và bánh trái cây) and Ripper was lapping noisily (và con Ripper đang liếm láp ồn ào) in the corner. (ở trong góc) Harry saw Aunt Petunia (Harry thấy dì Petunia) wince slightly (hơi nhăn mặt) as specks of tea and drool (khi những giọt trà và dãi) flecked her clean floor. (văng xuống sàn nhà sạch sẽ của dì) Aunt Petunia hated animals. (Dì Petunia rất ghét động vật)
+
+‘Who’s looking after (‘Ai đang chăm sóc) the other dogs, Marge?’ (những con chó khác vậy, Marge’) Uncle Vernon asked. (dượng Vernon hỏi)
+
+‘Oh, I’ve got Colonel Fubster (‘Ồ, em đã nhờ Đại tá Fubster) managing them,’ (trông nom chúng rồi’) boomed Aunt Marge. (dì Marge oang oang) ‘He’s retired now, (‘Ông ấy giờ đã nghỉ hưu) good for him (thật tốt cho ông ấy) to have something to do. (khi có việc gì đó để làm) But I couldn’t leave (Nhưng em không thể bỏ lại) poor old Ripper. (lão Ripper già tội nghiệp) He pines (Nó sẽ héo hon) if he’s away from me.’ (nếu phải xa em’)
+
+Ripper began to growl again (Con Ripper lại bắt đầu gầm gừ) as Harry sat down. (khi Harry ngồi xuống) This directed (Điều này đã thu hút) Aunt Marge’s attention (sự chú ý của dì Marge) to Harry (về phía Harry) for the first time. (lần đầu tiên)
+
+‘So!’ (‘Vậy ra’) she barked. (dì sủa lên) ‘Still here, are you?’ (‘Mày vẫn còn ở đây cơ à’)
+
+‘Yes,’ (‘Vâng’) said Harry. (Harry nói)
+
+‘Don’t you say “yes” (‘Đừng có nói "vâng") in that ungrateful tone,’ (với cái giọng vô ơn đó’) Aunt Marge growled. (dì Marge gầm gừ) ‘It’s damn good of Vernon and Petunia (‘Vernon và Petunia đã quá tốt) to keep you. (mới giữ mày lại) Wouldn’t have done it myself. (Tao thì tao sẽ không làm thế đâu) You’d have gone straight (Mày đã phải vào thẳng) to an orphanage (một trại trẻ mồ côi) if you’d been dumped (nếu mày bị vứt) on my doorstep.’ (trước cửa nhà tao’)
+
+Harry was bursting to say (Harry khao khát muốn nói) that he’d rather live (rằng cậu thà sống) in an orphanage (trong trại trẻ mồ côi) than with the Dursleys, (còn hơn là với nhà Dursley) but the thought of the Hogsmeade form (nhưng ý nghĩ về tờ đơn đi Hogsmeade) stopped him. (đã ngăn cậu lại) He forced his face (Cậu ép khuôn mặt mình) into a painful smile. (nở một nụ cười gượng gạo)
+
+‘Don’t you smirk at me!’ (‘Đừng có cười khẩy với tao’) boomed Aunt Marge. (dì Marge oang oang) ‘I can see (Tao có thể thấy) you haven’t improved (mày chẳng khá hơn chút nào) since I last saw you. (kể từ lần cuối tao gặp mày) I hoped school (Tao đã hy vọng trường học) would knock some manners into you.’ (sẽ nhồi nhét được chút phép tắc vào đầu mày’) She took a large gulp of tea, (Dì uống một ngụm trà lớn) wiped her moustache (lau bộ ria mép) and said, (và nói) ‘Where is it (‘Ở đâu) that you send him, again, Vernon?’ (mà anh gửi nó đến ấy nhỉ, Vernon’)
+
+‘St Brutus’s,’ (‘St Brutus’) said Uncle Vernon promptly. (dượng Vernon nhanh nhảu đáp) ‘It’s a first-rate institution (‘Đó là một cơ sở hạng nhất) for hopeless cases.’ (dành cho những trường hợp hết thuốc chữa’)
+
+‘I see,’ (‘Ra vậy’) said Aunt Marge. (dì Marge nói) ‘Do they use the cane (‘Họ có dùng roi mây) at St Brutus’s, boy?’ (ở trường St Brutus không, ranh con’) she barked (dì sủa lên) across the table. (xuyên qua bàn ăn)
+
+‘Er–’ (‘Ờ–’)
+
+Uncle Vernon nodded curtly (Dượng Vernon gật đầu cộc lốc) behind Aunt Marge’s back. (sau lưng dì Marge)
+
+‘Yes,’ (‘Có ạ’) said Harry. (Harry nói) Then, feeling he might as well (Sau đó, cảm thấy mình cũng nên) do the thing properly, (làm cho trót) he added, (cậu nói thêm) ‘All the time.’ (‘Lúc nào cũng dùng’)
+
+‘Excellent,’ (‘Tuyệt vời’) said Aunt Marge. (dì Marge nói) ‘I won’t have (‘Tao sẽ không chấp nhận) this namby-pamby, wishy-washy nonsense (cái mớ lý thuyết ẻo lả, dở dở ương ương) about not hitting people (về việc không được đánh những kẻ) who deserve it. (xứng đáng bị ăn đòn) A good thrashing (Một trận đòn nhừ tử) is what’s needed (là điều cần thiết) in ninety-nine cases (trong chín mươi chín trường hợp) out of a hundred. (trên một trăm) Have you been beaten often?’ (‘Mày có thường xuyên bị đánh không’)
+
+‘Oh, yeah,’ (‘Ồ, có ạ’) said Harry, (Harry nói) ‘loads of times.’ (‘rất nhiều lần’)
+
+Aunt Marge narrowed her eyes. (Dì Marge nheo mắt lại)
+
+‘I still don’t like your tone, boy,’ (‘Tao vẫn không thích thái độ của mày, ranh con’) she said. (dì nói) ‘If you can speak (Nếu mày có thể nói) of your beatings (về những trận đòn của mày) in that casual way, (theo kiểu phớt lờ như vậy) they clearly aren’t hitting you (rõ ràng là họ đánh mày) hard enough. (chưa đủ đau) Petunia, I’d write (Petunia, em sẽ viết thư) if I were you. (nếu em là chị) Make it clear (Nói rõ) that you approve (rằng chị tán thành) the use of extreme force (việc sử dụng bạo lực tối đa) in this boy’s case.’ (đối với trường hợp của thằng ranh này’)
+
+Perhaps Uncle Vernon was worried (Có lẽ dượng Vernon lo lắng) that Harry might forget (rằng Harry có thể quên) their bargain; (thỏa thuận của họ) in any case, (dù sao đi nữa) he changed the subject abruptly. (dượng cũng đột ngột đổi chủ đề)
+
+‘Heard the news this morning, Marge? (‘Sáng nay nghe tin tức gì chưa, Marge’) What about that escaped prisoner, eh?’ (‘Vụ tên tù nhân vượt ngục đó, hả’)
+
+* As Aunt Marge started (Khi dì Marge bắt đầu) to make herself at home, (cứ tự nhiên như ở nhà) Harry caught himself thinking (Harry chợt thấy mình đang nghĩ) almost longingly (gần như đầy khao khát) of life at number four (về cuộc sống ở số bốn) without her. (khi không có dì) Uncle Vernon and Aunt Petunia (Dượng Vernon và dì Petunia) usually encouraged Harry (thường khuyến khích Harry) to stay out of their way, (tránh xa khỏi tầm mắt họ) which Harry was only too happy to do. (điều mà Harry vô cùng sung sướng để làm) Aunt Marge, on the other hand, (Trái lại, dì Marge) wanted Harry under her eye (lại muốn Harry ở trong tầm mắt dì) at all times, (mọi lúc) so that she could boom out (để dì có thể oang oang đưa ra) suggestions for his improvement. (những gợi ý nhằm uốn nắn cậu) She delighted in (Dì thích thú với việc) comparing Harry with Dudley, (so sánh Harry với Dudley) and took huge pleasure (và vô cùng khoái chí) in buying Dudley expensive presents (khi mua cho Dudley những món quà đắt tiền) while glaring at Harry, (trong khi trừng mắt nhìn Harry) as though daring him (như thể thách thức cậu) to ask why (dám hỏi tại sao) he hadn’t got a present too. (cậu không có quà) She also kept throwing out (Dì cũng liên tục buông ra) dark hints (những lời bóng gió thâm độc) about what made Harry (về những thứ khiến Harry) such an unsatisfactory person. (trở thành một kẻ tồi tệ đến vậy)
+
+‘You mustn’t blame yourself (‘Anh không được tự trách mình) for the way the boy’s turned out, Vernon,’ (vì cách thằng bé này lớn lên, Vernon à’) she said over lunch (dì nói trong bữa trưa) on the third day. (vào ngày thứ ba) ‘If there’s something rotten (‘Nếu có thứ gì đó mục nát) on the inside, (từ bên trong) there’s nothing anyone can do about it.’ (thì không ai có thể làm gì được đâu’)
+
+Harry tried to concentrate (Harry cố gắng tập trung) on his food, (vào thức ăn của mình) but his hands shook (nhưng tay cậu run rẩy) and his face was starting to burn (và mặt cậu bắt đầu nóng bừng) with anger. (vì tức giận) Remember the form, (Nhớ tới tờ đơn) he told himself. (cậu tự nhủ) Think about Hogsmeade. (Hãy nghĩ về Hogsmeade) Don’t say anything. (Đừng nói gì cả) Don’t rise – (Đừng mắc mưu –)
+
+Aunt Marge reached (Dì Marge với tay lấy) for her glass of wine. (ly rượu vang của dì)
+
+‘It’s one of the basic rules (‘Đó là một trong những quy tắc cơ bản) of breeding,’ (của việc nhân giống’) she said. (dì nói) ‘You see it all the time (‘Em thấy điều đó suốt) with dogs. (ở loài chó) If there’s something wrong (‘Nếu con chó mẹ có vấn đề) with the bitch, (gì đó) there’ll be something wrong (thì con chó con) with the pup –’ (cũng sẽ có vấn đề –’)
+
+At that moment, (Ngay lúc đó) the wine glass (ly rượu vang) Aunt Marge was holding (mà dì Marge đang cầm) exploded in her hand. (nổ tung trong tay dì) Shards of glass flew (Những mảnh kính vỡ văng) in every direction (ra mọi hướng) and Aunt Marge spluttered and blinked, (và dì Marge lắp bắp chớp mắt) her great ruddy face dripping. (khuôn mặt đỏ gay to bự của dì ướt sũng)
+
+‘Marge!’ (‘Marge’) squealed Aunt Petunia. (dì Petunia ré lên) ‘Marge, are you all right?’ (‘Marge, em có sao không’)
+
+‘Not to worry,’ (‘Không cần lo lắng’) grunted Aunt Marge, (dì Marge càu nhàu) mopping her face (lau mặt) with her napkin. (bằng khăn ăn) ‘Must have squeezed it (‘Chắc là đã bóp nó) too hard. (quá mạnh) Did the same thing (Cũng bị y hệt thế này) at Colonel Fubster’s (ở nhà Đại tá Fubster) the other day. (hôm nọ) No need to fuss, Petunia, (‘Không cần phải cuống lên đâu, Petunia) I have a very firm grip ...’ (tay em nắm chặt lắm...’)
+
+But Aunt Petunia and Uncle Vernon (Nhưng dì Petunia và dượng Vernon) were both looking at Harry (đều đang nhìn Harry) suspiciously, (một cách đầy nghi ngờ) so he decided (nên cậu quyết định) he’d better skip pudding (tốt hơn là nên bỏ qua món tráng miệng) and escape from the table (và chuồn khỏi bàn ăn) as soon as he could. (càng sớm càng tốt)
+
+Outside in the hall, (Bên ngoài hành lang) he leant against the wall, (cậu dựa vào tường) breathing deeply. (thở sâu) It had been a long time (Đã lâu lắm rồi) since he’d lost control (kể từ lần cậu mất kiểm soát) and made something explode. (và làm nổ tung một thứ gì đó) He couldn’t afford (Cậu không thể cho phép) to let it happen again. (điều đó xảy ra lần nữa) The Hogsmeade form (Tờ đơn đi Hogsmeade) wasn’t the only thing at stake – (không phải là thứ duy nhất bị đe dọa –) if he carried on like that, (nếu cậu cứ tiếp tục như thế) he’d be in trouble (cậu sẽ gặp rắc rối) with the Ministry of Magic. (với Bộ Pháp thuật)
+
+Harry was still (Harry vẫn còn là) an underage wizard, (một phù thủy vị thành niên) and he was forbidden (và cậu bị cấm) by wizard law (bởi luật phù thủy) to do magic (không được làm phép) outside school. (bên ngoài trường học) His record wasn’t exactly clean, either. (Hồ sơ của cậu cũng chẳng hoàn toàn sạch sẽ gì) Only last summer (Mới mùa hè năm ngoái) he’d got an official warning (cậu đã nhận một lời cảnh cáo chính thức) which had stated quite clearly (trong đó nói rất rõ) that if the Ministry got wind (rằng nếu Bộ đánh hơi thấy) of any more magic (có thêm bất kỳ phép thuật nào) in Privet Drive, (ở đường Privet Drive) Harry would face expulsion (Harry sẽ đối mặt với việc bị đuổi học) from Hogwarts. (khỏi Hogwarts)
+
+He heard the Dursleys (Cậu nghe thấy nhà Dursley) leaving the table (rời khỏi bàn ăn) and hurried upstairs (và vội vã chạy lên lầu) out of the way. (để tránh mặt)
+
+* Harry got through (Harry đã vượt qua) the next three days (ba ngày tiếp theo) by forcing himself (bằng cách ép bản thân) to think about (nghĩ về) his Handbook of Do-it-Yourself Broomcare (cuốn Cẩm nang Tự Bảo dưỡng Chổi) whenever Aunt Marge (mỗi khi dì Marge) started on him. (bắt đầu nhắm vào cậu) This worked quite well, (Điều này hiệu quả khá tốt) though it seemed to give him (mặc dù nó có vẻ mang lại cho cậu) a glazed look, (một cái nhìn đờ đẫn) because Aunt Marge (bởi vì dì Marge) started voicing the opinion (bắt đầu nói lên quan điểm) that he was mentally subnormal. (rằng cậu bị thiểu năng trí tuệ)
+
+At last, at long last, (Cuối cùng, sau bao lâu chờ đợi) the final evening of Marge’s stay (buổi tối cuối cùng trong chuyến thăm của Marge) arrived. (đã đến) Aunt Petunia cooked (Dì Petunia nấu) a fancy dinner (một bữa tối thịnh soạn) and Uncle Vernon uncorked (và dượng Vernon khui) several bottles of wine. (vài chai rượu vang) They got all the way through (Họ đã ăn xong toàn bộ) the soup and the salmon (món súp và món cá hồi) without a single mention (mà không hề có một lời nhắc nhở nào) of Harry’s faults; (về những lỗi lầm của Harry) during the lemon meringue pie, (trong lúc ăn bánh tart chanh trứng đường) Uncle Vernon bored them all (dượng Vernon làm tất cả buồn ngủ) with a long talk (bằng một bài diễn văn dài dòng) about Grunnings, (về Grunnings) his drill-making company; (công ty sản xuất máy khoan của dượng) then Aunt Petunia made coffee (sau đó dì Petunia pha cà phê) and Uncle Vernon brought out (và dượng Vernon mang ra) a bottle of brandy. (một chai rượu brandy)
+
+‘Can I tempt you, Marge?’ (‘Mời em một ly nhé, Marge’)
+
+Aunt Marge had already had (Dì Marge đã uống) rather a lot of wine. (khá nhiều rượu vang) Her huge face (Khuôn mặt to bự của dì) was very red. (đã rất đỏ)
+
+‘Just a small one, then,’ (‘Chỉ một chút thôi nhé’) she chuckled. (dì cười khúc khích) ‘A bit more than that ... (‘Nhiều hơn thế một chút...) and a bit more ... (và thêm một chút nữa...) that’s the boy.’ (thế mới ngoan chứ’)
+
+Dudley was eating (Dudley đang ăn) his fourth slice of pie. (lát bánh thứ tư của nó) Aunt Petunia was sipping coffee (Dì Petunia đang nhâm nhi cà phê) with her little finger (với ngón tay út) sticking out. (chìa ra) Harry really wanted (Harry thực sự muốn) to disappear (biến mất) into his bedroom, (vào phòng ngủ của mình) but he met (nhưng cậu bắt gặp) Uncle Vernon’s angry little eyes (đôi mắt nhỏ giận dữ của dượng Vernon) and knew (và biết) he would have to (mình sẽ phải) sit it out. (ngồi chịu trận cho xong)
+
+‘Aah,’ (‘Aah’) said Aunt Marge, (dì Marge nói) smacking her lips (chép miệng) and putting (và đặt) the empty brandy glass (ly rượu brandy trống rỗng) back down. (xuống lại) ‘Excellent nosh, (‘Đồ ăn ngon tuyệt) Petunia. (Petunia à) It’s normally (Thường thì) just a fry-up (chỉ là một bữa đồ chiên) for me (đối với chị) of an evening, (vào buổi tối) with twelve dogs (với mười hai con chó) to look after ...’ (phải chăm sóc...’) She burped richly (Dì ợ một tiếng rõ to) and patted (và vỗ vỗ) her great tweed stomach. (lên cái bụng mặc áo tweed to bự của mình)
+
+‘Pardon me. (‘Thứ lỗi cho chị) But I do like to see (Nhưng chị rất thích nhìn) a healthy-sized boy,’ (một thằng bé có vóc dáng khỏe mạnh’) she went on, (dì tiếp tục) winking at Dudley. (nháy mắt với Dudley) ‘You’ll be (‘Cháu sẽ là) a proper-sized man, (một người đàn ông lực lưỡng) Dudders, (Dudders à) like your father. (giống như ba cháu) Yes, (Đúng vậy) I’ll have (em sẽ uống) a spot more brandy, (thêm một chút brandy nữa) Vernon ...’ (Vernon...’)
+
+‘Now, (‘Còn) this one here –’ (cái thằng này ở đây –’)
+
+She jerked her head (Dì hất đầu) at Harry, (về phía Harry) who felt (người cảm thấy) his stomach clench. (ruột gan mình thắt lại) The Handbook, (Cuốn Cẩm nang) he thought quickly. (cậu vội nghĩ)
+
+‘This one’s got (‘Thằng này có) a mean, runty look (một vẻ ốm đói, hèn mọn) about him. (toát ra từ nó) You get that (Em cũng thấy điều đó) with dogs. (ở loài chó) I had Colonel Fubster (Em đã bảo Đại tá Fubster) drown one (dìm chết một con) last year. (hồi năm ngoái) Ratty little thing (Một sinh vật nhỏ bé bẩn thỉu) it was. (là nó) Weak. (Yếu ớt) Underbred.’ (Giống tồi’)
+
+Harry was trying (Harry đang cố gắng) to remember (nhớ lại) page twelve (trang mười hai) of his book: (trong cuốn sách của mình) A Charm to Cure (Bùa chú để Chữa) Reluctant Reversers. (Chứng đảo ngược Bất đắc dĩ)
+
+‘It all comes down (‘Tất cả là do) to blood, (huyết thống) as I was saying (như em đã nói) the other day. (hôm nọ) Bad blood (Máu mủ xấu xa) will out. (rồi cũng sẽ lòi ra) Now, (Giờ thì) I’m saying nothing against (chị không có ý chê bai gì) your family, (gia đình em đâu) Petunia’ – (Petunia à’ –) she patted (dì vỗ vỗ) Aunt Petunia’s bony hand (lên bàn tay gầy guộc của dì Petunia) with her shovellike one, (bằng bàn tay to như cái xẻng của mình) ‘but your sister (‘nhưng chị gái em) was a bad egg. (là một kẻ tồi tệ) They turn up (Những kẻ đó xuất hiện) in the best families. (ngay cả trong những gia đình gia giáo nhất) Then she ran off (Rồi cô ta bỏ nhà theo) with a wastrel (một tên vô dụng) and here’s the result (và đây là kết quả) right in front of us.’ (ngay trước mắt chúng ta đây’)
+
+Harry was staring (Harry đang trừng trừng nhìn) at his plate, (vào cái đĩa của mình) a funny ringing (một tiếng ù ù kỳ lạ) in his ears. (trong tai) Grasp your broom firmly (Nắm chặt chổi) by the tail, (ở phần đuôi) he thought. (cậu nghĩ) But he couldn’t remember (Nhưng cậu không thể nhớ ra) what came next. (điều gì tiếp theo) Aunt Marge’s voice (Giọng của dì Marge) seemed to be boring (dường như đang khoan) into him (vào người cậu) like one of (như một trong những) Uncle Vernon’s drills. (cái máy khoan của dượng Vernon)
+
+‘This Potter,’ (‘Tên Potter này’) said Aunt Marge loudly, (dì Marge lớn giọng nói) seizing the brandy bottle (chộp lấy chai rượu brandy) and splashing more (và rót bắn ra ngoài) into her glass (vào ly của mình) and over the tablecloth, (và lên cả khăn trải bàn) ‘you never told me (‘anh chưa bao giờ kể cho em nghe) what he did?’ (hắn làm nghề gì’)
+
+Uncle Vernon and Aunt Petunia (Dượng Vernon và dì Petunia) were looking (trông có vẻ) extremely tense. (vô cùng căng thẳng) Dudley had even looked up (Dudley thậm chí đã ngẩng lên) from his pie (khỏi chiếc bánh của nó) to gape at (để há hốc mồm nhìn) his parents. (ba mẹ nó)
+
+‘He – didn’t work,’ (‘Hắn – không làm việc’) said Uncle Vernon, (dượng Vernon nói) with half a glance (với nửa cái liếc mắt) at Harry. (về phía Harry) ‘Unemployed.’ (‘Thất nghiệp’)
+
+‘As I expected!’ (‘Đúng như em đoán’) said Aunt Marge, (dì Marge nói) taking a huge swig (uống một ngụm lớn) of brandy (rượu brandy) and wiping her chin (và lau cằm) on her sleeve. (bằng tay áo) ‘A no-account, (‘Một kẻ vô tích sự) good-for-nothing, (chẳng được tích sự gì) lazy scrounger (kẻ ăn bám lười biếng) who –’ (kẻ mà –’)
+
+‘He was not,’ (‘Ông ấy không phải vậy’) said Harry suddenly. (Harry đột ngột lên tiếng) The table (Cả bàn ăn) went very quiet. (trở nên im phăng phắc) Harry was shaking (Harry đang run rẩy) all over. (toàn thân) He had never felt (Cậu chưa bao giờ cảm thấy) so angry (tức giận đến thế) in his life. (trong đời)
+
+‘MORE BRANDY!’ (‘THÊM BRANDY NỮA’) yelled Uncle Vernon, (dượng Vernon hét lên) who had gone very white. (người đã tái nhợt cả mặt) He emptied the bottle (Dượng dốc cạn chai rượu) into Aunt Marge’s glass. (vào ly của dì Marge) ‘You, boy,’ (‘Mày, ranh con’) he snarled at Harry. (dượng gầm gừ với Harry) ‘Go to bed, (‘Về phòng ngủ ngay) go on –’ (đi mau –’)
+
+‘No, Vernon,’ (‘Không, Vernon’) hiccoughed Aunt Marge, (dì Marge nấc cục) holding up a hand, (giơ một tay lên) her tiny bloodshot eyes (đôi mắt ti hí hằn tia máu của dì) fixed on Harry’s. (dán chặt vào mắt Harry) ‘Go on, boy, (‘Nói tiếp đi, ranh con) go on. (nói tiếp đi) Proud of your parents, (Tự hào về ba mẹ mày) are you? (phải không) They go and get themselves killed (Họ đâm đầu vào chỗ chết) in a car crash (trong một vụ tai nạn xe hơi) (drunk, I expect) –’ ((chắc là say xỉn, tao đoán thế) –’)
+
+‘They didn’t die (‘Họ không chết) in a car crash!’ (trong một vụ tai nạn xe hơi’) said Harry, (Harry nói) who found himself (người chợt nhận ra mình) on his feet. (đã đứng phắt dậy)
+
+‘They died in a car crash, (‘Họ đã chết trong một vụ tai nạn xe hơi) you nasty little liar, (đồ ranh con dối trá bẩn thỉu) and left you (và bỏ mày lại) to be a burden (thành một gánh nặng) on their decent, (cho những người họ hàng tử tế) hardworking relatives!’ (chăm chỉ của họ’) screamed Aunt Marge, (dì Marge hét lên) swelling with fury. (phồng người lên vì tức giận) ‘You are (‘Mày là) an insolent, (một đứa xấc xược) ungrateful little –’ (vô ơn tệ –’)
+
+But Aunt Marge (Nhưng dì Marge) suddenly stopped speaking. (đột nhiên ngừng bặt) For a moment, (Trong một khoảnh khắc) it looked (trông có vẻ) as though (như thể) words had failed her. (dì không thốt nên lời) She seemed to be swelling (Dì dường như đang phồng lên) with inexpressible anger – (bởi cơn giận không thể tả xiết –) but the swelling (nhưng sự phồng rộp đó) didn’t stop. (không dừng lại) Her great red face (Khuôn mặt đỏ gay to bự của dì) started to expand, (bắt đầu nở to ra) her tiny eyes bulged (đôi mắt ti hí của dì lồi ra) and her mouth stretched (và miệng dì căng ra) too tightly (quá chặt) for speech. (để có thể nói) Next second, (Giây tiếp theo) several buttons burst (vài chiếc cúc áo đứt phăng) from her tweed jacket (khỏi chiếc áo khoác tweed của dì) and pinged off the walls – (và văng vào tường –) she was inflating (dì đang bơm phồng lên) like a monstrous balloon, (như một quả bóng bay quái dị) her stomach bursting free (cái bụng của dì bung ra) of her tweed waistband, (khỏi dải thắt lưng vải tweed) each of her fingers (mỗi ngón tay của dì) blowing up (sưng vù lên) like a salami ... (như một cái xúc xích salami...)
+
+‘MARGE!’ (‘MARGE’) yelled Uncle Vernon and Aunt Petunia (dượng Vernon và dì Petunia hét lên) together, (cùng một lúc) as Aunt Marge’s whole body (khi toàn bộ cơ thể dì Marge) began to rise (bắt đầu nhấc bổng) off her chair (khỏi ghế) towards the ceiling. (hướng lên trần nhà) She was entirely round, (Bây giờ dì đã tròn xoe) now, (ngay lúc này) like a vast life buoy (như một chiếc phao cứu sinh khổng lồ) with piggy eyes, (với đôi mắt lợn) and her hands and feet (và tay chân dì) stuck out weirdly (chìa ra một cách kỳ quái) as she drifted up (khi dì trôi lơ lửng) into the air, (trong không trung) making apoplectic popping noises. (tạo ra những tiếng lụp bụp nghẹn ngào) Ripper came skidding (Con Ripper trượt chân lao) into the room, (vào phòng) barking madly. (sủa điên cuồng)
+
+‘NOOOOOOO!’ (‘KHÔOOOOONG’)
+
+Uncle Vernon seized (Dượng Vernon chộp lấy) one of Marge’s feet (một bàn chân của Marge) and tried to pull her down (và cố gắng kéo dì xuống) again, (lần nữa) but was almost lifted (nhưng chính dượng cũng suýt bị nhấc bổng) from the floor himself. (khỏi mặt sàn) Next second, (Giây tiếp theo) Ripper had leapt forward (con Ripper đã chồm tới) and sunk his teeth (và cắm ngập răng) into Uncle Vernon’s leg. (vào chân dượng Vernon)
+
+Harry tore (Harry lao vụt) from the dining room (khỏi phòng ăn) before anyone could stop him, (trước khi có ai kịp ngăn cậu lại) heading for (hướng tới) the cupboard (bất tủ chứa đồ) under the stairs. (dưới gầm cầu thang) The cupboard door (Cửa tủ chứa đồ) burst magically open (bật mở một cách mầu nhiệm) as he reached it. (khi cậu chạy đến) In seconds, (Trong vài giây) he had heaved (cậu đã kéo) his trunk (cái rương của mình) to the front door. (ra cửa trước) He sprinted upstairs (Cậu chạy nước rút lên lầu) and threw himself (và lao mình) under the bed, (xuống gầm giường) wrenched up (giật tung) the loose floorboard (tấm ván sàn lỏng lẻo) and grabbed (và vồ lấy) the pillowcase (cái vỏ gối) full of his books (đựng đầy sách) and birthday presents. (và quà sinh nhật) He wriggled out, (Cậu trườn ra) seized Hedwig’s empty cage (chộp lấy cái lồng không của Hedwig) and dashed back downstairs (và lao xầm xập xuống lầu) to his trunk, (tới chỗ cái rương của mình) just as (đúng lúc) Uncle Vernon burst out (dượng Vernon lao ra) of the dining room, (khỏi phòng ăn) his trouser leg (ống quần của dượng) in bloody tatters. (rách bươm và đầy máu)
+
+‘COME BACK IN HERE!’ (‘QUAY LẠI ĐÂY NGAY’) he bellowed. (dượng rống lên) ‘COME BACK (‘QUAY LẠI) AND PUT HER RIGHT!’ (VÀ LÀM CHO NÓ BÌNH THƯỜNG LẠI MAU’)
+
+But a reckless rage (Nhưng một cơn thịnh nộ liều lĩnh) had come over Harry. (đã bao trùm lấy Harry) He kicked his trunk open, (Cậu đá tung cái rương) pulled out his wand (rút đũa phép ra) and pointed it (và chĩa nó) at Uncle Vernon. (vào dượng Vernon)
+
+‘She deserved it,’ (‘Bà ta đáng bị như vậy’) Harry said, (Harry nói) breathing very fast. (thở rất gấp) ‘She deserved (‘Bà ta đáng nhận) what she got. (những gì bà ta bị) You keep away (Dượng tránh xa) from me.’ (cháu ra’)
+
+He fumbled (Cậu dò dẫm) behind him (phía sau lưng) for the catch (để tìm cái chốt) on the door. (trên cửa)
+
+‘I’m going,’ (‘Cháu đi đây’) Harry said. (Harry nói) ‘I’ve had enough.’ (‘Cháu chịu đựng đủ rồi’)
+
+And next moment, (Và khoảnh khắc tiếp theo) he was out (cậu đã ở ngoài) in the dark, quiet street, (con phố tối tăm, tĩnh lặng) heaving (kéo lê) his heavy trunk (cái rương nặng trịch) behind him, (phía sau lưng) Hedwig’s cage (cái lồng của Hedwig) under his arm. (kẹp dưới nách)
+`;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>

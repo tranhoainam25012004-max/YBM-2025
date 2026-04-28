@@ -1,0 +1,407 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Học Tiếng Anh Qua Truyện - Harry Potter</title>
+    <link rel="stylesheet" href="cs.css">
+    
+</head>
+<body>
+
+<div class="book-page">
+        <div class="instruction">
+            📖 <b>Chương 2: The Knight Bus </b>
+        </div>
+        <div class="audio-player-container">
+            <audio id="chapter-audio" src="18_Chapter_18_ Dobby_s_Reward.mp3" preload="metadata"></audio>
+            
+            <button id="play-pause-btn" class="play-btn" title="Phát/Tạm dừng">▶</button>
+            
+            <div class="progress-wrapper">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100">
+                <span id="duration-time">0:00</span>
+            </div>
+
+            <select id="speed-select" class="speed-control" title="Tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x (Chuẩn)</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <div class="pagination-controls">
+            <button id="prev-page" class="page-btn" disabled>&#8592; Trước</button>
+            <span id="page-info" class="page-info">Trang 1 / 1</span>
+            <button id="next-page" class="page-btn">Sau &#8594;</button>
+        </div>
+
+        <div id="story-content"></div>
+    </div>
+
+    <div id="dict-panel" class="dict-panel">
+        <button id="close-panel" class="close-panel" title="Đóng">&times;</button>
+        <div class="panel-container">
+            <div class="panel-header">
+                <span id="dict-word" class="dict-word">Từ vựng</span>
+                <span id="dict-ipa" class="dict-ipa">/phát âm/</span>
+                <button id="dict-audio-btn" class="dict-audio-btn">🔊</button>
+            </div>
+            <div id="dict-meaning" class="dict-meaning">Nghĩa của từ...</div>
+        </div>
+    </div>
+
+    <script>
+
+        let currentWord = "";
+        let audioUrl = "";
+        let lookupTimer;
+        const rawText = `
+Harry was several streets away (Harry đã chạy cách xa được vài con phố) before he collapsed onto a low wall (trước khi cậu gục xuống một bức tường thấp) in Magnolia Crescent, (ở đường Magnolia Crescent,) panting from the effort of dragging his trunk. (thở hổn hển vì mệt mỏi sau khi kéo lê chiếc rương của mình.) He sat quite still, (Cậu ngồi im phăng phắc,) anger still surging through him, (cơn giận dữ vẫn đang trào dâng trong lòng,) listening to the frantic thumping of his heart. (lắng nghe tiếng tim mình đập loạn xạ.)
+
+But after ten minutes alone (Nhưng sau mười phút chỉ có một mình) in the dark street, (trên con phố tối tăm,) a new emotion overtook him: (một cảm xúc mới đã xâm chiếm lấy cậu:) panic. (sự hoảng loạn.) Whichever way he looked at it, (Dù có nhìn nhận theo cách nào đi chăng nữa,) he had never been in a worse fix. (cậu cũng chưa bao giờ lâm vào tình cảnh tồi tệ hơn thế này.) He was stranded, (Cậu đang mắc kẹt,) quite alone, (hoàn toàn đơn độc,) in the dark Muggle world, (trong thế giới Muggle tăm tối,) with absolutely nowhere to go. (và hoàn toàn không có nơi nào để đi.) And the worst of it was, (Và điều tồi tệ nhất là,) he had just done serious magic, (cậu vừa mới sử dụng pháp thuật nghiêm trọng,) which meant that (điều đó có nghĩa là) he was almost certainly expelled from Hogwarts. (gần như chắc chắn cậu đã bị đuổi khỏi Hogwarts.) He had broken the Decree for the Restriction of Underage Wizardry (Cậu đã vi phạm Đạo luật Hạn chế Pháp thuật ở Tuổi vị thành niên) so badly, (một cách quá nặng nề,) he was surprised (đến mức cậu thấy ngạc nhiên) Ministry of Magic representatives (khi các đại diện của Bộ Pháp thuật) weren’t swooping down on him (vẫn chưa sà xuống tóm lấy cậu) where he sat. (ngay tại chỗ cậu đang ngồi.)
+
+Harry shivered (Harry rùng mình) and looked up and down Magnolia Crescent. (và nhìn dọc theo đường Magnolia Crescent.) What was going to happen to him? (Chuyện gì sẽ xảy ra với cậu đây?) Would he be arrested, (Cậu sẽ bị bắt,) or would he simply be outlawed (hay đơn giản là sẽ bị trục xuất) from the wizarding world? (khỏi thế giới pháp thuật?) He thought of Ron and Hermione, (Cậu nghĩ đến Ron và Hermione,) and his heart sank even lower. (và lòng cậu càng chùng xuống.) Harry was sure that, (Harry chắc chắn rằng,) criminal or not, (dù cậu có là tội phạm hay không,) Ron and Hermione would want to help him now, (Ron và Hermione lúc này đều sẽ muốn giúp đỡ cậu,) but they were both abroad, (nhưng cả hai đều đang ở nước ngoài,) and with Hedwig gone, (và vì Hedwig đã bay đi mất,) he had no means of contacting them. (cậu không có cách nào để liên lạc với họ.)
+
+He didn’t have any Muggle money, either. (Cậu cũng chẳng có đồng tiền Muggle nào.) There was a little wizard gold (Chỉ có một ít vàng của phù thủy) in the moneybag at the bottom of his trunk, (trong túi tiền nằm dưới đáy rương,) but the rest of the fortune (nhưng phần còn lại của gia tài) his parents had left him (mà cha mẹ để lại cho cậu) was stored in a vault (được cất giữ trong một hầm bạc) at Gringotts Wizarding Bank in London. (tại Ngân hàng Phù thủy Gringotts ở Luân Đôn.) He’d never be able to drag his trunk (Cậu sẽ chẳng bao giờ có thể kéo chiếc rương của mình) all the way to London. (suốt quãng đường tới tận Luân Đôn.) Unless ... (Trừ phi ...)
+
+He looked down at his wand, (Cậu nhìn xuống cây đũa phép của mình,) which he was still clutching in his hand. (thứ cậu vẫn đang nắm chặt trong tay.) If he was already expelled (Nếu đằng nào cũng đã bị đuổi học) (his heart was now thumping painfully fast), ((tim cậu lúc này đang đập nhanh đến đau nhói),) a bit more magic couldn’t hurt. (thì dùng thêm chút phép thuật nữa cũng chẳng sao.) He had the Invisibility Cloak (Cậu có chiếc Áo khoác Tàng hình) he had inherited from his father (được thừa kế từ cha mình) – what if he bewitched the trunk (– chuyện gì sẽ xảy ra nếu cậu ếm bùa chiếc rương) to make it feather-light, (để làm nó nhẹ như lông hồng,) tied it to his broomstick, (buộc nó vào cán chổi,) covered himself in the Cloak (khoác Áo tàng hình lên người) and flew to London? (và bay tới Luân Đôn?)
+
+Then he could get the rest of his money (Rồi cậu có thể lấy phần tiền còn lại) out of his vault (ra khỏi hầm bạc của mình) and ... begin his life as an outcast. (và ... bắt đầu cuộc đời của một kẻ lang thang ngoài vòng pháp luật.) It was a horrible prospect, (Đó là một viễn cảnh tồi tệ,) but he couldn’t sit on this wall for ever (nhưng cậu không thể ngồi mãi trên bức tường này được) or he’d find himself (nếu không cậu sẽ phải) trying to explain to Muggle police (cố gắng giải thích với cảnh sát Muggle) why he was out in the dead of night (lý do tại sao cậu lại ở ngoài đường lúc nửa đêm thanh vắng) with a trunkful of spellbooks and a broomstick. (với một rương đầy sách bùa chú và một cây chổi bay.)
+
+Harry opened his trunk again (Harry lại mở rương ra) and pushed the contents aside, (và gạt đồ đạc sang một bên,) looking for the Invisibility Cloak (để tìm chiếc Áo khoác Tàng hình) – but before he had found it, (– nhưng trước khi cậu tìm thấy nó,) he straightened up suddenly, (cậu chợt đứng thẳng dậy,) looking around him once more. (nhìn quanh mình một lần nữa.)
+
+A funny prickling on the back of his neck (Một cảm giác râm ran kỳ lạ sau gáy) had made Harry feel he was being watched, (khiến Harry có cảm giác như mình đang bị theo dõi,) but the street appeared to be deserted, (nhưng con phố có vẻ vắng tanh,) and no lights shone (và không có ánh đèn nào chiếu ra) from any of the large square houses. (từ bất kỳ ngôi nhà vuông vức rộng lớn nào.)
+
+He bent over his trunk again, (Cậu lại cúi xuống chiếc rương,) but almost immediately stood up once more, (nhưng gần như ngay lập tức lại đứng thẳng dậy,) his hand clenched on his wand. (tay nắm chặt đũa phép.) He had sensed rather than heard it: (Cậu cảm nhận được hơn là nghe thấy:) someone or something was standing (ai đó hoặc thứ gì đó đang đứng) in the narrow gap (trong khe hở chật hẹp) between the garage and the fence behind him. (giữa gara và hàng rào phía sau lưng cậu.) Harry squinted at the black alleyway. (Harry nheo mắt nhìn vào con hẻm đen ngòm.) If only it would move, (Giá như nó nhúc nhích,) then he’d know (thì cậu sẽ biết) whether it was just a stray cat (liệu đó chỉ là một con mèo hoang) or – something else. (hay – một thứ gì khác.)
+
+‘Lumos,’ Harry muttered, (‘Lumos,’ Harry lẩm bẩm,) and a light appeared at the end of his wand, (và một luồng sáng chói lòa hiện ra ở đầu đũa phép,) almost dazzling him. (gần như làm cậu lóa mắt.) He held it high over his head, (Cậu giơ nó lên cao quá đầu,) and the pebble-dashed walls of number two (và những bức tường trát sỏi của căn nhà số hai) suddenly sparkled; (bỗng lấp lánh;) the garage door gleamed, (cánh cửa gara sáng lên,) and between them, (và ở giữa chúng,) Harry saw, quite distinctly, (Harry nhìn thấy, khá rõ ràng,) the hulking outline of something very big, (cái bóng dáng to lớn của một thứ gì đó vô cùng đồ sộ,) with wide, gleaming eyes. (với đôi mắt to tướng, sáng rực.)
+
+Harry stepped backwards. (Harry bước lùi lại.) His legs hit his trunk and he tripped. (Chân cậu va vào chiếc rương và cậu vấp ngã.) His wand flew out of his hand (Chiếc đũa phép văng khỏi tay cậu) as he flung out an arm to break his fall, (khi cậu vung tay ra để chống đỡ cú ngã,) and he landed, hard, in the gutter. (và cậu ngã đánh uỵch một cái thật mạnh xuống rãnh nước.)
+
+There was a deafening BANG (Có một tiếng ĐÙNG chói tai) and Harry threw up his hands (và Harry giơ hai tay lên) to shield his eyes (để che mắt) against a sudden blinding light ... (khỏi một ánh sáng chói lòa bất ngờ ...)
+
+With a yell, he rolled back onto the pavement, (Vừa hét lên, cậu vừa lăn ngược lại lên vỉa hè,) just in time. (vừa kịp lúc.) A second later, (Một giây sau,) a gigantic pair of wheels and headlights (một cặp bánh xe và đèn pha khổng lồ) had screeched to a halt (đã rít lên phanh lại) exactly where Harry had just been lying. (ngay đúng chỗ Harry vừa nằm.) They belonged, (Chúng thuộc về,) as Harry saw when he raised his head, (như Harry thấy khi cậu ngẩng đầu lên,) to a triple-decker, violently purple bus, (một chiếc xe buýt ba tầng màu tím rực,) which had appeared out of thin air. (vừa xuất hiện từ hư không.) Gold lettering over the windscreen (Dòng chữ vàng phía trên kính chắn gió) spelled The Knight Bus. (đánh vần là Xe buýt Hiệp sĩ.)
+
+For a split second, (Trong một tích tắc,) Harry wondered if he had been knocked silly (Harry tự hỏi liệu mình có bị choáng váng đến lú lẫn) by his fall. (bởi cú ngã hay không.) Then a conductor in a purple uniform (Sau đó, một người lơ xe trong bộ đồng phục màu tím) leapt out of the bus (nhảy ra khỏi xe) and began to speak loudly to the night. (và bắt đầu nói lớn vào màn đêm.)
+
+‘Welcome to the Knight Bus, (‘Chào mừng đến với Xe buýt Hiệp sĩ,) emergency transport for the stranded witch or wizard. (phương tiện vận chuyển khẩn cấp dành cho phù thủy hoặc pháp sư đang mắc kẹt.) Just stick out your wand hand, (Chỉ cần giơ tay cầm đũa phép ra,) step on board (bước lên xe) and we can take you anywhere you want to go. (và chúng tôi có thể đưa bạn đến bất cứ đâu bạn muốn.) My name is Stan Shunpike, (Tên tôi là Stan Shunpike,) and I will be your conductor this eve–’ (và tôi sẽ là lơ xe của bạn tối na–’)
+
+The conductor stopped abruptly. (Người lơ xe dừng lại đột ngột.) He had just caught sight of Harry, (Anh ta vừa nhìn thấy Harry,) who was still sitting on the ground. (người vẫn đang ngồi trên mặt đất.) Harry snatched up his wand again (Harry vội chộp lấy cây đũa phép của mình) and scrambled to his feet. (và lồm cồm đứng dậy.) Close to, he saw that (Nhìn gần, cậu thấy rằng) Stan Shunpike was only a few years older than he was; (Stan Shunpike chỉ lớn hơn cậu vài tuổi;) eighteen or nineteen at most, (mười tám hoặc mười chín là cùng,) with large, protruding ears (với đôi tai to, vểnh ra) and a fair few pimples. (và khá nhiều mụn.)
+
+‘What were you doin’ down there?’ (‘Mày đang làm cái quái gì dưới đó thế?’) said Stan, dropping his professional manner. (Stan nói, bỏ đi thái độ chuyên nghiệp của mình.)
+
+‘Fell over,’ said Harry. (‘Bị ngã,’ Harry đáp.)
+
+‘’Choo fall over for?’ sniggered Stan. (‘Ngã làm cái quái gì?’ Stan cười khẩy.)
+
+‘I didn’t do it on purpose,’ said Harry, annoyed. (‘Tôi đâu có cố ý,’ Harry bực bội nói.) One of the knees in his jeans was torn, (Một bên đầu gối chiếc quần jean của cậu đã bị rách,) and the hand he had thrown out to break his fall (và bàn tay cậu giơ ra để chống đỡ cú ngã) was bleeding. (đang rỉ máu.) He suddenly remembered why he had fallen over, (Cậu chợt nhớ ra lý do tại sao mình lại ngã,) and turned around quickly (và quay ngoắt lại) to stare at the alleyway (để nhìn chằm chằm vào con hẻm) between the garage and fence. (giữa gara và hàng rào.) The Knight Bus’s headlamps (Đèn pha của Xe buýt Hiệp sĩ) were flooding it with light, (đang ngập tràn ánh sáng chiếu rọi vào đó,) and it was empty. (và nó trống không.)
+
+‘’Choo lookin’ at?’ said Stan. (‘Mày đang nhìn cái gì thế?’ Stan hỏi.)
+
+‘There was a big black thing,’ said Harry, (‘Có một thứ gì đó màu đen to lớn,’ Harry nói,) pointing uncertainly into the gap. (chỉ tay một cách ngập ngừng vào khe hở.) ‘Like a dog ... but massive ...’ (‘Giống như một con chó ... nhưng khổng lồ ...’)
+
+He looked around at Stan, (Cậu quay sang nhìn Stan,) whose mouth was slightly open. (người đang hơi há hốc miệng.) With a feeling of unease, (Với một cảm giác bất an,) Harry saw Stan’s eyes move (Harry thấy ánh mắt của Stan chuyển tới) to the scar on Harry’s forehead. (vết sẹo trên trán Harry.)
+
+‘Woss that on your ’ead?’ said Stan abruptly. (‘Cái gì trên đầu mày thế?’ Stan bất ngờ hỏi.)
+
+‘Nothing,’ said Harry quickly, (‘Không có gì,’ Harry đáp nhanh,) flattening his hair over his scar. (vuốt tóc che đi vết sẹo của mình.) If the Ministry of Magic was looking for him, (Nếu Bộ Pháp thuật đang lùng sục cậu,) he didn’t want to make it too easy for them. (cậu cũng không muốn để họ tìm thấy một cách quá dễ dàng.)
+
+‘Woss your name?’ Stan persisted. (‘Mày tên gì?’ Stan gặng hỏi.)
+
+‘Neville Longbottom,’ said Harry, (‘Neville Longbottom,’ Harry nói,) saying the first name that came into his head. (bật ra cái tên đầu tiên nảy ra trong đầu.) ‘So – so this bus,’ he went on quickly, (‘Vậy – vậy chiếc xe buýt này,’ cậu nói tiếp thật nhanh,) hoping to distract Stan, (với hy vọng đánh lạc hướng Stan,) ‘did you say it goes anywhere?’ (‘anh vừa nói là nó có thể đi tới bất cứ đâu sao?’)
+
+‘Yep,’ said Stan proudly, (‘Đúng thế,’ Stan tự hào nói,) ‘anywhere you like, long’s it’s on land. (‘bất cứ đâu mày thích, miễn là ở trên đất liền.) Can’t do nuffink underwater. (Không làm ăn được gì ở dưới nước đâu.) ’Ere,’ he said, looking suspicious again, (‘Này,’ anh ta nói, lại mang vẻ mặt đầy nghi ngờ,) ‘you did flag us down, dincha? (‘mày đã vẫy xe tụi tao, đúng không?) Stuck out your wand ’and, dincha?’ (Mày đã giơ cái tay cầm đũa phép ra, đúng chứ?’)
+
+‘Yes,’ said Harry quickly. (‘Đúng rồi,’ Harry đáp nhanh.) ‘Listen, how much would it be to get to London?’ (‘Nghe này, tới Luân Đôn thì mất bao nhiêu tiền?’)
+
+‘Eleven Sickles,’ said Stan, (‘Mười một đồng Sickle,’ Stan đáp,) ‘but for firteen you get ’ot chocolate, (‘nhưng đưa mười ba đồng thì mày sẽ có sô-cô-la nóng,) and for fifteen you get an ’ot-water bottle (và mười lăm đồng thì mày có thêm một bình nước nóng) an’ a toofbrush in the colour of your choice.’ (với một cái bàn chải đánh răng màu tùy chọn.’)
+
+Harry rummaged once more in his trunk, (Harry lục lọi rương của mình một lần nữa,) extracted his money bag (rút túi tiền ra) and shoved some silver into Stan’s hand. (và dúi một ít tiền bạc vào tay Stan.) He and Stan then lifted his trunk, (Sau đó cậu và Stan cùng nâng chiếc rương,) with Hedwig’s cage balanced on top, (với lồng của Hedwig được đặt thăng bằng bên trên,) up the steps of the bus. (lên các bậc thang của xe buýt.)
+
+There were no seats; (Không hề có ghế ngồi;) instead, half-a-dozen brass bedsteads (thay vào đó, nửa tá khung giường bằng đồng) stood beside the curtained windows. (được đặt cạnh những ô cửa sổ có rèm che.) Candles were burning in brackets beside each bed, (Nến cháy sáng trong các giá đỡ bên cạnh mỗi giường,) illuminating the wood-panelled walls. (chiếu sáng những bức tường ốp gỗ.) A tiny wizard in a nightcap (Một pháp sư nhỏ thó đội mũ ngủ) at the rear of the bus muttered, (ở cuối xe buýt lẩm bẩm,) ‘Not now, thanks, I’m pickling some slugs,’ (‘Đừng làm phiền, cám ơn, tôi đang ngâm muối mấy con ốc sên,’) and rolled over in his sleep. (rồi lăn mình chìm vào giấc ngủ.)
+
+‘You ’ave this one,’ Stan whispered, (‘Mày nằm cái này đi,’ Stan thì thầm,) shoving Harry’s trunk under the bed (đẩy chiếc rương của Harry vào gầm chiếc giường) right behind the driver, (ngay phía sau tài xế,) who was sitting in an armchair (người đang ngồi trên một chiếc ghế bành) in front of the steering wheel. (trước vô lăng.) ‘This is our driver, Ernie Prang. (‘Đây là tài xế của chúng ta, Ernie Prang.) This is Neville Longbottom, Ern.’ (Còn đây là Neville Longbottom, chú Ern.’)
+
+Ernie Prang, an elderly wizard wearing very thick glasses, (Ernie Prang, một pháp sư già đeo cặp kính rất dày,) nodded to Harry, (gật đầu với Harry,) who nervously flattened his fringe again (người lại lo lắng vuốt mớ tóc mái của mình xuống lần nữa) and sat down on his bed. (và ngồi xuống giường.)
+
+‘Take ’er away, Ern,’ said Stan, (‘Cho xe chạy đi, chú Ern,’ Stan nói,) sitting down in the armchair next to Ernie’s. (rồi ngồi xuống chiếc ghế bành cạnh ghế của Ernie.)
+
+There was another tremendous BANG, (Lại có một tiếng ĐÙNG kinh khủng nữa vang lên,) and next moment Harry found himself flat on his bed, (và khoảnh khắc tiếp theo, Harry thấy mình bị dán chặt xuống giường,) thrown backwards by the speed of the Knight Bus. (bị giật ngửa ra sau vì tốc độ của chiếc Xe buýt Hiệp sĩ.) Pulling himself up, (Cố gắng ngồi dậy,) Harry stared out of the dark window (Harry nhìn chằm chằm ra ngoài ô cửa sổ tối đen) and saw that they were now bowling along a completely different street. (và nhận ra giờ đây họ đang lao vút trên một con phố hoàn toàn khác.) Stan was watching Harry’s stunned face with great enjoyment. (Stan đang vô cùng thích thú quan sát khuôn mặt sửng sốt của Harry.)
+
+‘This is where we was before you flagged us down,’ he said. (‘Đây là nơi bọn tao đang chạy trước khi mày vẫy xe đấy,’ anh ta nói.) ‘Where are we, Ern? Somewhere in Wales?’ (‘Chúng ta đang ở đâu rồi, chú Ern? Đâu đó ở xứ Wales phải không?’)
+
+‘Ar,’ said Ernie. (‘Ờ,’ Ernie đáp.)
+
+‘How come the Muggles don’t hear the bus?’ said Harry. (‘Sao đám Muggle lại không nghe thấy tiếng xe buýt vậy?’ Harry hỏi.)
+
+‘Them!’ said Stan contemptuously. (‘Bọn họ ấy à!’ Stan nói một cách khinh khỉnh.) ‘Don’ listen properly, do they? (‘Có bao giờ nghe tử tế đâu cơ chứ? ) Don’ look properly either. (Cũng chẳng bao giờ thèm nhìn cẩn thận.) Never notice nuffink, they don’.’ (Chẳng bao giờ để ý đến cái gì sất, bọn họ ấy.’)
+
+‘Best go wake up Madam Marsh, Stan,’ said Ern. (‘Tốt nhất là đi đánh thức phu nhân Marsh đi, Stan,’ Ern nói.) ‘We’ll be in Abergavenny in a minute.’ (‘Chúng ta sẽ tới Abergavenny trong chốc lát nữa thôi.’)
+
+Stan passed Harry’s bed (Stan đi ngang qua giường của Harry) and disappeared up a narrow wooden staircase. (và biến mất trên một cầu thang gỗ chật hẹp.) Harry was still looking out of the window, (Harry vẫn đang nhìn ra ngoài cửa sổ,) feeling increasingly nervous. (cảm thấy ngày càng căng thẳng hơn.) Ernie didn’t seem to have mastered the use of a steering wheel. (Ernie có vẻ như vẫn chưa thành thạo cách sử dụng vô lăng.) The Knight Bus kept mounting the pavement, (Chiếc Xe buýt Hiệp sĩ cứ liên tục phi lên vỉa hè,) but it didn’t hit anything; (nhưng nó không hề đâm vào thứ gì cả;) lines of lamp posts, letter-boxes and bins (những hàng cột đèn, hộp thư và thùng rác) jumped out of its way as it approached (tự động nhảy ra khỏi đường đi khi nó đến gần) and back into position once it had passed. (và trở lại vị trí cũ khi nó đã đi qua.)
+
+Stan came back downstairs, (Stan từ trên lầu đi xuống,) followed by a faintly green witch (theo sau là một mụ phù thủy có sắc mặt xanh xao) wrapped in a travelling cloak. (đang quấn mình trong chiếc áo choàng du lịch.)
+
+‘’Ere you go, Madam Marsh,’ said Stan happily, (‘Tới nơi rồi, phu nhân Marsh,’ Stan vui vẻ nói,) as Ern stamped on the brake (khi Ern đạp phanh) and the beds slid a foot or so (và những chiếc giường trượt đi chừng một foot) towards the front of the bus. (về phía đầu xe.) Madam Marsh clamped a handkerchief to her mouth (Phu nhân Marsh bịt khăn tay lên miệng) and tottered down the steps. (và lảo đảo bước xuống bậc thang.) Stan threw her bag out after her (Stan ném chiếc túi của bà ra theo) and rammed the doors shut; (và đóng sầm cửa lại;) there was another loud BANG, (lại có một tiếng ĐÙNG lớn nữa vang lên,) and they were thundering down a narrow country lane, (và họ đang lao ầm ầm xuống một con đường làng chật hẹp,) trees leaping out of the way. (cây cối dạt hết ra nhường đường.)
+
+Harry wouldn’t have been able to sleep (Harry sẽ chẳng thể nào ngủ được) even if he had been travelling on a bus (ngay cả khi cậu đi trên một chiếc xe buýt) that didn’t keep banging loudly (không liên tục phát ra những tiếng đùng đoàng chói tai) and jumping a hundred miles at a time. (và nhảy cóc cả trăm dặm mỗi lần.) His stomach churned (Dạ dày cậu quặn lại) as he fell back to wondering (khi cậu lại quẩn quanh với suy nghĩ) what was going to happen to him, (điều gì sẽ xảy ra với mình,) and whether the Dursleys (và liệu nhà Dursley) had managed to get Aunt Marge off the ceiling yet. (đã tìm cách đưa được cô Marge xuống khỏi trần nhà hay chưa.)
+
+Stan had unfurled a copy of the Daily Prophet (Stan đã mở một tờ Nhật báo Tiên tri ra) and was now reading (và giờ đang cắm cúi đọc) with his tongue between his teeth. (với cái lưỡi thò ra giữa hai hàm răng.) A large photograph of a sunken-faced man (Bức ảnh lớn của một người đàn ông có khuôn mặt hốc hác) with long, matted hair (với mái tóc dài bù xù) blinked slowly at Harry (chớp mắt chậm rãi nhìn Harry) from the front page. (từ trang nhất.) He looked strangely familiar. (Trông hắn quen thuộc một cách kỳ lạ.)
+
+‘That man!’ Harry said, (‘Người đàn ông đó!’ Harry nói,) forgetting his troubles for a moment. (tạm quên đi những rắc rối của mình.) ‘He was on the Muggle news!’ (‘Ông ta đã xuất hiện trên bản tin của dân Muggle!’)
+
+Stanley turned to the front page and chuckled. (Stanley lật sang trang nhất và cười khúc khích.)
+
+‘Sirius Black,’ he said, nodding. (‘Sirius Black,’ anh ta gật gù nói.) ‘’Course ’e was on the Muggle news, Neville. (‘Tất nhiên là hắn phải lên bản tin Muggle rồi, Neville.) Where you been?’ (Mày đã lặn đi đâu vậy?’)
+
+He gave a superior sort of chuckle (Anh ta cười khẩy một cách trịch thượng) at the blank look on Harry’s face, (trước vẻ mặt ngơ ngác của Harry,) removed the front page (tách trang nhất ra) and handed it to Harry. (và đưa nó cho Harry.)
+
+‘You oughta read the papers more, Neville.’ (‘Mày nên đọc báo nhiều hơn đi, Neville.’)
+
+Harry held the paper up to the candlelight and read: (Harry cầm tờ báo lên sát ngọn nến và đọc:)
+
+BLACK STILL AT LARGE (BLACK VẪN ĐANG LẨN TRỐN)
+
+Sirius Black, (Sirius Black,) possibly the most infamous prisoner (có lẽ là tên tù nhân khét tiếng nhất) ever to be held in Azkaban fortress, (từng bị giam giữ tại pháo đài Azkaban,) is still eluding capture, (vẫn đang trốn tránh được lệnh truy nã,) the Ministry of Magic confirmed today. (Bộ Pháp thuật hôm nay đã xác nhận.)
+
+‘We are doing all we can to recapture Black,’ (‘Chúng tôi đang làm tất cả những gì có thể để bắt Black lại,’) said the Minister for Magic, Cornelius Fudge, this morning, (Bộ trưởng Bộ Pháp thuật, Cornelius Fudge, phát biểu sáng nay,) ‘and we beg the magical community to remain calm.’ (‘và chúng tôi khẩn thiết yêu cầu cộng đồng phép thuật giữ bình tĩnh.’)
+
+Fudge has been criticised (Ông Fudge đã bị chỉ trích) by some members of the International Federation of Warlocks (bởi một số thành viên của Liên đoàn Pháp sư Quốc tế) for informing the Muggle Prime Minister of the crisis. (vì đã thông báo cho Thủ tướng Muggle về cuộc khủng hoảng này.)
+
+‘Well, really, I had to, don’t you know,’ (‘Chà, thực sự thì tôi buộc phải làm thế, các vị biết đấy,’) said an irritable Fudge. (ông Fudge bực bội nói.) ‘Black is mad. (‘Black bị điên rồi.) He’s a danger to anyone who crosses him, (Hắn là mối nguy hiểm cho bất kỳ ai cản đường hắn,) magic or Muggle. (dù là phù thủy hay dân Muggle.) I have the Prime Minister’s assurance (Tôi đã có lời cam đoan của Ngài Thủ tướng) that he will not breathe a word (rằng ngài ấy sẽ không hé nửa lời) of Black’s true identity to anyone. (về danh tính thực sự của Black cho bất kỳ ai.) And let’s face it – (Và hãy nhìn thẳng vào sự thật đi –) who’d believe him if he did?’ (ai sẽ tin ngài ấy nếu ngài ấy có nói ra chứ?’) While Muggles have been told (Trong khi dân Muggle được thông báo) that Black is carrying a gun (rằng Black đang mang theo một khẩu súng) (a kind of metal wand which Muggles use to kill each other), ((một loại đũa phép bằng kim loại mà dân Muggle dùng để giết nhau),) the magical community lives in fear (thì cộng đồng phép thuật lại sống trong nỗi sợ hãi) of a massacre like that of twelve years ago, (về một vụ thảm sát giống như mười hai năm trước,) when Black murdered thirteen people (khi Black sát hại mười ba người) with a single curse. (chỉ bằng một lời nguyền duy nhất.)
+
+Harry looked into the shadowed eyes of Sirius Black, (Harry nhìn vào đôi mắt khuất trong bóng tối của Sirius Black,) the only part of the sunken face that seemed alive. (phần duy nhất trên khuôn mặt hốc hác ấy có vẻ như còn sống động.) Harry had never met a vampire, (Harry chưa bao giờ gặp ma cà rồng,) but he had seen pictures of them (nhưng cậu đã thấy hình ảnh của chúng) in his Defence Against the Dark Arts classes, (trong các lớp học môn Phòng chống Nghệ thuật Hắc ám,) and Black, with his waxy white skin, (và Black, với làn da trắng nhợt nhạt như sáp,) looked just like one. (trông y hệt như một con ma cà rồng.)
+
+‘Scary-lookin’ fing, inee?’ said Stan, (‘Trông đáng sợ ghê, phải không?’ Stan nói,) who had been watching Harry read. (người nãy giờ vẫn quan sát Harry đọc báo.)
+
+‘He murdered thirteen people?’ said Harry, (‘Hắn đã giết mười ba người ư?’ Harry nói,) handing the page back to Stan, (trả lại trang báo cho Stan,) ‘with one curse?’ (‘chỉ bằng một lời nguyền thôi sao?’)
+
+‘Yep,’ said Stan. (‘Đúng thế,’ Stan đáp.) ‘In front of witnesses an’ all. (‘Ngay trước mặt các nhân chứng và mọi người.) Broad daylight. (Giữa thanh thiên bạch nhật.) Big trouble it caused, dinnit, Ern?’ (Chuyện đó đã gây ra rắc rối lớn, đúng không, chú Ern?’)
+
+‘Ar,’ said Ern darkly. (‘Ờ,’ Ern đáp với giọng ủ rũ.)
+
+Stan swivelled in his armchair, (Stan xoay người trên chiếc ghế bành,) his hands on the back, (hai tay vịn lên lưng ghế,) the better to look at Harry. (để nhìn Harry cho rõ hơn.)
+
+‘Black woz a big supporter of You-Know-’Oo,’ he said. (‘Black từng là một kẻ ủng hộ nhiệt thành của Kẻ-mà-ai-cũng-biết-là-ai-đấy,’ anh ta nói.)
+
+‘What, Voldemort?’ said Harry, without thinking. (‘Cái gì, Voldemort á?’ Harry buột miệng nói mà không suy nghĩ.)
+
+Even Stan’s pimples went white; (Thậm chí mấy nốt mụn của Stan cũng trắng bệch ra;) Ern jerked the steering wheel so hard (Ern bẻ ngoặt vô lăng mạnh đến mức) that a whole farmhouse had to jump aside (cả một căn nhà trang trại phải nhảy dạt sang một bên) to avoid the bus. (để tránh chiếc xe buýt.)
+
+‘You outta your tree?’ yelped Stan. (‘Mày mất trí rồi hả?’ Stan thét lên.) ‘’Choo say ’is name for?’ (‘Mày gọi tên hắn ra để làm cái quái gì?’)
+
+‘Sorry,’ said Harry hastily. (‘Xin lỗi,’ Harry vội vã nói.) ‘Sorry, I – I forgot –’ (‘Xin lỗi, tôi – tôi quên mất –’)
+
+‘Forgot!’ said Stan weakly. (‘Quên mất á!’ Stan nói với giọng yếu ớt.) ‘Blimey, my ’eart’s goin’ that fast ...’ (‘Trời đất ơi, tim tao đang đập nhanh chết đi được ...’)
+
+‘So – so Black was a supporter of You-Know-Who?’ Harry prompted apologetically. (‘Vậy – vậy Black là kẻ ủng hộ Kẻ-mà-ai-cũng-biết-là-ai-đấy sao?’ Harry gợi chuyện với vẻ hối lỗi.)
+
+‘Yeah,’ said Stan, still rubbing his chest. (‘Ừ,’ Stan đáp, tay vẫn xoa ngực.) ‘Yeah, that’s right. (‘Ừ, đúng vậy.) Very close to You-Know-’Oo, they say ... (Họ nói hắn rất thân cận với Kẻ-mà-ai-cũng-biết-là-ai-đấy ...) anyway, when little ’Arry Potter put paid to You-Know-’Oo’ (dù sao thì, khi thằng nhóc Harry Potter xử lý xong Kẻ-mà-ai-cũng-biết-là-ai-đấy’) – Harry nervously flattened his fringe down again – (– Harry lại lo lắng vuốt mớ tóc mái xuống –) ‘all You-Know-’Oo’s supporters was tracked down, wasn’t they, Ern? (‘tất cả những kẻ ủng hộ Kẻ-mà-ai-cũng-biết-là-ai-đấy đều bị truy lùng, đúng không, chú Ern?) Most of ’em knew it was all over, (Hầu hết bọn chúng đều biết mọi chuyện đã kết thúc,) wiv You-Know-’Oo gone, (khi Kẻ-mà-ai-cũng-biết-là-ai-đấy đã biến mất,) and they came quiet. (và chúng đã âm thầm ra hàng.) But not Sirius Black. (Nhưng Sirius Black thì không.) I ’eard he thought ’e’d be second-in-command (Tao nghe nói hắn từng nghĩ mình sẽ là nhân vật quyền lực số hai) once You-Know-’Oo ’ad taken over. (một khi Kẻ-mà-ai-cũng-biết-là-ai-đấy lên nắm quyền.)
+
+‘Anyway, they cornered Black (Dù sao thì, họ đã dồn Black vào chân tường) in the middle of a street full of Muggles (giữa một con phố đầy dân Muggle) an’ Black took out ’is wand (và Black đã rút đũa phép của hắn ra) and ’e blasted ’alf the street apart, (rồi hắn nổ tung một nửa con phố,) an’ a wizard got it, (và một phù thủy đã trúng đòn,) an’ so did a dozen Muggles what got in the way. (cùng với cả tá dân Muggle ngáng đường.) ’Orrible, eh? (Kinh khủng nhỉ?) An’ you know what Black did then?’ Stan continued in a dramatic whisper. (Và mày biết Black đã làm gì sau đó không?’ Stan tiếp tục bằng một tiếng thì thầm đầy kịch tính.)
+
+‘What?’ said Harry. (‘Làm gì?’ Harry hỏi.)
+
+‘Laughed,’ said Stan. (‘Cười,’ Stan đáp.) ‘Jus’ stood there an’ laughed. (‘Chỉ đứng đó và cười.) An’ when reinforcements from the Ministry of Magic got there, (Và khi lực lượng tiếp viện từ Bộ Pháp thuật tới nơi,) ’e went wiv ’em quiet as anyfink, (hắn ngoan ngoãn đi theo họ mà chẳng hề phản kháng,) still laughing ’is ’ead off. (vẫn cười phá lên như điên.) ’Cos ’e’s mad, inee, Ern? Inee mad?’ (Bởi vì hắn điên rồi, đúng không, chú Ern? Hắn điên rồi mà?’)
+
+‘If he weren’t when he went to Azkaban, he will be now,’ said Ern in his slow voice. (‘Nếu lúc vào Azkaban hắn chưa điên, thì bây giờ hắn cũng sẽ điên thôi,’ Ern chậm rãi cất giọng.) ‘I’d blow meself up before I set foot in that place. (‘Tôi thà tự nổ tung mình còn hơn phải đặt chân đến nơi đó.) Serves him right, mind ... after what he did ...’ (Cũng đáng đời hắn thôi, hãy nhớ kỹ ... sau những gì hắn đã gây ra ...’)
+
+‘They ’ad a job coverin’ it up, din’ they, Ern?’ Stan said. (‘Họ đã rất vất vả để che đậy chuyện đó, đúng không, chú Ern?’ Stan nói.) ‘’Ole street blown up an’ all them Muggles dead. (‘Cả một con phố bị nổ tung và tất cả đám Muggle đó chết hết.) What was it they said ’ad ’appened, Ern?’ (Họ đã tung tin chuyện gì xảy ra nhỉ, chú Ern?’)
+
+‘Gas explosion,’ grunted Ernie. (‘Nổ khí ga,’ Ernie càu nhàu.)
+
+‘An’ now ’e’s out,’ said Stan, (‘Và giờ thì hắn đã thoát ra ngoài,’ Stan nói,) examining the newspaper picture of Black’s gaunt face again. (lại chăm chú nhìn vào bức ảnh khuôn mặt hốc hác của Black trên báo.) ‘Never been a breakout from Azkaban before, ’as there, Ern? (‘Chưa từng có vụ vượt ngục nào khỏi Azkaban trước đây, đúng không, chú Ern?) Beats me ’ow ’e did it. (Chịu, chả biết hắn làm cách nào nữa.) Frightenin’, eh? (Đáng sợ thật nhỉ?) Mind, I don’t fancy ’is chances against them Azkaban guards, eh, Ern?’ (Nhưng mà này, tao không nghĩ hắn có cơ may nào chống lại đám cai ngục Azkaban đó đâu, đúng không, chú Ern?’)
+
+Ernie suddenly shivered. (Ernie đột nhiên rùng mình.)
+
+‘Talk about summat else, Stan, there’s a good lad. (‘Nói chuyện khác đi, Stan, ngoan nào.) Them Azkaban guards give me the collywobbles.’ (Đám cai ngục Azkaban đó làm chú sởn hết cả gai ốc.’)
+
+Stan put the paper away reluctantly (Stan miễn cưỡng cất tờ báo đi) and Harry leant against the window of the Knight Bus, (và Harry tựa đầu vào cửa sổ chiếc Xe buýt Hiệp sĩ,) feeling worse than ever. (cảm thấy tồi tệ hơn bao giờ hết.) He couldn’t help imagining (Cậu không thể không tưởng tượng ra) what Stan might be telling his passengers in a few nights’ time. (những gì Stan có thể sẽ kể cho hành khách của anh ta trong vài đêm tới.)
+
+‘’Ear about that ’Arry Potter? (‘Nghe chuyện thằng nhóc Harry Potter chưa?) Blew up ’is Aunt! (Nó đã thổi phồng bà cô của nó lên đấy!) We ’ad ’im ’ere on the Knight Bus, di’n’t we, Ern? (Chúng ta đã chở nó trên chiếc Xe buýt Hiệp sĩ này đấy, đúng không, chú Ern?) ’E was tryin’ to run for it ...’ (Nó đang cố tẩu thoát ...’)
+
+He, Harry, had broken wizard law (Cậu, Harry, đã vi phạm luật pháp thuật) just like Sirius Black. (giống hệt như Sirius Black.)
+
+Was inflating Aunt Marge (Liệu việc thổi phồng cô Marge) bad enough to land him in Azkaban? (có đủ tồi tệ để tống cậu vào Azkaban không?) Harry didn’t know anything about the wizard prison, (Harry không biết gì về nhà tù của phù thủy,) though everyone he’d ever heard speak of it (mặc dù bất cứ ai cậu từng nghe nhắc đến nó) did so in the same fearful tone. (đều nói với cùng một giọng điệu đầy sợ hãi.) Hagrid the Hogwarts gamekeeper (Hagrid, người gác đổng của Hogwarts,) had spent two months there only last year. (mới năm ngoái đã phải trải qua hai tháng ở đó.) Harry wouldn’t soon forget the look of terror on Hagrid’s face (Harry sẽ không thể sớm quên được vẻ kinh hoàng trên khuôn mặt Hagrid) when he had been told where he was going, (khi bác ấy được thông báo về nơi mình sắp bị đưa đến,) and Hagrid was one of the bravest people Harry knew. (và Hagrid là một trong những người dũng cảm nhất mà Harry biết.)
+
+The Knight Bus rolled through the darkness, (Chiếc Xe buýt Hiệp sĩ lăn bánh xuyên qua màn đêm,) scattering bushes and bollards, telephone boxes and trees, (làm dạt ra những bụi rậm và cọc tiêu, bốt điện thoại và cây cối,) and Harry lay, restless and miserable, on his feather bed. (còn Harry nằm, trằn trọc và đau khổ, trên chiếc giường lông vũ của mình.) After a while, Stan remembered (Một lúc sau, Stan nhớ ra) that Harry had paid for hot chocolate, (rằng Harry đã trả tiền cho món sô-cô-la nóng,) but poured it all over Harry’s pillow (nhưng anh ta lại đổ ập tất cả lên gối của Harry) when the bus moved abruptly from Anglesey to Aberdeen. (khi chiếc xe buýt đột ngột di chuyển từ Anglesey đến Aberdeen.) One by one, wizards and witches in dressing-gowns and slippers (Lần lượt, các pháp sư và phù thủy mặc áo choàng tắm và đi dép lê) descended from the upper floors to leave the bus. (từ các tầng trên đi xuống để rời khỏi xe buýt.) They all looked very pleased to go. (Tất cả họ trông đều rất vui vẻ khi được rời đi.)
+
+Finally, Harry was the only passenger left. (Cuối cùng, Harry là hành khách duy nhất còn lại.)
+
+‘Right then, Neville,’ said Stan, clapping his hands, (‘Được rồi, Neville,’ Stan nói, vỗ vỗ tay,) ‘whereabouts in London?’ (‘đến chỗ nào ở Luân Đôn đây?’)
+
+‘Diagon Alley,’ said Harry. (‘Hẻm Xéo,’ Harry đáp.)
+
+‘Righto,’ said Stan, ‘’old tight, then ...’ (‘Rõ rồi,’ Stan nói, ‘vậy thì bám chặt vào nhé ...’)
+
+BANG! (ĐÙNG!)
+
+They were thundering along Charing Cross Road. (Họ đang lao ầm ầm dọc theo đường Charing Cross.) Harry sat up and watched buildings and benches (Harry ngồi dậy và nhìn các tòa nhà và những chiếc ghế đá) squeezing themselves out of the Knight Bus’s way. (đang tự dạt ra khỏi đường đi của Xe buýt Hiệp sĩ.) The sky was getting a little lighter. (Bầu trời đang sáng dần lên.) He would lie low for a couple of hours, (Cậu sẽ náu mình trong vài giờ,) go to Gringotts the moment it opened, (đến Gringotts ngay khoảnh khắc nó mở cửa,) then set off – where, he didn’t know. (rồi lên đường – đi đâu thì cậu cũng chưa biết.)
+
+Ern slammed on the brakes (Ern đạp phanh gấp) and the Knight Bus skidded to a halt (và chiếc Xe buýt Hiệp sĩ trượt dài rồi dừng lại) in front of a small and shabby-looking pub, (trước một quán rượu nhỏ trông tồi tàn,) the Leaky Cauldron, (quán Cái Vạc Lủng,) behind which lay the magical entrance to Diagon Alley. (nơi phía sau nó là lối vào bằng phép thuật dẫn tới Hẻm Xéo.)
+
+‘Thanks,’ Harry said to Ern. (‘Cảm ơn chú,’ Harry nói với Ern.)
+
+He jumped down the steps (Cậu nhảy xuống các bậc thang) and helped Stan lower his trunk and Hedwig’s cage onto the pavement. (và giúp Stan hạ chiếc rương cùng chiếc lồng của Hedwig xuống vỉa hè.)
+
+‘Well,’ said Harry, ‘’bye then!’ (‘Thôi,’ Harry nói, ‘tạm biệt nhé!’)
+
+But Stan wasn’t paying attention. (Nhưng Stan không hề chú ý.) Still standing in the doorway to the bus, (Vẫn đang đứng ở cửa xe buýt,) he was goggling at the shadowy entrance to the Leaky Cauldron. (anh ta đang trợn tròn mắt nhìn vào lối vào mờ tối của quán Cái Vạc Lủng.)
+
+‘There you are, Harry,’ said a voice. (‘Cháu đây rồi, Harry,’ một giọng nói cất lên.)
+
+Before Harry could turn, (Trước khi Harry kịp quay lại,) he felt a hand on his shoulder. (cậu cảm thấy một bàn tay đặt lên vai mình.) At the same time, Stan shouted, (Cùng lúc đó, Stan hét lên,) ‘Blimey! Ern, come ’ere! Come ’ere!’ (‘Trời đất ơi! Ern, ra đây mà xem! Ra đây!’)
+
+Harry looked up at the owner of the hand on his shoulder (Harry ngước lên nhìn chủ nhân của bàn tay trên vai mình) and felt a bucketful of ice cascade into his stomach – (và cảm thấy như có cả một xô nước đá đổ ụp vào dạ dày –) he had walked right into Cornelius Fudge, the Minister for Magic himself. (cậu đã đụng độ ngay Cornelius Fudge, đích thân ngài Bộ trưởng Bộ Pháp thuật.)
+
+Stan leapt onto the pavement beside them. (Stan nhảy phốc xuống vỉa hè ngay cạnh họ.)
+
+‘What didja call Neville, Minister?’ he said excitedly. (‘Ngài vừa gọi Neville là gì vậy, thưa Bộ trưởng?’ anh ta phấn khích hỏi.)
+
+Fudge, a portly little man in a long, pinstriped cloak, (Fudge, một người đàn ông thấp bé béo tốt trong chiếc áo choàng dài sọc nhỏ,) looked cold and exhausted. (trông có vẻ lạnh lẽo và kiệt sức.)
+
+‘Neville?’ he repeated, frowning. (‘Neville sao?’ ông lặp lại, cau mày.) ‘This is Harry Potter.’ (‘Đây là Harry Potter.’)
+
+‘I knew it!’ Stan shouted gleefully. (‘Tôi biết ngay mà!’ Stan reo lên sung sướng.) ‘Ern! Ern! Guess ’oo Neville is, Ern! (Ern! Ern! Đoán xem Neville là ai này, Ern!) ’E’s ’Arry Potter! I can see ’is scar!’ (Nó là Harry Potter! Tôi thấy vết sẹo của nó rồi!’)
+
+‘Yes,’ said Fudge testily. (‘Đúng vậy,’ ông Fudge bực dọc nói.) ‘Well, I’m very glad the Knight Bus picked Harry up, (Chà, ta rất vui vì Xe buýt Hiệp sĩ đã đón Harry,) but he and I need to step inside the Leaky Cauldron now ...’ (nhưng giờ cậu ấy và ta cần phải bước vào trong quán Cái Vạc Lủng ...’)
+
+Fudge increased the pressure on Harry’s shoulder, (Ông Fudge bóp chặt hơn lên vai Harry,) and Harry found himself being steered inside the pub. (và Harry thấy mình bị lèo lái đi vào trong quán rượu.) A stooping figure bearing a lantern (Một bóng người còng lưng xách đèn lồng) appeared through the door behind the bar. (xuất hiện qua cánh cửa phía sau quầy pha chế.) It was Tom, the wizened, toothless landlord. (Đó là Tom, ông chủ quán nhăn nheo, móm mém.)
+
+‘You’ve got him, Minister!’ said Tom. (‘Ngài đã tìm thấy cậu ấy rồi, thưa Bộ trưởng!’ Tom nói.) ‘Will you be wanting anything? Beer? Brandy?’ (‘Ngài có dùng chút gì không? Bia? Hay Rượu mạnh?’)
+
+‘Perhaps a pot of tea,’ said Fudge, (‘Có lẽ một ấm trà thì hơn,’ ông Fudge nói,) who still hadn’t let go of Harry. (người vẫn chưa buông Harry ra.)
+
+There was a loud scraping and puffing from behind them, (Có tiếng bước chân loẹt quẹt và tiếng thở phì phò phía sau họ,) and Stan and Ern appeared, (rồi Stan và Ern xuất hiện,) carrying Harry’s trunk and Hedwig’s cage (khiêng theo rương của Harry và lồng của Hedwig) and looking around excitedly. (và phấn khích nhìn quanh.)
+
+‘’Ow come you di’n’t tell us ’oo you are, eh, Neville?’ said Stan, (‘Sao mày không nói cho tụi này biết mày là ai hả, Neville?’ Stan nói,) beaming at Harry, (cười rạng rỡ với Harry,) while Ernie’s owlish face peered interestedly over Stan’s shoulder. (trong khi khuôn mặt như con cú của Ernie tò mò ngó qua vai Stan.)
+
+‘And a private parlour, please, Tom,’ said Fudge pointedly. (‘Và một phòng khách riêng tư nữa nhé, Tom,’ ông Fudge nói đầy ngụ ý.)
+
+‘’Bye,’ Harry said miserably to Stan and Ern, (‘Tạm biệt,’ Harry sầu não nói với Stan và Ern,) as Tom beckoned Fudge towards the passage that led from the bar. (khi Tom ra hiệu mời ông Fudge đi về phía hành lang dẫn ra từ quầy rượu.)
+
+‘’Bye, Neville!’ called Stan. (‘Tạm biệt nhé, Neville!’ Stan gọi theo.)
+
+Fudge marched Harry along the narrow passage after Tom’s lantern, (Fudge áp giải Harry đi dọc theo hành lang hẹp hẹp theo sau ngọn đèn lồng của Tom,) and then into a small parlour. (và sau đó bước vào một căn phòng khách nhỏ.) Tom clicked his fingers, a fire burst into life in the grate, (Tom búng tay một cái, một ngọn lửa bùng lên trong lò sưởi,) and he bowed himself out of the room. (và ông ta cúi chào rồi lui ra khỏi phòng.)
+
+‘Sit down, Harry’ said Fudge, indicating a chair by the fire. (‘Ngồi đi, Harry’ ông Fudge nói, chỉ vào một chiếc ghế cạnh lò sưởi.)
+
+Harry sat down, (Harry ngồi xuống,) feeling goosebumps rising up his arms (cảm thấy nổi da gà dọc hai cánh tay) despite the glow of the fire. (bất chấp hơi ấm từ ngọn lửa.) Fudge took off his pinstriped cloak and tossed it aside, (Ông Fudge cởi chiếc áo choàng sọc nhỏ của mình ra và ném sang một bên,) then hitched up the trousers of his bottle-green suit (rồi xốc lại quần của bộ vest màu xanh lá cây đậm) and sat down opposite Harry. (và ngồi xuống đối diện Harry.)
+
+‘I am Cornelius Fudge, Harry. The Minister for Magic.’ (‘Ta là Cornelius Fudge, Harry. Bộ trưởng Bộ Pháp thuật.’)
+
+Harry already knew this, of course; (Tất nhiên là Harry đã biết điều này;) he had seen Fudge once before, (cậu đã từng gặp ông Fudge một lần trước đây,) but as he had been wearing his father’s Invisibility Cloak at the time, (nhưng vì lúc đó cậu đang mặc chiếc Áo khoác Tàng hình của cha mình,) Fudge wasn’t to know that. (nên ông Fudge không thể biết được điều đó.)
+
+Tom the innkeeper reappeared, (Tom, chủ quán trọ, xuất hiện trở lại,) wearing an apron over his nightshirt (mặc một chiếc tạp dề bên ngoài chiếc áo ngủ) and bearing a tray of tea and crumpets. (và bê theo một khay trà cùng bánh nướng xốp.) He placed the tray on a table between Fudge and Harry, (Ông đặt khay lên chiếc bàn giữa ông Fudge và Harry,) and left the parlour, closing the door behind him. (và rời khỏi phòng khách, đóng cửa lại sau lưng.)
+
+‘Well, Harry,’ said Fudge, pouring out tea, (‘Chà, Harry,’ ông Fudge vừa rót trà vừa nói,) ‘you’ve had us all in a right flap, I don’t mind telling you. (‘ta nói thật là cháu đã làm tất cả chúng ta một phen hoảng hồn đấy.) Running away from your aunt and uncle’s house like that! (Tự nhiên bỏ chạy khỏi nhà dì dượng của cháu như vậy!) I’d started to think ... (Ta đã bắt đầu nghĩ đến chuyện ...) but you’re safe, and that’s what matters.’ (nhưng cháu an toàn rồi, và đó mới là điều quan trọng.’)
+
+Fudge buttered himself a crumpet (Ông Fudge tự phết bơ lên một chiếc bánh nướng xốp) and pushed the plate towards Harry. (và đẩy chiếc đĩa về phía Harry.)
+
+‘Eat, Harry, you look dead on your feet. (‘Ăn đi, Harry, trông cháu mệt lả rồi kìa.) Now then ... (Giờ thì ...) You will be pleased to hear that (Cháu sẽ rất vui khi nghe tin rằng) we have dealt with the unfortunate blowing-up of Miss Marjorie Dursley. (chúng ta đã giải quyết xong vụ thổi phồng cô Marjorie Dursley không may đó.) Two members of the Accidental Magic Reversal Squad (Hai thành viên của Đội Xóa Bỏ Pháp Thuật Bất Ngờ) were dispatched to Privet Drive a few hours ago. (đã được phái đến đường Privet Drive vài giờ trước.) Miss Dursley has been punctured (Cô Dursley đã được xì hơi) and her memory has been modified. (và trí nhớ của cô ấy đã được điều chỉnh lại.) She has no recollection of the incident at all. (Cô ấy hoàn toàn không có chút ký ức nào về vụ việc đó.) So that’s that, and no harm done.’ (Vậy là xong xuôi, và không có thiệt hại gì.’)
+
+Fudge smiled at Harry over the rim of his teacup, (Ông Fudge mỉm cười với Harry qua viền tách trà của mình,) rather like an uncle surveying a favourite nephew. (trông khá giống một người bác đang ngắm nhìn đứa cháu trai cưng.) Harry, who couldn’t believe his ears, (Harry, người không thể tin vào tai mình,) opened his mouth to speak, (mở miệng định nói,) couldn’t think of anything to say, (nhưng chẳng nghĩ ra được điều gì để nói,) and closed it again. (lại ngậm miệng lại.)
+
+‘Ah, you’re worrying about the reaction of your aunt and uncle?’ said Fudge. (‘À, cháu đang lo lắng về phản ứng của dì dượng mình sao?’ ông Fudge hỏi.) ‘Well, I won’t deny that they are extremely angry, Harry, (‘Chà, ta sẽ không phủ nhận là họ đang vô cùng tức giận, Harry à,) but they are prepared to take you back next summer (nhưng họ sẵn sàng đón cháu trở lại vào mùa hè tới) as long as you stay at Hogwarts for the Christmas and Easter holidays.’ (miễn là cháu ở lại Hogwarts trong suốt kỳ nghỉ Giáng sinh và Lễ Phục sinh.’)
+
+Harry unstuck his throat. (Harry hắng giọng.)
+
+‘I always stay at Hogwarts for the Christmas and Easter holidays,’ he said, (‘Cháu luôn ở lại Hogwarts trong kỳ nghỉ Giáng sinh và Lễ Phục sinh,’ cậu nói,) ‘and I don’t ever want to go back to Privet Drive.’ (‘và cháu chẳng bao giờ muốn quay lại đường Privet Drive nữa.’)
+
+‘Now, now, I’m sure you’ll feel differently once you’ve calmed down,’ said Fudge in a worried tone. (‘Thôi nào, thôi nào, ta chắc chắn cháu sẽ suy nghĩ khác đi một khi bình tĩnh lại,’ ông Fudge nói với giọng điệu lo lắng.) ‘They are your family, after all, (‘Dù sao thì họ cũng là gia đình của cháu,) and I’m sure you are fond of each other – er – very deep down.’ (và ta chắc chắn là các người rất yêu thương nhau – ờ – tận sâu trong đáy lòng.’)
+
+It didn’t occur to Harry to put Fudge right. (Harry chẳng buồn đính chính lại với ông Fudge.) He was still waiting to hear what was going to happen to him now. (Cậu vẫn đang chờ đợi để nghe xem điều gì sẽ xảy ra với mình bây giờ.)
+
+‘So all that remains,’ said Fudge, (‘Vậy tất cả những gì còn lại,’ ông Fudge nói,) now buttering himself a second crumpet, (lúc này đang phết bơ lên chiếc bánh nướng thứ hai cho mình,) ‘is to decide where you’re going to spend the last three weeks of your holidays. (‘là quyết định xem cháu sẽ trải qua ba tuần cuối cùng của kỳ nghỉ ở đâu.) I suggest you take a room here at the Leaky Cauldron and –’ (Ta đề nghị cháu thuê một phòng ở quán Cái Vạc Lủng này và –’)
+
+‘Hang on,’ blurted Harry, (‘Khoan đã,’ Harry thốt lên,) ‘what about my punishment?’ (‘thế còn hình phạt của cháu thì sao?’)
+
+Fudge blinked. (Ông Fudge chớp mắt.)
+
+‘Punishment?’ (‘Hình phạt ư?’)
+
+‘I broke the law!’ Harry said. (‘Cháu đã vi phạm luật lệ!’ Harry nói.) ‘The Decree for the Restriction of Underage Wizardry!’ (‘Đạo luật Hạn chế Pháp thuật ở Tuổi vị thành niên!’)
+
+‘Oh, my dear boy, (‘Ôi, cậu bé thân mến của ta,) we’re not going to punish you for a little thing like that!’ cried Fudge, (chúng ta sẽ không trừng phạt cháu chỉ vì một chuyện cỏn con như thế đâu!’ ông Fudge kêu lên,) waving his crumpet impatiently. (mất kiên nhẫn vung vẩy chiếc bánh nướng.) ‘It was an accident! (Đó là một tai nạn!) We don’t send people to Azkaban just for blowing up their aunts!’ (Chúng ta không tống người ta vào Azkaban chỉ vì họ thổi phồng mấy bà cô của mình!’)
+
+But this didn’t tally at all (Nhưng điều này hoàn toàn không ăn khớp) with Harry’s past dealings with the Ministry of Magic. (với những lần rắc rối trước đây của Harry với Bộ Pháp thuật.)
+
+‘Last year, I got an official warning (‘Năm ngoái, cháu đã nhận được một cảnh cáo chính thức) just because a house-elf smashed a pudding in my uncle’s house!’ said Harry, frowning. (chỉ vì một con gia tinh đánh rơi một cái bánh pudding trong nhà dượng cháu!’ Harry nói, cau mày.) ‘The Ministry of Magic said I’d be expelled from Hogwarts (Bộ Pháp thuật nói rằng cháu sẽ bị đuổi khỏi Hogwarts) if there was any more magic there!’ (nếu có thêm bất kỳ pháp thuật nào xảy ra ở đó!’)
+
+Unless Harry’s eyes were deceiving him, (Trừ phi mắt Harry đang đánh lừa cậu,) Fudge was suddenly looking awkward. (nếu không thì ông Fudge bỗng trông có vẻ lúng túng.)
+
+‘Circumstances change, Harry ... (‘Hoàn cảnh thay đổi rồi, Harry ...) we have to take into account ... (chúng ta phải cân nhắc ...) in the present climate ... (trong tình hình hiện tại ...) surely you don’t want to be expelled?’ (chắc chắn là cháu không muốn bị đuổi học chứ?’)
+
+‘Of course I don’t,’ said Harry. (‘Tất nhiên là cháu không muốn rồi,’ Harry đáp.)
+
+‘Well then, what’s all the fuss about?’ laughed Fudge airily. (‘Vậy thì, có gì mà phải ầm ĩ lên thế?’ ông Fudge cười một cách hời hợt.) ‘Now, have a crumpet, Harry, (‘Giờ thì, ăn bánh đi Harry,) while I go and see if Tom’s got a room for you.’ (trong khi ta đi xem Tom có phòng cho cháu không.’)
+
+Fudge strode out of the parlour and Harry stared after him. (Fudge sải bước ra khỏi phòng khách và Harry nhìn chằm chằm theo bóng ông.) There was something extremely odd going on. (Có chuyện gì đó cực kỳ kỳ lạ đang diễn ra.) Why had Fudge been waiting for him at the Leaky Cauldron, (Tại sao ông Fudge lại đứng chờ cậu ở quán Cái Vạc Lủng,) if not to punish him for what he’d done? (nếu không phải là để trừng phạt cậu vì những gì cậu đã làm?) And now Harry came to think of it, (Và giờ Harry mới nghĩ đến điều này,) surely it wasn’t usual (chắc chắn là không hề bình thường) for the Minister for Magic himself (khi đích thân Bộ trưởng Bộ Pháp thuật) to get involved in matters of underage magic? (lại đi can thiệp vào những vụ pháp thuật vị thành niên?)
+
+Fudge came back, accompanied by Tom the innkeeper. (Fudge quay lại, đi cùng với Tom, người chủ quán trọ.)
+
+‘Room eleven’s free, Harry,’ said Fudge. (‘Phòng số mười một đang trống, Harry,’ ông Fudge nói.) ‘I think you’ll be very comfortable. (‘Ta nghĩ cháu sẽ thấy rất thoải mái.) Just one thing, and I’m sure you’ll understand: (Chỉ có một điều, và ta chắc chắn cháu sẽ hiểu:) I don’t want you wandering off into Muggle London, all right? (Ta không muốn cháu đi lang thang vào khu Luân Đôn của dân Muggle, được chứ?) Keep to Diagon Alley. (Chỉ loanh quanh trong Hẻm Xéo thôi.) And you’re to be back here before dark each night. (Và cháu phải có mặt ở đây trước khi trời tối mỗi ngày.) Sure you’ll understand. (Chắc chắn là cháu sẽ hiểu.) Tom will be keeping an eye on you for me.’ (Tom sẽ thay ta để mắt tới cháu.’)
+
+‘OK,’ said Harry slowly, ‘but why –?’ (‘Vâng,’ Harry chậm rãi nói, ‘nhưng tại sao –?’)
+
+‘Don’t want to lose you again, do we?’ said Fudge with a hearty laugh. (‘Chúng ta đâu muốn lạc mất cháu lần nữa, phải không?’ ông Fudge nói kèm theo một tràng cười sảng khoái.) ‘No, no ... best we know where you are ... I mean ...’ (‘Không, không ... tốt nhất là chúng ta biết cháu đang ở đâu ... Ý ta là ...’)
+
+Fudge cleared his throat loudly (Ông Fudge hắng giọng thật to) and picked up his pinstriped cloak. (và cầm lấy chiếc áo choàng sọc nhỏ của mình.)
+
+‘Well, I’ll be off, plenty to do, you know.’ (‘Chà, ta phải đi đây, có vô khối việc phải làm, cháu biết đấy.’)
+
+‘Have you had any luck with Black yet?’ Harry asked. (‘Ngài đã có manh mối gì về Black chưa?’ Harry hỏi.)
+
+Fudge’s fingers slipped on the silver fastenings of his cloak. (Những ngón tay của ông Fudge trượt đi trên chiếc móc gài bằng bạc của áo choàng.)
+
+‘What’s that? (‘Cái gì cơ?) Oh, you’ve heard – well, no, not yet, (Ồ, cháu đã nghe tin rồi – chà, chưa, chưa đâu,) but it’s only a matter of time. (nhưng đó chỉ là vấn đề thời gian thôi.) The Azkaban guards have never yet failed ... (Đám giám ngục Azkaban chưa bao giờ thất bại ...) and they are angrier than I’ve ever seen them.’ (và bọn chúng đang tức giận hơn bao giờ hết.’)
+
+Fudge shuddered slightly. (Ông Fudge khẽ rùng mình.)
+
+‘So, I’ll say goodbye.’ (‘Vậy, ta xin tạm biệt.’)
+
+He held out his hand and Harry, shaking it, had a sudden idea. (Ông chìa tay ra và Harry, khi đang bắt tay ông, chợt nảy ra một ý định.)
+
+‘Er – Minister? Can I ask you something?’ (‘Ờ – thưa Bộ trưởng? Cháu có thể hỏi ngài một chuyện được không?’)
+
+‘Certainly,’ smiled Fudge. (‘Chắc chắn rồi,’ ông Fudge mỉm cười.)
+
+‘Well, third-years at Hogwarts are allowed to visit Hogsmeade, (‘Chà, học sinh năm ba ở Hogwarts được phép đến thăm Hogsmeade,) but my aunt and uncle didn’t sign the permission form. (nhưng dì dượng cháu chưa ký vào giấy phép.) D’you think you could?’ (Ngài có thể ký giúp cháu được không?’)
+
+Fudge was looking uncomfortable. (Ông Fudge trông có vẻ không thoải mái.)
+
+‘Ah,’ he said. ‘No. No, I’m very sorry, Harry, (‘À,’ ông nói. ‘Không. Không, ta rất xin lỗi, Harry,) but as I’m not your parent or guardian –’ (nhưng vì ta không phải là phụ huynh hay người giám hộ của cháu –’)
+
+‘But you’re the Minister for Magic,’ said Harry eagerly. (‘Nhưng ngài là Bộ trưởng Bộ Pháp thuật mà,’ Harry háo hức nói.) ‘If you gave me permission –’ (‘Nếu ngài cho phép cháu –’)
+
+‘No, I’m sorry, Harry, but rules are rules,’ said Fudge flatly. (‘Không, ta xin lỗi, Harry, nhưng luật là luật,’ ông Fudge đáp thẳng thừng.) ‘Perhaps you’ll be able to visit Hogsmeade next year. (‘Có lẽ năm sau cháu sẽ được đi thăm Hogsmeade.) In fact, I think it best if you don’t ... yes ... well, I’ll be off. (Thực ra, ta nghĩ tốt nhất là cháu không nên đi ... ừ ... thôi, ta phải đi đây.) Enjoy your stay, Harry.’ (Chúc cháu có một kỳ nghỉ vui vẻ, Harry.’)
+
+And with a last smile and shake of Harry’s hand, Fudge left the room. (Và với nụ cười cùng cái bắt tay cuối cùng với Harry, ông Fudge rời khỏi phòng.) Tom now moved forward, beaming at Harry. (Tom bước tới, cười rạng rỡ với Harry.)
+
+‘If you’ll follow me, Mr Potter,’ he said. (‘Mời cậu đi theo tôi, cậu Potter,’ ông nói.) ‘I’ve already taken your things up ...’ (‘Tôi đã mang đồ đạc của cậu lên trên đó rồi ...’)
+
+Harry followed Tom up a handsome wooden staircase (Harry theo Tom đi lên một cầu thang gỗ tuyệt đẹp) to a door with a brass number eleven on it, (tới một cánh cửa có gắn số mười một bằng đồng,) which Tom unlocked and opened for him. (cánh cửa được Tom mở khóa và mở ra cho cậu.)
+
+Inside was a very comfortable-looking bed, (Bên trong là một chiếc giường trông rất thoải mái,) some highly polished oak furniture, (vài món đồ nội thất bằng gỗ sồi được đánh bóng loáng,) a cheerfully crackling fire and, (một ngọn lửa đang cháy lách tách vui tai và,) perched on top of the wardrobe – (đậu trên nóc tủ quần áo –)
+
+‘Hedwig!’ Harry gasped. (‘Hedwig!’ Harry há hốc miệng.)
+
+The snowy owl clicked her beak (Cô cú tuyết kêu lách cách mỏ) and fluttered down onto Harry’s arm. (và vỗ cánh sà xuống cánh tay Harry.)
+
+‘Very smart owl you’ve got there,’ chuckled Tom. (‘Cậu có một con cú rất thông minh đấy,’ Tom cười khúc khích.) ‘Arrived about five minutes after you did. (‘Nó đến đây khoảng năm phút sau cậu.) If there’s anything you need, Mr Potter, don’t hesitate to ask.’ (Nếu cậu cần gì, cậu Potter, cứ đừng ngần ngại yêu cầu nhé.’)
+
+He gave another bow and left. (Ông ta cúi chào một lần nữa rồi rời đi.)
+
+Harry sat on his bed for a long time, (Harry ngồi trên giường một lúc lâu,) absent-mindedly stroking Hedwig. (lơ đãng vuốt ve Hedwig.) The sky outside the window was changing rapidly (Bầu trời ngoài cửa sổ đang thay đổi nhanh chóng) from deep, velvety blue (từ màu xanh thẫm, mịn màng như nhung) to cold, steely grey (sang màu xám xịt lạnh lẽo như thép) and then, slowly, to pink shot with gold. (rồi sau đó, chầm chậm, chuyển sang màu hồng pha lẫn tia vàng.) Harry could hardly believe that (Harry khó có thể tin được rằng) he’d only left Privet Drive a few hours ago, (cậu chỉ mới rời khỏi đường Privet Drive vài giờ trước,) that he wasn’t expelled, (rằng cậu không hề bị đuổi học,) and that he was now facing three completely Dursley-free weeks. (và rằng cậu giờ đây đang đứng trước ba tuần hoàn toàn không có nhà Dursley.)
+
+‘It’s been a very weird night, Hedwig,’ he yawned. (‘Đúng là một đêm vô cùng kỳ lạ, Hedwig à,’ cậu ngáp.)
+
+And without even removing his glasses, (Và thậm chí không thèm tháo kính ra,) he slumped back onto his pillows and fell asleep. (cậu ngả người xuống gối và chìm vào giấc ngủ.)
+`;
+    </script>
+    <script src="js.js"></script>
+</body>
+</html>
